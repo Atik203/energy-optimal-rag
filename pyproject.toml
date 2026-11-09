@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "energy-optimal-rag"
+version = "0.1.0"
+description = "Energy-optimal retrieval depth in retrieval-augmented generation"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+  { name = "Atikur Rahaman", email = "atikurrahaman0305@gmail.com" },
+]
+keywords = [
+  "green-ai",
+  "rag",
+  "energy-efficiency",
+  "retrieval",
+  "llm",
+  "research",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "numpy",
+  "pandas",
+  "scipy",
+  "scikit-learn",
+  "statsmodels",
+  "rank-bm25",
+  "nvidia-ml-py",
+  "requests",
+  "matplotlib",
+  "pyarrow",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "ruff",
+]
+
+[project.scripts]
+rag-energy = "rag_energy.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Atik203/energy-optimal-rag"
+Repository = "https://github.com/Atik203/energy-optimal-rag"
+Issues = "https://github.com/Atik203/energy-optimal-rag/issues"
+Changelog = "https://github.com/Atik203/energy-optimal-rag/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["rag_energy*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+  "gpu: requires a CUDA GPU and the local Ollama reader",
+  "slow: takes more than 60 seconds",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

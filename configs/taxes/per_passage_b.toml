@@ -1,0 +1,34 @@
+# Per-passage energy tax (raises b). A calibrated dummy GPU computation is run
+# once per retrieved passage; the passage text and prompt are unchanged.
+#
+# Baseline b = 2.283 J/passage (pilot affine fit J(k) = 15.74 + 2.283k).
+# Target tax = 20% of b, inside the pre-registered 10-30% band.
+schema_version = 1
+kind = "tax"
+tax_id = "per_passage_b"
+tax_kind = "per_passage"
+phase = "P2"
+target_fraction = 0.20
+baseline_a_j = 15.74
+baseline_b_j_per_passage = 2.283
+delta_a_j = 0.0
+delta_b_j_per_passage = 0.457
+n_questions = 150
+k_grid = [0, 1, 2, 4, 8, 16, 32]
+prediction = "k_star_decreases"
+
+[dummy_work]
+kind = "matmul"
+device = "cuda"
+dtype = "float16"
+calibration_repeats = 20
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 20
+warmup_queries = 20
+
+[notes]
+purpose = "Causal test of Corollary 1: a higher per-passage cost makes retrieval less attractive."

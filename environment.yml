@@ -1,0 +1,21 @@
+name: rag-energy
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - statsmodels
+  - pyarrow
+  - matplotlib
+  - requests
+  - pytest
+  - ruff
+  - pip:
+      - rank-bm25
+      - nvidia-ml-py
+      - -e .

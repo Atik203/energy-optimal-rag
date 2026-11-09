@@ -1,0 +1,63 @@
+# Base configuration for the energy-optimal retrieval depth project (G2).
+# All paths are relative to the repository root unless noted.
+schema_version = 1
+kind = "base"
+seed = 20261115
+
+[project]
+name = "energy-optimal-rag"
+short_name = "G2"
+title = "Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation"
+repo = "https://github.com/Atik203/energy-optimal-rag"
+status = "post-pilot-marginal"
+license_code = "MIT"
+license_docs = "CC-BY-4.0"
+
+[paths]
+data_raw = "data/raw"
+data_processed = "data/processed"
+runs = "runs"
+artifacts = "artifacts"
+analysis = "analysis"
+cache = ".cache"
+
+[reader]
+backend = "ollama"
+model = "qwen3.5:4b"
+quantization = "Q4"
+num_ctx = 4096
+num_predict = 24
+temperature = 0.0
+top_k = 1
+seed = 42
+think = false
+
+[retriever]
+backend = "bm25"
+implementation = "rank_bm25.BM25Okapi"
+top_k = 32
+passage_words = 70
+tokenizer = "lowercase_alnum"
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 20
+warmup_queries = 20
+nonce_hex_chars = 10
+cpu_retrieval_proxy_watts = 20.0
+
+[measurement]
+power_mode = "ac"
+batch_size = 1
+screen_off = true
+concurrent_jobs = false
+repeat_blocks = 3
+repeat_queries_per_block = 20
+repeat_depth = 8
+
+[stats]
+bootstrap_resamples = 10000
+alpha = 0.05
+sided = "one-sided"

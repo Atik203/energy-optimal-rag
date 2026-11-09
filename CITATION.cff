@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software or its documentation, please cite it using the metadata below."
+type: software
+title: "Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation"
+abstract: >-
+  A research harness and decision-theoretic study of retrieval depth in
+  retrieval-augmented generation. The project measures joules per correct answer
+  E(k) = E[J_k] / E[C_k] under a pre-registered accuracy gate, tests an
+  optimal-depth elasticity identity, estimates a price-of-static-depth bound, and
+  evaluates a certification-cost threshold for deciding whether calibration is
+  worth its energy. The initial pilot is MARGINAL: a static 2 percentage-point
+  claim failed at the boundary, while a 5 percentage-point non-inferiority
+  policy at k = 4 saved 69.3% of energy in the pilot. No confirmatory results are
+  claimed in version 0.1.0.
+authors:
+  - family-names: Rahaman
+    given-names: Atikur
+    email: atikurrahaman0305@gmail.com
+version: 0.1.0
+date-released: 2026-11-09
+repository-code: "https://github.com/Atik203/energy-optimal-rag"
+url: "https://github.com/Atik203/energy-optimal-rag"
+license: MIT
+keywords:
+  - green AI
+  - retrieval-augmented generation
+  - energy efficiency
+  - retrieval depth
+  - large language models
+  - measurement
+  - reproducibility
+  - decision theory

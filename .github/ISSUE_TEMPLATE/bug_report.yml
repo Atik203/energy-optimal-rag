@@ -1,0 +1,74 @@
+name: Bug report
+description: Report a reproducible defect in the harness, configs, or analysis.
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. A bug in a research harness can invalidate a run, so please
+        include a minimal reproduction and the exact commit.
+
+        Do **not** paste secrets, tokens, raw dataset text, or model weights.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and why it is wrong.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Command, config path, and the smallest input that triggers the bug.
+      placeholder: |
+        python -m rag_energy.cli validate
+        pytest -q tests/test_smoke.py
+    validations:
+      required: true
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit or version
+      placeholder: e.g. 0.1.0 or a1b2c3d
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python, GPU/driver, Ollama version if relevant.
+      placeholder: Windows 11, Python 3.12, RTX 3060 6 GB, Ollama 0.x
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Traceback or logs
+      description: Paste the traceback. Redact paths and tokens if needed.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues.
+          required: true
+        - label: I removed secrets and raw data from this report.
+          required: true

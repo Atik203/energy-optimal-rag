@@ -1,0 +1,18 @@
+# Primary depth grid for the powered SQuAD run (7 depths).
+schema_version = 1
+kind = "grid"
+grid_id = "primary_k7"
+k_grid = [0, 1, 2, 4, 8, 16, 32]
+n_questions = 1000
+base_run = "squad_qwen4b_p1"
+phase = "P1"
+
+[analysis]
+primary_depth = 4
+reference_depth = 32
+primary_margin_pp = 5.0
+secondary_margin_pp = 2.0
+min_energy_savings_pct = 20.0
+
+[notes]
+purpose = "7-depth primary grid; k=4 is the pre-specified interior depth for the 5pp test."

@@ -1,0 +1,67 @@
+# Analysis parameters fixed before the P1 confirmatory run.
+# These values are frozen at the prereg-freeze-v1 tag.
+schema_version = 1
+kind = "analysis"
+phase = "P1"
+frozen = false
+seed = 20261115
+
+[primary]
+estimand = "ratio_of_expectations"
+metric = "joules_per_correct_answer"
+margin_pp = 5.0
+test = "one_sided_non_inferiority"
+sided = "one-sided"
+alpha = 0.05
+min_savings_pct = 20.0
+depth = 4
+reference_depth = 32
+
+[secondary]
+margin_pp = 2.0
+role = "estimation_only"
+report_ci = true
+used_for_certification = false
+
+[bootstrap]
+resamples = 10000
+unit = "question"
+paired = true
+ci = "percentile"
+confidence = 0.95
+
+[policy_split]
+train = 600
+validation = 200
+test = 200
+evaluation = "matched_accuracy"
+oracle_gain_threshold_pct = 20.0
+capture_threshold_pct = 50.0
+
+[identity]
+method = "finite_difference"
+energy_model = "affine"
+test_at = "selected_depth"
+ci = "percentile"
+
+[gates]
+k1_min_relative_energy_effect = 0.10
+k3_min_posterior_prob = 0.80
+k4_context_share_floor = 0.05
+k6_min_oracle_gain = 0.15
+k7_max_cv = 0.20
+g1_margin_pp = 5.0
+g1_min_savings_pct = 20.0
+g2_max_upper_bound_pp = 5.0
+g2_min_posterior_prob = 0.80
+g3_context_share_low = 0.10
+g3_context_share_high = 0.70
+g4_min_oracle_gain_pct = 20.0
+g4_min_capture_pct = 50.0
+
+[multiplicity]
+primary_tests = 1
+family = "primary_only"
+secondary_role = "exploratory"
+correction = "none"
+note = "One primary test. All other tests are exploratory and labeled as such."

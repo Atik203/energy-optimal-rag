@@ -1,0 +1,38 @@
+# requirements-lock.txt
+#
+# PLACEHOLDER LOCK TEMPLATE — NOT A RESOLVED LOCK FILE.
+#
+# These are the intended top-level packages, not pinned versions. Exact pins
+# must be generated on the target machine after the environment is created:
+#
+#   conda activate rag-energy
+#   python -m pip freeze --exclude-editable > requirements-lock.txt
+#
+# Do not hand-write version numbers that have not been resolved locally. A lock
+# file with invented pins is worse than no lock file: it fails silently on a
+# different platform.
+#
+# Record alongside the lock:
+#   - OS and Python build
+#   - GPU model, driver version, CUDA runtime
+#   - Ollama version and model digest
+#   - conda explicit export (`conda list --explicit`)
+#
+# Runtime
+# numpy
+# pandas
+# scipy
+# scikit-learn
+# statsmodels
+# rank-bm25
+# nvidia-ml-py
+# requests
+# matplotlib
+# pyarrow
+#
+# Development
+# pytest
+# ruff
+#
+# The package itself is installed editable:
+#   pip install -e .

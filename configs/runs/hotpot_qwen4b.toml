@@ -1,0 +1,52 @@
+# HotpotQA distractor run: the setting supplies 10 paragraphs, so the depth grid
+# is capped at 10. This is a multi-hop/distractor stress test, not a fullwiki run.
+schema_version = 1
+kind = "run"
+run_id = "hotpot_qwen4b_p2"
+dataset = "hotpot"
+dataset_version = "distractor"
+split = "dev"
+n_questions = 500
+k_grid = [0, 1, 2, 4, 8, 10]
+seed = 20261115
+phase = "P2"
+
+[reader]
+backend = "ollama"
+model = "qwen3.5:4b"
+quantization = "Q4"
+num_ctx = 4096
+num_predict = 24
+temperature = 0.0
+top_k = 1
+seed = 42
+think = false
+
+[retrieval]
+backend = "bm25"
+top_k = 10
+passage_words = 70
+tokenizer = "lowercase_alnum"
+corpus = "distractor_paragraphs"
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 20
+warmup_queries = 20
+nonce_hex_chars = 10
+cpu_retrieval_proxy_watts = 20.0
+
+[scoring]
+primary = "normalized_em"
+secondary = ["lenient_span", "token_f1_ge_0.5"]
+
+[output]
+dir = "runs"
+raw_csv = "raw.csv"
+blocks_json = "blocks.json"
+
+[notes]
+purpose = "Distractor/multi-hop external validity and non-monotone accuracy check."
+claim_status = "confirmatory-after-prereg-freeze"

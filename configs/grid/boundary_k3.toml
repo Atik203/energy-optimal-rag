@@ -1,0 +1,20 @@
+# Boundary probe: is k*=32 a real boundary or a grid artifact? 200 questions is
+# enough to locate the energy curve; this probe is diagnostic, not confirmatory
+# for accuracy.
+schema_version = 1
+kind = "grid"
+grid_id = "boundary_k3"
+k_grid = [32, 48, 64]
+n_questions = 200
+base_run = "squad_qwen4b_p1"
+phase = "P2"
+
+[analysis]
+primary_depth = 32
+reference_depth = 64
+primary_margin_pp = 5.0
+secondary_margin_pp = 2.0
+min_energy_savings_pct = 20.0
+
+[notes]
+purpose = "Extend the grid once, as pre-specified by gate K2, to resolve the boundary."

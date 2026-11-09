@@ -1,0 +1,62 @@
+name: Feature request
+description: Propose a capability, experiment, or documentation change.
+title: "[feat] "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Feature requests are welcome, but this is a preregistered research project. A
+        request that changes a claim, a gate, or the analysis plan needs an amendment and a
+        decision-log entry. See `CONTRIBUTING.md`.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is missing or painful? Focus on the research need, not the solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should be added or changed?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - data preparation
+        - retrieval
+        - reader
+        - energy measurement
+        - statistics
+        - policy
+        - documentation
+        - tooling / CI
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Research impact
+      options:
+        - label: This touches the preregistration or frozen analysis plan.
+          required: false
+        - label: This touches frozen data or the manifest.
+          required: false
+        - label: This could change a reported claim.
+          required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false

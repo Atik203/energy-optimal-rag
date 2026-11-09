@@ -1,0 +1,181 @@
+# =============================================================================
+# Python
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Test, lint, coverage
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Notebooks
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# =============================================================================
+# Environments and secrets
+# =============================================================================
+.venv/
+venv/
+ENV/
+env/
+.env
+.env.*
+!.env.example
+secrets/
+.secret/
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+token*.txt
+.netrc
+
+# =============================================================================
+# Data — raw and processed text is never committed
+# =============================================================================
+data/raw/
+data/interim/
+data/external/
+data/processed/*
+!data/processed/.gitkeep
+data/*.jsonl
+data/*.json
+!data/manifest.json
+data/*.csv
+data/*.tsv
+data/*.parquet
+data/*.arrow
+data/*.feather
+data/*.sqlite
+data/*.db
+data/*.zip
+data/*.gz
+data/*.tar
+data/*.7z
+squad/
+squad*/
+hotpot/
+hotpot*/
+!data/README.md
+
+# =============================================================================
+# Models and weights — never committed
+# =============================================================================
+models/
+weights/
+checkpoints/
+*.gguf
+*.ggml
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.h5
+*.hdf5
+*.msgpack
+*.model
+.cache/
+.cache/huggingface/
+.cache/ollama/
+.ollama/
+
+# =============================================================================
+# Runs and generated outputs
+# =============================================================================
+runs/*
+!runs/README.md
+!runs/registry.csv
+!runs/.gitkeep
+analysis/outputs/
+analysis/figures/
+analysis/tables/
+analysis/*.html
+analysis/**/*.png
+analysis/**/*.pdf
+artifacts/*
+!artifacts/README.md
+!artifacts/ledger.csv
+!artifacts/claims_evidence.csv
+paper/build/
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.bbl
+paper/*.blg
+paper/*.synctex.gz
+
+# Stray result files at the repository root
+/*.csv
+/*.tsv
+/*.parquet
+/*.log
+
+# =============================================================================
+# Editors and OS
+# =============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =============================================================================
+# Archives and large binaries
+# =============================================================================
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+*.pdf
+!paper/**/*.pdf
+
+# =============================================================================
+# Local tooling
+# =============================================================================
+.temp/
+.tmp/
+scratch/
+*.bak
+*.orig

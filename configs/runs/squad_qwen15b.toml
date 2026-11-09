@@ -1,0 +1,53 @@
+# Reader replication with Qwen2.5-1.5B-Instruct. 500 questions keeps the
+# replication within the local GPU budget while retaining ~1.7pp standard error
+# on the paired accuracy difference.
+schema_version = 1
+kind = "run"
+run_id = "squad_qwen15b_p2"
+dataset = "squad"
+dataset_version = "v1.1"
+split = "dev"
+n_questions = 500
+k_grid = [0, 1, 2, 4, 8, 16, 32]
+seed = 20261115
+phase = "P2"
+
+[reader]
+backend = "hf"
+model = "Qwen/Qwen2.5-1.5B-Instruct"
+quantization = "none"
+dtype = "float16"
+device = "cuda"
+num_ctx = 4096
+num_predict = 24
+temperature = 0.0
+top_k = 1
+seed = 42
+
+[retrieval]
+backend = "bm25"
+top_k = 32
+passage_words = 70
+tokenizer = "lowercase_alnum"
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 20
+warmup_queries = 20
+nonce_hex_chars = 10
+cpu_retrieval_proxy_watts = 20.0
+
+[scoring]
+primary = "normalized_em"
+secondary = ["lenient_span", "token_f1_ge_0.5"]
+
+[output]
+dir = "runs"
+raw_csv = "raw.csv"
+blocks_json = "blocks.json"
+
+[notes]
+purpose = "Replicate the 5pp non-inferiority direction on a weaker reader."
+claim_status = "confirmatory-after-prereg-freeze"

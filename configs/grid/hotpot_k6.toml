@@ -1,0 +1,18 @@
+# HotpotQA distractor depth grid (6 depths, capped at the 10 provided paragraphs).
+schema_version = 1
+kind = "grid"
+grid_id = "hotpot_k6"
+k_grid = [0, 1, 2, 4, 8, 10]
+n_questions = 500
+base_run = "hotpot_qwen4b_p2"
+phase = "P2"
+
+[analysis]
+primary_depth = 4
+reference_depth = 10
+primary_margin_pp = 5.0
+secondary_margin_pp = 2.0
+min_energy_savings_pct = 20.0
+
+[notes]
+purpose = "Distractor/multi-hop replication; tests whether the plateau survives distractors."

@@ -1,0 +1,34 @@
+# Fixed energy tax (raises a). A calibrated dummy GPU computation is inserted
+# before generation; it does not change the prompt or the answer.
+#
+# Baseline a = 15.74 J (pilot affine fit J(k) = 15.74 + 2.283k).
+# Target tax = 20% of a, inside the pre-registered 10-30% band.
+schema_version = 1
+kind = "tax"
+tax_id = "fixed_a"
+tax_kind = "fixed"
+phase = "P2"
+target_fraction = 0.20
+baseline_a_j = 15.74
+baseline_b_j_per_passage = 2.283
+delta_a_j = 3.148
+delta_b_j_per_passage = 0.0
+n_questions = 150
+k_grid = [0, 1, 2, 4, 8, 16, 32]
+prediction = "k_star_increases"
+
+[dummy_work]
+kind = "matmul"
+device = "cuda"
+dtype = "float16"
+calibration_repeats = 20
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 20
+warmup_queries = 20
+
+[notes]
+purpose = "Causal test of Corollary 1: a higher fixed cost makes retrieval more attractive."

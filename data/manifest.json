@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "generated_utc": null,
+  "project": "energy-optimal-rag",
+  "policy": "No raw question or context text is stored in this repository. Only dataset identifiers, versions, licenses, checksums, and derived statistics are tracked. Upstream SQuAD and HotpotQA licenses (CC BY-SA 4.0) remain in force.",
+  "datasets": [
+    {
+      "id": "squad",
+      "name": "Stanford Question Answering Dataset",
+      "version": "1.1",
+      "split": "dev",
+      "source_url": "https://rajpurkar.github.io/SQuAD-explorer/",
+      "upstream_license": "CC BY-SA 4.0",
+      "citation": "Rajpurkar et al., SQuAD: 100,000+ Questions for Machine Comprehension of Text, EMNLP 2016.",
+      "n_questions_total": 10570,
+      "n_questions_used": 1000,
+      "corpus": {
+        "construction": "unique dev contexts truncated to 256 words, chunked into 70-word passages, no overlap",
+        "n_contexts": 20958,
+        "n_passages": 45651,
+        "passage_words": 70,
+        "retrieval_top_k": 32
+      },
+      "checksums": {
+        "source_sha256": null,
+        "questions_sha256": null,
+        "corpus_sha256": null
+      },
+      "prepared_utc": null,
+      "preparation_seed": 20261115,
+      "status": "not_prepared",
+      "notes": "Pilot used 200 stratified questions. Primary run uses 1000; replication 500; boundary probe 200. Pilot recall@32 of the gold context was 88.0%."
+    },
+    {
+      "id": "hotpot",
+      "name": "HotpotQA",
+      "version": "distractor",
+      "split": "dev",
+      "source_url": "https://hotpotqa.github.io/",
+      "upstream_license": "CC BY-SA 4.0",
+      "citation": "Yang et al., HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering, EMNLP 2018.",
+      "n_questions_total": 7405,
+      "n_questions_used": 500,
+      "corpus": {
+        "construction": "10 provided paragraphs per question (2 gold, 8 distractors); no cross-question pooling",
+        "n_contexts": null,
+        "n_passages": 5000,
+        "passage_words": 70,
+        "retrieval_top_k": 10
+      },
+      "checksums": {
+        "source_sha256": null,
+        "questions_sha256": null,
+        "corpus_sha256": null
+      },
+      "prepared_utc": null,
+      "preparation_seed": 20261115,
+      "status": "not_prepared",
+      "notes": "Multi-hop/distractor stress condition. BM25 over 10 paragraphs is a weak retriever; report supporting-fact recall separately. The distractor set is constructed, not natural."
+    }
+  ]
+}
