@@ -64,7 +64,7 @@ be certified at `n = 200`. The rerun is designed around that failure.
 | Secondary | 2 pp margin, **estimation only** — reported with CI, never used as a certification claim |
 | Reader replication | Qwen2.5-1.5B-Instruct, `n = 500`, same grid |
 | Multi-hop / distractor | HotpotQA distractor, `n = 500`, `k ∈ {0,1,2,4,8,10}` |
-| Boundary probe | `k ∈ {32,48,64}`, `n = 200`, to test whether the pilot boundary was a grid artifact |
+| Boundary probe | `k ∈ {32,48,64}`, `n = 200`, grid-artifact test plus a 16k-token context check |
 | Causal test | Fixed energy tax `Δa` and per-passage tax `Δb` at 10–30% of `a ≈ 15.74 J`, `b ≈ 2.283 J/passage` |
 | Learned policy | Query features → depth, split 600/200/200, evaluated at matched accuracy against the best static `k` |
 | Certification | `N* = C_cert / (A(k*)[E(k0) − E(k*)])`, reported descriptively per dataset and reader |

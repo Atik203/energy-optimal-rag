@@ -113,6 +113,8 @@ not promote the 2 pp result after seeing the data.
 
 The 1.5B replication uses `n = 500`, seven depths. HotpotQA uses `n = 500`, six depths. The
 boundary probe uses `n = 200` at `k ∈ {32,48,64}` and is diagnostic, not powered for accuracy.
+A 16k-token context check tests whether the pilot boundary was a 4096-context artifact; if
+the card cannot hold 16k, the limit is reported.
 All three fit the 15–20 GPU-hour budget.
 
 ## 6. Estimand and correctness

@@ -81,7 +81,9 @@ certification target. This phase decides whether the paper has a static policy r
 reader (Qwen2.5-1.5B-Instruct, `n = 500`), a multi-hop/distractor dataset (HotpotQA,
 `n = 500`, `k ∈ {0,1,2,4,8,10}` because the distractor setting supplies 10 paragraphs), and
 a boundary probe (`k ∈ {32,48,64}`, `n = 200`) to test whether the pilot's boundary optimum
-was a grid artifact. Add the energy-tax manipulation: a fixed dummy GPU computation raising
+was a grid artifact. The probe also includes a 16k-token context check to test whether the
+boundary is a 4096-context artifact; if the 6 GB card cannot hold 16k, the limit is reported
+rather than dropped. Add the energy-tax manipulation: a fixed dummy GPU computation raising
 `a` by 10–30% and a per-passage dummy computation raising `b` by 10–30%, with the prediction
 that `k*` increases for the fixed tax and decreases for the per-passage tax.
 
