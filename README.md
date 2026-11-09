@@ -143,6 +143,8 @@ require numpy, pandas, torch, or a GPU.
 Phases P0–P6, sprint plan, gates K1–K7 / G1–G5, budget, deliverables, and risks:
 [`ROADMAP.md`](ROADMAP.md).
 
+Supervisor proposal: [`docs/proposal.md`](docs/proposal.md).
+
 ## Citation
 
 If you use this scaffold, cite the repository (see [`CITATION.cff`](CITATION.cff)). The
