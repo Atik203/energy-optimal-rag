@@ -13,7 +13,7 @@ help:
 
 setup:
 	conda env create -f environment.yml || conda env update -f environment.yml --prune
-	$(PYTHON) -m pip install -e ".[dev]"
+	conda run -n rag-energy python -m pip install -e ".[dev]"
 
 test:
 	$(PYTHON) -m pytest -q
@@ -28,4 +28,4 @@ validate:
 	$(PYTHON) -m rag_energy.cli validate
 
 clean:
-	$(PYTHON) -c "import shutil, pathlib; [shutil.rmtree(p, ignore_errors=True) for p in ['build', 'dist', '.pytest_cache', '.ruff_cache', '.mypy_cache', 'htmlcov']]; [shutil.rmtree(p, ignore_errors=True) for p in pathlib.Path('.').rglob('__pycache__')]; [p.unlink(missing_ok=True) for p in pathlib.Path('.').rglob('*.egg-info')]"
+	$(PYTHON) -c "import pathlib, shutil; [shutil.rmtree(p, ignore_errors=True) for p in map(pathlib.Path, ['build', 'dist', '.pytest_cache', '.ruff_cache', '.mypy_cache', 'htmlcov'])]; [shutil.rmtree(p, ignore_errors=True) for p in pathlib.Path('.').rglob('__pycache__')]; [shutil.rmtree(p, ignore_errors=True) for p in pathlib.Path('.').rglob('*.egg-info')]"

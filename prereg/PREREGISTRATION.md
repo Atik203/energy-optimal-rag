@@ -154,6 +154,12 @@ reason, and whether outcome data had been seen. The amendment is mirrored in
 [`../docs/DECISIONS.md`](../docs/DECISIONS.md). The analysis script records the prereg hash
 and refuses to run on a mismatch.
 
+### Deviations log
+
+| ID | Date | Section | Change | Outcome data seen | Approval |
+|---|---|---|---|---|---|
+| — | — | — | _No deviations. The preregistration has not been frozen yet._ | — | — |
+
 ## 12. Data and code availability
 
 Code is MIT. Documentation and derived artifacts are CC BY 4.0. SQuAD and HotpotQA remain
