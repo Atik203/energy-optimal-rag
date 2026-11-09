@@ -19,7 +19,7 @@ silently strengthen a claim, add a "certified" result, or introduce a universal 
 ## 2. Environment
 
 - Python 3.12 at `C:\ProgramData\anaconda3\python.exe`.
-- Conda environment: `rag-energy` (`conda activate rag-energy`).
+- Conda environment: `energy-optimal-rag` (`conda activate energy-optimal-rag`).
 - GPU: local RTX 3060 Laptop 6 GB. Single GPU, batch size 1, no concurrent jobs.
 - Reader: Ollama `qwen3.5:4b` (Q4, 4096 context). Replication reader:
   `Qwen2.5-1.5B-Instruct` via Hugging Face.

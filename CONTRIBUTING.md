@@ -15,7 +15,7 @@ do not.
 git clone https://github.com/Atik203/energy-optimal-rag.git
 cd energy-optimal-rag
 conda env create -f environment.yml
-conda activate rag-energy
+conda activate energy-optimal-rag
 pip install -e ".[dev]"
 pytest -q
 python -m rag_energy.cli validate
@@ -27,7 +27,7 @@ Windows PowerShell:
 git clone https://github.com/Atik203/energy-optimal-rag.git
 Set-Location energy-optimal-rag
 conda env create -f environment.yml
-conda activate rag-energy
+conda activate energy-optimal-rag
 pip install -e ".[dev]"
 .\tasks.ps1 test
 .\tasks.ps1 validate

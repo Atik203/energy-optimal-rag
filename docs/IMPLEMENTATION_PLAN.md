@@ -56,7 +56,7 @@ never committed.
 ## 3. Environment and harness reuse
 
 The target is Python 3.12 at `C:\ProgramData\anaconda3\python.exe`, conda environment
-`rag-energy`, a local RTX 3060 Laptop 6 GB, and Ollama `qwen3.5:4b` (Q4, 3.3 GB, 4096 context).
+`energy-optimal-rag`, a local RTX 3060 Laptop 6 GB, and Ollama `qwen3.5:4b` (Q4, 3.3 GB, 4096 context).
 The replication reader is `Qwen/Qwen2.5-1.5B-Instruct` in float16.
 
 The pilot harness is reused rather than rewritten: BM25 Okapi over lowercase alphanumeric

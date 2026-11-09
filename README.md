@@ -109,7 +109,7 @@ Requires Python 3.12 and (for experiments) a CUDA GPU with Ollama.
 
 ```bash
 conda env create -f environment.yml
-conda activate rag-energy
+conda activate energy-optimal-rag
 pip install -e .
 pytest -q
 python -m rag_energy.cli validate

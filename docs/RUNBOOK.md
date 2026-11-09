@@ -1,14 +1,14 @@
 # Runbook
 
 **Windows-first.** Commands assume the repository root `E:\PROJECT\energy-optimal-rag` and the
-conda environment `rag-energy`. POSIX equivalents are in the `Makefile`.
+conda environment `energy-optimal-rag`. POSIX equivalents are in the `Makefile`.
 
 ## 0. One-time setup
 
 ```powershell
 Set-Location E:\PROJECT\energy-optimal-rag
 conda env create -f environment.yml
-conda activate rag-energy
+conda activate energy-optimal-rag
 python -m pip install -e ".[dev]"
 python -m rag_energy.cli validate
 pytest -q

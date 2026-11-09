@@ -1,4 +1,4 @@
-name: rag-energy
+name: energy-optimal-rag
 channels:
   - conda-forge
   - defaults

@@ -51,7 +51,7 @@ try {
                 conda env update -f environment.yml --prune
             }
             if ($LASTEXITCODE -ne 0) { throw "conda environment setup failed" }
-            conda run -n rag-energy python -m pip install -e ".[dev]"
+            conda run -n energy-optimal-rag python -m pip install -e ".[dev]"
             if ($LASTEXITCODE -ne 0) { throw "editable install failed" }
         }
         "test" {

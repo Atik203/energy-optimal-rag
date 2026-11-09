@@ -5,7 +5,7 @@
 # These are the intended top-level packages, not pinned versions. Exact pins
 # must be generated on the target machine after the environment is created:
 #
-#   conda activate rag-energy
+#   conda activate energy-optimal-rag
 #   python -m pip freeze --exclude-editable > requirements-lock.txt
 #
 # Do not hand-write version numbers that have not been resolved locally. A lock

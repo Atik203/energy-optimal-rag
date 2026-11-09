@@ -13,7 +13,7 @@ help:
 
 setup:
 	conda env create -f environment.yml || conda env update -f environment.yml --prune
-	conda run -n rag-energy python -m pip install -e ".[dev]"
+	conda run -n energy-optimal-rag python -m pip install -e ".[dev]"
 
 test:
 	$(PYTHON) -m pytest -q
