@@ -25,7 +25,10 @@ think = false
 [retrieval]
 backend = "bm25"
 top_k = 10
-passage_words = 70
+# Keep the 10 provided paragraphs whole: 0 means no chunking. Chunking inside a
+# paragraph would break the multi-hop evidence the condition is meant to test.
+chunking = "whole_paragraph"
+passage_words = 0
 tokenizer = "lowercase_alnum"
 corpus = "distractor_paragraphs"
 

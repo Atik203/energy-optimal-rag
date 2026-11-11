@@ -228,6 +228,11 @@ def validate_config(path: Path, root: Path | None = None) -> list[str]:
         secondary = data.get("secondary", {})
         bootstrap = data.get("bootstrap", {})
         policy = data.get("policy_split", {})
+        # The split is a target over the analysed questions. Older analysis
+        # configs without n_questions still assume the 1,000-question P1 design.
+        target_n = data.get("n_questions", 1000)
+        if not _is_int(target_n) or target_n <= 0:
+            errors.append(f"{path}: n_questions must be a positive integer")
         if isinstance(primary, dict):
             margin = primary.get("margin_pp")
             if not isinstance(margin, (int, float)) or not 0 < float(margin) < 50:
@@ -247,8 +252,11 @@ def validate_config(path: Path, root: Path | None = None) -> list[str]:
             parts = [policy.get("train"), policy.get("validation"), policy.get("test")]
             if not all(_is_int(p) and p > 0 for p in parts):
                 errors.append(f"{path}: policy_split values must be positive integers")
-            elif sum(parts) != 1000:
-                errors.append(f"{path}: policy_split must sum to 1000 questions")
+            elif _is_int(target_n) and target_n > 0 and sum(parts) != target_n:
+                errors.append(
+                    f"{path}: policy_split must sum to {target_n} questions, "
+                    f"matching n_questions = {target_n}"
+                )
 
     return errors
 

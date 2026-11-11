@@ -49,7 +49,12 @@ def build_table(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--margin", type=float, default=0.05)
-    parser.add_argument("--discordant-rate", type=float, default=0.145)
+    parser.add_argument(
+        "--discordant-rate",
+        type=float,
+        default=0.08,
+        help="Planning discordant-pair rate (pre-registered), not a measured value.",
+    )
     parser.add_argument("--alpha", type=float, default=0.05)
     parser.add_argument("--ns", type=int, nargs="+", default=[200, 300, 500, 750, 1000, 1500, 2000])
     parser.add_argument(

@@ -47,6 +47,12 @@ dev = [
   "pytest",
   "ruff",
 ]
+# Hugging Face reader for the 1.5B replication run. Not installed in the base
+# environment: torch is large and platform-specific.
+hf = [
+  "torch",
+  "transformers",
+]
 
 [project.scripts]
 rag-energy = "rag_energy.cli:main"

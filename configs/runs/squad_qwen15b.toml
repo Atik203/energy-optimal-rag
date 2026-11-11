@@ -27,6 +27,7 @@ seed = 42
 [retrieval]
 backend = "bm25"
 top_k = 32
+chunking = "word"
 passage_words = 70
 tokenizer = "lowercase_alnum"
 

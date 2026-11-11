@@ -55,11 +55,15 @@ def delta_method_variance(joules: Sequence[float], correct: Sequence[int]) -> fl
     """
     if len(joules) != len(correct):
         raise ValueError("joules and correct must have the same length")
-    n = len(joules)
-    if n < 2:
-        raise ValueError("at least two observations are required")
     j = [float(x) for x in joules]
     c = [float(x) for x in correct]
+    if any(value < 0 for value in j):
+        raise ValueError("energy must be non-negative")
+    if any(value not in (0.0, 1.0) for value in c):
+        raise ValueError("correct must contain 0/1 values")
+    n = len(j)
+    if n < 2:
+        raise ValueError("at least two observations are required")
     mean_j, mean_c = _mean(j), _mean(c)
     if mean_c == 0:
         return math.inf

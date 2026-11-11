@@ -15,6 +15,9 @@ dependencies:
   - requests
   - pytest
   - ruff
+  # The HF replication reader (squad_qwen15b) is not part of this base
+  # environment. Install it separately with:
+  #   python -m pip install -e ".[hf]"
   - pip:
       - rank-bm25
       - nvidia-ml-py

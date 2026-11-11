@@ -18,9 +18,15 @@ def prepare_hotpot(
     out_dir: Path,
     n_questions: int = 500,
     seed: int = 20261115,
+    chunking: str = "whole_paragraph",
     passage_words: int = 70,
 ) -> Path:
     """Prepare HotpotQA distractor dev into questions and a per-question corpus.
+
+    The primary condition keeps the 10 provided paragraphs whole so that
+    multi-hop evidence is not split: ``chunking="whole_paragraph"`` (the
+    default) does not chunk. ``chunking="word"`` is opt-in; only then does
+    ``passage_words`` apply, as the no-overlap word-chunk size.
 
     Intended outputs (git-ignored under ``data/processed/``):
       - ``hotpot_questions.parquet``: qid, question, gold answer, type, level

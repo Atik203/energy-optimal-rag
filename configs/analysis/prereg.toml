@@ -4,6 +4,7 @@ schema_version = 1
 kind = "analysis"
 phase = "P1"
 frozen = false
+n_questions = 1000
 seed = 20261115
 
 [primary]

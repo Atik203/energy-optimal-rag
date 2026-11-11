@@ -9,6 +9,12 @@ n_questions = 200
 base_run = "squad_qwen4b_p1"
 phase = "P2"
 
+# The probe must be able to retrieve all 64 passages, so the k=64 endpoint is
+# limited by the reader and not by the retriever. The base run retrieves top-32,
+# so this grid overrides the retrieval depth.
+[retrieval]
+top_k = 64
+
 [analysis]
 primary_depth = 32
 reference_depth = 64

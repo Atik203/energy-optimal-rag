@@ -1,10 +1,13 @@
 """Power for the 5 pp non-inferiority test.
 
-The pilot's minimum detectable effect was roughly 4-5 pp at n=200, which is why
-a 2 pp margin could not be certified. At n=1000 and a discordant-pair rate near
-0.145, the standard error of the paired difference is about 1.2 pp; a 5 pp
-one-sided non-inferiority test is well powered when the true difference is small,
-and a 2 pp margin remains estimation-only.
+The project's planning assumption is a discordant-pair rate of 0.08, which gives
+a paired-difference standard deviation of about 0.283. At n=1,000 the standard
+error of the paired difference is about 0.9 pp. The minimum detectable effect at
+80% power is about 5.0 pp at n=200 and about 2.2 pp at n=1,000, which is why the
+pilot could not certify a 2 pp margin and why a 2 pp margin remains
+estimation-only.
+
+These are planning assumptions, not measured values.
 """
 
 from __future__ import annotations
