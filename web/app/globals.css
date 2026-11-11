@@ -1,0 +1,410 @@
+@import "tailwindcss";
+
+/* Class-based dark mode. Dark is the default; light is a first-class theme. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ */
+/* Design tokens — "energy observatory"                                */
+/* Dark: deep green-black, phosphor lime, teal/cyan, amber, rose.      */
+/* Light: warm paper, deep green ink.                                  */
+/* ------------------------------------------------------------------ */
+
+:root {
+  color-scheme: light;
+  --background: #f6f2e6;
+  --panel: #fcf9f0;
+  --panel-soft: rgba(255, 252, 244, 0.68);
+  --foreground: #11241b;
+  --muted-foreground: #55675c;
+  --line: rgba(17, 36, 27, 0.14);
+  --line-strong: rgba(17, 36, 27, 0.3);
+  --signal: #1d5a3e;
+  --signal-foreground: #fbf8ef;
+  --data: #0f766e;
+  --beam: #0e7490;
+  --caution: #a16207;
+  --dead: #be123c;
+  --grid-line: rgba(17, 36, 27, 0.055);
+  --glow-a: rgba(29, 90, 62, 0.09);
+  --glow-b: rgba(15, 118, 110, 0.07);
+  --glass: rgba(255, 252, 244, 0.72);
+  --glass-border: rgba(17, 36, 27, 0.12);
+  --chart-line: #1d5a3e;
+  --chart-muted: #7a8b80;
+  --chart-band: rgba(29, 90, 62, 0.13);
+  --grain-opacity: 0.012;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #07110d;
+  --panel: #0a1812;
+  --panel-soft: rgba(12, 27, 20, 0.62);
+  --foreground: #eef3e5;
+  --muted-foreground: #93a89b;
+  --line: rgba(199, 240, 74, 0.13);
+  --line-strong: rgba(199, 240, 74, 0.28);
+  --signal: #c8f04f;
+  --signal-foreground: #0a1408;
+  --data: #5eead4;
+  --beam: #67e8f9;
+  --caution: #fbbf24;
+  --dead: #fb7185;
+  --grid-line: rgba(147, 168, 155, 0.075);
+  --glow-a: rgba(200, 240, 79, 0.09);
+  --glow-b: rgba(94, 234, 212, 0.07);
+  --glass: rgba(9, 22, 16, 0.62);
+  --glass-border: rgba(200, 240, 79, 0.14);
+  --chart-line: #c8f04f;
+  --chart-muted: #7f9688;
+  --chart-band: rgba(200, 240, 79, 0.12);
+  --grain-opacity: 0.03;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-panel: var(--panel);
+  --color-panel-soft: var(--panel-soft);
+  --color-muted: var(--panel);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-data: var(--data);
+  --color-beam: var(--beam);
+  --color-caution: var(--caution);
+  --color-dead: var(--dead);
+}
+
+@theme {
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --radius-panel: 4px;
+  --radius-chip: 2px;
+
+  --animate-rise: rise 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade: fade 0.35s ease both;
+  --animate-blink: blink 2.6s ease-in-out infinite;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
+}
+
+@layer base {
+  html {
+    font-size: 17px;
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+    transition: background-color 300ms ease, color 300ms ease;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px),
+      radial-gradient(58rem 38rem at 82% -12%, var(--glow-a), transparent 62%),
+      radial-gradient(46rem 34rem at 4% 16%, var(--glow-b), transparent 68%);
+    background-size:
+      88px 88px,
+      88px 88px,
+      100% 100%,
+      100% 100%;
+    mask-image: linear-gradient(to bottom, black 0%, black 58%, transparent 96%);
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: var(--grain-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--signal) 32%, transparent);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--signal) 45%, var(--line));
+    background-clip: content-box;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--signal);
+    outline-offset: 3px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  [id] {
+    scroll-margin-top: 92px;
+  }
+}
+
+@layer components {
+  .display-title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.028em;
+    line-height: 1.03;
+  }
+
+  .display-title em {
+    font-style: italic;
+    color: var(--signal);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+    box-shadow: inset 0 1px 0 color-mix(in oklab, white 4%, transparent);
+    min-width: 0;
+  }
+
+  .panel-soft {
+    background: var(--panel-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+    min-width: 0;
+  }
+
+  .panel-glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-panel);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: inset 0 1px 0 color-mix(in oklab, white 6%, transparent);
+    min-width: 0;
+  }
+
+  .instrument {
+    --inst-bg: #06110c;
+    --inst-panel: #0a1a12;
+    --inst-fg: #eef3e5;
+    --inst-muted: #8aa294;
+    --inst-line: rgba(200, 240, 79, 0.16);
+    --inst-grid: rgba(147, 168, 155, 0.1);
+    --inst-signal: #c8f04f;
+    --inst-data: #5eead4;
+    --inst-caution: #fbbf24;
+    --inst-dead: #fb7185;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(40rem 24rem at 84% -20%, rgba(200, 240, 79, 0.11), transparent 62%),
+      radial-gradient(30rem 20rem at 4% 110%, rgba(94, 234, 212, 0.08), transparent 64%),
+      var(--inst-bg);
+    color: var(--inst-fg);
+    border: 1px solid rgba(200, 240, 79, 0.22);
+    border-radius: var(--radius-panel);
+    min-width: 0;
+  }
+
+  .instrument-grid {
+    background-image:
+      linear-gradient(to right, var(--inst-grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--inst-grid) 1px, transparent 1px);
+    background-size: 30px 30px;
+    mask-image: radial-gradient(ellipse at 50% 40%, black 20%, transparent 82%);
+  }
+
+  .inst-label {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--inst-muted);
+  }
+
+  .inst-rule {
+    border-color: var(--inst-line);
+  }
+
+  .inst-signal {
+    color: var(--inst-signal);
+  }
+
+  .inst-data {
+    color: var(--inst-data);
+  }
+
+  .inst-caution {
+    color: var(--inst-caution);
+  }
+
+  .inst-dead {
+    color: var(--inst-dead);
+  }
+
+  .inst-muted {
+    color: var(--inst-muted);
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 2px solid var(--dead);
+    color: var(--dead);
+    padding: 0.2rem 0.55rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transform: rotate(-2deg);
+  }
+
+  .measure-grid {
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .surface-inset {
+    background: color-mix(in oklab, var(--panel) 70%, var(--background));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+  }
+
+  .link-underline {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    text-decoration-color: color-mix(in oklab, var(--signal) 55%, transparent);
+  }
+
+  .link-underline:hover {
+    text-decoration-color: var(--signal);
+  }
+
+  .deck-stage {
+    background:
+      radial-gradient(60rem 40rem at 50% -20%, rgba(200, 240, 79, 0.08), transparent 60%),
+      #07100c;
+  }
+
+  .deck-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(200, 240, 79, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(200, 240, 79, 0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at 50% 50%, black 10%, transparent 75%);
+  }
+
+  .slide-surface {
+    background: #f7f3e7;
+    color: #10231b;
+  }
+
+  .slide-grid {
+    background-image:
+      linear-gradient(to right, rgba(16, 35, 27, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(16, 35, 27, 0.05) 1px, transparent 1px);
+    background-size: 2.2cqw 2.2cqw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
