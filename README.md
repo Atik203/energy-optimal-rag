@@ -162,6 +162,8 @@ Supervisor proposal: [`docs/proposal.md`](docs/proposal.md).
 
 ## Website
 
+**Live site:** <https://energy-optimal-rag-web.vercel.app>
+
 The public research site is in [`web/`](web/README.md): a Next.js app with the project
 overview, research question, method, pilot evidence, roadmap, and a keyboard-driven slide
 deck. Build and run instructions, including the offline install command, are in

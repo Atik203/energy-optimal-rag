@@ -3,6 +3,8 @@
 A self-contained Next.js site for **Energy-Optimal Retrieval Depth in Retrieval-Augmented
 Generation (G2)**: a measurement instrument for joules per correct answer.
 
+**Live production:** <https://energy-optimal-rag-web.vercel.app>
+
 **Research status: post-pilot MARGINAL.** This site contains **no confirmatory results**.
 The preregistration is a draft until the P1 freeze. The pilot evidence is reported exactly as
 measured, including the claim that failed.
