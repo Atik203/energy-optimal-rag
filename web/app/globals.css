@@ -370,7 +370,7 @@
   .deck-stage {
     background:
       radial-gradient(60rem 40rem at 50% -20%, rgba(200, 240, 79, 0.08), transparent 60%),
-      #07100c;
+      #000000;
   }
 
   .deck-stage::before {
@@ -386,14 +386,14 @@
   }
 
   .slide-surface {
-    background: #f7f3e7;
-    color: #10231b;
+    background: #ffffff;
+    color: #000000;
   }
 
   .slide-grid {
     background-image:
-      linear-gradient(to right, rgba(16, 35, 27, 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(16, 35, 27, 0.05) 1px, transparent 1px);
+      linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
     background-size: 2.2cqw 2.2cqw;
   }
 }

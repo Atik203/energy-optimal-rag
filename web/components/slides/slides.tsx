@@ -106,7 +106,7 @@ function AccuracyPlot() {
           }}
         />
         <span
-          className="absolute -translate-x-1/2 whitespace-nowrap px-[0.7cqw] py-[0.2cqh] font-mono text-[1.25cqh] font-bold"
+          className="absolute -translate-x-1/2 whitespace-nowrap px-[0.7cqw] py-[0.2cqh] font-mono text-[1.8cqh] font-bold"
           style={{ left: `${(bandLeft + bandRight) / 2}%`, top: `calc(${bandTop}% - 3.2cqh)`, color: S.teal, background: S.paper }}
         >
           plateau {pilot.accuracy.plateauLow.toFixed(3)}–{pilot.accuracy.plateauHigh.toFixed(3)}
@@ -122,7 +122,7 @@ function AccuracyPlot() {
               style={{ background: S.teal, borderColor: S.paper }}
             />
             <span
-              className="absolute top-0 whitespace-nowrap font-mono text-[1.4cqh] font-bold tnum"
+              className="absolute top-0 whitespace-nowrap font-mono text-[1.9cqh] font-bold tnum"
               style={{
                 color: S.ink,
                 transform:
@@ -140,7 +140,7 @@ function AccuracyPlot() {
         {[0, 1, 2, 4, 8, 16, 32].map((tick) => (
           <span
             key={tick}
-            className="absolute -translate-x-1/2 font-mono text-[1.25cqh]"
+            className="absolute -translate-x-1/2 font-mono text-[1.8cqh]"
             style={{ left: `${xPos(tick)}%`, color: S.muted }}
           >
             {tick}
@@ -154,7 +154,7 @@ function AccuracyPlot() {
 function Status({ pass }: { pass: boolean }) {
   return (
     <span
-      className="font-mono text-[1.7cqh] font-bold uppercase tracking-[0.08em]"
+      className="font-mono text-[2.2cqh] font-bold uppercase tracking-[0.08em]"
       style={{ color: pass ? S.teal : S.rose }}
     >
       {pass ? "Pass" : "Fail"}
@@ -177,21 +177,21 @@ function TitleSlide({ index, total }: SlideProps) {
           <div className="flex items-center gap-[1.4cqw]">
             <SlideMark size="7.2cqh" />
             <div>
-              <p className="font-mono text-[1.6cqh] font-bold uppercase tracking-[0.18em]" style={{ color: S.deep }}>
+              <p className="font-mono text-[2.1cqh] font-bold uppercase tracking-[0.18em]" style={{ color: S.deep }}>
                 Energy Observatory
               </p>
-              <p className="mt-[0.3cqh] font-mono text-[1.35cqh] uppercase tracking-[0.14em]" style={{ color: S.muted }}>
+              <p className="mt-[0.3cqh] font-mono text-[1.9cqh] uppercase tracking-[0.14em]" style={{ color: S.muted }}>
                 G2 / Retrieval depth
               </p>
             </div>
           </div>
 
           <div className="mt-auto">
-            <p className="font-mono text-[1.55cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.teal }}>
+            <p className="font-mono text-[2.05cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.teal }}>
               Public scaffold v0.1.0 · Post-pilot MARGINAL
             </p>
             <h1
-              className="mt-[1.6cqh] max-w-[58cqw] text-[7.3cqh] font-normal leading-[0.97] tracking-[-0.03em]"
+              className="mt-[1.6cqh] max-w-[58cqw] text-[7.8cqh] font-semibold leading-[0.97] tracking-[-0.03em]"
               style={{ fontFamily: "var(--font-serif)", color: S.ink }}
             >
               What does a correct answer{" "}
@@ -199,7 +199,7 @@ function TitleSlide({ index, total }: SlideProps) {
                 cost?
               </span>
             </h1>
-            <p className="mt-[2.2cqh] max-w-[52cqw] text-[2.35cqh] font-medium leading-snug" style={{ color: S.inkSoft }}>
+            <p className="mt-[2.2cqh] max-w-[52cqw] text-[2.85cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
               Retrieval depth in retrieval-augmented generation, measured in joules per correct
               answer.
             </p>
@@ -211,7 +211,7 @@ function TitleSlide({ index, total }: SlideProps) {
           </div>
 
           <div
-            className="mt-[3cqh] flex items-center justify-between border-t pt-[1.1cqh] font-mono text-[1.35cqh] uppercase tracking-[0.1em]"
+            className="mt-[3cqh] flex items-center justify-between border-t pt-[1.1cqh] font-mono text-[1.9cqh] uppercase tracking-[0.1em]"
             style={{ borderColor: S.line, color: S.muted }}
           >
             <span>Energy-Optimal Retrieval Depth</span>
@@ -222,7 +222,7 @@ function TitleSlide({ index, total }: SlideProps) {
         <div className="flex min-h-0 items-center">
           <div className="w-full border-2 p-[2.4cqw]" style={{ borderColor: S.deep, background: S.deep }}>
             <div className="flex items-center justify-between">
-              <p className="font-mono text-[1.45cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.lime }}>
+              <p className="font-mono text-[1.95cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.lime }}>
                 Pilot readout
               </p>
               <span className="h-[1.3cqh] w-[1.3cqh] rounded-full" style={{ background: S.lime }} />
@@ -234,7 +234,7 @@ function TitleSlide({ index, total }: SlideProps) {
                 { k: 32, value: pilot.energy.e32, color: S.teal },
               ].map((bar) => (
                 <div key={bar.k} className="flex h-full w-1/3 flex-col items-center justify-end">
-                  <span className="mb-[0.5cqh] font-mono text-[1.45cqh] font-bold tnum" style={{ color: S.white }}>
+                  <span className="mb-[0.5cqh] font-mono text-[1.95cqh] font-bold tnum" style={{ color: S.white }}>
                     {bar.value.toFixed(1)}
                   </span>
                   <div
@@ -244,19 +244,19 @@ function TitleSlide({ index, total }: SlideProps) {
                       background: bar.color,
                     }}
                   />
-                  <span className="mt-[0.6cqh] font-mono text-[1.3cqh]" style={{ color: "#b8c7b8" }}>
+                  <span className="mt-[0.6cqh] font-mono text-[1.85cqh]" style={{ color: "#b8c7b8" }}>
                     k = {bar.k}
                   </span>
                 </div>
               ))}
             </div>
-            <p className="mt-[2.4cqh] font-mono text-[4.6cqh] font-medium leading-none tracking-[-0.05em]" style={{ color: S.lime }}>
+            <p className="mt-[2.4cqh] font-mono text-[5.2cqh] font-semibold leading-none tracking-[-0.05em]" style={{ color: S.lime }}>
               {pilot.energy.span.toFixed(2)}×
             </p>
-            <p className="mt-[0.7cqh] text-[1.65cqh] font-medium" style={{ color: "#c9d6c9" }}>
+            <p className="mt-[0.7cqh] text-[2.15cqh] font-semibold" style={{ color: "#c9d6c9" }}>
               E(32) / E(1) · joules per correct answer
             </p>
-            <div className="mt-[2.2cqh] flex justify-between border-t pt-[1.1cqh] font-mono text-[1.25cqh] uppercase tracking-[0.08em]" style={{ borderColor: "rgba(200,240,79,0.2)", color: "#a9baa9" }}>
+            <div className="mt-[2.2cqh] flex justify-between border-t pt-[1.1cqh] font-mono text-[1.8cqh] uppercase tracking-[0.08em]" style={{ borderColor: "rgba(200,240,79,0.2)", color: "#a9baa9" }}>
               <span>{pilot.generations.toLocaleString("en-US")} generations</span>
               <span>R² {pilot.fit.r2.toFixed(4)}</span>
             </div>
@@ -285,14 +285,14 @@ function DecisionSlide({ index, total }: SlideProps) {
       <div className="grid min-h-0 flex-1 grid-cols-3 gap-[1.5cqw]">
         <SlideCard title="2 pp · static" tone="rose" icon={<XCircle size="2.2cqh" />}>
           <div className="flex h-full flex-col justify-center">
-            <p className="font-mono text-[6.2cqh] font-bold leading-none" style={{ color: S.rose }}>
+            <p className="font-mono text-[6.8cqh] font-bold leading-none" style={{ color: S.rose }}>
               DEAD
             </p>
-            <p className="mt-[1.6cqh] text-[2.1cqh] font-bold">k* = {pilot.static2pp.kStar}, the grid boundary</p>
-            <p className="mt-[0.8cqh] font-mono text-[1.65cqh] leading-relaxed" style={{ color: S.inkSoft }}>
+            <p className="mt-[1.6cqh] text-[2.6cqh] font-bold">k* = {pilot.static2pp.kStar}, the grid boundary</p>
+            <p className="mt-[0.8cqh] font-mono text-[2.15cqh] leading-relaxed" style={{ color: S.inkSoft }}>
               P(k* optimal) = {pilot.static2pp.pOptimal.toFixed(2)}, below the {pilot.static2pp.threshold} gate.
             </p>
-            <p className="mt-[1.1cqh] border-t pt-[0.8cqh] text-[1.45cqh] leading-snug" style={{ color: S.muted, borderColor: S.line }}>
+            <p className="mt-[1.1cqh] border-t pt-[0.8cqh] text-[1.95cqh] leading-snug" style={{ color: S.muted, borderColor: S.line }}>
               MDE at n = {pilot.questions}: roughly {pilot.mdeAt200}. A power failure, not a flat curve.
             </p>
           </div>
@@ -300,14 +300,14 @@ function DecisionSlide({ index, total }: SlideProps) {
 
         <SlideCard title="5 pp · policy" tone="amber" icon={<Target size="2.2cqh" />}>
           <div className="flex h-full flex-col justify-center">
-            <p className="font-mono text-[5.2cqh] font-medium leading-none" style={{ color: S.amber }}>
+            <p className="font-mono text-[5.8cqh] font-semibold leading-none" style={{ color: S.amber }}>
               k = {pilot.fivePp.k}
             </p>
-            <p className="mt-[1.2cqh] font-mono text-[2.4cqh] font-bold">{pilot.fivePp.savings}% savings</p>
-            <p className="mt-[0.8cqh] text-[1.85cqh] font-medium leading-snug" style={{ color: S.inkSoft }}>
+            <p className="mt-[1.2cqh] font-mono text-[2.9cqh] font-bold">{pilot.fivePp.savings}% savings</p>
+            <p className="mt-[0.8cqh] text-[2.35cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
               Pilot signal, not certified.
             </p>
-            <p className="mt-[1.1cqh] border-t pt-[0.8cqh] font-mono text-[1.45cqh] leading-snug" style={{ color: S.muted, borderColor: S.line }}>
+            <p className="mt-[1.1cqh] border-t pt-[0.8cqh] font-mono text-[1.95cqh] leading-snug" style={{ color: S.muted, borderColor: S.line }}>
               N* = {pilot.fivePp.nStar} · P reported = {pilot.fivePp.pReported}
             </p>
           </div>
@@ -315,16 +315,16 @@ function DecisionSlide({ index, total }: SlideProps) {
 
         <SlideCard title="Oracle · ceiling" tone="teal" icon={<BarChart3 size="2.2cqh" />}>
           <div className="flex h-full flex-col justify-center">
-            <p className="font-mono text-[5.2cqh] font-medium leading-none" style={{ color: S.teal }}>
+            <p className="font-mono text-[5.8cqh] font-semibold leading-none" style={{ color: S.teal }}>
               {pilot.oracle.gain}%
             </p>
-            <p className="mt-[1.2cqh] text-[2.0cqh] font-bold leading-snug">
+            <p className="mt-[1.2cqh] text-[2.5cqh] font-bold leading-snug">
               Matched-accuracy gain, with hindsight.
             </p>
-            <p className="mt-[0.8cqh] text-[1.75cqh] font-medium" style={{ color: S.inkSoft }}>
+            <p className="mt-[0.8cqh] text-[2.25cqh] font-semibold" style={{ color: S.inkSoft }}>
               Upper bound only. No learned policy exists.
             </p>
-            <p className="mt-[1.1cqh] border-t pt-[0.8cqh] text-[1.45cqh] leading-snug" style={{ color: S.muted, borderColor: S.line }}>
+            <p className="mt-[1.1cqh] border-t pt-[0.8cqh] text-[1.95cqh] leading-snug" style={{ color: S.muted, borderColor: S.line }}>
               G4 requires a policy to capture ≥50% of a ≥20% oracle gap.
             </p>
           </div>
@@ -433,7 +433,7 @@ function EnergyCurveSlide({ index, total }: SlideProps) {
               max={160}
               height="34cqh"
             />
-            <p className="mt-[1.4cqh] text-center font-mono text-[1.5cqh]" style={{ color: S.muted }}>
+            <p className="mt-[1.4cqh] text-center font-mono text-[2.0cqh]" style={{ color: S.muted }}>
               Three documented E(k) points; all seven depths were measured.
             </p>
           </div>
@@ -449,9 +449,9 @@ function EnergyCurveSlide({ index, total }: SlideProps) {
               ["span", `${pilot.energy.span.toFixed(2)}×`, "E(32) / E(1)"],
             ].map(([label, value, note]) => (
               <div key={label} className="flex flex-col justify-center border px-[1.2cqw] py-[1cqh]" style={{ borderColor: S.line, background: S.alt }}>
-                <p className="font-mono text-[1.35cqh] uppercase tracking-[0.1em]" style={{ color: S.muted }}>{label}</p>
-                <p className="mt-[0.4cqh] font-mono text-[2.5cqh] font-bold tnum" style={{ color: S.ink }}>{value}</p>
-                <p className="mt-[0.2cqh] text-[1.45cqh]" style={{ color: S.inkSoft }}>{note}</p>
+                <p className="font-mono text-[1.9cqh] uppercase tracking-[0.1em]" style={{ color: S.muted }}>{label}</p>
+                <p className="mt-[0.4cqh] font-mono text-[3.0cqh] font-bold tnum" style={{ color: S.ink }}>{value}</p>
+                <p className="mt-[0.2cqh] text-[1.95cqh]" style={{ color: S.inkSoft }}>{note}</p>
               </div>
             ))}
           </div>
@@ -486,7 +486,7 @@ function AccuracyDeadSlide({ index, total }: SlideProps) {
         <SlideCard title="A_EM, documented points" tone="deep" icon={<BarChart3 size="2.2cqh" />} fill={S.paper}>
           <div className="flex h-full flex-col justify-center">
             <AccuracyPlot />
-            <p className="mt-[1.2cqh] text-center font-mono text-[1.35cqh]" style={{ color: S.muted }}>
+            <p className="mt-[1.2cqh] text-center font-mono text-[1.9cqh]" style={{ color: S.muted }}>
               No connecting line: intermediate accuracy values are not reported in the source.
             </p>
           </div>
@@ -494,18 +494,18 @@ function AccuracyDeadSlide({ index, total }: SlideProps) {
 
         <SlideCard title="Static 2 pp claim" tone="rose" icon={<XCircle size="2.2cqh" />}>
           <div className="flex h-full flex-col justify-center">
-            <p className="font-mono text-[5.6cqh] font-bold leading-none" style={{ color: S.rose }}>
+            <p className="font-mono text-[6.2cqh] font-bold leading-none" style={{ color: S.rose }}>
               DEAD
             </p>
-            <p className="mt-[1.4cqh] font-mono text-[2.3cqh] font-bold">k* = {pilot.static2pp.kStar} · P = {pilot.static2pp.pOptimal.toFixed(2)}</p>
-            <p className="mt-[0.6cqh] text-[1.8cqh] font-medium leading-snug" style={{ color: S.inkSoft }}>
+            <p className="mt-[1.4cqh] font-mono text-[2.8cqh] font-bold">k* = {pilot.static2pp.kStar} · P = {pilot.static2pp.pOptimal.toFixed(2)}</p>
+            <p className="mt-[0.6cqh] text-[2.3cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
               Below the {pilot.static2pp.threshold} selection gate. A power failure, not a flat-curve failure.
             </p>
             <div className="mt-[1.2cqh] border-t pt-[0.9cqh]" style={{ borderColor: S.line }}>
-              <p className="font-mono text-[1.5cqh]" style={{ color: S.inkSoft }}>
+              <p className="font-mono text-[2.0cqh]" style={{ color: S.inkSoft }}>
                 MDE at n = {pilot.questions}: roughly {pilot.mdeAt200}.
               </p>
-              <p className="mt-[0.3cqh] font-mono text-[1.5cqh]" style={{ color: S.inkSoft }}>
+              <p className="mt-[0.3cqh] font-mono text-[2.0cqh]" style={{ color: S.inkSoft }}>
                 The k = 16 interval includes the 2 pp floor.
               </p>
             </div>
@@ -602,11 +602,11 @@ function FivePpSlide({ index, total }: SlideProps) {
         <SlideCard title="What N* means" tone="deep" icon={<Timer size="2.2cqh" />}>
           <div className="flex h-full flex-col justify-center">
             <SlideFormula tone="deep">N* = C_cert / [A(k*)(E(k₀) − E(k*))]</SlideFormula>
-            <p className="mt-[1.2cqh] text-[1.85cqh] font-medium leading-snug" style={{ color: S.inkSoft }}>
+            <p className="mt-[1.2cqh] text-[2.35cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
               The pilot sweep cost {pilot.sweepKj} kJ. N* = {pilot.fivePp.nStar} at k = {pilot.fivePp.k} is the query count at which the saving
               repays the sweep. It is not a deployment guarantee.
             </p>
-            <p className="mt-[0.8cqh] font-mono text-[1.5cqh]" style={{ color: S.muted }}>
+            <p className="mt-[0.8cqh] font-mono text-[2.0cqh]" style={{ color: S.muted }}>
               {pilot.savingsAt.queries.toLocaleString("en-US")} queries: {pilot.savingsAt.kj} kJ saved; calibration is {pilot.savingsAt.calibrationShareOfSavingPct}% of the saving. At 100,000: {pilot.calibrationShareAt100kPct}%.
             </p>
           </div>
@@ -660,14 +660,14 @@ function RerunSlide({ index, total }: SlideProps) {
       <div className="mt-[2cqh] grid min-h-0 flex-1 grid-cols-[1.05fr_0.95fr] gap-[1.8cqw]">
         <div className="flex flex-col justify-between border-2 p-[1.8cqw]" style={{ borderColor: S.deep, background: S.deep, color: S.white }}>
           <div>
-            <p className="font-mono text-[1.45cqh] uppercase tracking-[0.14em]" style={{ color: S.lime }}>
+            <p className="font-mono text-[1.95cqh] uppercase tracking-[0.14em]" style={{ color: S.lime }}>
               Primary decision / P1
             </p>
-            <p className="mt-[1.4cqh] font-mono text-[3.4cqh] font-medium tracking-[-0.03em]">
+            <p className="mt-[1.4cqh] font-mono text-[3.9cqh] font-semibold tracking-[-0.03em]">
               k = {rerun.primary.candidateK} <span style={{ color: "#9fb09f" }}>vs</span> k = {rerun.primary.referenceK}
             </p>
-            <p className="mt-[0.8cqh] text-[2cqh] font-bold">5 pp EM non-inferiority · one-sided α = .05</p>
-            <p className="mt-[0.4cqh] text-[1.75cqh]" style={{ color: "#c9d6c9" }}>
+            <p className="mt-[0.8cqh] text-[2.5cqh] font-bold">5 pp EM non-inferiority · one-sided α = .05</p>
+            <p className="mt-[0.4cqh] text-[2.25cqh]" style={{ color: "#c9d6c9" }}>
               ≥ {rerun.primary.minSavingsPct}% savings required. {rerun.primary.secondaryMarginPp} pp is estimation-only.
             </p>
           </div>
@@ -678,12 +678,12 @@ function RerunSlide({ index, total }: SlideProps) {
               ["95% half-width", rerun.power.halfWidthAt1000],
             ].map(([label, value]) => (
               <div key={label}>
-                <p className="font-mono text-[1.2cqh] uppercase tracking-[0.08em]" style={{ color: "#a9baa9" }}>{label}</p>
-                <p className="mt-[0.2cqh] font-mono text-[1.9cqh] font-bold" style={{ color: S.white }}>{value}</p>
+                <p className="font-mono text-[1.75cqh] uppercase tracking-[0.08em]" style={{ color: "#a9baa9" }}>{label}</p>
+                <p className="mt-[0.2cqh] font-mono text-[2.4cqh] font-bold" style={{ color: S.white }}>{value}</p>
               </div>
             ))}
           </div>
-          <p className="mt-[1.2cqh] font-mono text-[1.25cqh] leading-relaxed" style={{ color: "#a9baa9" }}>
+          <p className="mt-[1.2cqh] font-mono text-[1.8cqh] leading-relaxed" style={{ color: "#a9baa9" }}>
             Planning values, not results. Pilot-derived MDE at n = {pilot.questions}: {pilot.mdeAt200}.
           </p>
         </div>
@@ -699,8 +699,8 @@ function RerunSlide({ index, total }: SlideProps) {
             return (
               <div key={item.title} className="border-2 p-[1.2cqw]" style={{ borderColor: S.line, background: S.alt }}>
                 <Icon size="2.4cqh" style={{ color: S.teal }} aria-hidden="true" />
-                <p className="mt-[0.8cqh] text-[1.9cqh] font-bold">{item.title}</p>
-                <p className="mt-[0.4cqh] text-[1.55cqh] leading-snug" style={{ color: S.inkSoft }}>{item.body}</p>
+                <p className="mt-[0.8cqh] text-[2.4cqh] font-bold">{item.title}</p>
+                <p className="mt-[0.4cqh] text-[2.05cqh] leading-snug" style={{ color: S.inkSoft }}>{item.body}</p>
               </div>
             );
           })}
@@ -746,9 +746,9 @@ function MeasurementSlide({ index, total }: SlideProps) {
           ["J_fix", "Fixed", "Partly amortized"],
         ].map(([symbol, label, note]) => (
           <div key={symbol} className="border px-[1cqw] py-[0.9cqh]" style={{ borderColor: S.line, background: S.paper }}>
-            <p className="font-mono text-[1.9cqh] font-bold" style={{ color: S.teal }}>{symbol}</p>
-            <p className="mt-[0.3cqh] text-[1.65cqh] font-bold">{label}</p>
-            <p className="mt-[0.2cqh] text-[1.35cqh]" style={{ color: S.muted }}>{note}</p>
+            <p className="font-mono text-[2.4cqh] font-bold" style={{ color: S.teal }}>{symbol}</p>
+            <p className="mt-[0.3cqh] text-[2.15cqh] font-bold">{label}</p>
+            <p className="mt-[0.2cqh] text-[1.9cqh]" style={{ color: S.muted }}>{note}</p>
           </div>
         ))}
       </div>
@@ -766,9 +766,9 @@ function MeasurementSlide({ index, total }: SlideProps) {
           return (
             <div key={item.title} className="flex flex-col border p-[1.2cqw]" style={{ borderColor: S.line, background: S.alt }}>
               <Icon size="2.2cqh" style={{ color: S.amber }} aria-hidden="true" />
-              <p className="mt-[0.7cqh] font-mono text-[2.3cqh] font-bold tnum" style={{ color: S.ink }}>{item.value}</p>
-              <p className="mt-[0.2cqh] text-[1.6cqh] font-bold">{item.title}</p>
-              <p className="mt-[0.3cqh] text-[1.35cqh] leading-snug" style={{ color: S.inkSoft }}>{item.note}</p>
+              <p className="mt-[0.7cqh] font-mono text-[2.8cqh] font-bold tnum" style={{ color: S.ink }}>{item.value}</p>
+              <p className="mt-[0.2cqh] text-[2.1cqh] font-bold">{item.title}</p>
+              <p className="mt-[0.3cqh] text-[1.9cqh] leading-snug" style={{ color: S.inkSoft }}>{item.note}</p>
             </div>
           );
         })}
@@ -812,7 +812,7 @@ function DataSlide({ index, total }: SlideProps) {
             widths={["26%", "74%"]}
             compact
           />
-          <p className="mt-[1.1cqh] text-[1.45cqh] leading-snug" style={{ color: S.inkSoft }}>
+          <p className="mt-[1.1cqh] text-[1.95cqh] leading-snug" style={{ color: S.inkSoft }}>
             Closed corpus: every question searches the same fixed collection. That isolates depth
             and limits external validity.
           </p>
@@ -832,7 +832,7 @@ function DataSlide({ index, total }: SlideProps) {
             widths={["26%", "74%"]}
             compact
           />
-          <p className="mt-[1.1cqh] text-[1.45cqh] leading-snug" style={{ color: S.inkSoft }}>
+          <p className="mt-[1.1cqh] text-[1.95cqh] leading-snug" style={{ color: S.inkSoft }}>
             Per-question corpus; pooling paragraphs across questions would change the task.
           </p>
         </SlideCard>
@@ -840,21 +840,21 @@ function DataSlide({ index, total }: SlideProps) {
 
       <div className="mt-[1.6cqh] grid grid-cols-3 gap-[1.2cqw]">
         <div className="border-l-[0.35cqw] px-[1.2cqw] py-[0.9cqh]" style={{ borderColor: S.teal, background: S.tealSoft }}>
-          <p className="font-mono text-[2.1cqh] font-bold" style={{ color: S.teal }}>
+          <p className="font-mono text-[2.6cqh] font-bold" style={{ color: S.teal }}>
             {pilot.recall.goldContext[pilot.recall.goldContext.length - 1].toFixed(1)}%
           </p>
-          <p className="mt-[0.2cqh] text-[1.45cqh] font-medium">Pilot gold-context recall at k = 32</p>
-          <p className="mt-[0.2cqh] font-mono text-[1.2cqh]" style={{ color: S.muted }}>Pilot recall</p>
+          <p className="mt-[0.2cqh] text-[1.95cqh] font-semibold">Pilot gold-context recall at k = 32</p>
+          <p className="mt-[0.2cqh] font-mono text-[1.75cqh]" style={{ color: S.muted }}>Pilot recall</p>
         </div>
         <div className="border-l-[0.35cqw] px-[1.2cqw] py-[0.9cqh]" style={{ borderColor: S.amber, background: S.amberSoft }}>
-          <p className="font-mono text-[2.1cqh] font-bold" style={{ color: S.amber }}>~{datasets.squad.goldOutsideCapPct}%</p>
-          <p className="mt-[0.2cqh] text-[1.45cqh] font-medium">Gold evidence outside the top-32 cap</p>
-          <p className="mt-[0.2cqh] font-mono text-[1.2cqh]" style={{ color: S.muted }}>Pilot recall ceiling</p>
+          <p className="font-mono text-[2.6cqh] font-bold" style={{ color: S.amber }}>~{datasets.squad.goldOutsideCapPct}%</p>
+          <p className="mt-[0.2cqh] text-[1.95cqh] font-semibold">Gold evidence outside the top-32 cap</p>
+          <p className="mt-[0.2cqh] font-mono text-[1.75cqh]" style={{ color: S.muted }}>Pilot recall ceiling</p>
         </div>
         <div className="border-l-[0.35cqw] px-[1.2cqw] py-[0.9cqh]" style={{ borderColor: S.rose, background: S.roseSoft }}>
-          <p className="font-mono text-[2.1cqh] font-bold" style={{ color: S.rose }}>CC BY-SA 4.0</p>
-          <p className="mt-[0.2cqh] text-[1.45cqh] font-medium">No raw question or context text is redistributed</p>
-          <p className="mt-[0.2cqh] font-mono text-[1.2cqh]" style={{ color: S.muted }}>Both datasets</p>
+          <p className="font-mono text-[2.6cqh] font-bold" style={{ color: S.rose }}>CC BY-SA 4.0</p>
+          <p className="mt-[0.2cqh] text-[1.95cqh] font-semibold">No raw question or context text is redistributed</p>
+          <p className="mt-[0.2cqh] font-mono text-[1.75cqh]" style={{ color: S.muted }}>Both datasets</p>
         </div>
       </div>
 
@@ -886,14 +886,14 @@ function TheorySlide({ index, total }: SlideProps) {
         <SlideCard title="Identity" tone="teal" icon={<Scale size="2.2cqh" />}>
           <div className="flex h-full flex-col justify-center">
             <SlideFormula tone="teal">{theory.theorems[0].formula}</SlideFormula>
-            <p className="mt-[1.1cqh] text-[1.7cqh] font-medium leading-snug" style={{ color: S.inkSoft }}>
+            <p className="mt-[1.1cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
               At an interior optimum, energy and accuracy elasticities are equal. A local, scale-free
               diagnostic.
             </p>
-            <p className="mt-[1cqh] font-mono text-[1.5cqh] font-bold" style={{ color: S.teal }}>
+            <p className="mt-[1cqh] font-mono text-[2.0cqh] font-bold" style={{ color: S.teal }}>
               k = 2: +{pilot.identity.at2.gap.toFixed(3)} · CI [{pilot.identity.at2.ci[0].toFixed(3)}, +{pilot.identity.at2.ci[1].toFixed(3)}]
             </p>
-            <p className="mt-[0.3cqh] font-mono text-[1.5cqh]" style={{ color: S.rose }}>
+            <p className="mt-[0.3cqh] font-mono text-[2.0cqh]" style={{ color: S.rose }}>
               k = 32: +{pilot.identity.at32.gap.toFixed(3)} → over-retrieval
             </p>
           </div>
@@ -902,7 +902,7 @@ function TheorySlide({ index, total }: SlideProps) {
         <SlideCard title="Price of static depth" tone="amber" icon={<BarChart3 size="2.2cqh" />}>
           <div className="flex h-full flex-col justify-center">
             <SlideFormula tone="amber">{theory.theorems[1].formula}</SlideFormula>
-            <p className="mt-[1.1cqh] text-[1.7cqh] font-medium leading-snug" style={{ color: S.inkSoft }}>
+            <p className="mt-[1.1cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
               For any static depth there is a query mixture on which it is arbitrarily worse at equal
               accuracy. An impossibility result, not a policy claim.
             </p>
@@ -912,7 +912,7 @@ function TheorySlide({ index, total }: SlideProps) {
         <SlideCard title="Certification" tone="deep" icon={<Timer size="2.2cqh" />}>
           <div className="flex h-full flex-col justify-center">
             <SlideFormula tone="deep">{theory.theorems[2].formula}</SlideFormula>
-            <p className="mt-[1.1cqh] text-[1.7cqh] font-medium leading-snug" style={{ color: S.inkSoft }}>
+            <p className="mt-[1.1cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
               Finding the depth is itself an energy purchase. The pilot sweep cost {pilot.sweepKj} kJ; N* = {pilot.fivePp.nStar}
               at k = {pilot.fivePp.k}.
             </p>
@@ -922,13 +922,13 @@ function TheorySlide({ index, total }: SlideProps) {
         <div className="col-span-3">
           <SlideCard title="Distractor counterexample" tone="rose" icon={<AlertTriangle size="2.2cqh" />}>
             <div className="grid grid-cols-[1.25fr_1fr_1.1fr] items-center gap-[1.4cqw]">
-              <p className="font-mono text-[1.5cqh] leading-snug" style={{ color: S.inkSoft }}>
+              <p className="font-mono text-[2.0cqh] leading-snug" style={{ color: S.inkSoft }}>
                 {theory.counterexample.setup}
               </p>
-              <p className="font-mono text-[1.5cqh] leading-snug" style={{ color: S.ink }}>
+              <p className="font-mono text-[2.0cqh] leading-snug" style={{ color: S.ink }}>
                 {theory.counterexample.energies}
               </p>
-              <p className="text-[1.5cqh] font-medium leading-snug" style={{ color: S.inkSoft }}>
+              <p className="text-[2.0cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
                 A local minimum at k = 1 and a lower global minimum at k = 4. A greedy policy misses 4.
               </p>
             </div>
@@ -975,7 +975,7 @@ function GatesSlide({ index, total }: SlideProps) {
             widths={["9%", "72%", "19%"]}
             compact
           />
-          <p className="mt-[0.8cqh] font-mono text-[1.35cqh]" style={{ color: S.muted }}>
+          <p className="mt-[0.8cqh] font-mono text-[1.9cqh]" style={{ color: S.muted }}>
             K1–K4 and K6 firing is a kill/reframe. K5 and K7 are fixable before they are kills.
           </p>
         </div>
@@ -1021,10 +1021,10 @@ function PolicyTaxesSlide({ index, total }: SlideProps) {
       <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.6cqw]">
         <SlideCard title="Learned policy" tone="teal" icon={<GitBranch size="2.2cqh" />}>
           <div className="flex h-full flex-col justify-center">
-            <p className="font-mono text-[3.4cqh] font-bold tracking-[-0.03em]" style={{ color: S.teal }}>
+            <p className="font-mono text-[3.9cqh] font-bold tracking-[-0.03em]" style={{ color: S.teal }}>
               {rerun.policy.train} / {rerun.policy.validation} / {rerun.policy.test}
             </p>
-            <p className="mt-[0.4cqh] font-mono text-[1.45cqh]" style={{ color: S.muted }}>
+            <p className="mt-[0.4cqh] font-mono text-[1.95cqh]" style={{ color: S.muted }}>
               target counts · hashed question ID · realized counts reported
             </p>
             <div className="mt-[1.3cqh]">
@@ -1045,21 +1045,21 @@ function PolicyTaxesSlide({ index, total }: SlideProps) {
           <div className="flex h-full flex-col justify-center">
             <div className="grid grid-cols-2 gap-[1.1cqw]">
               <div className="flex flex-col justify-center border p-[1.2cqw]" style={{ borderColor: S.line, background: S.paper }}>
-                <p className="font-mono text-[1.45cqh] uppercase tracking-[0.08em]" style={{ color: S.muted }}>Fixed Δa +20%</p>
-                <p className="mt-[0.5cqh] font-mono text-[3.2cqh] font-bold" style={{ color: S.teal }}>k* ↑</p>
-                <p className="mt-[0.4cqh] text-[1.45cqh] leading-snug" style={{ color: S.inkSoft }}>
+                <p className="font-mono text-[1.95cqh] uppercase tracking-[0.08em]" style={{ color: S.muted }}>Fixed Δa +20%</p>
+                <p className="mt-[0.5cqh] font-mono text-[3.7cqh] font-bold" style={{ color: S.teal }}>k* ↑</p>
+                <p className="mt-[0.4cqh] text-[1.95cqh] leading-snug" style={{ color: S.inkSoft }}>
                   {rerun.taxes.fixedJ} J before generation.
                 </p>
               </div>
               <div className="flex flex-col justify-center border p-[1.2cqw]" style={{ borderColor: S.line, background: S.paper }}>
-                <p className="font-mono text-[1.45cqh] uppercase tracking-[0.08em]" style={{ color: S.muted }}>Per-passage Δb +20%</p>
-                <p className="mt-[0.5cqh] font-mono text-[3.2cqh] font-bold" style={{ color: S.rose }}>k* ↓</p>
-                <p className="mt-[0.4cqh] text-[1.45cqh] leading-snug" style={{ color: S.inkSoft }}>
+                <p className="font-mono text-[1.95cqh] uppercase tracking-[0.08em]" style={{ color: S.muted }}>Per-passage Δb +20%</p>
+                <p className="mt-[0.5cqh] font-mono text-[3.7cqh] font-bold" style={{ color: S.rose }}>k* ↓</p>
+                <p className="mt-[0.4cqh] text-[1.95cqh] leading-snug" style={{ color: S.inkSoft }}>
                   {rerun.taxes.perPassageJ} J per passage.
                 </p>
               </div>
             </div>
-            <p className="mt-[1.2cqh] font-mono text-[1.4cqh]" style={{ color: S.muted }}>
+            <p className="mt-[1.2cqh] font-mono text-[1.9cqh]" style={{ color: S.muted }}>
               {rerun.taxes.n} questions per condition · mid-accuracy gate · report gated and unconstrained optima.
             </p>
           </div>
@@ -1112,10 +1112,10 @@ function BoundarySlide({ index, total }: SlideProps) {
       </div>
 
       <div className="mt-[1.5cqh] border-l-[0.4cqw] px-[1.6cqw] py-[1.2cqh]" style={{ borderColor: S.lime, background: S.limeSoft }}>
-        <p className="font-mono text-[1.35cqh] font-bold uppercase tracking-[0.12em]" style={{ color: S.deep }}>
+        <p className="font-mono text-[1.9cqh] font-bold uppercase tracking-[0.12em]" style={{ color: S.deep }}>
           The defensible next claim — if the rerun supports it
         </p>
-        <p className="mt-[0.6cqh] text-[2.1cqh] font-medium leading-snug" style={{ color: S.ink, fontFamily: "var(--font-serif)" }}>
+        <p className="mt-[0.6cqh] text-[2.6cqh] font-semibold leading-snug" style={{ color: S.ink, fontFamily: "var(--font-serif)" }}>
           “At a 5 pp EM non-inferiority margin, k = {pilot.fivePp.k} retains accuracy while saving roughly {pilot.fivePp.savings}% of
           GPU energy per correct answer relative to k = 32.”
         </p>
@@ -1139,10 +1139,10 @@ function ThanksSlide({ index, total }: SlideProps) {
           <div className="flex items-center gap-[1.4cqw]">
             <SlideMark size="7.2cqh" />
             <div>
-              <p className="font-mono text-[1.6cqh] font-bold uppercase tracking-[0.18em]" style={{ color: S.deep }}>
+              <p className="font-mono text-[2.1cqh] font-bold uppercase tracking-[0.18em]" style={{ color: S.deep }}>
                 Energy Observatory
               </p>
-              <p className="mt-[0.3cqh] font-mono text-[1.35cqh] uppercase tracking-[0.14em]" style={{ color: S.muted }}>
+              <p className="mt-[0.3cqh] font-mono text-[1.9cqh] uppercase tracking-[0.14em]" style={{ color: S.muted }}>
                 G2 / Retrieval depth
               </p>
             </div>
@@ -1150,12 +1150,12 @@ function ThanksSlide({ index, total }: SlideProps) {
 
           <div className="mt-auto">
             <h1
-              className="text-[8.4cqh] font-normal leading-none tracking-[-0.035em]"
+              className="text-[8.8cqh] font-semibold leading-none tracking-[-0.035em]"
               style={{ fontFamily: "var(--font-serif)", color: S.ink }}
             >
               Thank you.
             </h1>
-            <p className="mt-[2cqh] max-w-[50cqw] text-[2.4cqh] font-medium leading-snug" style={{ color: S.inkSoft }}>
+            <p className="mt-[2cqh] max-w-[50cqw] text-[2.9cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
               The failure is in the record. The next claim is conditional on the powered rerun.
             </p>
             <div className="mt-[2.2cqh] flex flex-wrap gap-[0.8cqw]">
@@ -1163,14 +1163,14 @@ function ThanksSlide({ index, total }: SlideProps) {
               <SlideChip tone="rose">No confirmatory results</SlideChip>
               <SlideChip tone="deep">Prereg not frozen</SlideChip>
             </div>
-            <div className="mt-[2.4cqh] flex flex-wrap gap-x-[2cqw] gap-y-[0.6cqh] font-mono text-[1.45cqh] font-bold uppercase tracking-[0.1em]" style={{ color: S.teal }}>
+            <div className="mt-[2.4cqh] flex flex-wrap gap-x-[2cqw] gap-y-[0.6cqh] font-mono text-[1.95cqh] font-bold uppercase tracking-[0.1em]" style={{ color: S.teal }}>
               <span>Repository: Atik203/energy-optimal-rag</span>
               <span>Site: /research · /results</span>
             </div>
           </div>
 
           <div
-            className="mt-[3cqh] flex items-center justify-between border-t pt-[1.1cqh] font-mono text-[1.35cqh] uppercase tracking-[0.1em]"
+            className="mt-[3cqh] flex items-center justify-between border-t pt-[1.1cqh] font-mono text-[1.9cqh] uppercase tracking-[0.1em]"
             style={{ borderColor: S.line, color: S.muted }}
           >
             <span>Energy-Optimal Retrieval Depth</span>
@@ -1180,27 +1180,27 @@ function ThanksSlide({ index, total }: SlideProps) {
 
         <div className="flex min-h-0 items-center">
           <div className="w-full border-2 p-[2.4cqw]" style={{ borderColor: S.deep, background: S.deep }}>
-            <p className="font-mono text-[1.4cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.lime }}>
+            <p className="font-mono text-[1.9cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.lime }}>
               The record
             </p>
             <div className="mt-[2.4cqh] space-y-[1.4cqh]">
               {[
-                ["2 pp", "DEAD", S.rose],
-                ["5 pp", "PILOT SIGNAL", S.amber],
-                [`${pilot.oracle.gain}%`, "UPPER BOUND", S.teal],
+                ["2 pp", "DEAD", "#fecaca"],
+                ["5 pp", "PILOT SIGNAL", "#fde68a"],
+                [`${pilot.oracle.gain}%`, "UPPER BOUND", "#99f6e4"],
               ].map(([label, status, color]) => (
                 <div key={label} className="flex items-center justify-between border-b pb-[1.1cqh]" style={{ borderColor: "rgba(200,240,79,0.16)" }}>
-                  <span className="font-mono text-[2.3cqh] font-bold" style={{ color: S.white }}>{label}</span>
-                  <span className="font-mono text-[1.55cqh] font-bold uppercase tracking-[0.1em]" style={{ color }}>{status}</span>
+                  <span className="font-mono text-[2.8cqh] font-bold" style={{ color: S.white }}>{label}</span>
+                  <span className="font-mono text-[2.05cqh] font-bold uppercase tracking-[0.1em]" style={{ color }}>{status}</span>
                 </div>
               ))}
             </div>
-            <p className="mt-[2.2cqh] text-[1.6cqh] leading-snug" style={{ color: "#c9d6c9" }}>
+            <p className="mt-[2.2cqh] text-[2.1cqh] leading-snug" style={{ color: "#c9d6c9" }}>
               A fired gate is a finding. A dead claim stays in the results.
             </p>
             <div className="mt-[2.2cqh] flex items-center gap-[0.8cqw] border-t pt-[1.2cqh]" style={{ borderColor: "rgba(200,240,79,0.16)" }}>
               <Target size="2.1cqh" style={{ color: S.lime }} aria-hidden="true" />
-              <span className="font-mono text-[1.3cqh] uppercase tracking-[0.1em]" style={{ color: "#a9baa9" }}>
+              <span className="font-mono text-[1.85cqh] uppercase tracking-[0.1em]" style={{ color: "#a9baa9" }}>
                 Joules per correct answer
               </span>
             </div>

@@ -28,7 +28,7 @@ export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
   const [index, setIndex] = useState(() => clamp(initialSlide - 1, total - 1));
   const [isFs, setIsFs] = useState(false);
   const indexRef = useRef(index);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const touchX = useRef<number | null>(null);
 
   const goTo = useCallback(
@@ -45,7 +45,7 @@ export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
   );
 
   const toggleFullscreen = useCallback(() => {
-    const element = containerRef.current;
+    const element = stageRef.current;
     if (!element) return;
     if (!document.fullscreenElement) {
       element.requestFullscreen?.().catch(() => {});
@@ -106,9 +106,12 @@ export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
   const progress = ((index + 1) / total) * 100;
 
   return (
-    <div ref={containerRef} className="fixed inset-0 z-[100] flex flex-col bg-[#07100c]">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-[#000]">
       <div
-        className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden p-2 sm:p-4"
+        ref={stageRef}
+        className={`relative flex min-h-0 flex-1 items-center justify-center overflow-hidden ${
+          isFs ? "bg-black p-0" : "bg-[#07100c] p-2 sm:p-4"
+        }`}
         onTouchStart={(event) => {
           touchX.current = event.touches[0]?.clientX ?? null;
         }}
@@ -127,9 +130,16 @@ export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
         </div>
 
         <div
-          className="relative overflow-hidden border border-[#c8f04f]/25 shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+          className={`relative overflow-hidden bg-white ${
+            isFs
+              ? "border-0 shadow-none"
+              : "border border-[#c8f04f]/25 shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+          }`}
           style={{
-            width: "min(calc(100vw - 2rem), calc((100dvh - 6rem) * 1.7778))",
+            width: isFs
+              ? "min(100vw, calc(100dvh * 1.7778))"
+              : "min(calc(100vw - 2rem), calc((100dvh - 6rem) * 1.7778))",
+            height: isFs ? "min(100dvh, calc(100vw / 1.7778))" : undefined,
             maxWidth: "100%",
             maxHeight: "100%",
             aspectRatio: "16 / 9",
@@ -149,18 +159,18 @@ export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
         </p>
       </div>
 
-      <div className="flex h-14 shrink-0 items-center gap-2 border-t border-white/10 bg-[#07100c] px-2 text-white/70 sm:px-4">
+      <div className="flex h-16 shrink-0 items-center gap-2 border-t border-white/20 bg-[#07100c] px-2 text-white/80 sm:px-4">
         <Link
           href="/"
           aria-label="Back to the site"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[2px] border border-white/10 transition-colors hover:border-[#c8f04f]/50 hover:text-white"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[2px] border border-white/20 transition-colors hover:border-[#c8f04f]/70 hover:text-white"
         >
-          <Home className="h-4 w-4" aria-hidden />
+          <Home className="h-5 w-5" aria-hidden />
         </Link>
 
         <div className="hidden items-center gap-2 sm:flex">
-          <Presentation className="h-4 w-4 text-[#c8f04f]" aria-hidden />
-          <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/45">
+          <Presentation className="h-5 w-5 text-[#c8f04f]" aria-hidden />
+          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-white/75">
             Energy Observatory / Deck
           </span>
         </div>
@@ -171,34 +181,34 @@ export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
             onClick={() => goTo(indexRef.current - 1)}
             disabled={index === 0}
             aria-label="Previous slide"
-            className="flex h-8 w-8 items-center justify-center rounded-[2px] text-white/70 transition-colors hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-9 w-9 items-center justify-center rounded-[2px] text-white/80 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
           >
-            <ChevronLeft className="h-4 w-4" aria-hidden />
+            <ChevronLeft className="h-5 w-5" aria-hidden />
           </button>
           <button
             type="button"
             onClick={() => goTo(indexRef.current + 1)}
             disabled={index === total - 1}
             aria-label="Next slide"
-            className="flex h-8 w-8 items-center justify-center rounded-[2px] text-white/70 transition-colors hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-9 w-9 items-center justify-center rounded-[2px] text-white/80 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
           >
-            <ChevronRight className="h-4 w-4" aria-hidden />
+            <ChevronRight className="h-5 w-5" aria-hidden />
           </button>
         </div>
 
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-white/10">
+          <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/15">
             <div
               className="h-full rounded-full bg-[#c8f04f] transition-[width] duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <span className="shrink-0 font-mono text-[10px] tabular-nums text-white/65">
+          <span className="shrink-0 font-mono text-[12px] font-semibold tabular-nums text-white/85">
             {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
           </span>
         </div>
 
-        <span className="hidden font-mono text-[9px] uppercase tracking-[0.14em] text-white/35 md:inline">
+        <span className="hidden font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-white/65 md:inline">
           ← → · space · F
         </span>
 
@@ -206,9 +216,9 @@ export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
           type="button"
           onClick={toggleFullscreen}
           aria-label={isFs ? "Exit fullscreen" : "Enter fullscreen"}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[2px] border border-white/10 transition-colors hover:border-[#c8f04f]/50 hover:text-white"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[2px] border border-white/20 transition-colors hover:border-[#c8f04f]/70 hover:text-white"
         >
-          {isFs ? <Minimize2 className="h-4 w-4" aria-hidden /> : <Maximize2 className="h-4 w-4" aria-hidden />}
+          {isFs ? <Minimize2 className="h-5 w-5" aria-hidden /> : <Maximize2 className="h-5 w-5" aria-hidden />}
         </button>
       </div>
     </div>
