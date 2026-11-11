@@ -92,7 +92,8 @@ multi-hop annotation is human-generated and not error-free.
 - Normalization: lowercase, strip punctuation and articles, collapse whitespace.
 - Chunking: whitespace tokens, 70 words, no overlap (SQuAD); whole paragraphs (HotpotQA).
 - Seed: `20261115` for sampling and for the deterministic policy split.
-- Policy split: 600 train / 200 validation / 200 test by SHA-256 of `seed:question_id`.
+- Policy split: target 600 train / 200 validation / 200 test by SHA-256 of `seed:question_id`;
+  realized counts are reported because per-question hashing can shift them.
 - No test-set tuning. The test split is evaluated once.
 - Raw and processed text live in `data/raw/` and `data/processed/`, both git-ignored.
 

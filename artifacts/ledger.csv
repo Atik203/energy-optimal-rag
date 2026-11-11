@@ -1,1 +1,2 @@
 artifact_id,run_id,kind,path,sha256,bytes,created_utc,license,notes
+A-0001,pilot,document,docs/PILOT_EVIDENCE.md,1465d8308a0a0ca2078fbe4bf063d608e80838eee86f12ab70c983bff712bcf7,5622,2026-11-11T12:05:06Z,CC-BY-4.0,"Pilot evidence transcription; raw CSVs not in repository"

@@ -1,6 +1,8 @@
 # Analysis Plan
 
-**Status:** draft companion to [`PREREGISTRATION.md`](PREREGISTRATION.md) · v0.1.0 · 2026-11-09
+**Status:** DRAFT — revised 2026-11-11 before freeze (population/failure clarification, split
+wording); not yet frozen. Companion to [`PREREGISTRATION.md`](PREREGISTRATION.md).
+**Version:** v0.1.0 · 2026-11-09
 **Frozen at:** `prereg-freeze-v1` (pending)
 **Software:** Python 3.12, numpy/pandas/scipy/statsmodels, seed `20261115`.
 
@@ -9,10 +11,16 @@ This plan is written so that another analyst can reproduce every number from
 
 ## 1. Unit and population
 
-The unit is a question. The analysis population is every sampled question with at least one
-valid row at every depth in the grid. A row is invalid under the protocol rules (missing
-nonce, failed request, empty output, sampler error). Invalid rows are counted, not silently
-dropped. The primary population is fixed before the run; no outcome-based exclusions.
+The unit is a question. A **valid row** requires a non-empty nonce, a completed request, and a
+power window with no sampler error. A failed or empty generation after a completed request is a
+**wrong answer** (`correct = 0`) and is retained, not invalidated; a row is **invalid** only for
+a protocol violation: missing nonce, request/backend failure, or sampler error. Descriptive
+`A(k)`, `J(k)`, and `E(k)` use every sampled question with a valid row at depth `k`, and
+`n_valid(k)` and `n_invalid(k)` are reported at each depth. A question is not dropped from
+depth `k` because it has no row at another depth. The primary paired test uses questions with
+valid rows at both `k = 4` and `k = 32`; the paired `n`, the discordant counts, and the invalid
+counts are reported. There are no outcome-based exclusions: no winsorizing, trimming, or
+imputation, and wrong, slow, and throttled answers stay in.
 
 ## 2. Preprocessing
 
@@ -37,33 +45,37 @@ S_r(k)= J_ret(k) / J(k)
 ```
 
 `J_pre(k)` is estimated from the fitted affine slope `b` times `k`, following the pilot. The
-retrieval term is the CPU proxy. `E(k) = inf` when `sum C = 0`; that is a real outcome and is
-reported as such.
+retrieval term is the CPU proxy. Here `n = n_valid(k)`, the number of sampled questions with a
+valid row at depth `k`; `n_invalid(k)` is reported alongside. `E(k) = inf` when `sum C = 0`;
+that is a real outcome and is reported as such.
 
 The feasibility set is `{k : A(k) ≥ A(32) − margin}`. The selected depth is the feasible `k`
 with the smallest `E(k)`. Ties go to the smaller `k` (cheaper retrieval), declared in advance.
 
 ## 4. Primary non-inferiority test
 
-Let `d_i = C_i4 − C_i32` for paired question `i`. The null is `E[d] ≤ −0.05`; the alternative
-is `E[d] > −0.05`. Use a one-sided paired test at `α = 0.05` (exact McNemar for the sign, or a
-paired z-test with a continuity correction; report both if they disagree). The decision rule
-also requires at least 20% savings:
+Let `d_i = C_i4 − C_i32` for paired question `i` over questions with valid rows at both
+depths. The null is `E[d] ≤ −0.05`; the alternative is `E[d] > −0.05`. Use a one-sided paired
+test at `α = 0.05` (exact McNemar for the sign, or a paired z-test with a continuity
+correction; report both if they disagree). The decision rule also requires at least 20%
+savings:
 
 ```
 savings = 1 − E(4) / E(32) ≥ 0.20
 ```
 
 Confidence intervals for the difference use a paired bootstrap (10,000 resamples) and a
-one-sided 95% lower bound. Report the discordant pair counts (`b`, `c`), the exact p-value,
-the lower bound, and the savings interval.
+one-sided 95% lower bound. Report the paired `n`, the discordant pair counts (`b`, `c`), the
+invalid counts, the exact p-value, the lower bound, and the savings interval.
 
 The 2 pp margin repeats the procedure with `margin = 0.02` and is labeled
 **estimation-only**. It is never described as certified.
 
 ## 5. Bootstrap
 
-- 10,000 resamples of questions, paired across depths.
+- 10,000 resamples of questions. Descriptive statistics resample questions with a valid row at
+  the depth being estimated; the primary test resamples the paired population with valid rows
+  at both `k = 4` and `k = 32`.
 - Percentile 95% intervals for `E(k)`, `A(k)`, `S(k)`, the identity gap, and `N*`.
 - `P(k* optimal)` is the fraction of resamples in which each depth is the feasible minimizer
   under the 5 pp gate.
@@ -114,7 +126,9 @@ selected depth changes, report the dependence and do not choose the favorable ru
 
 - Features: BM25 top score, second score, gap, mean, standard deviation, entropy, number of
   positive scores, question length, question type.
-- Split: 600 train / 200 validation / 200 test by SHA-256 of `seed:question_id`.
+- Split target: 600 train / 200 validation / 200 test by SHA-256 of `seed:question_id`. The
+  realized counts may differ slightly because assignment is per question; they are reported.
+  No test-set tuning; the test split is evaluated once.
 - Model: cost-sensitive classifier or shallow decision tree; validation selects the model and
   operating point; test is touched once.
 - Oracle: the cheapest correct depth per test question with hindsight.
@@ -143,11 +157,13 @@ procedure is applied and the promotion is recorded as an amendment.
 ## 13. Missing data and failures
 
 - A missing row at one depth does not remove the question from the other depths' descriptive
-  statistics, but the paired test uses only questions with both rows.
-- Report the paired sample size, not just the nominal `n`.
+  statistics; the paired test uses only questions with valid rows at both `k = 4` and `k = 32`.
+- Report `n_valid(k)` and `n_invalid(k)` at every depth, and the paired `n`, discordant counts,
+  and invalid counts for the primary test, not just the nominal `n`.
 - A run aborted before completion is registered as `aborted` and is not analyzed as if
   complete.
-- A model failure is a wrong answer, not a missing data point. It stays in the denominator.
+- A failed or empty generation after a completed request is a wrong answer, not a missing data
+  point. It stays in the denominator. A row is invalid only for a protocol violation.
 
 ## 14. Reproducibility
 

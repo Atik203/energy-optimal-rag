@@ -22,8 +22,11 @@ energy effect is large and precise: `E(32) = 157.1` versus `E(1) = 45.5` J/corre
 `J(k) = 15.74 + 2.283k` and `R² = 0.9990`.
 
 What survives is narrower. At a **5 pp** EM non-inferiority margin the pilot selected `k = 4`
-with **69.3%** savings and a descriptive `N* = 876`. That is a policy result contingent on a
-margin, and it must be re-established at `n = 1,000` before it is called certified. The **2 pp**
+with **69.3%** savings and a descriptive `N* = 876`; the proposal reports `P = .537` for the
+5 pp selection. That is a **pilot signal, not certified**: it is a policy result contingent on
+a margin, the pilot reports no non-inferiority test, and the selection probability is below
+the G2 threshold of 0.8. The rerun must report the non-inferiority test and the selection
+probability separately at `n = 1,000` before either is called certified. The **2 pp**
 margin is estimation-only. The **78.8%** adaptive-oracle gain is an upper bound computed with
 hindsight; no learned policy exists. The paper may not claim a universal `k*`, a "2 pp optimal"
 depth, or a "5 pp certified" result before the rerun. The implementation has two jobs: make the
@@ -44,9 +47,9 @@ test, curve models, policy scaffold, and multiplicity control.
 retriever, energy, statistics), `configs/runs/` (one file per experiment), `configs/grid/`
 (named depth grids), `configs/taxes/` (two causal conditions), and
 `configs/analysis/prereg.toml` (frozen margins and splits). `scripts/` is the numbered pipeline.
-`prereg/` holds the frozen intent, analysis plan, and amendment log. `runs/` holds the registry
-and git-ignored raw runs. `artifacts/` holds the ledger and claims-evidence map. `paper/` and
-`docs/` are the writing surface.
+`prereg/` holds the preregistration (draft until the P1 freeze), analysis plan, and amendment
+log. `runs/` holds the registry and git-ignored raw runs. `artifacts/` holds the ledger and
+claims-evidence map. `paper/` and `docs/` are the writing surface.
 
 The tracked data surface is deliberately small: `data/manifest.json`, `data/README.md`,
 `runs/registry.csv`, `artifacts/ledger.csv`, and `artifacts/claims_evidence.csv`. Everything
@@ -134,8 +137,18 @@ not. The rerun pre-registers EM and requires the qualitative conclusion to survi
 secondary rules; if it does not, the paper reports the dependence rather than picking the
 favorable rule.
 
-The analysis population is every question with a prepared gold answer and a completed generation
-at every depth. A failed or empty generation is a wrong answer at that depth and is retained.
+The analysis population follows one rule. The unit is a question. A **valid row** requires a
+non-empty nonce, a completed request, and a power window with no sampler error. A failed or
+empty generation after a completed request is a **wrong answer** (`correct = 0`) and is
+retained, not invalidated; a row is **invalid** only for a protocol violation: missing nonce,
+request/backend failure, or sampler error. Descriptive `A(k)`, `J(k)`, and `E(k)` use every
+sampled question with a valid row at depth `k`, and `n_valid(k)` and `n_invalid(k)` are
+reported at each depth. A question is not dropped from depth `k` because it has no row at
+another depth. The primary paired test uses questions with valid rows at both `k = 4` and
+`k = 32`; the paired `n`, the discordant counts, and the invalid counts are reported. There
+are no outcome-based exclusions: no winsorizing, trimming, or imputation, and wrong, slow, and
+throttled answers stay in.
+
 Per-query energy is used for pairing and bootstrap; absolute energy relies on block
 calibration. Uncertainty uses 10,000 paired bootstrap resamples over questions, yielding
 intervals for `E(k)`, `A(k)`, `S(k)`, and the identity gap, plus the probability that each depth
@@ -174,8 +187,10 @@ The policy experiment is the adaptive contribution; 78.8% is only its ceiling.
 
 Features are pre-generation and cheap: BM25 top score, second score, gap, mean, standard
 deviation, entropy, number of positive scores, question length, and question type. No gold
-answer, post-generation signal, or depth label is used. The split is 600 train, 200 validation,
-200 test, assigned by hashing `seed:question_id`, so it is stable and auditable.
+answer, post-generation signal, or depth label is used. The split target is 600 train, 200
+validation, 200 test, assigned by hashing `seed:question_id`, so it is stable and auditable.
+Hashed per-question assignment can produce slightly different realized counts; the realized
+counts are reported. There is no test-set tuning, and the test split is evaluated once.
 
 The model is a cost-sensitive classifier or shallow decision tree predicting the cheapest depth
 whose predicted correctness clears the gate. Validation selects the model and operating point;

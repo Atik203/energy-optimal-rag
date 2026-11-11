@@ -1,6 +1,6 @@
 # Roadmap — Energy-Optimal Retrieval Depth (G2)
 
-**Status:** post-pilot MARGINAL · initial public scaffold · last updated 2026-11-09
+**Status:** post-pilot MARGINAL · initial public scaffold · last updated 2026-11-11
 **Horizon:** 20 weeks · 3–4 people · local RTX 3060 6 GB only · ≤ $47 cash
 **Repository:** https://github.com/Atik203/energy-optimal-rag
 
@@ -26,7 +26,7 @@ generations, on an RTX 3060 Laptop 6 GB with Ollama `qwen3.5:4b` (Q4) and BM25 t
 | Optimal-depth identity | holds at `k=2`: gap **+0.044**, CI [−0.050, +0.128]; fails at `k=32`: **+0.700** |
 | Repeat CV (`k=8`) | median **3.80%**, max **9.24%** |
 | Static 2 pp claim | `k* = 32` boundary, bootstrap `P(k* optimal) = 0.61 < 0.8` → **DEAD** |
-| 5 pp margin (descriptive) | `k = 4`, **69.3%** savings, `N* = 876` queries |
+| 5 pp margin (pilot signal, not certified) | `k = 4`, **69.3%** savings, `N* = 876` queries; proposal reports `P = .537` for the 5 pp selection |
 | Adaptive oracle | **78.8%** gain at matched accuracy — upper bound, no learned policy |
 
 ### 1.2 What may be claimed now
@@ -35,8 +35,10 @@ generations, on an RTX 3060 Laptop 6 GB with Ollama `qwen3.5:4b` (Q4) and BM25 t
 - The affine energy model and the context-side share are measurable and stable.
 - The identity is a useful diagnostic at an interior optimum and correctly flags
   over-retrieval at high `k`.
-- At a **5 pp** EM margin, `k = 4` is non-inferior in the pilot and saves energy — but this
-  is pilot evidence at `n = 200`, not a certified result.
+- At a **5 pp** EM margin, the pilot selected `k = 4` with **69.3%** savings and `N* = 876`.
+  This is a **pilot signal, not certified**: the proposal reports `P = .537` for the 5 pp
+  selection, below the G2 threshold of 0.8, and no pilot non-inferiority test is reported. The
+  rerun must report the non-inferiority test and the selection probability separately.
 - Query-conditional depth is a promising direction; the 78.8% figure is an oracle upper
   bound, not a policy result.
 
@@ -90,9 +92,12 @@ that `k*` increases for the fixed tax and decreases for the per-passage tax.
 **P3 — Query-conditional policy (weeks 7–10).** The static population optimum is the wrong
 object if queries are heterogeneous. Build features from BM25 scores (top score, score gap,
 score entropy), question type, length, and retrieval recall proxies. Train a simple policy
-(logistic/decision tree or cost-sensitive classifier) on 600 questions, tune on 200, test on
-200. Evaluate at matched accuracy against the best static `k`, and report the fraction of the
-oracle gap captured. The oracle is an upper bound; the learned policy is the result.
+(logistic/decision tree or cost-sensitive classifier) on a 600-question target training split,
+tune on 200 validation questions, and evaluate once on 200 held-out questions. The 600/200/200
+split is a target: hashed per-question assignment can produce slightly different realized
+counts, which are reported. There is no test-set tuning. Evaluate at matched accuracy against
+the best static `k`, and report the fraction of the oracle gap captured. The oracle is an
+upper bound; the learned policy is the result.
 
 **P4 — Theory validation and sensitivity (weeks 11–14).** Test the identity across datasets
 and readers. Fit the coverage model and report its failure where it fails. Map the

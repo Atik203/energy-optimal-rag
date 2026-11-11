@@ -30,13 +30,17 @@ The 2-hour pilot ran 200 SQuAD v1.1 dev questions at seven depths
 | Identity certifies high-k behaviour | **Rejected** | gap +0.700 at `k=32`; 32 passages is over-retrieval |
 | Measurement is repeatable | **Supported** | repeat CV median 3.80%, max 9.24% |
 | **Static 2pp-optimal depth** | **DEAD** | `k* = 32` (boundary), bootstrap `P(k* optimal) = 0.61 < 0.8` |
-| **5pp non-inferiority at k=4** | **Pilot PASS — needs powered rerun** | 69.3% energy savings, `N* = 876` descriptive |
+| **5pp non-inferiority at k=4** | **Pilot signal — not certified** | 69.3% energy savings, `N* = 876` descriptive; proposal reports `P = .537` for the 5 pp selection |
 | Query-conditional oracle gain | **Upper bound only** | 78.8% matched-accuracy oracle gain; no learned policy yet |
 
 ### Claim boundary
 
 We do **not** claim a universal `k*`. We do **not** claim a "2pp-optimal" retrieval depth.
-We do **not** claim a "5pp certified" result before the powered rerun. The 78.8% oracle gain
+We do **not** claim a "5pp certified" result before the powered rerun. The 5 pp pilot result
+is a signal, not a certification. The proposal reports `P = .537` for the 5 pp selection; if
+that is the selection probability, it is below G2's 0.8 stability threshold. In any case, no
+pilot non-inferiority test is reported, so G2 is not claimed. The rerun must report the
+non-inferiority test and the selection probability separately. The 78.8% oracle gain
 is an upper bound computed with hindsight, not a result from a learned policy. The pilot's
 static claim is dead; the surviving object is the decision problem around the accuracy margin.
 
@@ -69,15 +73,26 @@ be certified at `n = 200`. The rerun is designed around that failure.
 | Learned policy | Query features → depth, split 600/200/200, evaluated at matched accuracy against the best static `k` |
 | Certification | `N* = C_cert / (A(k*)[E(k0) − E(k*)])`, reported descriptively per dataset and reader |
 
-**Primary analysis population:** all questions with a prepared gold answer and a completed
-generation at every depth. **Primary estimand:** the ratio of expectations
-`E(k) = E[J_k]/E[C_k]`, not the mean of per-query ratios. **Primary test:** one-sided 5%
-non-inferiority on paired correctness at the pre-specified interior depth, with a
-question-level bootstrap (10,000 resamples) for energy and the ratio.
+**Primary analysis population:** The unit is a question. A **valid row** requires a non-empty
+nonce, a completed request, and a power window with no sampler error. A failed or empty
+generation after a completed request is a **wrong answer** (`correct = 0`) and is retained, not
+invalidated; a row is **invalid** only for a protocol violation: missing nonce,
+request/backend failure, or sampler error. Descriptive `A(k)`, `J(k)`, and `E(k)` use every
+sampled question with a valid row at depth `k`, and `n_valid(k)` and `n_invalid(k)` are
+reported at each depth. A question is not dropped from depth `k` because it has no row at
+another depth. The primary paired test uses questions with valid rows at both `k = 4` and
+`k = 32`; the paired `n`, the discordant counts, and the invalid counts are reported. There
+are no outcome-based exclusions: no winsorizing, trimming, or imputation, and wrong, slow, and
+throttled answers stay in.
+
+**Primary estimand:** the ratio of expectations `E(k) = E[J_k]/E[C_k]`, not the mean of
+per-query ratios. **Primary test:** one-sided 5% non-inferiority on paired correctness at the
+pre-specified interior depth, with a question-level bootstrap (10,000 resamples) for energy
+and the ratio.
 
 Full design, power table, gates, and stop rules: [`ROADMAP.md`](ROADMAP.md) and
-[`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md). Frozen analysis intent:
-[`prereg/PREREGISTRATION.md`](prereg/PREREGISTRATION.md).
+[`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md). Draft analysis intent, frozen at
+P1: [`prereg/PREREGISTRATION.md`](prereg/PREREGISTRATION.md).
 
 ---
 
@@ -144,6 +159,13 @@ Phases P0–P6, sprint plan, gates K1–K7 / G1–G5, budget, deliverables, and 
 [`ROADMAP.md`](ROADMAP.md).
 
 Supervisor proposal: [`docs/proposal.md`](docs/proposal.md).
+
+## Website
+
+The public research site is in [`web/`](web/README.md): a Next.js app with the project
+overview, research question, method, pilot evidence, roadmap, and a keyboard-driven slide
+deck. Build and run instructions, including the offline install command, are in
+[`web/README.md`](web/README.md).
 
 ## Citation
 

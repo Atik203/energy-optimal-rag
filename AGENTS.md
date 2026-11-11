@@ -11,7 +11,7 @@ Before changing code or analysis, read:
 2. `ROADMAP.md` — phases, gates, budget, out-of-scope items.
 3. `docs/IMPLEMENTATION_PLAN.md` — the full design.
 4. `docs/MEASUREMENT.md` — how energy is measured.
-5. `prereg/PREREGISTRATION.md` — the frozen analysis intent.
+5. `prereg/PREREGISTRATION.md` — the analysis intent (draft until the P1 freeze).
 
 If a request conflicts with the claim boundary, say so before implementing it. Do not
 silently strengthen a claim, add a "certified" result, or introduce a universal `k*`.

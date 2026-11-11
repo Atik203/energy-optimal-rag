@@ -147,7 +147,7 @@ SQuAD's closed corpus isolates depth: changing `k` changes how much evidence rea
 
 HotpotQA supplies multi-hop evidence and distractor-induced non-monotonicity; its grid stops at 10 because the setting supplies 10 paragraphs, and pooling across questions would change the task.
 
-**Inclusion/exclusion.** The analysis population is every sampled question with a prepared gold answer and a completed generation at every depth. Empty/failed generations are wrong and retained. A question is excluded only if it has no valid row at any depth; a depth only if it has no valid row for the population. Wrong, slow, and throttled answers are not excluded; no outcome-based exclusion or trimming.
+**Inclusion/exclusion.** The unit is a question. A **valid row** requires a non-empty nonce, a completed request, and a power window with no sampler error. A failed or empty generation after a completed request is a **wrong answer** (`correct=0`) and is retained, not invalidated; a row is **invalid** only for a protocol violation: missing nonce, request/backend failure, or sampler error. Descriptive `A(k)`, `J(k)`, and `E(k)` use every sampled question with a valid row at depth `k`, and `n_valid(k)` and `n_invalid(k)` are reported at each depth. A question is not dropped from depth `k` because it has no row at another depth. The primary paired test uses questions with valid rows at both `k=4` and `k=32`; the paired `n`, the discordant counts, and the invalid counts are reported. There are no outcome-based exclusions: no winsorizing, trimming, or imputation, and wrong, slow, and throttled answers stay in.
 
 **Licensing/storage.** Both datasets are CC BY-SA 4.0. The repo releases IDs, versions, checksums, seeds, configs, prompts, predictions, and aggregates, never raw text. `data/manifest.json` records source URL, version, split, license, counts, SHA-256, seed, status. Raw text and run CSVs are git-ignored; footprint is under 2 GB plus weights in the Ollama store.
 
@@ -370,7 +370,7 @@ Pilot: 200 SQuAD v1.1 dev questions, `k∈{0,1,2,4,8,16,32}`, 1,400 generations,
 | Identity `k=32` | +0.700 | Rejected | Flags over-retrieval |
 | Repeat CV | 3.80% median, 9.24% max | Supported | Usable noise floor |
 | Static 2 pp | `k*=32` boundary; `P=.61<.8` | **DEAD** | Power/margin failure; do not resurrect |
-| 5 pp | `k=4`, 69.3%, `N*=876`; `P=.537` | Pilot PASS, not certified | Needs `n=1,000` |
+| 5 pp | `k=4`, 69.3%, `N*=876`; `P=.537` | Pilot signal, not certified | Needs `n=1,000`; NI test and selection probability reported separately |
 | Adaptive oracle | 78.8% matched-accuracy gain | Upper bound only | No learned policy |
 
 **Established.** The tradeoff is real and steep here; the affine model and context share are stable; the identity is a useful local diagnostic and flags over-retrieval; `k=4` is a promising 5 pp candidate; the harness is repeatable enough for a powered run.

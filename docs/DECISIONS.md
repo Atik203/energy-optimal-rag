@@ -116,3 +116,67 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   entry here.
 - **Consequences:** Exploratory analyses are allowed but must be labeled. A gate may not be
   re-thresholded after the primary outcome is seen.
+
+---
+
+## D-009 — One analysis population and failure rule
+
+- **Date:** 2026-11-11
+- **Status:** accepted
+- **Context:** The documents defined the analysis population three different ways. Some treated
+  a failed or empty generation as an invalid row, others treated it as a wrong answer, and some
+  required a row at every depth before a question entered the analysis. The three definitions
+  give different denominators and different paired `n`, so the rerun could not have one
+  pre-specified estimand.
+- **Decision:** Adopt one rule everywhere. The unit is a question. A **valid row** requires a
+  non-empty nonce, a completed request, and a power window with no sampler error. A failed or
+  empty generation after a completed request is a **wrong answer** (`correct = 0`) and is
+  retained, not invalidated; a row is **invalid** only for a protocol violation: missing nonce,
+  request/backend failure, or sampler error. Descriptive `A(k)`, `J(k)`, and `E(k)` use every
+  sampled question with a valid row at depth `k`, and `n_valid(k)` and `n_invalid(k)` are
+  reported at each depth. A question is not dropped from depth `k` because it has no row at
+  another depth. The primary paired test uses questions with valid rows at both `k = 4` and
+  `k = 32`; the paired `n`, the discordant counts, and the invalid counts are reported. There
+  are no outcome-based exclusions: no winsorizing, trimming, or imputation, and wrong, slow, and
+  throttled answers stay in.
+- **Consequences:** Every table reports its denominator. Descriptive tables report
+  `n_valid(k)` and `n_invalid(k)`; the primary table reports the paired `n`, discordant counts,
+  and invalid counts. No result may be recomputed on a "complete cases only" population after
+  seeing outcomes. This is a pre-freeze revision of the preregistration, not an amendment.
+
+---
+
+## D-010 — 5 pp pilot is a signal, not a certification
+
+- **Date:** 2026-11-11
+- **Status:** accepted
+- **Context:** `README.md` described the 5 pp pilot result as "Pilot PASS — needs powered
+  rerun", `ROADMAP.md` said `k = 4` was non-inferior in the pilot, and `docs/proposal.md`
+  reported `P = .537` and called it a signal, not certified. If `P = .537` is the selection
+  probability, it is below the G2 threshold of 0.8; no pilot non-inferiority test is reported
+  either way. "PASS" overstated the evidence.
+- **Decision:** Use **"pilot signal — not certified"** for the 5 pp pilot result. State that the
+  proposal reports `P = .537` for the 5 pp selection. The rerun must report the non-inferiority
+  test and the selection probability separately. Do not assert that G2 passed.
+- **Consequences:** No "5 pp certified" or "G2 passed" language before the powered rerun
+  completes and the preregistration is frozen and respected. The 69.3% savings and `N* = 876`
+  remain pilot/descriptive quantities, not certifications.
+
+---
+
+## D-011 — Pilot evidence is transcribed, not reproducible in-repo
+
+- **Date:** 2026-11-11
+- **Status:** accepted
+- **Context:** The pilot raw CSVs are not in this repository. The pilot numbers appear in
+  `README.md`, `ROADMAP.md`, `docs/proposal.md`, the implementation plan, and the prereg, but
+  none of them trace to a tracked raw file. A reader cannot recompute them here, and a paper
+  claim without traceable evidence violates the project's evidence policy.
+- **Decision:** Record every pilot claim in `docs/PILOT_EVIDENCE.md` with its value, source
+  document, and status, and index the claims in `artifacts/claims_evidence.csv` with
+  `run_id=pilot` and `artifact_path=docs/PILOT_EVIDENCE.md`. Add a ledger row for the evidence
+  file with a computed SHA-256 and byte count.
+- **Consequences:** The pilot rows are explicitly transcribed prior evidence, not a substitute
+  for registered runs. The confirmatory run must produce `runs/<run_id>/raw.csv` before any
+  confirmatory claim is made. A re-run is new evidence, not a reproduction of the pilot
+  numbers.

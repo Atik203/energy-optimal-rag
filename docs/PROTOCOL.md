@@ -121,11 +121,17 @@ gated and unconstrained optima both reported.
 
 ## 8. Exclusions and invalidity
 
-- A row is invalid if the nonce is missing, the request failed, the model returned an empty
-  string, or the power window contains a sampler error.
-- A question is excluded only if it has no valid row at any depth; the count is reported.
-- A depth is excluded only if it has no valid row for the analysis population; the count is
-  reported.
+The unit is a question. A **valid row** requires a non-empty nonce, a completed request, and a
+power window with no sampler error. A failed or empty generation after a completed request is a
+**wrong answer** (`correct = 0`) and is retained, not invalidated; a row is **invalid** only for
+a protocol violation: missing nonce, request/backend failure, or sampler error. Descriptive
+`A(k)`, `J(k)`, and `E(k)` use every sampled question with a valid row at depth `k`, and
+`n_valid(k)` and `n_invalid(k)` are reported at each depth. A question is not dropped from
+depth `k` because it has no row at another depth. The primary paired test uses questions with
+valid rows at both `k = 4` and `k = 32`; the paired `n`, the discordant counts, and the invalid
+counts are reported. There are no outcome-based exclusions: no winsorizing, trimming, or
+imputation, and wrong, slow, and throttled answers stay in.
+
 - Do not exclude a slow or wrong answer. Wrongness is data.
 - Do not exclude a throttled block. Throttling is recorded and analyzed as a covariate.
 - A run aborted before completion is registered with status `aborted`; it is not deleted.
@@ -144,7 +150,8 @@ Stop the run and diagnose if:
 ## 10. Post-run checklist
 
 1. Confirm row counts: `n_questions × n_depths` plus repeats.
-2. Confirm every depth has rows for every question.
+2. Confirm every depth has rows for every question, and record any missing rows with their
+   invalidity reason.
 3. Write `blocks.json`, `raw.csv`, and the run manifest.
 4. Add the registry row with the config hash and git commit.
 5. Copy the run directory to the USB backup.

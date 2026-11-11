@@ -1,6 +1,7 @@
 # Pre-Registration — Energy-Optimal Retrieval Depth (G2)
 
-**Status:** DRAFT — not yet frozen. Freeze at the P1 start, tag `prereg-freeze-v1`.
+**Status:** DRAFT — revised 2026-11-11 before freeze (population/failure clarification, split
+wording); not yet frozen. Freeze at the P1 start, tag `prereg-freeze-v1`.
 **Version:** 0.1-draft · 2026-11-09
 **Registry:** none (no external registry). The frozen git tag and its SHA-256 are the record.
 **Prereg hash:** `TBD` (recorded at freeze)
@@ -18,8 +19,10 @@ The pilot found a steep energy-depth tradeoff (`E(32) = 157.1` vs `E(1) = 45.5` 
 rising from 36.3% to 85.1%, and an optimal-depth identity that holds at `k = 2`
 (gap +0.044, CI [−0.050, +0.128]) and fails at `k = 32` (+0.700). The static 2 pp claim is
 dead: `k* = 32` at the boundary, `P(k* optimal) = 0.61`. At a 5 pp margin the pilot selected
-`k = 4` with 69.3% savings and `N* = 876`; the adaptive oracle gain was 78.8%, an upper bound
-with no learned policy.
+`k = 4` with 69.3% savings and `N* = 876`; the proposal reports `P = .537` for the 5 pp
+selection, a pilot signal, not a certification, and the rerun must report the non-inferiority
+test and the selection probability separately. The adaptive oracle gain was 78.8%, an upper
+bound with no learned policy.
 
 The confirmatory study tests the 5 pp policy claim and the adaptive direction. It does not
 test a universal `k*`, a 2 pp optimum, or a learned-policy gain that has not been measured.
@@ -53,7 +56,9 @@ interval and explicitly not used for certification.
 
 Within each question, depth order is randomized. Every request carries a unique nonce. The
 reader, prompt, decoding parameters, chunking, and scoring rule are fixed before the run. The
-policy split is 600/200/200 by hashed question ID.
+policy split target is 600/200/200 by hashed question ID; hashed per-question assignment can
+produce slightly different realized counts, which are reported. There is no test-set tuning,
+and the test split is evaluated once.
 
 ## 4. Primary estimand and test
 
@@ -116,16 +121,20 @@ cannot certify it against a 2 pp boundary.
 
 ## 8. Exclusions
 
-- A row is invalid if the nonce is missing, the request failed, the output is empty, or the
-  power window has a sampler error. The invalid count is reported.
-- A question is excluded only if it has no valid row at any depth. The count is reported.
-- A depth is excluded only if it has no valid row for the analysis population. The count is
-  reported.
-- Wrong answers, slow answers, and throttled blocks are **not** excluded.
-- No outcome-based exclusions. No trimming of the energy distribution unless pre-registered
-  here: none is.
-- The analysis population is intent-to-evaluate: every question sampled is analyzed if it has
-  at least one valid row.
+The unit is a question. A **valid row** requires a non-empty nonce, a completed request, and a
+power window with no sampler error. A failed or empty generation after a completed request is a
+**wrong answer** (`correct = 0`) and is retained, not invalidated; a row is **invalid** only for
+a protocol violation: missing nonce, request/backend failure, or sampler error. Descriptive
+`A(k)`, `J(k)`, and `E(k)` use every sampled question with a valid row at depth `k`, and
+`n_valid(k)` and `n_invalid(k)` are reported at each depth. A question is not dropped from
+depth `k` because it has no row at another depth. The primary paired test uses questions with
+valid rows at both `k = 4` and `k = 32`; the paired `n`, the discordant counts, and the invalid
+counts are reported. There are no outcome-based exclusions: no winsorizing, trimming, or
+imputation, and wrong, slow, and throttled answers stay in.
+
+- Invalid rows are counted, not silently dropped.
+- A run aborted before completion is registered as `aborted` and is not analyzed as if
+  complete.
 
 ## 9. Analysis plan summary
 

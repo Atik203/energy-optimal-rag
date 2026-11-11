@@ -18,7 +18,7 @@ directory is the auditable index.
 |---|---|
 | `artifact_id` | `A-0001`, in creation order |
 | `run_id` | Registered run, or `pilot` for prior evidence |
-| `kind` | `raw`, `analysis`, `figure`, `table`, `manifest`, `release` |
+| `kind` | `raw`, `analysis`, `figure`, `table`, `manifest`, `document`, `release` |
 | `path` | Repo-relative path |
 | `sha256` | SHA-256 hex digest |
 | `bytes` | File size |
