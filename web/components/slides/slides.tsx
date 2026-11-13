@@ -31,7 +31,7 @@ import {
   SlideMark,
   SlideTable,
 } from "@/components/slides/primitives";
-import { course, datasets, phases, pilot, rerun, team } from "@/lib/project-data";
+import { course, datasets, pilot, rerun, team } from "@/lib/project-data";
 
 export interface SlideProps {
   index: number;
@@ -906,8 +906,8 @@ function ImpactSlide({ index, total }: SlideProps) {
     <SlideFrame
       badge="Impact & plan"
       badgeTone="deep"
-      title="A green-RAG decision rule — and a 20-week plan to test it."
-      subtitle="Applications, risks, timeline, and the ask."
+      title="A green-RAG decision rule — and a plan to test it."
+      subtitle="Applications, risks, and the ask."
       index={index}
       total={total}
     >
@@ -919,46 +919,40 @@ function ImpactSlide({ index, total }: SlideProps) {
               "Edge and consumer-GPU deployment.",
               "Energy-aware retrieval benchmarks.",
               "Accuracy-margin policy for operators.",
+              "Open harness and reproducibility package.",
             ]}
-            size="2.2cqh"
+            size="2.3cqh"
           />
         </SlideCard>
-        <SlideCard title="Timeline" tone="deep" icon={<Timer size="2.8cqh" />}>
-          <div className="space-y-[0.6cqh]">
-            {phases.map((phase) => (
-              <div key={phase.id} className="flex items-center justify-between gap-[1cqw] border-b pb-[0.4cqh]" style={{ borderColor: S.line }}>
-                <span className="font-mono text-[2.0cqh] font-bold" style={{ color: S.teal }}>
-                  {phase.id}
-                </span>
-                <span className="text-[2.0cqh] font-semibold" style={{ color: S.ink }}>
-                  {phase.name}
-                </span>
-                <span className="whitespace-nowrap font-mono text-[1.85cqh] font-semibold" style={{ color: S.inkSoft }}>
-                  {phase.weeks}
-                </span>
-              </div>
-            ))}
-          </div>
-        </SlideCard>
         <SlideCard title="Risks & resources" tone="rose" icon={<AlertTriangle size="2.8cqh" />}>
-          <p className="text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+          <p className="text-[2.25cqh] font-semibold leading-snug" style={{ color: S.ink }}>
             Top risks: scoring dependence, reader strength, single corpus/retriever, thermal
             throttling, NVML resolution, prefix cache, policy overfitting, gate binding.
           </p>
-          <p className="mt-[1.0cqh] text-[2.2cqh] font-bold" style={{ color: S.ink }}>
+          <p className="mt-[1.0cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Mitigation: pre-register scoring, replicate on 1.5B/HotpotQA, log thermal, use a nonce.
+          </p>
+          <p className="mt-[1.0cqh] text-[2.3cqh] font-bold" style={{ color: S.ink }}>
             15–20 GPU-hours · ≤ $47 · local RTX 3060 only.
           </p>
         </SlideCard>
-        <div className="flex min-h-0 flex-col justify-center border-2 p-[1.8cqw]" style={{ borderColor: S.deep, background: S.deep }}>
-          <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.lime }}>
-            The ask
-          </p>
-          <p className="mt-[1.0cqh] text-[2.35cqh] font-semibold leading-snug" style={{ color: S.white }}>
-            Test whether an interior depth retains accuracy while saving roughly 69% of energy per
-            correct answer — and whether finding that depth is worth its energy.
-          </p>
-          <p className="mt-[1.4cqh] font-mono text-[2.1cqh] font-bold uppercase tracking-[0.12em]" style={{ color: S.lime }}>
-            Thank you · Questions
+        <div
+          className="col-span-2 flex min-h-0 items-center justify-between gap-[2cqw] border-2 p-[1.8cqw]"
+          style={{ borderColor: S.deep, background: S.deep }}
+        >
+          <div className="max-w-[72%]">
+            <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.lime }}>
+              The ask
+            </p>
+            <p className="mt-[0.9cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.white }}>
+              Test whether an interior depth retains accuracy while saving roughly 69% of energy per
+              correct answer — and whether finding that depth is worth its energy.
+            </p>
+          </div>
+          <p className="text-right font-mono text-[2.4cqh] font-bold uppercase leading-snug tracking-[0.12em]" style={{ color: S.lime }}>
+            Thank you
+            <br />
+            Questions
           </p>
         </div>
       </div>
