@@ -14,11 +14,11 @@
 
 | ক্রম | সদস্য | স্লাইড | বিষয় | সময় |
 |---:|---|---|---|---:|
-| 1 | **Md. Atikur Rahaman** | 1–2 | Title + Introduction & Problem Statement | 1:50 |
-| 2 | **Md. Sarowar Alam Sourov** | 3–4 | Motivation & Research Gap + Objectives & Scope | 1:50 |
-| 3 | **Pratay Paul** | 5–6 | Dataset + Proposed Method | 1:45 |
-| 4 | **Sadman Ifaz** | 7–8 | Methodology Flow + Experimental Setup | 1:35 |
-| 5 | **Jayed Bin Khalid** | 9–11 | Analysis & Gates + Expected Results + Applications, Risks & Conclusion | 2:20 |
+| 1 | **Pratay Paul** | 1–3 | Title + Introduction & Problem Statement + Motivation & Research Gap | 2:15 |
+| 2 | **Md. Sarowar Alam Sourov** | 4–5 | Objectives & Scope + Dataset | 1:50 |
+| 3 | **Md. Atikur Rahaman** | 6–7 | Proposed Method + Methodology Flow | 1:50 |
+| 4 | **Sadman Ifaz** | 8–9 | Experimental Setup + Analysis & Gates | 1:45 |
+| 5 | **Jayed Bin Khalid** | 10–11 | Expected Results + Applications, Risks & Conclusion | 1:40 |
 
 **Slide 12 — References:** কেউ উপস্থাপন করবে না। প্রশ্নের সময় দরকার হলে দেখানো যাবে।
 
@@ -26,29 +26,29 @@
 
 | সময় | কী হবে |
 |---:|---|
-| 0:00 | Atikur শুরু করবে |
-| 1:50 | Sarowar শুরু করবে |
-| 3:40 | Pratay শুরু করবে |
-| 5:25 | Sadman শুরু করবে |
-| 7:00 | Jayed শুরু করবে |
+| 0:00 | Pratay শুরু করবে |
+| 2:15 | Sourov শুরু করবে |
+| 4:05 | Atik শুরু করবে |
+| 5:55 | Sadman শুরু করবে |
+| 7:40 | Jayed শুরু করবে |
 | 9:20 | শেষ |
 | 9:20–10:00 | প্রশ্ন-উত্তর শুরু |
 
 ---
 
-## 2. Md. Atikur Rahaman — 1:50
+## 2. Pratay Paul — 2:15
 
-### Slide 1 — Title (0:00–0:20)
+### Slide 1 — Title (0:00–0:25)
 
 [স্লাইড ১]
 
-শুভ দিন, স্যার। আমি আতিকুর রহমান। আমাদের টিমের পক্ষ থেকে আপনাদের স্বাগতম।
+শুভ দিন, স্যার। আমি প্রতয় পল। আমাদের টিমের পক্ষ থেকে আপনাদের স্বাগতম। আমাদের টিমে আছেন আতিকুর, সারোয়ার, সাদমান, জায়েদ এবং আমি।
 
 আমাদের প্রজেক্টের নাম: **Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation**।
 
 সহজ ভাষায়: RAG-এ আমরা কতগুলো passage পড়ব, সেটা এমনভাবে বাছাই করতে চাই যাতে **প্রতি সঠিক উত্তরের energy cost সবচেয়ে কম** হয়।
 
-### Slide 2 — Introduction & Problem Statement (0:20–1:50)
+### Slide 2 — Introduction & Problem Statement (0:25–1:25)
 
 [স্লাইড ২]
 
@@ -56,55 +56,33 @@ RAG-এর ধাপগুলো দেখুন। প্রথমে প্র
 
 এখানে **k হলো retrieval depth** — অর্থাৎ reader কতগুলো passage দেখবে।
 
-More passages মানে বেশি evidence। Accuracy বাড়তে পারে, কিন্তু energy খরচও বাড়ে। Fewer passages মানে energy কম, কিন্তু উত্তর ভুল হতে পারে।
+More passages মানে বেশি evidence। Accuracy বাড়তে পারে, কিন্তু energy খরচও বাড়ে। Fewer passages মানে energy কম, কিন্তু উত্তর ভুল হতে পারে। তাই শুধু accuracy বা শুধু energy দেখলে সঠিক depth পাওয়া যায় না।
 
-তাই শুধু accuracy দেখলে বা শুধু energy দেখলে সঠিক depth পাওয়া যায় না।
+আমরা মাপি: **E(k) = ΣJ_k / ΣC_k**।
 
-আমরা মাপি:
-
-**E(k) = ΣJ_k / ΣC_k**
-
-এখানে:
-
-- **J_k** = depth k-তে এক প্রশ্নের energy
-- **C_k** = ১ যদি উত্তর সঠিক হয়, ০ যদি ভুল হয়
-- **Σ** = সব প্রশ্নের যোগফল
-
-সহজভাবে: **মোট energy ÷ মোট সঠিক উত্তর**।
+এখানে **J_k** হলো depth k-তে এক প্রশ্নের energy; **C_k** হলো ১ যদি উত্তর সঠিক হয়, ০ যদি ভুল হয়; **Σ** হলো সব প্রশ্নের যোগফল। সহজভাবে: **মোট energy ÷ মোট সঠিক উত্তর**।
 
 আমরা k বাছাই করি একটি **accuracy floor**-এর নিচে না গিয়ে। ৫ accuracy point মানে ৫ percentage point, সংক্ষেপে **pp**।
 
-আমাদের লক্ষ্য: প্রতি সঠিক উত্তরের energy সবচেয়ে কম, কিন্তু accuracy ৫ pp-এর বেশি কমবে না।
+### Slide 3 — Motivation & Research Gap (1:25–2:15)
 
-[হ্যান্ডঅফ] এখন সারোয়ার আলম সৌরভ Motivation ও Research Gap নিয়ে বলবেন।
+[স্লাইড ৩]
+
+Motivation: pilot study-তে **k=32**-এ প্রতি সঠিক উত্তরের energy **k=1**-এর তুলনায় **3.45 গুণ** বেশি। k=32-এ energy-এর **85.1%** যায় passage পড়ার পেছনে। Accuracy 4 থেকে 16 passage পর্যন্ত প্রায় flat থাকে। আর 5 pp margin-এ **k=4**-এ savings **69.3%**। এগুলো early result, final নয়।
+
+এই table-এ দেখুন: static top-k শুধু accuracy দেখে; adaptive-k token বা latency দেখে; energy benchmark শুধু power বা energy দেখে। কিন্তু কেউ একসাথে **energy per correct answer, accuracy floor, break-even, আর policy** দেখে না। এটাই আমাদের research gap।
+
+[হ্যান্ডঅফ] এখন সারোয়ার আলম সৌরভ Objectives ও Dataset নিয়ে বলবেন।
 
 ---
 
 ## 3. Md. Sarowar Alam Sourov — 1:50
 
-### Slide 3 — Motivation & Research Gap (1:50–2:50)
-
-[স্লাইড ৩]
-
-ধন্যবাদ। আমি সারোয়ার আলম সৌরভ।
-
-Motivation দিয়ে শুরু করি। আমাদের pilot study-তে দেখেছি, **k=32**-এ প্রতি সঠিক উত্তরের energy **k=1**-এর তুলনায় **3.45 গুণ** বেশি।
-
-আবার k=32-এ energy-এর **85.1%** খরচ হয় passage পড়ার পেছনে। Accuracy 4 থেকে 16 passage পর্যন্ত প্রায় flat থাকে।
-
-আর 5 pp margin-এ **k=4**-এ energy savings **69.3%**। এগুলো early result, final নয়।
-
-এই table-এ দেখুন:
-
-- Static top-k শুধু accuracy দেখে।
-- Adaptive-k token বা latency দেখে।
-- Energy benchmark শুধু power বা energy দেখে।
-
-কিন্তু কেউ একসাথে **energy per correct answer, accuracy floor, break-even, আর policy** দেখে না। এটাই আমাদের research gap।
-
-### Slide 4 — Objectives & Scope (2:50–3:40)
+### Slide 4 — Objectives & Scope (2:15–3:10)
 
 [স্লাইড ৪]
+
+ধন্যবাদ। আমি সারোয়ার আলম সৌরভ।
 
 আমাদের তিনটি প্রশ্ন।
 
@@ -116,33 +94,31 @@ Motivation দিয়ে শুরু করি। আমাদের pilot st
 
 **H1–H7** হলো সাতটি hypothesis। **H মানে hypothesis** — একটি পরীক্ষামূলক statement, যার clear pass/fail rule আছে।
 
-আমরা 5 pp rule, ≥20% savings, energy–accuracy link, passage share, policy, এবং tax signs পরীক্ষা করব।
+আমরা 5 pp rule, ≥20% savings, energy–accuracy link, passage share, policy, এবং tax signs পরীক্ষা করব। আমরা universal k*, 2 pp optimum, বা rerun-এর আগে certified 5 pp result claim করব না।
 
-আমরা universal k*, 2 pp optimum, বা rerun-এর আগে certified 5 pp result claim করব না।
-
-[হ্যান্ডঅফ] এখন প্রতয় পল Dataset ও Proposed Method নিয়ে বলবেন।
-
----
-
-## 4. Pratay Paul — 1:45
-
-### Slide 5 — Dataset (3:40–4:35)
+### Slide 5 — Dataset (3:10–4:05)
 
 [স্লাইড ৫]
 
-ধন্যবাদ। আমি প্রতয় পল।
-
 প্রথম dataset: **SQuAD** — Stanford Question Answering Dataset — v1.1 dev। এতে 10,570 প্রশ্ন, 20,958 context, এবং 45,651 passage আছে। আমরা BM25 top-32 ব্যবহার করব।
 
-আমাদের primary run 1,000 প্রশ্ন, replication 500, boundary 200। Metric হলো exact match। License CC BY-SA 4.0।
+আমাদের primary run 1,000 প্রশ্ন, replication 500, boundary 200। Metric exact match; license CC BY-SA 4.0।
 
-দ্বিতীয় dataset: **HotpotQA** — একটি multi-hop question answering dataset। এর distractor version-এ 7,405 প্রশ্ন আছে; আমরা 500 ব্যবহার করব। প্রতি প্রশ্নে 10 paragraph: 2 gold + 8 distractor। k = 0, 1, 2, 4, 8, 10; BM25 top-10।
+দ্বিতীয় dataset: **HotpotQA** — multi-hop question answering dataset। distractor version-এ 7,405 প্রশ্ন; আমরা 500 ব্যবহার করব। প্রতি প্রশ্নে 10 paragraph: 2 gold + 8 distractor। k = 0, 1, 2, 4, 8, 10; BM25 top-10।
 
-SQuAD depth isolate করতে সাহায্য করে। HotpotQA multi-hop reasoning ও distractor-এর stress test করে।
+SQuAD depth isolate করে; HotpotQA multi-hop ও distractor stress test করে।
 
-### Slide 6 — Proposed Method (4:35–5:25)
+[হ্যান্ডঅফ] এখন আতিকুর রাহামান Proposed Method ও Methodology Flow নিয়ে বলবেন।
+
+---
+
+## 4. Md. Atikur Rahaman — 1:50
+
+### Slide 6 — Proposed Method (4:05–5:10)
 
 [স্লাইড ৬]
+
+ধন্যবাদ। আমি আতিকুর রাহামান।
 
 Method-এ চারটি idea।
 
@@ -156,17 +132,9 @@ Method-এ চারটি idea।
 
 Baseline হলো একটাই fixed top-k, শুধু accuracy বা speed দেখে tune করা। আমাদের proposal হলো accuracy floor-এর মধ্যে energy per correct answer দিয়ে depth বাছাই করা।
 
-[হ্যান্ডঅফ] এখন সাদমান ইফাজ Methodology Flow ও Experimental Setup নিয়ে বলবেন।
-
----
-
-## 5. Sadman Ifaz — 1:35
-
-### Slide 7 — Methodology Flow (5:25–6:10)
+### Slide 7 — Methodology Flow (5:10–5:55)
 
 [স্লাইড ৭]
-
-ধন্যবাদ। আমি সাদমান ইফাজ।
 
 এই slide-এ experiment-এর flow।
 
@@ -176,17 +144,19 @@ Baseline হলো একটাই fixed top-k, শুধু accuracy বা spe
 
 মূল কথা: **run হলো measurement, checkpoint হলো decision**।
 
-### Slide 8 — Experimental Setup (6:10–7:00)
+[হ্যান্ডঅফ] এখন সাদমান ইফাজ Experimental Setup ও Analysis-এর Gates নিয়ে বলবেন।
+
+---
+
+## 5. Sadman Ifaz — 1:45
+
+### Slide 8 — Experimental Setup (5:55–6:50)
 
 [স্লাইড ৮]
 
-Setup-এ runs:
+ধন্যবাদ। আমি সাদমান ইফাজ।
 
-- SQuAD: 1,000 × 7
-- Qwen2.5-1.5B: 500 × 7
-- HotpotQA: 500 × 6
-- Boundary: 200 × 3
-- Taxes: 150 × 2
+Setup-এ runs: SQuAD 1,000 × 7; Qwen2.5-1.5B 500 × 7; HotpotQA 500 × 6; boundary 200 × 3; taxes 150 × 2।
 
 Measurement: NVML প্রতি 100 ms-এ power পড়ে। 60 সেকেন্ড idle baseline; 20 প্রশ্নের block; প্রতিটি request-এ unique code, যাতে cached prompt না আসে; heat ও speed log; wall meter; repeat block।
 
@@ -194,53 +164,33 @@ Decision: k=4, k=32-এর থেকে 5 pp-এর বেশি খারাপ
 
 Budget: **15–20 GPU hours**, RTX 3060 6 GB, একসাথে একটাই job, wall power, screen off।
 
-[হ্যান্ডঅফ] এখন জায়েদ বিন খালিদ Analysis, Gates ও Conclusion নিয়ে বলবেন।
-
----
-
-## 6. Jayed Bin Khalid — 2:20
-
-### Slide 9 — Analysis & Gates (7:00–8:05)
+### Slide 9 — Analysis & Gates (6:50–7:40)
 
 [স্লাইড ৯]
 
-ধন্যবাদ। আমি জায়েদ বিন খালিদ।
+এখন Analysis ও Gates।
 
-প্রথমে তিনটি সংক্ষিপ্ত রূপ:
+**G মানে go** — checkpoint pass হলে এগিয়ে যাব। **K মানে stop/reframe** — fail হলে report করে claim বদলাব। **H মানে hypothesis** — পরীক্ষার statement।
 
-- **G মানে go** — checkpoint pass হলে এগিয়ে যাব।
-- **K মানে stop** — fail হলে report করে claim বদলাব।
-- **H মানে hypothesis** — পরীক্ষার statement।
+Main decision: k=4, k=32-এর থেকে 5 pp-এর বেশি খারাপ নয়, এবং অন্তত 20% energy savings। Formula: **A(4) − A(32) > −5 pp · savings ≥ 20%**। 5% one-sided false-positive limit, 10,000 resamples। P(k*) হলো সম্ভাবনা যে বাছাই করা depth-টাই সত্যিই সবচেয়ে ভালো।
 
-Main decision: k=4, k=32-এর থেকে 5 pp-এর বেশি খারাপ নয়, এবং অন্তত 20% energy savings।
+Go gates: G1 5-point rule + ≥20%; G2 upper confidence bound ≤5 points এবং P(k*) ≥ 0.8; G3 energy on passages 10–70%; G4 best-possible gain ≥20%, policy ≥50%; G5 replication।
 
-Formula: **A(4) − A(32) > −5 pp · savings ≥ 20%**।
-
-5% one-sided false-positive limit, 10,000 resamples। P(k*) হলো সম্ভাবনা যে আমরা বাছাই করা depth-টাই সত্যিই সবচেয়ে ভালো। 2-point rule শুধু estimate।
-
-Go gates:
-
-- G1 — 5-point rule + ≥20%
-- G2 — upper confidence bound ≤5 points; P(k*) ≥ 0.8
-- G3 — energy on passages 10–70%
-- G4 — best-possible gain ≥20%; policy ≥50%
-- G5 — replication
-
-Stop gates:
-
-- K1 — energy effect <10%
-- K2 — best depth boundary-তে
-- K3 — P(k*) < 0.8
-- K4 — energy on passages <5%
-- K5 — best depth 1-এর বেশি নড়ে
-- K6 — best-possible gain <15%
-- K7 — repeat error >20%
+Stop gates: K1 energy effect <10%; K2 best depth boundary-তে; K3 P(k*) < 0.8; K4 energy on passages <5%; K5 best depth 1-এর বেশি নড়ে; K6 best-possible gain <15%; K7 repeat error >20%।
 
 কোনো checkpoint fail করলে আমরা সেটা report করি এবং claim বদলাই।
 
-### Slide 10 — Expected Results (8:05–8:40)
+[হ্যান্ডঅফ] এখন জায়েদ বিন খালিদ Expected Results ও Conclusion নিয়ে বলবেন।
+
+---
+
+## 6. Jayed Bin Khalid — 1:40
+
+### Slide 10 — Expected Results (7:40–8:25)
 
 [স্লাইড ১০]
+
+ধন্যবাদ। আমি জায়েদ বিন খালিদ।
 
 Expected results:
 
@@ -252,7 +202,7 @@ Expected results:
 
 Null result-ও result।
 
-### Slide 11 — Applications, Risks & Conclusion (8:40–9:20)
+### Slide 11 — Applications, Risks & Conclusion (8:25–9:20)
 
 [স্লাইড ১১]
 
