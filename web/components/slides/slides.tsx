@@ -31,7 +31,7 @@ import {
   SlideMark,
   SlideTable,
 } from "@/components/slides/primitives";
-import { course, datasets, pilot, rerun, team } from "@/lib/project-data";
+import { course, datasets, pilot, references, rerun, team } from "@/lib/project-data";
 
 export interface SlideProps {
   index: number;
@@ -367,7 +367,7 @@ function GapSlide({ index, total }: SlideProps) {
         </p>
       </div>
       <SlideCallout tone="amber">
-        Grouped citations: Pan et al. 2025; Hwang 2026; Hashemi et al. 2025; RAGMark 2026;
+        Sources: Pan et al. 2025; Hwang 2026; Hashemi et al. 2025; RAGMark 2026;
         Tail-Aware Adaptive-k 2026; Taguchi et al. 2025; Token Arena 2026.
       </SlideCallout>
     </SlideFrame>
@@ -507,8 +507,8 @@ function DatasetSlide({ index, total }: SlideProps) {
         </SlideCard>
       </div>
       <SlideCallout tone="deep">
-        Readers: qwen3.5:4b Q4 · replication: Qwen2.5-1.5B · hardware: RTX 3060 6 GB · no raw text
-        is redistributed.
+        Data: SQuAD (Rajpurkar et al. 2016) · HotpotQA (Yang et al. 2018) · readers: qwen3.5:4b /
+        Qwen2.5-1.5B · RTX 3060 6 GB.
       </SlideCallout>
     </SlideFrame>
   );
@@ -963,6 +963,55 @@ function ImpactSlide({ index, total }: SlideProps) {
 }
 
 /* ------------------------------------------------------------------ */
+/* 18 · References (backup)                                            */
+/* ------------------------------------------------------------------ */
+
+function ReferencesSlide({ index, total }: SlideProps) {
+  return (
+    <SlideFrame
+      badge="Backup · References"
+      badgeTone="amber"
+      title="References"
+      subtitle="Full citations for the research gap, datasets, and measurement tools. Backup slide — not part of the 10-minute talk."
+      index={index}
+      total={total}
+    >
+      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[2cqw]">
+        <div className="min-w-0">
+          <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.12em]" style={{ color: S.teal }}>
+            Prior work
+          </p>
+          <ol
+            className="mt-[0.9cqh] list-decimal space-y-[0.65cqh] pl-[1.5cqw] text-[1.95cqh] font-semibold leading-snug"
+            style={{ color: S.ink }}
+          >
+            {references.priorWork.map((ref) => (
+              <li key={ref.id}>{ref.text}</li>
+            ))}
+          </ol>
+        </div>
+        <div className="min-w-0">
+          <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.12em]" style={{ color: S.amber }}>
+            Data &amp; tools
+          </p>
+          <ul
+            className="mt-[0.9cqh] list-disc space-y-[0.8cqh] pl-[1.5cqw] text-[1.95cqh] font-semibold leading-snug"
+            style={{ color: S.ink }}
+          >
+            {references.dataTools.map((ref) => (
+              <li key={ref.id}>{ref.text}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <SlideCallout tone="amber">
+        Full citations are kept in docs/proposal.md §19 and the repository record.
+      </SlideCallout>
+    </SlideFrame>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 
 export const SLIDES: SlideDef[] = [
   { id: "title", title: "Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation", Component: TitleSlide },
@@ -981,5 +1030,6 @@ export const SLIDES: SlideDef[] = [
   { id: "analysis", title: "The gates decide what the result means", Component: AnalysisSlide },
   { id: "preliminary", title: "The preliminary study changed the claim", Component: PreliminarySlide },
   { id: "expected", title: "What the rerun must show, and what would falsify it", Component: ExpectedSlide },
-  { id: "impact", title: "A green-RAG decision rule and a 20-week plan", Component: ImpactSlide },
+  { id: "impact", title: "A green-RAG decision rule and a plan to test it", Component: ImpactSlide },
+  { id: "references", title: "References", Component: ReferencesSlide },
 ];
