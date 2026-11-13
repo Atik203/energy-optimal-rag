@@ -170,11 +170,11 @@ ax.text(0.08, 2.98, "DECISION FLOW", fontsize=21, fontweight="bold", color=AMBER
 ax.text(0.08, 2.62, "pre-registered gates", fontsize=14.5, fontweight="semibold", color=INK_SOFT, ha="left")
 
 bottom = [
-    ("1", "FREEZE PREREG", "before\noutcomes", AMBER),
-    ("2", "P0 GOLDEN", "200-question\ncheck", DEEP),
-    ("3", "P1 POWERED", "n = 1,000\n× 7", AMBER),
-    ("4", "GATES", "G1–G5\nK1–K7", ROSE),
-    ("5", "P2 / P3 / P4", "replication\npolicy · theory", DEEP),
+    ("1", "FREEZE PLAN", "before\noutcomes", AMBER),
+    ("2", "SMALL RE-RUN", "200\nquestions", DEEP),
+    ("3", "FULL RE-RUN", "1,000\n× 7", AMBER),
+    ("4", "CHECKPOINTS", "G1–G5\nK1–K7", ROSE),
+    ("5", "MORE TESTS", "replication\npolicy · theory", DEEP),
 ]
 
 bot_y, bot_h, bot_w, bot_gap = 0.55, 1.95, 2.86, 0.30
@@ -190,8 +190,8 @@ for i, (num, title, sub, color) in enumerate(bottom):
 # Save
 # ---------------------------------------------------------------------------
 
-svg_path = PUBLIC / "flow-diagram.svg"
-png_path = PUBLIC / "flow-diagram.png"
+svg_path = PUBLIC / "flow-diagram-v2.svg"
+png_path = PUBLIC / "flow-diagram-v2.png"
 fig.savefig(svg_path, format="svg", bbox_inches="tight", pad_inches=0.06, facecolor=WHITE)
 fig.savefig(png_path, format="png", dpi=600, bbox_inches="tight", pad_inches=0.06, facecolor=WHITE)
 plt.close(fig)

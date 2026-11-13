@@ -62,7 +62,7 @@ from the reference project so the store remains valid.
 | `/results` | Pilot setup, energy fit, accuracy, context share, identity, full pilot table, 5 pp signal, oracle |
 | `/roadmap` | P0–P6, gates, budget, deliverables, risks, decisions, stop rules |
 | `/about` | Status, author, citation, licenses, data policy, evidence policy, links |
-| `/slide` | 15-slide keyboard-driven 16:9 deck |
+| `/slide` | 12-slide keyboard-driven 16:9 deck (11 presented + 1 reference slide) |
 
 ## Structure
 
