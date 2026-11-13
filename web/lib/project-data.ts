@@ -1284,14 +1284,6 @@ export const references = {
       id: "D3",
       text: "Robertson, S., Zaragoza, H. The Probabilistic Relevance Framework: BM25 and Beyond. Foundations and Trends in Information Retrieval, 2009.",
     },
-    {
-      id: "D4",
-      text: "NVIDIA. NVML: NVIDIA Management Library. nvidia-ml-py.",
-    },
-    {
-      id: "D5",
-      text: "Ollama. Local model runtime; qwen3.5:4b (Q4). Qwen Team. Qwen2.5-1.5B-Instruct model card, 2024.",
-    },
   ],
 } as const;
 
