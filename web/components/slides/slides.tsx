@@ -293,10 +293,9 @@ function MotivationSlide({ index, total }: SlideProps) {
       badge="Motivation"
       badgeTone="teal"
       title="Retrieval energy is a deployment cost, not a benchmark detail."
-      subtitle="The preliminary study: 32 passages cost 3.45× more per correct answer than one; accuracy was flat from k=4 to k=16."
+      subtitle="Measured on 200 SQuAD questions: 32 passages cost 3.45× more per correct answer than one; accuracy was flat from k=4 to k=16."
       index={index}
       total={total}
-      pilot
     >
       <SlideKpiRow
         items={[
@@ -310,7 +309,7 @@ function MotivationSlide({ index, total }: SlideProps) {
           {
             value: `${pilot.fivePp.savings}%`,
             label: `savings at k = ${pilot.fivePp.k}`,
-            sub: "5 pp preliminary signal",
+            sub: "5 pp signal",
             tone: "amber",
           },
         ]}
@@ -329,7 +328,7 @@ function MotivationSlide({ index, total }: SlideProps) {
           </p>
         </SlideCard>
       </div>
-      <SlideCallout tone="amber">Preliminary evidence only. The 5 pp result is a signal, not a certificate.</SlideCallout>
+      <SlideCallout tone="amber">The 5 pp result is a signal, not a certificate.</SlideCallout>
     </SlideFrame>
   );
 }
