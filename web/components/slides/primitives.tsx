@@ -8,7 +8,7 @@ export const S = {
   alt: "#f3f4f6",
   ink: "#000000",
   inkSoft: "#111827",
-  muted: "#374151",
+  muted: "#111827",
   line: "#b8c0c8",
   deep: "#123a2a",
   lime: "#a8d43a",
@@ -65,7 +65,6 @@ export function SlideFrame({
   title,
   subtitle,
   index,
-  total,
   pilot = false,
   children,
 }: {
@@ -92,7 +91,7 @@ export function SlideFrame({
         <div className="flex items-start justify-between gap-[2cqw]">
           <div className="flex flex-wrap items-center gap-[0.9cqw]">
             <span
-              className="px-[1.2cqw] py-[0.5cqh] font-mono text-[1.95cqh] font-bold uppercase tracking-[0.14em]"
+              className="px-[1.2cqw] py-[0.5cqh] font-mono text-[2.05cqh] font-bold uppercase tracking-[0.14em]"
               style={{ background: badgeColors.soft, color: badgeColors.main }}
             >
               {badge}
@@ -107,7 +106,7 @@ export function SlideFrame({
             )}
           </div>
           <span
-            className="pt-[0.5cqh] font-mono text-[1.7cqh] font-semibold uppercase tracking-[0.16em]"
+            className="pt-[0.5cqh] font-mono text-[1.9cqh] font-semibold uppercase tracking-[0.16em]"
             style={{ color: S.muted }}
           >
             {course.code} · {course.name} · Section {course.section}
@@ -116,14 +115,14 @@ export function SlideFrame({
 
         <div className="mt-[2.1cqh] max-w-[86cqw]">
           <h1
-            className="text-[5.2cqh] font-semibold leading-[1.02] tracking-[-0.02em]"
+            className="text-[5.35cqh] font-semibold leading-[1.02] tracking-[-0.02em]"
             style={{ fontFamily: "var(--font-serif)", color: S.ink }}
           >
             {title}
           </h1>
           {subtitle && (
             <div
-              className="mt-[1.05cqh] max-w-[78cqw] text-[2.45cqh] font-semibold leading-snug"
+              className="mt-[1.05cqh] max-w-[80cqw] text-[2.6cqh] font-semibold leading-snug"
               style={{ color: S.inkSoft }}
             >
               {subtitle}
@@ -134,14 +133,10 @@ export function SlideFrame({
         <div className="relative mt-[1.9cqh] flex min-h-0 flex-1 flex-col">{children}</div>
 
         <div
-          className="mt-[1.5cqh] flex items-center justify-between gap-[2cqw] border-t pt-[0.9cqh] font-mono text-[1.6cqh] font-semibold uppercase tracking-[0.1em]"
-          style={{ borderColor: S.line, color: S.muted }}
+          className="mt-[1.5cqh] flex justify-end border-t pt-[0.9cqh] font-mono text-[2.0cqh] font-bold"
+          style={{ borderColor: S.line, color: S.inkSoft }}
         >
-          <span>Project Proposal</span>
-          <span>{course.label}</span>
-          <span className="tnum">
-            {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-          </span>
+          <span className="tnum">{index + 1}</span>
         </div>
       </div>
     </div>
@@ -179,7 +174,7 @@ export function SlideCard({
           </span>
         )}
         <span
-          className="font-mono text-[2.2cqh] font-bold uppercase tracking-[0.08em]"
+          className="font-mono text-[2.4cqh] font-bold uppercase tracking-[0.08em]"
           style={{ color: c.main }}
         >
           {title}
@@ -210,11 +205,11 @@ export function SlideKpi({
       >
         {value}
       </p>
-      <p className="mt-[0.75cqh] text-[2.2cqh] font-bold leading-snug" style={{ color: S.ink }}>
+      <p className="mt-[0.75cqh] text-[2.3cqh] font-bold leading-snug" style={{ color: S.ink }}>
         {label}
       </p>
       {sub && (
-        <p className="mt-[0.35cqh] text-[1.9cqh] font-semibold leading-snug" style={{ color: S.muted }}>
+        <p className="mt-[0.35cqh] text-[2.15cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
           {sub}
         </p>
       )}
@@ -248,7 +243,7 @@ export function SlideKpiRow({
 export function SlideBullets({
   items,
   tone: bulletTone = "deep",
-  size = "2.45cqh",
+  size = "2.6cqh",
 }: {
   items: ReactNode[];
   tone?: SlideTone;
@@ -277,7 +272,7 @@ export function SlideChip({ children, tone: chipTone = "deep" }: { children: Rea
   const c = tone(chipTone);
   return (
     <span
-      className="inline-block px-[1.1cqw] py-[0.55cqh] font-mono text-[1.9cqh] font-bold uppercase tracking-[0.08em]"
+      className="inline-block px-[1.1cqw] py-[0.55cqh] font-mono text-[2.1cqh] font-bold uppercase tracking-[0.08em]"
       style={{ background: c.soft, color: c.main }}
     >
       {children}
@@ -298,7 +293,7 @@ export function SlideFormula({
       className="px-[1.5cqw] py-[1.1cqh]"
       style={{ borderLeft: `0.4cqw solid ${c.main}`, background: c.soft }}
     >
-      <div className="font-mono text-[2.55cqh] font-semibold leading-relaxed" style={{ color: S.ink }}>
+      <div className="font-mono text-[2.7cqh] font-semibold leading-relaxed" style={{ color: S.ink }}>
         {children}
       </div>
     </div>
@@ -315,7 +310,7 @@ export function SlideCallout({
   const c = tone(calloutTone);
   return (
     <div
-      className="flex items-center gap-[1.2cqw] px-[1.6cqw] py-[1.1cqh] text-[2.3cqh] font-bold leading-snug"
+      className="flex items-center gap-[1.2cqw] px-[1.6cqw] py-[1.1cqh] text-[2.5cqh] font-bold leading-snug"
       style={{ background: c.soft, color: S.ink, borderLeft: `0.4cqw solid ${c.main}` }}
     >
       <ArrowRight size="2.4cqh" style={{ color: c.main, flexShrink: 0 }} aria-hidden="true" />
@@ -349,7 +344,7 @@ export function SlideTable({
               <th
                 key={cell}
                 className={`px-[1.1cqw] text-left font-mono font-bold uppercase tracking-[0.06em] ${
-                  compact ? "py-[0.75cqh] text-[2.0cqh]" : "py-[0.9cqh] text-[2.15cqh]"
+                  compact ? "py-[0.75cqh] text-[2.1cqh]" : "py-[0.9cqh] text-[2.25cqh]"
                 }`}
                 style={{ color: c.main, width: widths?.[index] }}
               >
@@ -371,7 +366,7 @@ export function SlideTable({
                 <td
                   key={cellIndex}
                   className={`px-[1.1cqw] align-top font-semibold leading-snug ${
-                    compact ? "py-[0.85cqh] text-[2.15cqh]" : "py-[0.95cqh] text-[2.3cqh]"
+                    compact ? "py-[0.85cqh] text-[2.3cqh]" : "py-[0.95cqh] text-[2.45cqh]"
                   } ${cellIndex === 0 ? "text-left" : "text-left"}`}
                   style={{ color: S.ink }}
                 >
@@ -403,7 +398,7 @@ export function SlideBars({
             const c = tone(item.tone);
             return (
               <div key={item.label} className="flex h-full w-1/3 flex-col items-center justify-end">
-                <span className="mb-[0.4cqh] font-mono text-[1.9cqh] font-bold tnum" style={{ color: S.ink }}>
+                <span className="mb-[0.4cqh] font-mono text-[2.0cqh] font-bold tnum" style={{ color: S.ink }}>
                   {item.display}
                 </span>
                 <div
@@ -420,7 +415,7 @@ export function SlideBars({
       </div>
       <div className="flex justify-around gap-[2cqw] px-[1.5cqw] pt-[0.6cqh]">
         {items.map((item) => (
-          <span key={item.label} className="w-1/3 text-center font-mono text-[1.9cqh] font-semibold" style={{ color: S.muted }}>
+          <span key={item.label} className="w-1/3 text-center font-mono text-[2.0cqh] font-semibold" style={{ color: S.inkSoft }}>
             {item.label}
           </span>
         ))}
@@ -447,7 +442,7 @@ export function SlideDepthLadder({ values = [0, 1, 2, 4, 8, 16, 32] }: { values?
                   borderRadius: "999px",
                 }}
               />
-              <span className="font-mono text-[1.65cqh] font-semibold tnum" style={{ color: S.muted }}>
+              <span className="font-mono text-[1.9cqh] font-semibold tnum" style={{ color: S.inkSoft }}>
                 {k}
               </span>
             </div>

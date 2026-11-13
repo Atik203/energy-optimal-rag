@@ -204,7 +204,7 @@ export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
             />
           </div>
           <span className="shrink-0 font-mono text-[12px] font-semibold tabular-nums text-white/85">
-            {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+            {index + 1}
           </span>
         </div>
 

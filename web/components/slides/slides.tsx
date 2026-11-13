@@ -1,48 +1,37 @@
+import Image from "next/image";
 import type { ReactElement } from "react";
 import {
-  Activity,
   AlertTriangle,
-  BarChart3,
+  ArrowRight,
   CheckCircle2,
-  Cpu,
   Database,
+  FlaskConical,
   Gauge,
   GitBranch,
   Layers,
-  PlugZap,
-  ScanLine,
-  Scale,
+  ListChecks,
+  Search,
   ShieldCheck,
   Target,
-  Thermometer,
   Timer,
+  TrendingUp,
   XCircle,
   Zap,
 } from "lucide-react";
 import {
   S,
-  SlideBars,
   SlideBullets,
   SlideCallout,
   SlideCard,
   SlideChip,
+  SlideDepthLadder,
   SlideFormula,
   SlideFrame,
   SlideKpiRow,
   SlideMark,
   SlideTable,
 } from "@/components/slides/primitives";
-import {
-  claimBoundary,
-  course,
-  datasets,
-  gates,
-  measurement,
-  pilot,
-  rerun,
-  team,
-  theory,
-} from "@/lib/project-data";
+import { course, datasets, phases, pilot, rerun, team } from "@/lib/project-data";
 
 export interface SlideProps {
   index: number;
@@ -56,144 +45,35 @@ export interface SlideDef {
 }
 
 /* ------------------------------------------------------------------ */
-/* Small helpers                                                       */
-/* ------------------------------------------------------------------ */
-
-const LOG_MAX = Math.log2(33);
-const xPos = (k: number) => (Math.log2(k + 1) / LOG_MAX) * 100;
-
-function AccuracyPlot() {
-  const min = 0.35;
-  const max = 0.6;
-  const yPos = (value: number) => 100 - ((value - min) / (max - min)) * 100;
-  const points = [
-    { k: 1, value: pilot.accuracy.a1, label: pilot.accuracy.a1.toFixed(3), side: "right" as const },
-    { k: 4, value: pilot.accuracy.a4, label: pilot.accuracy.a4.toFixed(3), side: "right" as const },
-    { k: 32, value: pilot.accuracy.a32, label: pilot.accuracy.a32.toFixed(3), side: "left" as const },
-  ];
-  const bandLeft = xPos(pilot.accuracy.plateauFrom);
-  const bandRight = xPos(pilot.accuracy.plateauTo);
-  const bandTop = yPos(pilot.accuracy.plateauHigh);
-  const bandBottom = yPos(pilot.accuracy.plateauLow);
-
-  return (
-    <div
-      role="img"
-      aria-label="Preliminary accuracy: 0.395 at depth 1, 0.520 at depth 4, a plateau of 0.520 to 0.535 from depth 4 to 16, and 0.570 at depth 32."
-    >
-      <div className="relative h-[34cqh] border-b border-l" style={{ borderColor: S.line }}>
-        {[0.35, 0.4, 0.45, 0.5, 0.55, 0.6].map((tick) => (
-          <div
-            key={tick}
-            className="absolute inset-x-0 border-t"
-            style={{ top: `${yPos(tick)}%`, borderColor: S.line }}
-          />
-        ))}
-        {[0, 1, 2, 4, 8, 16, 32].map((tick) => (
-          <div
-            key={tick}
-            className="absolute bottom-0 top-0 border-l"
-            style={{ left: `${xPos(tick)}%`, borderColor: S.line }}
-          />
-        ))}
-        <div
-          className="absolute border-y border-dashed"
-          style={{
-            left: `${bandLeft}%`,
-            width: `${bandRight - bandLeft}%`,
-            top: `${bandTop}%`,
-            height: `${bandBottom - bandTop}%`,
-            background: S.limeSoft,
-            borderColor: S.teal,
-          }}
-        />
-        <span
-          className="absolute -translate-x-1/2 whitespace-nowrap px-[0.7cqw] py-[0.2cqh] font-mono text-[1.8cqh] font-bold"
-          style={{ left: `${(bandLeft + bandRight) / 2}%`, top: `calc(${bandTop}% - 3.2cqh)`, color: S.teal, background: S.paper }}
-        >
-          plateau {pilot.accuracy.plateauLow.toFixed(3)}–{pilot.accuracy.plateauHigh.toFixed(3)}
-        </span>
-        {points.map((point) => (
-          <div
-            key={point.k}
-            className="absolute"
-            style={{ left: `${xPos(point.k)}%`, top: `${yPos(point.value)}%` }}
-          >
-            <span
-              className="absolute block h-[1.6cqh] w-[1.6cqh] -translate-x-1/2 -translate-y-1/2 rounded-full border-2"
-              style={{ background: S.teal, borderColor: S.paper }}
-            />
-            <span
-              className="absolute top-0 whitespace-nowrap font-mono text-[1.9cqh] font-bold tnum"
-              style={{
-                color: S.ink,
-                transform:
-                  point.side === "left"
-                    ? "translate(calc(-100% - 1.2cqh), -50%)"
-                    : "translate(1.2cqh, -50%)",
-              }}
-            >
-              {point.label}
-            </span>
-          </div>
-        ))}
-      </div>
-      <div className="relative mt-[0.6cqh] h-[1.8cqh]" aria-hidden="true">
-        {[0, 1, 2, 4, 8, 16, 32].map((tick) => (
-          <span
-            key={tick}
-            className="absolute -translate-x-1/2 font-mono text-[1.8cqh]"
-            style={{ left: `${xPos(tick)}%`, color: S.muted }}
-          >
-            {tick}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Status({ pass }: { pass: boolean }) {
-  return (
-    <span
-      className="font-mono text-[2.2cqh] font-bold uppercase tracking-[0.08em]"
-      style={{ color: pass ? S.teal : S.rose }}
-    >
-      {pass ? "Pass" : "Fail"}
-    </span>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /* 1 · Title                                                           */
 /* ------------------------------------------------------------------ */
 
-function TitleSlide({ index, total }: SlideProps) {
+function TitleSlide({ index }: SlideProps) {
   return (
     <div className="relative flex h-full w-full overflow-hidden" style={{ background: S.paper, color: S.ink }}>
       <div className="absolute inset-y-0 left-0 w-[0.5cqw]" style={{ background: S.lime }} />
-      <div className="slide-grid pointer-events-none absolute inset-0 opacity-40" />
+      <div className="slide-grid pointer-events-none absolute inset-0 opacity-30" />
 
       <div className="relative grid h-full grid-cols-[1.08fr_0.92fr] gap-[4.2cqw] px-[5.4cqw] py-[4.2cqh]">
         <div className="flex min-h-0 flex-col">
           <div className="flex items-center gap-[1.4cqw]">
             <SlideMark size="7.2cqh" />
             <div>
-              <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.deep }}>
+              <p className="font-mono text-[2.1cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.deep }}>
                 {course.code} · {course.name}
               </p>
-              <p className="mt-[0.3cqh] font-mono text-[1.8cqh] font-semibold uppercase tracking-[0.14em]" style={{ color: S.muted }}>
-                Section {course.section} · Project Proposal
+              <p className="mt-[0.3cqh] font-mono text-[1.9cqh] font-semibold uppercase tracking-[0.14em]" style={{ color: S.inkSoft }}>
+                Section {course.section}
               </p>
             </div>
           </div>
 
           <div className="mt-auto">
-            <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.teal }}>
+            <p className="font-mono text-[2.1cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.teal }}>
               Project Proposal · 2026
             </p>
             <h1
-              className="mt-[1.4cqh] text-[6.1cqh] font-semibold leading-[1.02] tracking-[-0.03em]"
+              className="mt-[1.4cqh] text-[5.8cqh] font-semibold leading-[1.02] tracking-[-0.03em]"
               style={{ fontFamily: "var(--font-serif)", color: S.ink }}
             >
               Energy-Optimal Retrieval Depth in{" "}
@@ -206,28 +86,23 @@ function TitleSlide({ index, total }: SlideProps) {
               depth is worth its own energy.
             </p>
             <div className="mt-[2.0cqh] flex flex-wrap gap-[0.8cqw]">
-              <SlideChip tone="amber">Project Proposal</SlideChip>
               <SlideChip tone="deep">
                 {course.code} · Section {course.section}
               </SlideChip>
-
             </div>
           </div>
 
           <div
-            className="mt-[2.6cqh] flex items-center justify-between border-t pt-[1.0cqh] font-mono text-[1.7cqh] font-semibold uppercase tracking-[0.1em]"
-            style={{ borderColor: S.line, color: S.muted }}
+            className="mt-[2.6cqh] flex justify-end border-t pt-[1.0cqh] font-mono text-[2.1cqh] font-bold"
+            style={{ borderColor: S.line, color: S.inkSoft }}
           >
-            <span>{course.label}</span>
-            <span className="tnum">
-              {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-            </span>
+            <span className="tnum">{index + 1}</span>
           </div>
         </div>
 
         <div className="flex min-h-0 items-center">
           <div className="w-full border-2 p-[2.2cqw]" style={{ borderColor: S.deep, background: S.deep }}>
-            <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.lime }}>
+            <p className="font-mono text-[2.1cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.lime }}>
               Team
             </p>
             <div className="mt-[2.0cqh] space-y-[1.0cqh]">
@@ -238,16 +113,16 @@ function TitleSlide({ index, total }: SlideProps) {
                   style={{ borderColor: "rgba(200,240,79,0.16)" }}
                 >
                   <div>
-                    <p className="text-[2.1cqh] font-semibold leading-snug" style={{ color: S.white }}>
+                    <p className="text-[2.2cqh] font-semibold leading-snug" style={{ color: S.white }}>
                       {member.name}
                     </p>
-                    <p className="mt-[0.2cqh] font-mono text-[1.7cqh] font-semibold" style={{ color: "#c9d6c9" }}>
+                    <p className="mt-[0.2cqh] font-mono text-[1.8cqh] font-semibold" style={{ color: "#c9d6c9" }}>
                       {member.id}
                     </p>
                   </div>
                   {member.section === "E" && (
                     <span
-                      className="border px-[0.7cqw] py-[0.35cqh] font-mono text-[1.45cqh] font-bold uppercase tracking-[0.08em]"
+                      className="border px-[0.7cqw] py-[0.35cqh] font-mono text-[1.55cqh] font-bold uppercase tracking-[0.08em]"
                       style={{ borderColor: S.lime, color: S.lime }}
                     >
                       Section E
@@ -264,967 +139,852 @@ function TitleSlide({ index, total }: SlideProps) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 2 · The decision                                                    */
+/* 2 · Executive summary                                               */
 /* ------------------------------------------------------------------ */
 
-function DecisionSlide({ index, total }: SlideProps) {
+function ExecSummarySlide({ index, total }: SlideProps) {
   return (
     <SlideFrame
-      badge="The decision"
-      badgeTone="rose"
-      pilot
-      title="The preliminary study killed its own headline."
-      subtitle="The original target was a static 2 pp optimum. The data selected the grid boundary. The surviving object is a decision problem around the accuracy margin."
+      badge="Executive summary"
+      badgeTone="deep"
+      title="The proposal in one slide."
+      subtitle="A gated energy decision, a powered rerun, and a causal test of the energy split."
       index={index}
       total={total}
     >
-      <div className="grid min-h-0 flex-1 grid-cols-3 gap-[1.5cqw]">
-        <SlideCard title="2 pp · static" tone="rose" icon={<XCircle size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <p className="font-mono text-[6.8cqh] font-bold leading-none" style={{ color: S.rose }}>
-              DEAD
-            </p>
-            <p className="mt-[1.6cqh] text-[2.6cqh] font-bold">k* = {pilot.static2pp.kStar}, the grid boundary</p>
-            <p className="mt-[0.8cqh] font-mono text-[2.15cqh] leading-relaxed" style={{ color: S.inkSoft }}>
-              P(k* optimal) = {pilot.static2pp.pOptimal.toFixed(2)}, below the {pilot.static2pp.threshold} gate.
-            </p>
-            <p className="mt-[1.1cqh] border-t pt-[0.8cqh] text-[1.95cqh] leading-snug" style={{ color: S.muted, borderColor: S.line }}>
-              MDE at n = {pilot.questions}: roughly {pilot.mdeAt200}. A power failure, not a flat curve.
-            </p>
-          </div>
+      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.4cqw]">
+        <SlideCard title="Question" tone="deep" icon={<Target size="2.8cqh" />}>
+          <p className="text-[2.6cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Which retrieval depth minimizes joules per correct answer under an accuracy floor?
+          </p>
         </SlideCard>
-
-        <SlideCard title="5 pp · policy" tone="amber" icon={<Target size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <p className="font-mono text-[5.8cqh] font-semibold leading-none" style={{ color: S.amber }}>
-              k = {pilot.fivePp.k}
-            </p>
-            <p className="mt-[1.2cqh] font-mono text-[2.9cqh] font-bold">{pilot.fivePp.savings}% savings</p>
-            <p className="mt-[0.8cqh] text-[2.35cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              Preliminary signal, not certified.
-            </p>
-            <p className="mt-[1.1cqh] border-t pt-[0.8cqh] font-mono text-[1.95cqh] leading-snug" style={{ color: S.muted, borderColor: S.line }}>
-              N* = {pilot.fivePp.nStar} · P reported = {pilot.fivePp.pReported}
-            </p>
-          </div>
+        <SlideCard title="Gap" tone="amber" icon={<Search size="2.8cqh" />}>
+          <p className="text-[2.6cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Existing work optimizes accuracy, latency, or tokens — not the gated energy decision.
+          </p>
         </SlideCard>
-
-        <SlideCard title="Oracle · ceiling" tone="teal" icon={<BarChart3 size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <p className="font-mono text-[5.8cqh] font-semibold leading-none" style={{ color: S.teal }}>
-              {pilot.oracle.gain}%
-            </p>
-            <p className="mt-[1.2cqh] text-[2.5cqh] font-bold leading-snug">
-              Matched-accuracy gain, with hindsight.
-            </p>
-            <p className="mt-[0.8cqh] text-[2.25cqh] font-semibold" style={{ color: S.inkSoft }}>
-              Upper bound only. No learned policy exists.
-            </p>
-            <p className="mt-[1.1cqh] border-t pt-[0.8cqh] text-[1.95cqh] leading-snug" style={{ color: S.muted, borderColor: S.line }}>
-              G4 requires a policy to capture ≥50% of a ≥20% oracle gap.
-            </p>
-          </div>
+        <SlideCard title="Method" tone="teal" icon={<FlaskConical size="2.8cqh" />}>
+          <p className="text-[2.6cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            SQuAD n=1,000 × 7 depths, NVML energy, 5 pp non-inferiority, 10,000 bootstrap, taxes,
+            and a 600/200/200 policy.
+          </p>
+        </SlideCard>
+        <SlideCard title="Contribution" tone="deep" icon={<Zap size="2.8cqh" />}>
+          <p className="text-[2.6cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Gated E(k), optimal-depth identity, static-depth bound, N*, causal tax test, and a
+            learned policy.
+          </p>
         </SlideCard>
       </div>
-
-      <div className="mt-[1.5cqh]">
-        <SlideCallout tone="deep">
-          The question is now margin-indexed: how much accuracy will you trade for how many joules?
-        </SlideCallout>
-      </div>
+      <SlideCallout tone="amber">No confirmatory result is claimed yet. This is a proposal.</SlideCallout>
     </SlideFrame>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 3 · Preliminary setup                                                     */
+/* 3 · Introduction                                                    */
 /* ------------------------------------------------------------------ */
 
-function PreliminarySetupSlide({ index, total }: SlideProps) {
+function IntroSlide({ index, total }: SlideProps) {
+  const steps = ["Question", "BM25", "k passages", "Reader", "Answer"];
   return (
     <SlideFrame
-      badge="Preliminary setup"
-      badgeTone="amber"
-      pilot
-      title="200 questions. Seven depths. One laptop."
-      subtitle="SQuAD v1.1 dev · qwen3.5:4b Q4 · BM25 top-32 over 45,651 passages."
+      badge="Introduction"
+      badgeTone="deep"
+      title="RAG answers by choosing how much evidence to read."
+      subtitle="Retrieval depth k is the number of passages placed before the reader."
       index={index}
       total={total}
     >
-      <SlideKpiRow
-        items={[
-          { value: String(pilot.questions), label: "SQuAD questions", sub: "v1.1 dev", tone: "deep" },
-          { value: String(pilot.depths.length), label: "depths", sub: pilot.depths.join(","), tone: "deep" },
-          { value: pilot.generations.toLocaleString("en-US"), label: "generations", sub: `${pilot.questions} × ${pilot.depths.length}`, tone: "deep" },
-          { value: "6 GB", label: "GPU memory", sub: pilot.gpu, tone: "deep" },
-        ]}
-      />
-
-      <div className="mt-[2cqh] grid min-h-0 flex-1 grid-cols-3 gap-[1.6cqw]">
-        <SlideCard title="Data" tone="teal" icon={<Database size="2.2cqh" />}>
-          <SlideBullets
-            tone="teal"
-            items={[
-              "SQuAD v1.1 dev.",
-              `${pilot.contexts.toLocaleString("en-US")} contexts → ${pilot.passages.toLocaleString("en-US")} ${pilot.chunkWords}-word passages.`,
-              `${pilot.retriever}. No dense retriever.`,
-            ]}
-          />
-        </SlideCard>
-        <SlideCard title="Reader" tone="deep" icon={<Cpu size="2.2cqh" />}>
-          <SlideBullets
-            tone="deep"
-            items={[
-              `${pilot.reader}, ${pilot.quantization}, ${pilot.readerContext}.`,
-              "Greedy decoding, 24 new tokens.",
-              "One model; no frontier reader.",
-            ]}
-          />
-        </SlideCard>
-        <SlideCard title="Rig" tone="amber" icon={<Gauge size="2.2cqh" />}>
-          <SlideBullets
-            tone="amber"
-            items={[
-              `${pilot.gpu}.`,
-              "Batch size 1, no concurrent jobs.",
-              "AC power, screen off, thermal log on.",
-            ]}
-          />
-        </SlideCard>
-      </div>
-
-      <div className="mt-[1.5cqh]">
-        <SlideCallout tone="amber">
-          Preliminary only. The confirmatory sample is separate, and no confirmatory run has been executed.
-        </SlideCallout>
-      </div>
-    </SlideFrame>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 4 · Energy curve                                                    */
-/* ------------------------------------------------------------------ */
-
-function EnergyCurveSlide({ index, total }: SlideProps) {
-  return (
-    <SlideFrame
-      badge="Preliminary evidence"
-      badgeTone="teal"
-      pilot
-      title="Energy per correct answer rises 3.45×."
-      subtitle={`E(32) = ${pilot.energy.e32} vs E(1) = ${pilot.energy.e1} J/correct. The affine fit is ${pilot.fit.formula} J, R² = ${pilot.fit.r2.toFixed(4)}.`}
-      index={index}
-      total={total}
-    >
-      <div className="grid min-h-0 flex-1 grid-cols-[1.1fr_0.9fr] gap-[2cqw]">
-        <SlideCard title="Joules per correct answer" tone="teal" icon={<BarChart3 size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <SlideBars
-              items={[
-                { label: "k = 1", value: pilot.energy.e1, display: pilot.energy.e1.toFixed(1), tone: "deep" },
-                { label: "k = 4", value: pilot.energy.e4, display: pilot.energy.e4.toFixed(1), tone: "amber" },
-                { label: "k = 32", value: pilot.energy.e32, display: pilot.energy.e32.toFixed(1), tone: "teal" },
-              ]}
-              max={160}
-              height="34cqh"
-            />
-            <p className="mt-[1.4cqh] text-center font-mono text-[2.0cqh]" style={{ color: S.muted }}>
-              Three documented E(k) points; all seven depths were measured.
-            </p>
-          </div>
-        </SlideCard>
-
-        <div className="flex min-h-0 flex-col gap-[1.4cqh]">
-          <SlideFormula tone="deep">{pilot.fit.formula} J</SlideFormula>
-          <div className="grid flex-1 grid-cols-2 gap-[1.2cqh]">
-            {[
-              ["a", `${pilot.fit.a} J`, "fixed cost"],
-              ["b", `${pilot.fit.b} J`, "per passage"],
-              ["R²", pilot.fit.r2.toFixed(4), "affine fit"],
-              ["span", `${pilot.energy.span.toFixed(2)}×`, "E(32) / E(1)"],
-            ].map(([label, value, note]) => (
-              <div key={label} className="flex flex-col justify-center border px-[1.2cqw] py-[1cqh]" style={{ borderColor: S.line, background: S.alt }}>
-                <p className="font-mono text-[1.9cqh] uppercase tracking-[0.1em]" style={{ color: S.muted }}>{label}</p>
-                <p className="mt-[0.4cqh] font-mono text-[3.0cqh] font-bold tnum" style={{ color: S.ink }}>{value}</p>
-                <p className="mt-[0.2cqh] text-[1.95cqh]" style={{ color: S.inkSoft }}>{note}</p>
+      <div className="grid min-h-0 flex-1 grid-cols-[1.15fr_0.85fr] gap-[1.8cqw]">
+        <div className="flex flex-col justify-center gap-[2.0cqh]">
+          <div className="flex flex-wrap items-center gap-[0.5cqw]">
+            {steps.map((step, i) => (
+              <div key={step} className="flex items-center gap-[0.5cqw]">
+                <span
+                  className="border-2 px-[0.9cqw] py-[0.7cqh] font-mono text-[2.1cqh] font-bold"
+                  style={{ borderColor: S.deep, color: S.deep }}
+                >
+                  {step}
+                </span>
+                {i < steps.length - 1 && <ArrowRight size="2.3cqh" style={{ color: S.teal }} aria-hidden />}
               </div>
             ))}
           </div>
+          <SlideDepthLadder />
+          <SlideFormula>E(k) = Σ J_k / Σ C_k</SlideFormula>
+          <p className="text-[2.4cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+            The numerator is total joules; the denominator is correct answers. The gate stops the
+            ratio from rewarding cheap failure.
+          </p>
+        </div>
+        <div className="grid min-h-0 grid-rows-3 gap-[1.1cqh]">
+          <SlideCard title="More passages" tone="teal">
+            <p className="text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+              More evidence, higher accuracy — and more prefill energy.
+            </p>
+          </SlideCard>
+          <SlideCard title="Fewer passages" tone="amber">
+            <p className="text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+              Cheaper, but the reader may miss the evidence.
+            </p>
+          </SlideCard>
+          <SlideCard title="The decision" tone="deep">
+            <p className="text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+              Choose k under an accuracy floor to minimize joules per correct answer.
+            </p>
+          </SlideCard>
         </div>
       </div>
-
-      <div className="mt-[1.5cqh]">
-        <SlideCallout tone="teal">
-          Steep and precise under preliminary conditions. This is not a universal law or an identified optimum.
-        </SlideCallout>
-      </div>
     </SlideFrame>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 5 · Accuracy and the dead 2 pp claim                                */
+/* 4 · Problem statement                                               */
 /* ------------------------------------------------------------------ */
 
-function AccuracyDeadSlide({ index, total }: SlideProps) {
+function ProblemSlide({ index, total }: SlideProps) {
   return (
     <SlideFrame
-      badge="The dead claim"
+      badge="Problem"
       badgeTone="rose"
-      pilot
-      title="Accuracy plateaus. The 2 pp gate runs to the boundary."
-      subtitle={`A_EM ${pilot.accuracy.a1.toFixed(3)} → ${pilot.accuracy.a32.toFixed(3)}; flat ${pilot.accuracy.plateauLow.toFixed(3)}–${pilot.accuracy.plateauHigh.toFixed(3)} at k = ${pilot.accuracy.plateauFrom}–${pilot.accuracy.plateauTo}. The accuracy side was underpowered at n = ${pilot.questions}.`}
-      index={index}
-      total={total}
-    >
-      <div className="grid min-h-0 flex-1 grid-cols-[1.1fr_0.9fr] gap-[2cqw]">
-        <SlideCard title="A_EM, documented points" tone="deep" icon={<BarChart3 size="2.2cqh" />} fill={S.paper}>
-          <div className="flex h-full flex-col justify-center">
-            <AccuracyPlot />
-            <p className="mt-[1.2cqh] text-center font-mono text-[1.9cqh]" style={{ color: S.muted }}>
-              No connecting line: intermediate accuracy values are not reported in the source.
-            </p>
-          </div>
-        </SlideCard>
-
-        <SlideCard title="Static 2 pp claim" tone="rose" icon={<XCircle size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <p className="font-mono text-[6.2cqh] font-bold leading-none" style={{ color: S.rose }}>
-              DEAD
-            </p>
-            <p className="mt-[1.4cqh] font-mono text-[2.8cqh] font-bold">k* = {pilot.static2pp.kStar} · P = {pilot.static2pp.pOptimal.toFixed(2)}</p>
-            <p className="mt-[0.6cqh] text-[2.3cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              Below the {pilot.static2pp.threshold} selection gate. A power failure, not a flat-curve failure.
-            </p>
-            <div className="mt-[1.2cqh] border-t pt-[0.9cqh]" style={{ borderColor: S.line }}>
-              <p className="font-mono text-[2.0cqh]" style={{ color: S.inkSoft }}>
-                MDE at n = {pilot.questions}: roughly {pilot.mdeAt200}.
-              </p>
-              <p className="mt-[0.3cqh] font-mono text-[2.0cqh]" style={{ color: S.inkSoft }}>
-                The k = 16 interval includes the 2 pp floor.
-              </p>
-            </div>
-          </div>
-        </SlideCard>
-      </div>
-
-      <div className="mt-[1.5cqh]">
-        <SlideCallout tone="rose">
-          2 pp is estimation-only in the rerun. It is not a certification target, and the dead claim is not resurrected.
-        </SlideCallout>
-      </div>
-    </SlideFrame>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 6 · What survives                                                   */
-/* ------------------------------------------------------------------ */
-
-function SurvivesSlide({ index, total }: SlideProps) {
-  return (
-    <SlideFrame
-      badge="What survives"
-      badgeTone="teal"
-      pilot
-      title="Six measurements survive. One claim does not."
-      subtitle="The preliminary study is a precise energy measurement and a failed accuracy certification. Both belong in the record."
+      title="Depth is tuned for accuracy or latency — not joules per correct answer."
+      subtitle="A cheap wrong answer can look efficient; an accurate answer can waste energy on passages that never help."
       index={index}
       total={total}
     >
       <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.6cqw]">
-        <SlideCard title="Survived" tone="teal" icon={<CheckCircle2 size="2.2cqh" />}>
+        <SlideCard title="What goes wrong" tone="rose" icon={<AlertTriangle size="2.8cqh" />}>
           <SlideBullets
-            tone="teal"
             items={[
-              <><strong>{pilot.energy.span.toFixed(2)}×</strong> energy span, E(32) vs E(1).</>,
-              <><strong>R² = {pilot.fit.r2.toFixed(4)}</strong> affine energy fit.</>,
-              <><strong>{pilot.accuracy.plateauLow.toFixed(3)}–{pilot.accuracy.plateauHigh.toFixed(3)}</strong> accuracy plateau at k = {pilot.accuracy.plateauFrom}–{pilot.accuracy.plateauTo}.</>,
-              <><strong>{pilot.contextShare.at2}% → {pilot.contextShare.at32}%</strong> context-side share.</>,
-              <><strong>+{pilot.identity.at2.gap.toFixed(3)}</strong> identity gap at k = 2; CI includes zero.</>,
-              <><strong>{pilot.repeatCv.median.toFixed(2)}%</strong> median repeat CV at k = {pilot.repeatCv.k}.</>,
+              "Accuracy-only tuning picks the highest depth.",
+              "Energy-only tuning picks k = 0 and hides errors in the denominator.",
+              "One static depth ignores query heterogeneity.",
+              "Mean joules per query is not the deployment cost.",
             ]}
+            size="2.4cqh"
           />
         </SlideCard>
-
-        <SlideCard title="Did not / bounded" tone="rose" icon={<AlertTriangle size="2.2cqh" />}>
+        <SlideCard title="What we need" tone="teal" icon={<ShieldCheck size="2.8cqh" />}>
           <SlideBullets
-            tone="rose"
             items={[
-              <><strong>2 pp static optimum: DEAD.</strong> k* = {pilot.static2pp.kStar} boundary, P = {pilot.static2pp.pOptimal.toFixed(2)}.</>,
-              <><strong>Identity at k = 32: rejected.</strong> Gap +{pilot.identity.at32.gap.toFixed(3)} flags over-retrieval.</>,
-              <><strong>5 pp at k = {pilot.fivePp.k}: preliminary signal.</strong> {pilot.fivePp.savings}% savings, not certified.</>,
-              <><strong>Oracle: upper bound.</strong> {pilot.oracle.gain}% with hindsight, no learned policy.</>,
+              "A gated ratio E(k) = ΣJ / ΣC.",
+              "A paired 5 pp non-inferiority decision.",
+              "A causal test of the energy split.",
+              "A query-conditional policy at matched accuracy.",
             ]}
+            size="2.4cqh"
           />
         </SlideCard>
       </div>
-
-      <div className="mt-[1.5cqh]">
-        <SlideCallout tone="deep">
-          The surviving object is the decision problem around the accuracy margin, not a universal depth.
-        </SlideCallout>
-      </div>
+      <SlideCallout tone="rose">The denominator is correct answers, not queries. A cheap failure is not a green result.</SlideCallout>
     </SlideFrame>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 7 · The 5 pp signal                                                 */
+/* 5 · Motivation                                                      */
 /* ------------------------------------------------------------------ */
 
-function FivePpSlide({ index, total }: SlideProps) {
+function MotivationSlide({ index, total }: SlideProps) {
   return (
     <SlideFrame
-      badge="The 5 pp signal"
-      badgeTone="amber"
+      badge="Motivation"
+      badgeTone="teal"
+      title="Retrieval energy is a deployment cost, not a benchmark detail."
+      subtitle="The preliminary study: 32 passages cost 3.45× more per correct answer than one; accuracy was flat from k=4 to k=16."
+      index={index}
+      total={total}
       pilot
-      title="At 5 pp, the preliminary study chose k = 4."
-      subtitle="Preliminary signal, not certified. The powered rerun decides whether the policy claim survives."
-      index={index}
-      total={total}
     >
       <SlideKpiRow
         items={[
-          { value: `k = ${pilot.fivePp.k}`, label: "selected depth", sub: "interior candidate", tone: "amber" },
-          { value: `${pilot.fivePp.savings}%`, label: "energy savings", sub: "vs k = 32", tone: "amber" },
-          { value: String(pilot.fivePp.nStar), label: "N*", sub: "descriptive break-even", tone: "deep" },
-          { value: pilot.fivePp.pReported.toFixed(3).replace(/^0/, ""), label: "P reported", sub: "proposal value", tone: "deep" },
+          {
+            value: `${pilot.energy.span.toFixed(2)}×`,
+            label: "energy per correct answer",
+            sub: "E(32) vs E(1)",
+            tone: "deep",
+          },
+          { value: `${pilot.contextShare.at32}%`, label: "context-side share", sub: "at k = 32", tone: "teal" },
+          {
+            value: `${pilot.fivePp.savings}%`,
+            label: `savings at k = ${pilot.fivePp.k}`,
+            sub: "5 pp preliminary signal",
+            tone: "amber",
+          },
         ]}
       />
-
-      <div className="mt-[2cqh] grid min-h-0 flex-1 grid-cols-2 gap-[1.6cqw]">
-        <SlideCard title="What N* means" tone="deep" icon={<Timer size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <SlideFormula tone="deep">N* = C_cert / [A(k*)(E(k₀) − E(k*))]</SlideFormula>
-            <p className="mt-[1.2cqh] text-[2.35cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              The preliminary sweep cost {pilot.sweepKj} kJ. N* = {pilot.fivePp.nStar} at k = {pilot.fivePp.k} is the query count at which the saving
-              repays the sweep. It is not a deployment guarantee.
-            </p>
-            <p className="mt-[0.8cqh] font-mono text-[2.0cqh]" style={{ color: S.muted }}>
-              {pilot.savingsAt.queries.toLocaleString("en-US")} queries: {pilot.savingsAt.kj} kJ saved; calibration is {pilot.savingsAt.calibrationShareOfSavingPct}% of the saving. At 100,000: {pilot.calibrationShareAt100kPct}%.
-            </p>
-          </div>
-        </SlideCard>
-
-        <SlideCard title="Why it is not certified" tone="rose" icon={<XCircle size="2.2cqh" />}>
-          <SlideBullets
-            tone="rose"
-            items={[
-              `Preliminary n = ${pilot.questions}; the rerun is n = ${rerun.primary.n.toLocaleString("en-US")}.`,
-              `P = ${pilot.fivePp.pReported} is the proposal's 5 pp selection value; no preliminary NI test is reported.`,
-              "The rerun must report the NI test and selection probability separately.",
-              "No “certified” language before the freeze and the powered rerun.",
-            ]}
-          />
-        </SlideCard>
-      </div>
-
-      <div className="mt-[1.5cqh]">
-        <SlideCallout tone="amber">
-          The preliminary study picked a candidate. It did not certify one.
-        </SlideCallout>
-      </div>
-    </SlideFrame>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 8 · Powered rerun                                                   */
-/* ------------------------------------------------------------------ */
-
-function RerunSlide({ index, total }: SlideProps) {
-  return (
-    <SlideFrame
-      badge="The rerun"
-      badgeTone="deep"
-      title="Sized around the failure."
-      subtitle={`The preliminary study's MDE was roughly ${pilot.mdeAt200} at n = ${pilot.questions}. The rerun is powered for a 5 pp decision.`}
-      index={index}
-      total={total}
-    >
-      <SlideKpiRow
-        items={[
-          { value: `${rerun.primary.n.toLocaleString("en-US")} × ${rerun.primary.depths.length}`, label: "SQuAD primary", sub: "n × depths", tone: "deep" },
-          { value: String(rerun.replication.n), label: "1.5B replication", sub: rerun.replication.reader, tone: "teal" },
-          { value: String(rerun.hotpot.n), label: "HotpotQA", sub: "distractor, k ≤ 10", tone: "amber" },
-          { value: String(rerun.boundary.n), label: "boundary probe", sub: "k = 32, 48, 64", tone: "rose" },
-        ]}
-      />
-
-      <div className="mt-[2cqh] grid min-h-0 flex-1 grid-cols-[1.05fr_0.95fr] gap-[1.8cqw]">
-        <div className="flex flex-col justify-between border-2 p-[1.8cqw]" style={{ borderColor: S.deep, background: S.deep, color: S.white }}>
-          <div>
-            <p className="font-mono text-[1.95cqh] uppercase tracking-[0.14em]" style={{ color: S.lime }}>
-              Primary decision / P1
-            </p>
-            <p className="mt-[1.4cqh] font-mono text-[3.9cqh] font-semibold tracking-[-0.03em]">
-              k = {rerun.primary.candidateK} <span style={{ color: "#9fb09f" }}>vs</span> k = {rerun.primary.referenceK}
-            </p>
-            <p className="mt-[0.8cqh] text-[2.5cqh] font-bold">5 pp EM non-inferiority · one-sided α = .05</p>
-            <p className="mt-[0.4cqh] text-[2.25cqh]" style={{ color: "#c9d6c9" }}>
-              ≥ {rerun.primary.minSavingsPct}% savings required. {rerun.primary.secondaryMarginPp} pp is estimation-only.
-            </p>
-          </div>
-          <div className="mt-[1.4cqh] grid grid-cols-3 gap-[1cqw] border-t pt-[1.1cqh]" style={{ borderColor: "rgba(200,240,79,0.2)" }}>
-            {[
-              ["MDE", rerun.power.mdeAt1000],
-              ["SE", rerun.power.seAt1000],
-              ["95% half-width", rerun.power.halfWidthAt1000],
-            ].map(([label, value]) => (
-              <div key={label}>
-                <p className="font-mono text-[1.75cqh] uppercase tracking-[0.08em]" style={{ color: "#a9baa9" }}>{label}</p>
-                <p className="mt-[0.2cqh] font-mono text-[2.4cqh] font-bold" style={{ color: S.white }}>{value}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-[1.2cqh] font-mono text-[1.8cqh] leading-relaxed" style={{ color: "#a9baa9" }}>
-            Planning values, not results. Preliminary-derived MDE at n = {pilot.questions}: {pilot.mdeAt200}.
+      <div className="mt-[2.2cqh] grid min-h-0 flex-1 grid-cols-2 gap-[1.6cqw]">
+        <SlideCard title="Why now" tone="teal" icon={<Zap size="2.8cqh" />}>
+          <p className="text-[2.5cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Production RAG runs at scale. A 3× energy difference per correct answer is a real bill,
+            not a rounding error.
           </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-[1.2cqw]">
-          {[
-            { icon: Database, title: "Distractor", body: "10 paragraphs per question; no pooling." },
-            { icon: ScanLine, title: "Boundary", body: "16k-token context check; diagnostic, not powered." },
-            { icon: PlugZap, title: "Taxes", body: "150 questions per condition; fixed and per-passage." },
-            { icon: GitBranch, title: "Policy", body: "600 / 200 / 200; test touched once." },
-          ].map((item) => {
-            const Icon = item.icon;
-            return (
-              <div key={item.title} className="border-2 p-[1.2cqw]" style={{ borderColor: S.line, background: S.alt }}>
-                <Icon size="2.4cqh" style={{ color: S.teal }} aria-hidden="true" />
-                <p className="mt-[0.8cqh] text-[2.4cqh] font-bold">{item.title}</p>
-                <p className="mt-[0.4cqh] text-[2.05cqh] leading-snug" style={{ color: S.inkSoft }}>{item.body}</p>
-              </div>
-            );
-          })}
-        </div>
+        </SlideCard>
+        <SlideCard title="The green question" tone="amber" icon={<Gauge size="2.8cqh" />}>
+          <p className="text-[2.5cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            How much accuracy are we willing to trade for how many joules — and is finding the
+            trade-off worth its own energy?
+          </p>
+        </SlideCard>
       </div>
-
-      <div className="mt-[1.5cqh]">
-        <SlideCallout tone="deep">
-          No confirmatory result exists yet. This is the design, with the gates to be frozen before the data.
-        </SlideCallout>
-      </div>
+      <SlideCallout tone="amber">Preliminary evidence only. The 5 pp result is a signal, not a certificate.</SlideCallout>
     </SlideFrame>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 9 · Measurement                                                     */
+/* 6 · Research gap                                                    */
 /* ------------------------------------------------------------------ */
 
-function MeasurementSlide({ index, total }: SlideProps) {
-  const blockMin = Math.min(...pilot.blockFactors.map((item) => item.factor)).toFixed(3);
-  const blockMax = Math.max(...pilot.blockFactors.map((item) => item.factor)).toFixed(3);
-
+function GapSlide({ index, total }: SlideProps) {
+  const rows = [
+    ["Static top-k / accuracy-only", "Accuracy", "No", "No", "No"],
+    ["Adaptive-k / token or latency", "Tokens or latency", "No", "No", "Partial policy"],
+    ["Energy benchmarks", "Power / energy", "Partial", "No", "No"],
+    ["This proposal", "Gated E(k)", "Yes", "Yes", "Yes"],
+  ];
   return (
     <SlideFrame
-      badge="Measurement"
+      badge="Research gap"
       badgeTone="amber"
-      pilot
-      title="A joule is attributed, not guessed."
-      subtitle="GPU energy is the primary measurement. CPU retrieval is a time-to-joules proxy. The wall meter is a cross-check."
+      title="Existing work optimizes accuracy, latency, or tokens. The gated energy decision is missing."
+      subtitle="A qualitative benchmark matrix, not a performance leaderboard."
       index={index}
       total={total}
     >
-      <SlideFormula tone="deep">
-        J_k(q) = J_ret + J_pre + J_dec + J_fix
-      </SlideFormula>
-
-      <div className="mt-[1.4cqh] grid grid-cols-4 gap-[1.2cqw]">
-        {[
-          ["J_ret", "BM25 + fetch", "CPU proxy · 20 W"],
-          ["J_pre", "Prefill", "NVML · dominant at high k"],
-          ["J_dec", "Decode", "NVML"],
-          ["J_fix", "Fixed", "Partly amortized"],
-        ].map(([symbol, label, note]) => (
-          <div key={symbol} className="border px-[1cqw] py-[0.9cqh]" style={{ borderColor: S.line, background: S.paper }}>
-            <p className="font-mono text-[2.4cqh] font-bold" style={{ color: S.teal }}>{symbol}</p>
-            <p className="mt-[0.3cqh] text-[2.15cqh] font-bold">{label}</p>
-            <p className="mt-[0.2cqh] text-[1.9cqh]" style={{ color: S.muted }}>{note}</p>
-          </div>
-        ))}
+      <div className="flex min-h-0 flex-1 flex-col justify-center gap-[1.6cqh]">
+        <SlideTable
+          head={["Approach", "Optimizes", "Gated E(k)?", "Causal test?", "N* + policy?"]}
+          rows={rows}
+          tone="amber"
+          widths={["31%", "23%", "15%", "15%", "16%"]}
+        />
+        <p className="text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+          The missing object is a decision rule, not another benchmark.
+        </p>
       </div>
-
-      <div className="mt-[1.4cqh] grid min-h-0 flex-1 grid-cols-3 gap-[1.2cqw]">
-        {[
-          { icon: Activity, value: measurement.sensor.cadence, title: "NVML cadence", note: "Coarse driver update, about 1 Hz. Not 100 ms of independent information." },
-          { icon: Zap, value: `${pilot.idle.preW} W`, title: "Idle baseline", note: `60 s pre-run, CV ${pilot.idle.preCv}%. Post-run ${pilot.idle.postW} W changes E ratios by under 1%.` },
-          { icon: Gauge, value: "20 queries", title: "Block calibration", note: `Preliminary factors ${blockMin}–${blockMax}; largest correction at k = 2.` },
-          { icon: ShieldCheck, value: "10-hex", title: "Nonce control", note: `Prefix reuse cut prefill from ${pilot.nonce.prefillWithMs} ms to ${pilot.nonce.prefillWithoutMs} ms. Every request gets a fresh nonce.` },
-          { icon: Thermometer, value: `${pilot.thermal.tempStartC} → ${pilot.thermal.tempEndC} °C`, title: "Thermal log", note: `Clock ${pilot.thermal.clockStartMhz} → ${pilot.thermal.clockEndMhz} MHz; power ${pilot.thermal.powerStartW} → ${pilot.thermal.powerEndW} W. Energy stayed stable.` },
-          { icon: Timer, value: `${pilot.repeatCv.median.toFixed(2)}%`, title: "Repeat CV", note: `Median at k = ${pilot.repeatCv.k}; max ${pilot.repeatCv.max}%. Three blocks of 20 identical queries.` },
-        ].map((item) => {
-          const Icon = item.icon;
-          return (
-            <div key={item.title} className="flex flex-col border p-[1.2cqw]" style={{ borderColor: S.line, background: S.alt }}>
-              <Icon size="2.2cqh" style={{ color: S.amber }} aria-hidden="true" />
-              <p className="mt-[0.7cqh] font-mono text-[2.8cqh] font-bold tnum" style={{ color: S.ink }}>{item.value}</p>
-              <p className="mt-[0.2cqh] text-[2.1cqh] font-bold">{item.title}</p>
-              <p className="mt-[0.3cqh] text-[1.9cqh] leading-snug" style={{ color: S.inkSoft }}>{item.note}</p>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="mt-[1.4cqh]">
-        <SlideCallout tone="amber">
-          Absolute joules are conditional on block calibration and the repeat CV. Per-query energy is a paired observation.
-        </SlideCallout>
-      </div>
+      <SlideCallout tone="amber">
+        Grouped citations: Pan et al. 2025; Hwang 2026; Hashemi et al. 2025; RAGMark 2026;
+        Tail-Aware Adaptive-k 2026; Taguchi et al. 2025; Token Arena 2026.
+      </SlideCallout>
     </SlideFrame>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 10 · Data                                                           */
+/* 7 · Objectives and hypotheses                                       */
 /* ------------------------------------------------------------------ */
 
-function DataSlide({ index, total }: SlideProps) {
+function ObjectivesSlide({ index, total }: SlideProps) {
+  return (
+    <SlideFrame
+      badge="Objectives"
+      badgeTone="deep"
+      title="Three questions, seven pre-registered hypotheses."
+      subtitle="A decision problem, not a curve-fitting exercise."
+      index={index}
+      total={total}
+    >
+      <div className="grid min-h-0 flex-1 grid-cols-3 gap-[1.2cqw]">
+        <SlideCard title="RQ1 · Static depth" tone="deep" icon={<Target size="2.8cqh" />}>
+          <p className="text-[2.5cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Which depth minimizes E(k) under a 5 pp accuracy floor?
+          </p>
+          <p className="mt-[1.4cqh] font-mono text-[2.1cqh] font-bold" style={{ color: S.teal }}>
+            H1–H4
+          </p>
+        </SlideCard>
+        <SlideCard title="RQ2 · Adaptivity" tone="teal" icon={<GitBranch size="2.8cqh" />}>
+          <p className="text-[2.5cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Does a query-conditional policy beat the best static depth at matched accuracy?
+          </p>
+          <p className="mt-[1.4cqh] font-mono text-[2.1cqh] font-bold" style={{ color: S.teal }}>
+            H5
+          </p>
+        </SlideCard>
+        <SlideCard title="RQ3 · Causality & cost" tone="amber" icon={<Timer size="2.8cqh" />}>
+          <p className="text-[2.5cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Do energy taxes move k* in the predicted direction, and is calibration worth it?
+          </p>
+          <p className="mt-[1.4cqh] font-mono text-[2.1cqh] font-bold" style={{ color: S.amber }}>
+            H6–H7 · N*
+          </p>
+        </SlideCard>
+      </div>
+      <SlideCallout tone="teal">
+        Primary decision: 5 pp EM non-inferiority at k=4 vs k=32, with ≥20% savings. The 2 pp
+        margin is estimation-only.
+      </SlideCallout>
+    </SlideFrame>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 8 · Scope and claim boundary                                        */
+/* ------------------------------------------------------------------ */
+
+function ScopeSlide({ index, total }: SlideProps) {
+  return (
+    <SlideFrame
+      badge="Scope"
+      badgeTone="rose"
+      title="The claim is deliberately narrow."
+      subtitle="A proposal is also a decision about what not to claim."
+      index={index}
+      total={total}
+    >
+      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.6cqw]">
+        <SlideCard title="We will test" tone="teal" icon={<CheckCircle2 size="2.8cqh" />}>
+          <SlideBullets
+            items={[
+              "5 pp non-inferiority at an interior k.",
+              "At least 20% energy savings.",
+              "Identity, context share, and replication.",
+              "Policy capture and tax signs.",
+            ]}
+            size="2.4cqh"
+          />
+        </SlideCard>
+        <SlideCard title="We will not claim" tone="rose" icon={<XCircle size="2.8cqh" />}>
+          <SlideBullets
+            items={[
+              "A universal k*.",
+              "A 2 pp optimum.",
+              "5 pp certified before the rerun.",
+              "A learned-policy gain from the oracle.",
+              "Carbon optimality or frontier/dense/full-NQ generalization.",
+            ]}
+            size="2.35cqh"
+          />
+        </SlideCard>
+      </div>
+      <SlideCallout tone="rose">
+        The 2 pp static claim is dead. The 5 pp result is a preliminary signal, not a certificate.
+      </SlideCallout>
+    </SlideFrame>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 9 · Datasets                                                        */
+/* ------------------------------------------------------------------ */
+
+function DatasetSlide({ index, total }: SlideProps) {
   return (
     <SlideFrame
       badge="Data"
       badgeTone="teal"
       title="Two corpora, one depth question."
-      subtitle="SQuAD isolates the depth effect inside a closed corpus. HotpotQA stresses multi-hop evidence and distractor-induced non-monotonicity."
+      subtitle="SQuAD isolates depth; HotpotQA stresses multi-hop evidence and distractors."
       index={index}
       total={total}
     >
-      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.6cqw]">
-        <SlideCard title="SQuAD v1.1 dev · primary" tone="teal" icon={<Database size="2.2cqh" />}>
-          <SlideTable
-            head={["Field", "Value"]}
-            rows={[
-              ["Upstream", `${datasets.squad.upstreamQuestions.toLocaleString("en-US")} questions · ${datasets.squad.upstreamContexts.toLocaleString("en-US")} contexts`],
-              ["Corpus", `${pilot.passages.toLocaleString("en-US")} ${pilot.chunkWords}-word passages`],
-              ["Used", `${datasets.squad.usedPrimary.toLocaleString("en-US")} primary · ${datasets.squad.usedReplication} replication · ${datasets.squad.usedBoundary} boundary`],
-              ["Retriever", datasets.squad.retriever],
-              ["Metric", datasets.squad.primaryMetric],
+      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.4cqw]">
+        <SlideCard title="SQuAD v1.1 dev · primary" tone="teal" icon={<Database size="2.8cqh" />}>
+          <SlideBullets
+            items={[
+              `${datasets.squad.upstreamQuestions.toLocaleString("en-US")} questions; ${datasets.squad.upstreamContexts.toLocaleString("en-US")} contexts.`,
+              `${datasets.squad.corpus}; ${datasets.squad.retriever}.`,
+              `n=${datasets.squad.usedPrimary.toLocaleString("en-US")} primary · ${datasets.squad.usedReplication} replication · ${datasets.squad.usedBoundary} boundary.`,
+              `${datasets.squad.primaryMetric}; ${datasets.squad.license}.`,
             ]}
-            tone="teal"
-            widths={["26%", "74%"]}
-            compact
+            size="2.35cqh"
           />
-          <p className="mt-[1.1cqh] text-[1.95cqh] leading-snug" style={{ color: S.inkSoft }}>
-            Closed corpus: every question searches the same fixed collection. That isolates depth
-            and limits external validity.
-          </p>
         </SlideCard>
-
-        <SlideCard title="HotpotQA · distractor" tone="amber" icon={<Layers size="2.2cqh" />}>
-          <SlideTable
-            head={["Field", "Value"]}
-            rows={[
-              ["Upstream", `${datasets.hotpot.upstreamQuestions.toLocaleString("en-US")} questions`],
-              ["Used", `${datasets.hotpot.used} questions`],
-              ["Corpus", `${datasets.hotpot.paragraphs} paragraphs: ${datasets.hotpot.goldParagraphs} gold + ${datasets.hotpot.distractors} distractors`],
-              ["Depths", `${datasets.hotpot.depths.join(",")}; ${datasets.hotpot.retriever}`],
-              ["Constraint", "No pooling across questions"],
+        <SlideCard title="HotpotQA distractor · stress" tone="amber" icon={<Layers size="2.8cqh" />}>
+          <SlideBullets
+            items={[
+              `${datasets.hotpot.upstreamQuestions.toLocaleString("en-US")} questions; ${datasets.hotpot.used} used.`,
+              `${datasets.hotpot.paragraphs} paragraphs per question: ${datasets.hotpot.goldParagraphs} gold + ${datasets.hotpot.distractors} distractors.`,
+              `k ∈ {${datasets.hotpot.depths.join(",")}}; ${datasets.hotpot.retriever}.`,
+              `No pooling across questions; ${datasets.hotpot.license}.`,
             ]}
-            tone="amber"
-            widths={["26%", "74%"]}
-            compact
+            size="2.35cqh"
           />
-          <p className="mt-[1.1cqh] text-[1.95cqh] leading-snug" style={{ color: S.inkSoft }}>
-            Per-question corpus; pooling paragraphs across questions would change the task.
-          </p>
         </SlideCard>
       </div>
-
-      <div className="mt-[1.6cqh] grid grid-cols-3 gap-[1.2cqw]">
-        <div className="border-l-[0.35cqw] px-[1.2cqw] py-[0.9cqh]" style={{ borderColor: S.teal, background: S.tealSoft }}>
-          <p className="font-mono text-[2.6cqh] font-bold" style={{ color: S.teal }}>
-            {pilot.recall.goldContext[pilot.recall.goldContext.length - 1].toFixed(1)}%
-          </p>
-          <p className="mt-[0.2cqh] text-[1.95cqh] font-semibold">Preliminary gold-context recall at k = 32</p>
-          <p className="mt-[0.2cqh] font-mono text-[1.75cqh]" style={{ color: S.muted }}>Preliminary recall</p>
-        </div>
-        <div className="border-l-[0.35cqw] px-[1.2cqw] py-[0.9cqh]" style={{ borderColor: S.amber, background: S.amberSoft }}>
-          <p className="font-mono text-[2.6cqh] font-bold" style={{ color: S.amber }}>~{datasets.squad.goldOutsideCapPct}%</p>
-          <p className="mt-[0.2cqh] text-[1.95cqh] font-semibold">Gold evidence outside the top-32 cap</p>
-          <p className="mt-[0.2cqh] font-mono text-[1.75cqh]" style={{ color: S.muted }}>Preliminary recall ceiling</p>
-        </div>
-        <div className="border-l-[0.35cqw] px-[1.2cqw] py-[0.9cqh]" style={{ borderColor: S.rose, background: S.roseSoft }}>
-          <p className="font-mono text-[2.6cqh] font-bold" style={{ color: S.rose }}>CC BY-SA 4.0</p>
-          <p className="mt-[0.2cqh] text-[1.95cqh] font-semibold">No raw question or context text is redistributed</p>
-          <p className="mt-[0.2cqh] font-mono text-[1.75cqh]" style={{ color: S.muted }}>Both datasets</p>
-        </div>
-      </div>
-
-      <div className="mt-[1.4cqh]">
-        <SlideCallout tone="deep">
-          One closed corpus, one distractor set, BM25 only, English only. External validity is bounded by design.
-        </SlideCallout>
-      </div>
+      <SlideCallout tone="deep">
+        Readers: qwen3.5:4b Q4 · replication: Qwen2.5-1.5B · hardware: RTX 3060 6 GB · no raw text
+        is redistributed.
+      </SlideCallout>
     </SlideFrame>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 11 · Theory                                                         */
+/* 10 · Conventional vs proposed                                       */
 /* ------------------------------------------------------------------ */
 
-function TheorySlide({ index, total }: SlideProps) {
+function ContrastSlide({ index, total }: SlideProps) {
   return (
     <SlideFrame
-      badge="Theory"
+      badge="Method"
       badgeTone="deep"
-      pilot
-      title="Small theory, falsifiable."
-      subtitle="Three results and one counterexample. The identity is local, not a global law of retrieval."
+      title="From static top-k to a gated energy decision."
+      subtitle="The baseline is not wrong; it answers a different question."
       index={index}
       total={total}
     >
-      <div className="grid min-h-0 flex-1 grid-cols-3 grid-rows-[1fr_auto] gap-[1.5cqw]">
-        <SlideCard title="Identity" tone="teal" icon={<Scale size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <SlideFormula tone="teal">{theory.theorems[0].formula}</SlideFormula>
-            <p className="mt-[1.1cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              At an interior optimum, energy and accuracy elasticities are equal. A local, scale-free
-              diagnostic.
-            </p>
-            <p className="mt-[1cqh] font-mono text-[2.0cqh] font-bold" style={{ color: S.teal }}>
-              k = 2: +{pilot.identity.at2.gap.toFixed(3)} · CI [{pilot.identity.at2.ci[0].toFixed(3)}, +{pilot.identity.at2.ci[1].toFixed(3)}]
-            </p>
-            <p className="mt-[0.3cqh] font-mono text-[2.0cqh]" style={{ color: S.rose }}>
-              k = 32: +{pilot.identity.at32.gap.toFixed(3)} → over-retrieval
-            </p>
-          </div>
+      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.6cqw]">
+        <SlideCard title="Conventional" tone="amber" icon={<Layers size="2.8cqh" />}>
+          <SlideBullets
+            items={[
+              "Fixed top-k for every query.",
+              "Accuracy-only or latency-only tuning.",
+              "Mean energy or tokens, not per correct answer.",
+              "No accuracy floor and no paired decision.",
+            ]}
+            size="2.4cqh"
+          />
         </SlideCard>
-
-        <SlideCard title="Price of static depth" tone="amber" icon={<BarChart3 size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <SlideFormula tone="amber">{theory.theorems[1].formula}</SlideFormula>
-            <p className="mt-[1.1cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              For any static depth there is a query mixture on which it is arbitrarily worse at equal
-              accuracy. An impossibility result, not a policy claim.
-            </p>
-          </div>
+        <SlideCard title="Proposed" tone="teal" icon={<Target size="2.8cqh" />}>
+          <SlideBullets
+            items={[
+              "Gated E(k) = ΣJ / ΣC.",
+              "Feasible set under A_min.",
+              "Paired 5 pp non-inferiority.",
+              "Identity, N*, causal taxes, and a learned policy.",
+            ]}
+            size="2.4cqh"
+          />
         </SlideCard>
-
-        <SlideCard title="Certification" tone="deep" icon={<Timer size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <SlideFormula tone="deep">{theory.theorems[2].formula}</SlideFormula>
-            <p className="mt-[1.1cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              Finding the depth is itself an energy purchase. The preliminary sweep cost {pilot.sweepKj} kJ; N* = {pilot.fivePp.nStar}
-              at k = {pilot.fivePp.k}.
-            </p>
-          </div>
-        </SlideCard>
-
-        <div className="col-span-3">
-          <SlideCard title="Distractor counterexample" tone="rose" icon={<AlertTriangle size="2.2cqh" />}>
-            <div className="grid grid-cols-[1.25fr_1fr_1.1fr] items-center gap-[1.4cqw]">
-              <p className="font-mono text-[2.0cqh] leading-snug" style={{ color: S.inkSoft }}>
-                {theory.counterexample.setup}
-              </p>
-              <p className="font-mono text-[2.0cqh] leading-snug" style={{ color: S.ink }}>
-                {theory.counterexample.energies}
-              </p>
-              <p className="text-[2.0cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-                A local minimum at k = 1 and a lower global minimum at k = 4. A greedy policy misses 4.
-              </p>
-            </div>
-          </SlideCard>
-        </div>
       </div>
+      <SlideCallout tone="teal">The decision unit is joules per correct answer, not joules per query.</SlideCallout>
+    </SlideFrame>
+  );
+}
 
-      <div className="mt-[1.5cqh]">
-        <SlideCallout tone="rose">
-          Coverage fit: A₀ = {theory.coverageFit.a0}, p = {theory.coverageFit.p}, R² = {theory.coverageFit.r2}. Global unimodality is rejected.
-        </SlideCallout>
+/* ------------------------------------------------------------------ */
+/* 11 · Method core                                                    */
+/* ------------------------------------------------------------------ */
+
+function MethodSlide({ index, total }: SlideProps) {
+  return (
+    <SlideFrame
+      badge="Method"
+      badgeTone="deep"
+      title="Four pieces, each falsifiable."
+      subtitle="None of them assumes a universal k*."
+      index={index}
+      total={total}
+    >
+      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
+        <SlideCard title="Gated estimand" tone="deep" icon={<Gauge size="2.8cqh" />}>
+          <SlideFormula>E(k) = Σ J_k / Σ C_k</SlideFormula>
+          <p className="mt-[1.2cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Feasible set: A(k) ≥ A(32) − 5 pp.
+          </p>
+        </SlideCard>
+        <SlideCard title="Optimal-depth identity" tone="teal" icon={<GitBranch size="2.8cqh" />}>
+          <SlideFormula>k J′(k) / J(k) = k A′(k) / A(k)</SlideFormula>
+          <p className="mt-[1.2cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            A local diagnostic: it flags over-retrieval.
+          </p>
+        </SlideCard>
+        <SlideCard title="Certification threshold" tone="amber" icon={<Timer size="2.8cqh" />}>
+          <SlideFormula>N* = C_cert / [A(k*)(E(k₀) − E(k*))]</SlideFormula>
+          <p className="mt-[1.2cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Finding the depth is itself an energy purchase.
+          </p>
+        </SlideCard>
+        <SlideCard title="Causal energy tax" tone="rose" icon={<FlaskConical size="2.8cqh" />}>
+          <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Fixed tax raises k*; per-passage tax lowers k*. A wrong sign falsifies the affine/split
+            model.
+          </p>
+        </SlideCard>
       </div>
     </SlideFrame>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 12 · Gates                                                          */
+/* 12 · Flow diagram                                                   */
 /* ------------------------------------------------------------------ */
 
-function GatesSlide({ index, total }: SlideProps) {
-  const killRows = gates.kill.map((gate) => [
-    <span key="id" className="font-mono font-bold" style={{ color: S.deep }}>{gate.id}</span>,
-    gate.criterion,
-    <Status key="status" pass={gate.status === "pass"} />,
-  ]);
-
+function FlowSlide({ index, total }: SlideProps) {
   return (
     <SlideFrame
-      badge="Gates"
-      badgeTone="rose"
-      pilot
-      title="Gates are allowed to fire."
-      subtitle="Preliminary adjudication: four pass, three fail. The rerun re-adjudicates each once, on the pre-specified population."
+      badge="Flow"
+      badgeTone="deep"
+      title="One pipeline from data to decision."
+      subtitle="The same sweep produces the curve, the identity test, the certification cost, and the policy data."
       index={index}
       total={total}
     >
-      <div className="grid min-h-0 flex-1 grid-cols-[1.2fr_0.8fr] items-center gap-[1.6cqw]">
-        <div className="min-h-0">
-          <SlideTable
-            head={["Gate", "Criterion", "Preliminary"]}
-            rows={killRows}
-            tone="rose"
-            widths={["9%", "72%", "19%"]}
-            compact
+      <div className="flex min-h-0 flex-1 items-center justify-center">
+        <Image
+          src="/flow-diagram.png"
+          alt="Experiment pipeline: prepare data, build a BM25 index, sweep seven depths, measure energy with NVML and blocks, score with exact match and bootstrap, and analyze E(k), N*, and policy. Decision flow: freeze the preregistration, P0 golden reproduction, P1 powered run, gates G1-G5 and K1-K7, then P2, P3, and P4."
+          width={7512}
+          height={3167}
+          priority
+          className="h-full w-full object-contain"
+        />
+      </div>
+      <SlideCallout tone="teal">The sweep is the measurement; the gates are the decision.</SlideCallout>
+    </SlideFrame>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 13 · Experimental setup                                             */
+/* ------------------------------------------------------------------ */
+
+function SetupSlide({ index, total }: SlideProps) {
+  return (
+    <SlideFrame
+      badge="Setup"
+      badgeTone="amber"
+      title="A powered, controlled, local experiment."
+      subtitle="Everything is pre-registered before the confirmatory accuracy data are seen."
+      index={index}
+      total={total}
+    >
+      <div className="grid min-h-0 flex-1 grid-cols-3 gap-[1.2cqw]">
+        <SlideCard title="Conditions" tone="deep" icon={<Layers size="2.8cqh" />}>
+          <SlideBullets
+            items={[
+              `SQuAD ${rerun.primary.n.toLocaleString("en-US")} × 7 depths`,
+              `1.5B replication ${rerun.replication.n} × 7`,
+              `HotpotQA ${rerun.hotpot.n} × 6`,
+              `Boundary ${rerun.boundary.n} × 3 · taxes ${rerun.taxes.n} × 2`,
+            ]}
+            size="2.25cqh"
           />
-          <p className="mt-[0.8cqh] font-mono text-[1.9cqh]" style={{ color: S.muted }}>
-            K1–K4 and K6 firing is a kill/reframe. K5 and K7 are fixable before they are kills.
+        </SlideCard>
+        <SlideCard title="Measurement" tone="teal" icon={<Gauge size="2.8cqh" />}>
+          <SlideBullets
+            items={[
+              "NVML 100 ms; idle 60 s.",
+              "20-query blocks; 10-hex nonce.",
+              "Thermal log; repeat CV; wall meter.",
+              "10,000 paired bootstrap resamples.",
+            ]}
+            size="2.25cqh"
+          />
+        </SlideCard>
+        <SlideCard title="Decision" tone="rose" icon={<ShieldCheck size="2.8cqh" />}>
+          <SlideBullets
+            items={[
+              "5 pp NI at k=4 vs k=32.",
+              "≥20% energy savings.",
+              "One-sided α = 0.05.",
+              "2 pp estimation-only; G1–G5 / K1–K7.",
+            ]}
+            size="2.25cqh"
+          />
+        </SlideCard>
+      </div>
+      <SlideCallout tone="amber">
+        15–20 GPU-hours · RTX 3060 6 GB · batch 1 · AC power · screen off.
+      </SlideCallout>
+    </SlideFrame>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 14 · Analysis plan and gates                                        */
+/* ------------------------------------------------------------------ */
+
+function AnalysisSlide({ index, total }: SlideProps) {
+  return (
+    <SlideFrame
+      badge="Analysis"
+      badgeTone="rose"
+      title="The gates decide what the result means."
+      subtitle="A fired gate is a finding, not a failure to hide."
+      index={index}
+      total={total}
+    >
+      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.4cqw]">
+        <SlideCard title="Primary decision" tone="rose" icon={<Target size="2.8cqh" />}>
+          <p className="text-[2.55cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            5 pp EM non-inferiority at k=4 vs k=32.
+          </p>
+          <div className="mt-[1.2cqh]">
+            <SlideFormula>A(4) − A(32) &gt; −5 pp · savings ≥ 20%</SlideFormula>
+          </div>
+          <p className="mt-[1.2cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            One-sided α = .05 · 10,000 paired bootstrap resamples.
+          </p>
+          <p className="mt-[0.9cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Paired n, discordant counts, and invalid counts are reported.
+          </p>
+          <p className="mt-[0.9cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+            The 2 pp margin is estimation-only.
+          </p>
+        </SlideCard>
+        <SlideCard title="Gate families" tone="deep" icon={<ListChecks size="2.8cqh" />}>
+          <div className="grid grid-cols-2 gap-[1.2cqw]">
+            <div>
+              <p className="font-mono text-[2.05cqh] font-bold uppercase tracking-[0.1em]" style={{ color: S.teal }}>
+                Go · G1–G5
+              </p>
+              <ul className="mt-[0.6cqh] space-y-[0.55cqh] text-[2.15cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+                <li>G1 · 5 pp NI + ≥20%</li>
+                <li>G2 · upper bound ≤5 pp</li>
+                <li>G3 · context share [0.10, 0.70]</li>
+                <li>G4 · oracle ≥20%, capture ≥50%</li>
+                <li>G5 · replication</li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-mono text-[2.05cqh] font-bold uppercase tracking-[0.1em]" style={{ color: S.rose }}>
+                Kill · K1–K7
+              </p>
+              <ul className="mt-[0.6cqh] space-y-[0.55cqh] text-[2.15cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+                <li>K1 · energy effect &lt;10%</li>
+                <li>K2 · k* at boundary</li>
+                <li>K3 · P(k*) &lt; 0.8</li>
+                <li>K4 · context share &lt;5%</li>
+                <li>K5 · k* span &gt;1</li>
+                <li>K6 · oracle gain &lt;15%</li>
+                <li>K7 · repeat CV &gt;20%</li>
+              </ul>
+            </div>
+          </div>
+        </SlideCard>
+      </div>
+      <SlideCallout tone="rose">
+        No gate is added, removed, or re-thresholded after the primary outcome.
+      </SlideCallout>
+    </SlideFrame>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 15 · Preliminary results                                            */
+/* ------------------------------------------------------------------ */
+
+function PreliminarySlide({ index, total }: SlideProps) {
+  return (
+    <SlideFrame
+      badge="Preliminary results"
+      badgeTone="teal"
+      title="The preliminary study changed the claim."
+      subtitle="A precise energy measurement and a failed accuracy certification. Both belong in the record."
+      index={index}
+      total={total}
+      pilot
+    >
+      <SlideKpiRow
+        cols={3}
+        items={[
+          {
+            value: `${pilot.energy.span.toFixed(2)}×`,
+            label: "energy at k=32 vs k=1",
+            sub: `${pilot.energy.e32.toFixed(1)} vs ${pilot.energy.e1.toFixed(1)} J/correct`,
+            tone: "deep",
+          },
+          {
+            value: `${pilot.contextShare.at32}%`,
+            label: "context-side share",
+            sub: `at k=32; retrieval ${pilot.retrievalShare.min}–${pilot.retrievalShare.max}%`,
+            tone: "teal",
+          },
+          {
+            value: `${pilot.repeatCv.median.toFixed(2)}%`,
+            label: "median repeat CV",
+            sub: `max ${pilot.repeatCv.max.toFixed(2)}%; k=${pilot.repeatCv.k}`,
+            tone: "amber",
+          },
+          {
+            value: pilot.accuracy.a32.toFixed(3),
+            label: "A_EM at k=32",
+            sub: `${pilot.accuracy.a1.toFixed(3)} at k=1; plateau ${pilot.accuracy.plateauLow.toFixed(3)}–${pilot.accuracy.plateauHigh.toFixed(3)}`,
+            tone: "deep",
+          },
+          {
+            value: `P = ${pilot.static2pp.pOptimal.toFixed(2).replace(/^0/, "")}`,
+            label: "2 pp selection",
+            sub: "DEAD at the boundary",
+            tone: "rose",
+          },
+          {
+            value: `${pilot.fivePp.savings}%`,
+            label: `5 pp savings at k=${pilot.fivePp.k}`,
+            sub: `N* = ${pilot.fivePp.nStar}; signal, not certified`,
+            tone: "amber",
+          },
+        ]}
+      />
+      <div className="mt-[1.3cqh] border-l-[0.4cqw] px-[1.4cqw] py-[0.8cqh]" style={{ borderColor: S.rose, background: S.roseSoft }}>
+        <p className="text-[2.25cqh] font-bold leading-snug" style={{ color: S.ink }}>
+          The 2 pp static claim is DEAD. The 5 pp result is a preliminary signal, not a certificate.
+        </p>
+      </div>
+      <div className="mt-[1.2cqh] grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
+        <SlideCard title="What survived" tone="teal">
+          <SlideBullets
+            items={[
+              "Steep energy–depth tradeoff: 3.45×.",
+              "Affine fit R² = 0.9990; context share 36.3% → 85.1%.",
+              "Identity holds at k=2; repeat CV median 3.80%.",
+            ]}
+            size="2.2cqh"
+          />
+        </SlideCard>
+        <SlideCard title="What died / is bounded" tone="rose">
+          <SlideBullets
+            items={[
+              "2 pp static optimum: DEAD (P = .61).",
+              "5 pp at k=4: signal, not certified.",
+              `Oracle ${pilot.oracle.gain}%: upper bound only.`,
+            ]}
+            size="2.2cqh"
+          />
+        </SlideCard>
+      </div>
+    </SlideFrame>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 16 · Expected results and decision rules                            */
+/* ------------------------------------------------------------------ */
+
+function ExpectedSlide({ index, total }: SlideProps) {
+  return (
+    <SlideFrame
+      badge="Expected results"
+      badgeTone="deep"
+      title="What the rerun must show — and what would falsify it."
+      subtitle="We pre-commit to the decision, not to a positive result."
+      index={index}
+      total={total}
+    >
+      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
+        <SlideCard title="H1 · affine energy" tone="deep" icon={<TrendingUp size="2.8cqh" />}>
+          <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Supported if R² ≥ 0.95 and lack-of-fit is not rejected at 5%.
+          </p>
+          <p className="mt-[1.0cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+            Falsified if R² &lt; 0.95 or the lack-of-fit check rejects.
+          </p>
+        </SlideCard>
+        <SlideCard title="H2 · primary decision" tone="rose" icon={<Target size="2.8cqh" />}>
+          <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Supported if the 5 pp lower bound &gt; −5 pp and savings ≥ 20%.
+          </p>
+          <p className="mt-[1.0cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+            Falsified if the lower bound ≤ −5 pp or savings &lt; 20%.
+          </p>
+        </SlideCard>
+        <SlideCard title="H3–H4 · identity + split" tone="teal" icon={<GitBranch size="2.8cqh" />}>
+          <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Identity CI includes 0; context share in [0.10, 0.70] and rising.
+          </p>
+          <p className="mt-[1.0cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+            Falsified if the CI excludes 0 or the share leaves the band.
+          </p>
+        </SlideCard>
+        <SlideCard title="H5–H6 · policy + taxes" tone="amber" icon={<FlaskConical size="2.8cqh" />}>
+          <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Oracle ≥ 20%, capture ≥ 50%; fixed tax ↑ k*, per-passage ↓ k*.
+          </p>
+          <p className="mt-[1.0cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+            Falsified if capture &lt; 50% or a tax sign is wrong.
+          </p>
+        </SlideCard>
+      </div>
+      <SlideCallout tone="deep">
+        H7: the H2 direction replicates on Qwen2.5-1.5B or HotpotQA. A null or fired gate is a
+        reportable result.
+      </SlideCallout>
+    </SlideFrame>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 17 · Applications, timeline, conclusion                             */
+/* ------------------------------------------------------------------ */
+
+function ImpactSlide({ index, total }: SlideProps) {
+  return (
+    <SlideFrame
+      badge="Impact & plan"
+      badgeTone="deep"
+      title="A green-RAG decision rule — and a 20-week plan to test it."
+      subtitle="Applications, risks, timeline, and the ask."
+      index={index}
+      total={total}
+    >
+      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
+        <SlideCard title="Applications" tone="teal" icon={<Zap size="2.8cqh" />}>
+          <SlideBullets
+            items={[
+              "Green RAG serving and capacity planning.",
+              "Edge and consumer-GPU deployment.",
+              "Energy-aware retrieval benchmarks.",
+              "Accuracy-margin policy for operators.",
+            ]}
+            size="2.2cqh"
+          />
+        </SlideCard>
+        <SlideCard title="Timeline" tone="deep" icon={<Timer size="2.8cqh" />}>
+          <div className="space-y-[0.6cqh]">
+            {phases.map((phase) => (
+              <div key={phase.id} className="flex items-center justify-between gap-[1cqw] border-b pb-[0.4cqh]" style={{ borderColor: S.line }}>
+                <span className="font-mono text-[2.0cqh] font-bold" style={{ color: S.teal }}>
+                  {phase.id}
+                </span>
+                <span className="text-[2.0cqh] font-semibold" style={{ color: S.ink }}>
+                  {phase.name}
+                </span>
+                <span className="whitespace-nowrap font-mono text-[1.85cqh] font-semibold" style={{ color: S.inkSoft }}>
+                  {phase.weeks}
+                </span>
+              </div>
+            ))}
+          </div>
+        </SlideCard>
+        <SlideCard title="Risks & resources" tone="rose" icon={<AlertTriangle size="2.8cqh" />}>
+          <p className="text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            Top risks: scoring dependence, reader strength, single corpus/retriever, thermal
+            throttling, NVML resolution, prefix cache, policy overfitting, gate binding.
+          </p>
+          <p className="mt-[1.0cqh] text-[2.2cqh] font-bold" style={{ color: S.ink }}>
+            15–20 GPU-hours · ≤ $47 · local RTX 3060 only.
+          </p>
+        </SlideCard>
+        <div className="flex min-h-0 flex-col justify-center border-2 p-[1.8cqw]" style={{ borderColor: S.deep, background: S.deep }}>
+          <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.lime }}>
+            The ask
+          </p>
+          <p className="mt-[1.0cqh] text-[2.35cqh] font-semibold leading-snug" style={{ color: S.white }}>
+            Test whether an interior depth retains accuracy while saving roughly 69% of energy per
+            correct answer — and whether finding that depth is worth its energy.
+          </p>
+          <p className="mt-[1.4cqh] font-mono text-[2.1cqh] font-bold uppercase tracking-[0.12em]" style={{ color: S.lime }}>
+            Thank you · Questions
           </p>
         </div>
-
-        <SlideCard title="Go gates · planned" tone="deep" icon={<ShieldCheck size="2.2cqh" />}>
-          <SlideBullets
-            tone="deep"
-            size="1.8cqh"
-            items={[
-              <><strong>G1</strong> 5 pp NI at interior k, ≥ 20% savings.</>,
-              <><strong>G2</strong> upper CI loss ≤ 5 pp, P(k*) ≥ 0.8.</>,
-              <><strong>G3</strong> context share in [0.10, 0.70], varies with k.</>,
-              <><strong>G4</strong> oracle ≥ 20%, policy captures ≥ 50%.</>,
-              <><strong>G5</strong> replication on 1.5B or HotpotQA.</>,
-            ]}
-          />
-        </SlideCard>
-      </div>
-
-      <div className="mt-[1.4cqh]">
-        <SlideCallout tone="rose">
-          A fired gate is reported, not tuned away. No gate is added, removed, or re-thresholded after the primary outcome.
-        </SlideCallout>
       </div>
     </SlideFrame>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 13 · Policy and taxes                                               */
-/* ------------------------------------------------------------------ */
-
-function PolicyTaxesSlide({ index, total }: SlideProps) {
-  return (
-    <SlideFrame
-      badge="Policy and causality"
-      badgeTone="amber"
-      title="Adaptivity is the ceiling. Taxes are the test."
-      subtitle="The policy is a held-out experiment. The oracle is only its upper bound. The tax signs are a causal falsification test."
-      index={index}
-      total={total}
-    >
-      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.6cqw]">
-        <SlideCard title="Learned policy" tone="teal" icon={<GitBranch size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <p className="font-mono text-[3.9cqh] font-bold tracking-[-0.03em]" style={{ color: S.teal }}>
-              {rerun.policy.train} / {rerun.policy.validation} / {rerun.policy.test}
-            </p>
-            <p className="mt-[0.4cqh] font-mono text-[1.95cqh]" style={{ color: S.muted }}>
-              target counts · hashed question ID · realized counts reported
-            </p>
-            <div className="mt-[1.3cqh]">
-              <SlideBullets
-                tone="teal"
-                size="1.75cqh"
-                items={[
-                  "Pre-generation features only: BM25 scores, gaps, entropy, question type, length.",
-                  "Matched-accuracy evaluation against the best static k.",
-                  "G4: oracle ≥ 20%; policy captures ≥ 50% on 200 held-out questions.",
-                ]}
-              />
-            </div>
-          </div>
-        </SlideCard>
-
-        <SlideCard title="Energy taxes" tone="amber" icon={<PlugZap size="2.2cqh" />}>
-          <div className="flex h-full flex-col justify-center">
-            <div className="grid grid-cols-2 gap-[1.1cqw]">
-              <div className="flex flex-col justify-center border p-[1.2cqw]" style={{ borderColor: S.line, background: S.paper }}>
-                <p className="font-mono text-[1.95cqh] uppercase tracking-[0.08em]" style={{ color: S.muted }}>Fixed Δa +20%</p>
-                <p className="mt-[0.5cqh] font-mono text-[3.7cqh] font-bold" style={{ color: S.teal }}>k* ↑</p>
-                <p className="mt-[0.4cqh] text-[1.95cqh] leading-snug" style={{ color: S.inkSoft }}>
-                  {rerun.taxes.fixedJ} J before generation.
-                </p>
-              </div>
-              <div className="flex flex-col justify-center border p-[1.2cqw]" style={{ borderColor: S.line, background: S.paper }}>
-                <p className="font-mono text-[1.95cqh] uppercase tracking-[0.08em]" style={{ color: S.muted }}>Per-passage Δb +20%</p>
-                <p className="mt-[0.5cqh] font-mono text-[3.7cqh] font-bold" style={{ color: S.rose }}>k* ↓</p>
-                <p className="mt-[0.4cqh] text-[1.95cqh] leading-snug" style={{ color: S.inkSoft }}>
-                  {rerun.taxes.perPassageJ} J per passage.
-                </p>
-              </div>
-            </div>
-            <p className="mt-[1.2cqh] font-mono text-[1.9cqh]" style={{ color: S.muted }}>
-              {rerun.taxes.n} questions per condition · mid-accuracy gate · report gated and unconstrained optima.
-            </p>
-          </div>
-        </SlideCard>
-      </div>
-
-      <div className="mt-[1.4cqh]">
-        <SlideCallout tone="amber">
-          {pilot.oracle.gain}% (preliminary) is an oracle upper bound. No learned policy exists. A wrong tax sign falsifies the model.
-        </SlideCallout>
-      </div>
-    </SlideFrame>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 14 · Claim boundary                                                 */
-/* ------------------------------------------------------------------ */
-
-function BoundarySlide({ index, total }: SlideProps) {
-  return (
-    <SlideFrame
-      badge="Claim boundary"
-      badgeTone="rose"
-      pilot
-      title="What this project will not claim."
-      subtitle="The boundary is part of the result. A fired gate is reported, not tuned away."
-      index={index}
-      total={total}
-    >
-      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.6cqw]">
-        <SlideCard title="Not claimed" tone="rose" icon={<XCircle size="2.2cqh" />}>
-          <SlideBullets
-            tone="rose"
-            items={claimBoundary.notClaimed.slice(0, 6)}
-          />
-        </SlideCard>
-        <SlideCard title="May be claimed now" tone="teal" icon={<CheckCircle2 size="2.2cqh" />}>
-          <SlideBullets
-            tone="teal"
-            items={[
-              "The energy-depth tradeoff is real and steep under preliminary conditions.",
-              "The affine model and context-side share are measurable in the pilot.",
-              "The identity is a local diagnostic and flags over-retrieval.",
-              "At 5 pp, k = 4 is non-inferior in the preliminary study and saves energy — preliminary evidence, not certified.",
-              "Query-conditional depth is promising; 78.8% is an oracle ceiling.",
-            ]}
-          />
-        </SlideCard>
-      </div>
-
-      <div className="mt-[1.5cqh] border-l-[0.4cqw] px-[1.6cqw] py-[1.2cqh]" style={{ borderColor: S.lime, background: S.limeSoft }}>
-        <p className="font-mono text-[1.9cqh] font-bold uppercase tracking-[0.12em]" style={{ color: S.deep }}>
-          The defensible next claim — if the rerun supports it
-        </p>
-        <p className="mt-[0.6cqh] text-[2.6cqh] font-semibold leading-snug" style={{ color: S.ink, fontFamily: "var(--font-serif)" }}>
-          “At a 5 pp EM non-inferiority margin, k = {pilot.fivePp.k} retains accuracy while saving roughly {pilot.fivePp.savings}% of
-          GPU energy per correct answer relative to k = 32.”
-        </p>
-      </div>
-    </SlideFrame>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 15 · Thank you                                                      */
-/* ------------------------------------------------------------------ */
-
-function ThanksSlide({ index, total }: SlideProps) {
-  return (
-    <div className="relative flex h-full w-full overflow-hidden" style={{ background: S.paper, color: S.ink }}>
-      <div className="absolute inset-y-0 left-0 w-[0.5cqw]" style={{ background: S.lime }} />
-      <div className="slide-grid pointer-events-none absolute inset-0 opacity-60" />
-
-      <div className="relative grid h-full grid-cols-[1.12fr_0.88fr] gap-[4.5cqw] px-[5.6cqw] py-[4.6cqh]">
-        <div className="flex min-h-0 flex-col">
-          <div className="flex items-center gap-[1.4cqw]">
-            <SlideMark size="7.2cqh" />
-            <div>
-              <p className="font-mono text-[2.1cqh] font-bold uppercase tracking-[0.18em]" style={{ color: S.deep }}>
-                {course.code} · {course.name}
-              </p>
-              <p className="mt-[0.3cqh] font-mono text-[1.9cqh] font-semibold uppercase tracking-[0.14em]" style={{ color: S.muted }}>
-                Section {course.section} · Project Proposal
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-auto">
-            <h1
-              className="text-[8.8cqh] font-semibold leading-none tracking-[-0.035em]"
-              style={{ fontFamily: "var(--font-serif)", color: S.ink }}
-            >
-              Thank you.
-            </h1>
-            <p className="mt-[2cqh] max-w-[50cqw] text-[2.9cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              The preliminary evidence motivates a powered rerun. This proposal defines the next step.
-            </p>
-            <div className="mt-[2.2cqh] flex flex-wrap gap-[0.8cqw]">
-              <SlideChip tone="amber">Project Proposal</SlideChip>
-              <SlideChip tone="deep">
-                {course.code} · Section {course.section}
-              </SlideChip>
-
-            </div>
-            <div className="mt-[2.4cqh] flex flex-wrap gap-x-[2cqw] gap-y-[0.6cqh] font-mono text-[1.95cqh] font-bold uppercase tracking-[0.1em]" style={{ color: S.teal }}>
-              <span>Repository: Atik203/energy-optimal-rag</span>
-              <span>Site: energy-optimal-rag-web.vercel.app</span>
-            </div>
-          </div>
-
-          <div
-            className="mt-[3cqh] flex items-center justify-between border-t pt-[1.1cqh] font-mono text-[1.9cqh] uppercase tracking-[0.1em]"
-            style={{ borderColor: S.line, color: S.muted }}
-          >
-            <span>{course.label}</span>
-            <span className="tnum">{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
-          </div>
-        </div>
-
-        <div className="flex min-h-0 items-center">
-          <div className="w-full border-2 p-[2.4cqw]" style={{ borderColor: S.deep, background: S.deep }}>
-            <p className="font-mono text-[1.9cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.lime }}>
-              Preliminary evidence
-            </p>
-            <div className="mt-[2.4cqh] space-y-[1.4cqh]">
-              {[
-                ["2 pp", "DEAD", "#fecaca"],
-                ["5 pp", "PRELIMINARY SIGNAL", "#fde68a"],
-                [`${pilot.oracle.gain}%`, "UPPER BOUND", "#99f6e4"],
-              ].map(([label, status, color]) => (
-                <div key={label} className="flex items-center justify-between border-b pb-[1.1cqh]" style={{ borderColor: "rgba(200,240,79,0.16)" }}>
-                  <span className="font-mono text-[2.8cqh] font-bold" style={{ color: S.white }}>{label}</span>
-                  <span className="font-mono text-[2.05cqh] font-bold uppercase tracking-[0.1em]" style={{ color }}>{status}</span>
-                </div>
-              ))}
-            </div>
-            <p className="mt-[2.2cqh] text-[2.1cqh] leading-snug" style={{ color: "#c9d6c9" }}>
-              A fired gate is a finding. A dead claim stays in the results.
-            </p>
-            <div className="mt-[2.2cqh] flex items-center gap-[0.8cqw] border-t pt-[1.2cqh]" style={{ borderColor: "rgba(200,240,79,0.16)" }}>
-              <Target size="2.1cqh" style={{ color: S.lime }} aria-hidden="true" />
-              <span className="font-mono text-[1.85cqh] uppercase tracking-[0.1em]" style={{ color: "#a9baa9" }}>
-                Joules per correct answer
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
 
 export const SLIDES: SlideDef[] = [
-  { id: "title", title: "What does a correct answer cost?", Component: TitleSlide },
-  { id: "decision", title: "The preliminary study killed its own headline", Component: DecisionSlide },
-  { id: "preliminary-setup", title: "200 questions, seven depths, one laptop", Component: PreliminarySetupSlide },
-  { id: "energy", title: "Energy per correct answer rises 3.45 times", Component: EnergyCurveSlide },
-  { id: "accuracy", title: "Accuracy plateaus and the 2 pp gate runs to the boundary", Component: AccuracyDeadSlide },
-  { id: "survives", title: "Six measurements survive, one claim does not", Component: SurvivesSlide },
-  { id: "five-pp", title: "At 5 pp the preliminary study chose k equals 4, a signal not a certificate", Component: FivePpSlide },
-  { id: "rerun", title: "The powered rerun is sized around the failure", Component: RerunSlide },
-  { id: "measurement", title: "A joule is attributed, not guessed", Component: MeasurementSlide },
-  { id: "data", title: "Two corpora, one depth question", Component: DataSlide },
-  { id: "theory", title: "Small theory, falsifiable", Component: TheorySlide },
-  { id: "gates", title: "Gates are allowed to fire", Component: GatesSlide },
-  { id: "policy-taxes", title: "Adaptivity is the ceiling, taxes are the test", Component: PolicyTaxesSlide },
-  { id: "boundary", title: "What this project will not claim", Component: BoundarySlide },
-  { id: "thanks", title: "Thank you", Component: ThanksSlide },
+  { id: "title", title: "Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation", Component: TitleSlide },
+  { id: "summary", title: "The proposal in one slide", Component: ExecSummarySlide },
+  { id: "introduction", title: "RAG answers by choosing how much evidence to read", Component: IntroSlide },
+  { id: "problem", title: "Depth is tuned for accuracy or latency, not joules per correct answer", Component: ProblemSlide },
+  { id: "motivation", title: "Retrieval energy is a deployment cost", Component: MotivationSlide },
+  { id: "gap", title: "Existing work optimizes accuracy, latency, or tokens", Component: GapSlide },
+  { id: "objectives", title: "Three questions, seven pre-registered hypotheses", Component: ObjectivesSlide },
+  { id: "scope", title: "The claim is deliberately narrow", Component: ScopeSlide },
+  { id: "data", title: "Two corpora, one depth question", Component: DatasetSlide },
+  { id: "contrast", title: "From static top-k to a gated energy decision", Component: ContrastSlide },
+  { id: "method", title: "Four pieces, each falsifiable", Component: MethodSlide },
+  { id: "flow", title: "One pipeline from data to decision", Component: FlowSlide },
+  { id: "setup", title: "A powered, controlled, local experiment", Component: SetupSlide },
+  { id: "analysis", title: "The gates decide what the result means", Component: AnalysisSlide },
+  { id: "preliminary", title: "The preliminary study changed the claim", Component: PreliminarySlide },
+  { id: "expected", title: "What the rerun must show, and what would falsify it", Component: ExpectedSlide },
+  { id: "impact", title: "A green-RAG decision rule and a 20-week plan", Component: ImpactSlide },
 ];
