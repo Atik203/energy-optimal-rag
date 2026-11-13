@@ -34,11 +34,13 @@ import {
 } from "@/components/slides/primitives";
 import {
   claimBoundary,
+  course,
   datasets,
   gates,
   measurement,
   pilot,
   rerun,
+  team,
   theory,
 } from "@/lib/project-data";
 
@@ -77,7 +79,7 @@ function AccuracyPlot() {
   return (
     <div
       role="img"
-      aria-label="Pilot accuracy: 0.395 at depth 1, 0.520 at depth 4, a plateau of 0.520 to 0.535 from depth 4 to 16, and 0.570 at depth 32."
+      aria-label="Preliminary accuracy: 0.395 at depth 1, 0.520 at depth 4, a plateau of 0.520 to 0.535 from depth 4 to 16, and 0.570 at depth 32."
     >
       <div className="relative h-[34cqh] border-b border-l" style={{ borderColor: S.line }}>
         {[0.35, 0.4, 0.45, 0.5, 0.55, 0.6].map((tick) => (
@@ -170,95 +172,89 @@ function TitleSlide({ index, total }: SlideProps) {
   return (
     <div className="relative flex h-full w-full overflow-hidden" style={{ background: S.paper, color: S.ink }}>
       <div className="absolute inset-y-0 left-0 w-[0.5cqw]" style={{ background: S.lime }} />
-      <div className="slide-grid pointer-events-none absolute inset-0 opacity-60" />
+      <div className="slide-grid pointer-events-none absolute inset-0 opacity-40" />
 
-      <div className="relative grid h-full grid-cols-[1.12fr_0.88fr] gap-[4.5cqw] px-[5.6cqw] py-[4.6cqh]">
+      <div className="relative grid h-full grid-cols-[1.08fr_0.92fr] gap-[4.2cqw] px-[5.4cqw] py-[4.2cqh]">
         <div className="flex min-h-0 flex-col">
           <div className="flex items-center gap-[1.4cqw]">
             <SlideMark size="7.2cqh" />
             <div>
-              <p className="font-mono text-[2.1cqh] font-bold uppercase tracking-[0.18em]" style={{ color: S.deep }}>
-                Energy Observatory
+              <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.deep }}>
+                {course.code} · {course.name}
               </p>
-              <p className="mt-[0.3cqh] font-mono text-[1.9cqh] uppercase tracking-[0.14em]" style={{ color: S.muted }}>
-                G2 / Retrieval depth
+              <p className="mt-[0.3cqh] font-mono text-[1.8cqh] font-semibold uppercase tracking-[0.14em]" style={{ color: S.muted }}>
+                Section {course.section} · Project Proposal
               </p>
             </div>
           </div>
 
           <div className="mt-auto">
-            <p className="font-mono text-[2.05cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.teal }}>
-              Public scaffold v0.1.0 · Post-pilot MARGINAL
+            <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.teal }}>
+              Project Proposal · 2026
             </p>
             <h1
-              className="mt-[1.6cqh] max-w-[58cqw] text-[7.8cqh] font-semibold leading-[0.97] tracking-[-0.03em]"
+              className="mt-[1.4cqh] text-[6.1cqh] font-semibold leading-[1.02] tracking-[-0.03em]"
               style={{ fontFamily: "var(--font-serif)", color: S.ink }}
             >
-              What does a correct answer{" "}
-              <span style={{ fontStyle: "italic", color: S.teal, borderBottom: `0.22cqw solid ${S.lime}` }}>
-                cost?
+              Energy-Optimal Retrieval Depth in{" "}
+              <span style={{ fontStyle: "italic", color: S.teal, borderBottom: `0.2cqw solid ${S.lime}` }}>
+                Retrieval-Augmented Generation
               </span>
             </h1>
-            <p className="mt-[2.2cqh] max-w-[52cqw] text-[2.85cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              Retrieval depth in retrieval-augmented generation, measured in joules per correct
-              answer.
+            <p className="mt-[1.9cqh] text-[2.55cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+              Measuring joules per correct answer, and deciding whether calibrating the retrieval
+              depth is worth its own energy.
             </p>
-            <div className="mt-[2.2cqh] flex flex-wrap gap-[0.8cqw]">
-              <SlideChip tone="amber">Pilot n = {pilot.questions}</SlideChip>
-              <SlideChip tone="rose">No confirmatory results</SlideChip>
-              <SlideChip tone="deep">Prereg not frozen</SlideChip>
+            <div className="mt-[2.0cqh] flex flex-wrap gap-[0.8cqw]">
+              <SlideChip tone="amber">Project Proposal</SlideChip>
+              <SlideChip tone="deep">
+                {course.code} · Section {course.section}
+              </SlideChip>
+
             </div>
           </div>
 
           <div
-            className="mt-[3cqh] flex items-center justify-between border-t pt-[1.1cqh] font-mono text-[1.9cqh] uppercase tracking-[0.1em]"
+            className="mt-[2.6cqh] flex items-center justify-between border-t pt-[1.0cqh] font-mono text-[1.7cqh] font-semibold uppercase tracking-[0.1em]"
             style={{ borderColor: S.line, color: S.muted }}
           >
-            <span>Energy-Optimal Retrieval Depth</span>
-            <span className="tnum">{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
+            <span>{course.label}</span>
+            <span className="tnum">
+              {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+            </span>
           </div>
         </div>
 
         <div className="flex min-h-0 items-center">
-          <div className="w-full border-2 p-[2.4cqw]" style={{ borderColor: S.deep, background: S.deep }}>
-            <div className="flex items-center justify-between">
-              <p className="font-mono text-[1.95cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.lime }}>
-                Pilot readout
-              </p>
-              <span className="h-[1.3cqh] w-[1.3cqh] rounded-full" style={{ background: S.lime }} />
-            </div>
-            <div className="mt-[3.2cqh] flex h-[25cqh] items-end justify-around gap-[2cqw]">
-              {[
-                { k: 1, value: pilot.energy.e1, color: S.lime },
-                { k: 4, value: pilot.energy.e4, color: S.amber },
-                { k: 32, value: pilot.energy.e32, color: S.teal },
-              ].map((bar) => (
-                <div key={bar.k} className="flex h-full w-1/3 flex-col items-center justify-end">
-                  <span className="mb-[0.5cqh] font-mono text-[1.95cqh] font-bold tnum" style={{ color: S.white }}>
-                    {bar.value.toFixed(1)}
-                  </span>
-                  <div
-                    style={{
-                      width: "62%",
-                      height: `${Math.max(2, (bar.value / 160) * 82)}%`,
-                      background: bar.color,
-                    }}
-                  />
-                  <span className="mt-[0.6cqh] font-mono text-[1.85cqh]" style={{ color: "#b8c7b8" }}>
-                    k = {bar.k}
-                  </span>
+          <div className="w-full border-2 p-[2.2cqw]" style={{ borderColor: S.deep, background: S.deep }}>
+            <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.lime }}>
+              Team
+            </p>
+            <div className="mt-[2.0cqh] space-y-[1.0cqh]">
+              {team.map((member) => (
+                <div
+                  key={member.id}
+                  className="flex items-center justify-between gap-[1cqw] border-b pb-[0.9cqh]"
+                  style={{ borderColor: "rgba(200,240,79,0.16)" }}
+                >
+                  <div>
+                    <p className="text-[2.1cqh] font-semibold leading-snug" style={{ color: S.white }}>
+                      {member.name}
+                    </p>
+                    <p className="mt-[0.2cqh] font-mono text-[1.7cqh] font-semibold" style={{ color: "#c9d6c9" }}>
+                      {member.id}
+                    </p>
+                  </div>
+                  {member.section === "E" && (
+                    <span
+                      className="border px-[0.7cqw] py-[0.35cqh] font-mono text-[1.45cqh] font-bold uppercase tracking-[0.08em]"
+                      style={{ borderColor: S.lime, color: S.lime }}
+                    >
+                      Section E
+                    </span>
+                  )}
                 </div>
               ))}
-            </div>
-            <p className="mt-[2.4cqh] font-mono text-[5.2cqh] font-semibold leading-none tracking-[-0.05em]" style={{ color: S.lime }}>
-              {pilot.energy.span.toFixed(2)}×
-            </p>
-            <p className="mt-[0.7cqh] text-[2.15cqh] font-semibold" style={{ color: "#c9d6c9" }}>
-              E(32) / E(1) · joules per correct answer
-            </p>
-            <div className="mt-[2.2cqh] flex justify-between border-t pt-[1.1cqh] font-mono text-[1.8cqh] uppercase tracking-[0.08em]" style={{ borderColor: "rgba(200,240,79,0.2)", color: "#a9baa9" }}>
-              <span>{pilot.generations.toLocaleString("en-US")} generations</span>
-              <span>R² {pilot.fit.r2.toFixed(4)}</span>
             </div>
           </div>
         </div>
@@ -277,7 +273,7 @@ function DecisionSlide({ index, total }: SlideProps) {
       badge="The decision"
       badgeTone="rose"
       pilot
-      title="The pilot killed its own headline."
+      title="The preliminary study killed its own headline."
       subtitle="The original target was a static 2 pp optimum. The data selected the grid boundary. The surviving object is a decision problem around the accuracy margin."
       index={index}
       total={total}
@@ -305,7 +301,7 @@ function DecisionSlide({ index, total }: SlideProps) {
             </p>
             <p className="mt-[1.2cqh] font-mono text-[2.9cqh] font-bold">{pilot.fivePp.savings}% savings</p>
             <p className="mt-[0.8cqh] text-[2.35cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              Pilot signal, not certified.
+              Preliminary signal, not certified.
             </p>
             <p className="mt-[1.1cqh] border-t pt-[0.8cqh] font-mono text-[1.95cqh] leading-snug" style={{ color: S.muted, borderColor: S.line }}>
               N* = {pilot.fivePp.nStar} · P reported = {pilot.fivePp.pReported}
@@ -341,13 +337,13 @@ function DecisionSlide({ index, total }: SlideProps) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 3 · Pilot setup                                                     */
+/* 3 · Preliminary setup                                                     */
 /* ------------------------------------------------------------------ */
 
-function PilotSetupSlide({ index, total }: SlideProps) {
+function PreliminarySetupSlide({ index, total }: SlideProps) {
   return (
     <SlideFrame
-      badge="Pilot setup"
+      badge="Preliminary setup"
       badgeTone="amber"
       pilot
       title="200 questions. Seven depths. One laptop."
@@ -399,7 +395,7 @@ function PilotSetupSlide({ index, total }: SlideProps) {
 
       <div className="mt-[1.5cqh]">
         <SlideCallout tone="amber">
-          Pilot only. The confirmatory sample is separate, and no confirmatory run has been executed.
+          Preliminary only. The confirmatory sample is separate, and no confirmatory run has been executed.
         </SlideCallout>
       </div>
     </SlideFrame>
@@ -413,7 +409,7 @@ function PilotSetupSlide({ index, total }: SlideProps) {
 function EnergyCurveSlide({ index, total }: SlideProps) {
   return (
     <SlideFrame
-      badge="Pilot evidence"
+      badge="Preliminary evidence"
       badgeTone="teal"
       pilot
       title="Energy per correct answer rises 3.45×."
@@ -460,7 +456,7 @@ function EnergyCurveSlide({ index, total }: SlideProps) {
 
       <div className="mt-[1.5cqh]">
         <SlideCallout tone="teal">
-          Steep and precise under pilot conditions. This is not a universal law or an identified optimum.
+          Steep and precise under preliminary conditions. This is not a universal law or an identified optimum.
         </SlideCallout>
       </div>
     </SlideFrame>
@@ -533,7 +529,7 @@ function SurvivesSlide({ index, total }: SlideProps) {
       badgeTone="teal"
       pilot
       title="Six measurements survive. One claim does not."
-      subtitle="The pilot is a precise energy measurement and a failed accuracy certification. Both belong in the record."
+      subtitle="The preliminary study is a precise energy measurement and a failed accuracy certification. Both belong in the record."
       index={index}
       total={total}
     >
@@ -558,7 +554,7 @@ function SurvivesSlide({ index, total }: SlideProps) {
             items={[
               <><strong>2 pp static optimum: DEAD.</strong> k* = {pilot.static2pp.kStar} boundary, P = {pilot.static2pp.pOptimal.toFixed(2)}.</>,
               <><strong>Identity at k = 32: rejected.</strong> Gap +{pilot.identity.at32.gap.toFixed(3)} flags over-retrieval.</>,
-              <><strong>5 pp at k = {pilot.fivePp.k}: pilot signal.</strong> {pilot.fivePp.savings}% savings, not certified.</>,
+              <><strong>5 pp at k = {pilot.fivePp.k}: preliminary signal.</strong> {pilot.fivePp.savings}% savings, not certified.</>,
               <><strong>Oracle: upper bound.</strong> {pilot.oracle.gain}% with hindsight, no learned policy.</>,
             ]}
           />
@@ -584,8 +580,8 @@ function FivePpSlide({ index, total }: SlideProps) {
       badge="The 5 pp signal"
       badgeTone="amber"
       pilot
-      title="At 5 pp, the pilot chose k = 4."
-      subtitle="Pilot signal, not certified. The powered rerun decides whether the policy claim survives."
+      title="At 5 pp, the preliminary study chose k = 4."
+      subtitle="Preliminary signal, not certified. The powered rerun decides whether the policy claim survives."
       index={index}
       total={total}
     >
@@ -603,7 +599,7 @@ function FivePpSlide({ index, total }: SlideProps) {
           <div className="flex h-full flex-col justify-center">
             <SlideFormula tone="deep">N* = C_cert / [A(k*)(E(k₀) − E(k*))]</SlideFormula>
             <p className="mt-[1.2cqh] text-[2.35cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              The pilot sweep cost {pilot.sweepKj} kJ. N* = {pilot.fivePp.nStar} at k = {pilot.fivePp.k} is the query count at which the saving
+              The preliminary sweep cost {pilot.sweepKj} kJ. N* = {pilot.fivePp.nStar} at k = {pilot.fivePp.k} is the query count at which the saving
               repays the sweep. It is not a deployment guarantee.
             </p>
             <p className="mt-[0.8cqh] font-mono text-[2.0cqh]" style={{ color: S.muted }}>
@@ -616,8 +612,8 @@ function FivePpSlide({ index, total }: SlideProps) {
           <SlideBullets
             tone="rose"
             items={[
-              `Pilot n = ${pilot.questions}; the rerun is n = ${rerun.primary.n.toLocaleString("en-US")}.`,
-              `P = ${pilot.fivePp.pReported} is the proposal's 5 pp selection value; no pilot NI test is reported.`,
+              `Preliminary n = ${pilot.questions}; the rerun is n = ${rerun.primary.n.toLocaleString("en-US")}.`,
+              `P = ${pilot.fivePp.pReported} is the proposal's 5 pp selection value; no preliminary NI test is reported.`,
               "The rerun must report the NI test and selection probability separately.",
               "No “certified” language before the freeze and the powered rerun.",
             ]}
@@ -627,7 +623,7 @@ function FivePpSlide({ index, total }: SlideProps) {
 
       <div className="mt-[1.5cqh]">
         <SlideCallout tone="amber">
-          The pilot picked a candidate. It did not certify one.
+          The preliminary study picked a candidate. It did not certify one.
         </SlideCallout>
       </div>
     </SlideFrame>
@@ -644,7 +640,7 @@ function RerunSlide({ index, total }: SlideProps) {
       badge="The rerun"
       badgeTone="deep"
       title="Sized around the failure."
-      subtitle={`The pilot's MDE was roughly ${pilot.mdeAt200} at n = ${pilot.questions}. The rerun is powered for a 5 pp decision.`}
+      subtitle={`The preliminary study's MDE was roughly ${pilot.mdeAt200} at n = ${pilot.questions}. The rerun is powered for a 5 pp decision.`}
       index={index}
       total={total}
     >
@@ -684,7 +680,7 @@ function RerunSlide({ index, total }: SlideProps) {
             ))}
           </div>
           <p className="mt-[1.2cqh] font-mono text-[1.8cqh] leading-relaxed" style={{ color: "#a9baa9" }}>
-            Planning values, not results. Pilot-derived MDE at n = {pilot.questions}: {pilot.mdeAt200}.
+            Planning values, not results. Preliminary-derived MDE at n = {pilot.questions}: {pilot.mdeAt200}.
           </p>
         </div>
 
@@ -757,7 +753,7 @@ function MeasurementSlide({ index, total }: SlideProps) {
         {[
           { icon: Activity, value: measurement.sensor.cadence, title: "NVML cadence", note: "Coarse driver update, about 1 Hz. Not 100 ms of independent information." },
           { icon: Zap, value: `${pilot.idle.preW} W`, title: "Idle baseline", note: `60 s pre-run, CV ${pilot.idle.preCv}%. Post-run ${pilot.idle.postW} W changes E ratios by under 1%.` },
-          { icon: Gauge, value: "20 queries", title: "Block calibration", note: `Pilot factors ${blockMin}–${blockMax}; largest correction at k = 2.` },
+          { icon: Gauge, value: "20 queries", title: "Block calibration", note: `Preliminary factors ${blockMin}–${blockMax}; largest correction at k = 2.` },
           { icon: ShieldCheck, value: "10-hex", title: "Nonce control", note: `Prefix reuse cut prefill from ${pilot.nonce.prefillWithMs} ms to ${pilot.nonce.prefillWithoutMs} ms. Every request gets a fresh nonce.` },
           { icon: Thermometer, value: `${pilot.thermal.tempStartC} → ${pilot.thermal.tempEndC} °C`, title: "Thermal log", note: `Clock ${pilot.thermal.clockStartMhz} → ${pilot.thermal.clockEndMhz} MHz; power ${pilot.thermal.powerStartW} → ${pilot.thermal.powerEndW} W. Energy stayed stable.` },
           { icon: Timer, value: `${pilot.repeatCv.median.toFixed(2)}%`, title: "Repeat CV", note: `Median at k = ${pilot.repeatCv.k}; max ${pilot.repeatCv.max}%. Three blocks of 20 identical queries.` },
@@ -843,13 +839,13 @@ function DataSlide({ index, total }: SlideProps) {
           <p className="font-mono text-[2.6cqh] font-bold" style={{ color: S.teal }}>
             {pilot.recall.goldContext[pilot.recall.goldContext.length - 1].toFixed(1)}%
           </p>
-          <p className="mt-[0.2cqh] text-[1.95cqh] font-semibold">Pilot gold-context recall at k = 32</p>
-          <p className="mt-[0.2cqh] font-mono text-[1.75cqh]" style={{ color: S.muted }}>Pilot recall</p>
+          <p className="mt-[0.2cqh] text-[1.95cqh] font-semibold">Preliminary gold-context recall at k = 32</p>
+          <p className="mt-[0.2cqh] font-mono text-[1.75cqh]" style={{ color: S.muted }}>Preliminary recall</p>
         </div>
         <div className="border-l-[0.35cqw] px-[1.2cqw] py-[0.9cqh]" style={{ borderColor: S.amber, background: S.amberSoft }}>
           <p className="font-mono text-[2.6cqh] font-bold" style={{ color: S.amber }}>~{datasets.squad.goldOutsideCapPct}%</p>
           <p className="mt-[0.2cqh] text-[1.95cqh] font-semibold">Gold evidence outside the top-32 cap</p>
-          <p className="mt-[0.2cqh] font-mono text-[1.75cqh]" style={{ color: S.muted }}>Pilot recall ceiling</p>
+          <p className="mt-[0.2cqh] font-mono text-[1.75cqh]" style={{ color: S.muted }}>Preliminary recall ceiling</p>
         </div>
         <div className="border-l-[0.35cqw] px-[1.2cqw] py-[0.9cqh]" style={{ borderColor: S.rose, background: S.roseSoft }}>
           <p className="font-mono text-[2.6cqh] font-bold" style={{ color: S.rose }}>CC BY-SA 4.0</p>
@@ -913,7 +909,7 @@ function TheorySlide({ index, total }: SlideProps) {
           <div className="flex h-full flex-col justify-center">
             <SlideFormula tone="deep">{theory.theorems[2].formula}</SlideFormula>
             <p className="mt-[1.1cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              Finding the depth is itself an energy purchase. The pilot sweep cost {pilot.sweepKj} kJ; N* = {pilot.fivePp.nStar}
+              Finding the depth is itself an energy purchase. The preliminary sweep cost {pilot.sweepKj} kJ; N* = {pilot.fivePp.nStar}
               at k = {pilot.fivePp.k}.
             </p>
           </div>
@@ -962,14 +958,14 @@ function GatesSlide({ index, total }: SlideProps) {
       badgeTone="rose"
       pilot
       title="Gates are allowed to fire."
-      subtitle="Pilot adjudication: four pass, three fail. The rerun re-adjudicates each once, on the pre-specified population."
+      subtitle="Preliminary adjudication: four pass, three fail. The rerun re-adjudicates each once, on the pre-specified population."
       index={index}
       total={total}
     >
       <div className="grid min-h-0 flex-1 grid-cols-[1.2fr_0.8fr] items-center gap-[1.6cqw]">
         <div className="min-h-0">
           <SlideTable
-            head={["Gate", "Criterion", "Pilot"]}
+            head={["Gate", "Criterion", "Preliminary"]}
             rows={killRows}
             tone="rose"
             widths={["9%", "72%", "19%"]}
@@ -1068,7 +1064,7 @@ function PolicyTaxesSlide({ index, total }: SlideProps) {
 
       <div className="mt-[1.4cqh]">
         <SlideCallout tone="amber">
-          {pilot.oracle.gain}% (pilot) is an oracle upper bound. No learned policy exists. A wrong tax sign falsifies the model.
+          {pilot.oracle.gain}% (preliminary) is an oracle upper bound. No learned policy exists. A wrong tax sign falsifies the model.
         </SlideCallout>
       </div>
     </SlideFrame>
@@ -1101,10 +1097,10 @@ function BoundarySlide({ index, total }: SlideProps) {
           <SlideBullets
             tone="teal"
             items={[
-              "The energy-depth tradeoff is real and steep under pilot conditions.",
+              "The energy-depth tradeoff is real and steep under preliminary conditions.",
               "The affine model and context-side share are measurable in the pilot.",
               "The identity is a local diagnostic and flags over-retrieval.",
-              "At 5 pp, k = 4 is non-inferior in the pilot and saves energy — pilot evidence, not certified.",
+              "At 5 pp, k = 4 is non-inferior in the preliminary study and saves energy — preliminary evidence, not certified.",
               "Query-conditional depth is promising; 78.8% is an oracle ceiling.",
             ]}
           />
@@ -1140,10 +1136,10 @@ function ThanksSlide({ index, total }: SlideProps) {
             <SlideMark size="7.2cqh" />
             <div>
               <p className="font-mono text-[2.1cqh] font-bold uppercase tracking-[0.18em]" style={{ color: S.deep }}>
-                Energy Observatory
+                {course.code} · {course.name}
               </p>
-              <p className="mt-[0.3cqh] font-mono text-[1.9cqh] uppercase tracking-[0.14em]" style={{ color: S.muted }}>
-                G2 / Retrieval depth
+              <p className="mt-[0.3cqh] font-mono text-[1.9cqh] font-semibold uppercase tracking-[0.14em]" style={{ color: S.muted }}>
+                Section {course.section} · Project Proposal
               </p>
             </div>
           </div>
@@ -1156,16 +1152,18 @@ function ThanksSlide({ index, total }: SlideProps) {
               Thank you.
             </h1>
             <p className="mt-[2cqh] max-w-[50cqw] text-[2.9cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              The failure is in the record. The next claim is conditional on the powered rerun.
+              The preliminary evidence motivates a powered rerun. This proposal defines the next step.
             </p>
             <div className="mt-[2.2cqh] flex flex-wrap gap-[0.8cqw]">
-              <SlideChip tone="amber">Pilot n = {pilot.questions}</SlideChip>
-              <SlideChip tone="rose">No confirmatory results</SlideChip>
-              <SlideChip tone="deep">Prereg not frozen</SlideChip>
+              <SlideChip tone="amber">Project Proposal</SlideChip>
+              <SlideChip tone="deep">
+                {course.code} · Section {course.section}
+              </SlideChip>
+
             </div>
             <div className="mt-[2.4cqh] flex flex-wrap gap-x-[2cqw] gap-y-[0.6cqh] font-mono text-[1.95cqh] font-bold uppercase tracking-[0.1em]" style={{ color: S.teal }}>
               <span>Repository: Atik203/energy-optimal-rag</span>
-              <span>Site: /research · /results</span>
+              <span>Site: energy-optimal-rag-web.vercel.app</span>
             </div>
           </div>
 
@@ -1173,7 +1171,7 @@ function ThanksSlide({ index, total }: SlideProps) {
             className="mt-[3cqh] flex items-center justify-between border-t pt-[1.1cqh] font-mono text-[1.9cqh] uppercase tracking-[0.1em]"
             style={{ borderColor: S.line, color: S.muted }}
           >
-            <span>Energy-Optimal Retrieval Depth</span>
+            <span>{course.label}</span>
             <span className="tnum">{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
           </div>
         </div>
@@ -1181,12 +1179,12 @@ function ThanksSlide({ index, total }: SlideProps) {
         <div className="flex min-h-0 items-center">
           <div className="w-full border-2 p-[2.4cqw]" style={{ borderColor: S.deep, background: S.deep }}>
             <p className="font-mono text-[1.9cqh] font-bold uppercase tracking-[0.16em]" style={{ color: S.lime }}>
-              The record
+              Preliminary evidence
             </p>
             <div className="mt-[2.4cqh] space-y-[1.4cqh]">
               {[
                 ["2 pp", "DEAD", "#fecaca"],
-                ["5 pp", "PILOT SIGNAL", "#fde68a"],
+                ["5 pp", "PRELIMINARY SIGNAL", "#fde68a"],
                 [`${pilot.oracle.gain}%`, "UPPER BOUND", "#99f6e4"],
               ].map(([label, status, color]) => (
                 <div key={label} className="flex items-center justify-between border-b pb-[1.1cqh]" style={{ borderColor: "rgba(200,240,79,0.16)" }}>
@@ -1215,12 +1213,12 @@ function ThanksSlide({ index, total }: SlideProps) {
 
 export const SLIDES: SlideDef[] = [
   { id: "title", title: "What does a correct answer cost?", Component: TitleSlide },
-  { id: "decision", title: "The pilot killed its own headline", Component: DecisionSlide },
-  { id: "pilot-setup", title: "200 questions, seven depths, one laptop", Component: PilotSetupSlide },
+  { id: "decision", title: "The preliminary study killed its own headline", Component: DecisionSlide },
+  { id: "preliminary-setup", title: "200 questions, seven depths, one laptop", Component: PreliminarySetupSlide },
   { id: "energy", title: "Energy per correct answer rises 3.45 times", Component: EnergyCurveSlide },
   { id: "accuracy", title: "Accuracy plateaus and the 2 pp gate runs to the boundary", Component: AccuracyDeadSlide },
   { id: "survives", title: "Six measurements survive, one claim does not", Component: SurvivesSlide },
-  { id: "five-pp", title: "At 5 pp the pilot chose k equals 4, a signal not a certificate", Component: FivePpSlide },
+  { id: "five-pp", title: "At 5 pp the preliminary study chose k equals 4, a signal not a certificate", Component: FivePpSlide },
   { id: "rerun", title: "The powered rerun is sized around the failure", Component: RerunSlide },
   { id: "measurement", title: "A joule is attributed, not guessed", Component: MeasurementSlide },
   { id: "data", title: "Two corpora, one depth question", Component: DataSlide },

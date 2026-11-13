@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
+import { course } from "@/lib/project-data";
 
 /* Projector-safe, light-deck palette. */
 export const S = {
@@ -101,7 +102,7 @@ export function SlideFrame({
                 className="border px-[0.9cqw] py-[0.4cqh] font-mono text-[1.7cqh] font-bold uppercase tracking-[0.12em]"
                 style={{ borderColor: S.amber, color: S.amber }}
               >
-                Pilot
+                Preliminary
               </span>
             )}
           </div>
@@ -109,7 +110,7 @@ export function SlideFrame({
             className="pt-[0.5cqh] font-mono text-[1.7cqh] font-semibold uppercase tracking-[0.16em]"
             style={{ color: S.muted }}
           >
-            Energy Observatory / G2
+            {course.code} · {course.name} · Section {course.section}
           </span>
         </div>
 
@@ -136,10 +137,8 @@ export function SlideFrame({
           className="mt-[1.5cqh] flex items-center justify-between gap-[2cqw] border-t pt-[0.9cqh] font-mono text-[1.6cqh] font-semibold uppercase tracking-[0.1em]"
           style={{ borderColor: S.line, color: S.muted }}
         >
-          <span>Energy-Optimal Retrieval Depth</span>
-          <span style={{ color: pilot ? S.amber : S.muted }}>
-            {pilot ? "Pilot evidence · not confirmatory" : "No confirmatory results"}
-          </span>
+          <span>Project Proposal</span>
+          <span>{course.label}</span>
           <span className="tnum">
             {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
           </span>

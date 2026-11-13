@@ -43,6 +43,24 @@ export const project = {
   licenseData: "CC BY-SA 4.0",
 } as const;
 
+/* Course and team — EEE 4261 Green Computing, Section C. Sadman Ifaz is
+   from Section E; the remaining team is Section C. */
+
+export const course = {
+  code: "EEE 4261",
+  name: "Green Computing",
+  section: "C",
+  label: "EEE 4261 · Green Computing · Section C",
+} as const;
+
+export const team = [
+  { name: "Md. Atikur Rahaman", id: "0112310298", section: "C" },
+  { name: "Md. Sarowar Alam Sourov", id: "0112310302", section: "C" },
+  { name: "Pratay Paul", id: "0112310163", section: "C" },
+  { name: "Sadman Ifaz", id: "0112230873", section: "E" },
+  { name: "Jayed Bin Khalid", id: "0112230880", section: "C" },
+] as const;
+
 /* ------------------------------------------------------------------ */
 /* Claim boundary — README.md §Status, ROADMAP.md §1.2–1.3             */
 /* ------------------------------------------------------------------ */
