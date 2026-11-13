@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { SlideDeck } from "@/components/slides/deck";
 
 export const metadata: Metadata = {
-  title: "Slides",
+  title: "Project Proposal",
+  description:
+    "EEE 4261: Green Computing, Section C — Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation.",
   robots: {
     index: false,
     follow: false,

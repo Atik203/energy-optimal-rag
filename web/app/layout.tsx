@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Energy Observatory \u2014 Joules per Correct Answer",
     description:
-      "Retrieval depth, measured in joules per correct answer. Pilot evidence, a dead 2 pp claim, and a powered rerun design. No confirmatory results.",
+      "Project proposal: retrieval depth, joules per correct answer, preliminary evidence, and the design of a powered rerun.",
     siteName: "Energy Observatory",
     type: "website",
   },
