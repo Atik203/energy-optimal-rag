@@ -280,6 +280,24 @@ export function SlideChip({ children, tone: chipTone = "deep" }: { children: Rea
   );
 }
 
+export function MathSub({ children }: { children: ReactNode }) {
+  return <sub className="text-[0.62em] leading-none">{children}</sub>;
+}
+
+export function MathSup({ children }: { children: ReactNode }) {
+  return <sup className="text-[0.62em] leading-none">{children}</sup>;
+}
+
+export function Frac({ num, den }: { num: ReactNode; den: ReactNode }) {
+  return (
+    <span className="mx-[0.18em] inline-flex min-w-[1.2em] flex-col items-center justify-center align-middle leading-none">
+      <span className="px-[0.3em] pb-[0.14em]">{num}</span>
+      <span className="h-px w-full bg-current" />
+      <span className="px-[0.3em] pt-[0.14em]">{den}</span>
+    </span>
+  );
+}
+
 export function SlideFormula({
   children,
   tone: formulaTone = "deep",
@@ -293,7 +311,13 @@ export function SlideFormula({
       className="px-[1.5cqw] py-[1.1cqh]"
       style={{ borderLeft: `0.4cqw solid ${c.main}`, background: c.soft }}
     >
-      <div className="font-mono text-[2.7cqh] font-semibold leading-relaxed" style={{ color: S.ink }}>
+      <div
+        className="text-[2.7cqh] leading-relaxed"
+        style={{
+          color: S.ink,
+          fontFamily: '"Cambria Math", "STIX Two Math", "Times New Roman", serif',
+        }}
+      >
         {children}
       </div>
     </div>

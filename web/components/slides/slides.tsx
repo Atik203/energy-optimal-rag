@@ -15,6 +15,9 @@ import {
   Zap,
 } from "lucide-react";
 import {
+  Frac,
+  MathSub,
+  MathSup,
   S,
   SlideBullets,
   SlideCallout,
@@ -38,6 +41,30 @@ export interface SlideDef {
   id: string;
   title: string;
   Component: (props: SlideProps) => ReactElement;
+}
+
+function EnergyFormula() {
+  return (
+    <span className="inline-flex items-center gap-[0.12em]">
+      <span>
+        <i>E</i>(<i>k</i>){" = "}
+      </span>
+      <Frac
+        num={
+          <>
+            <span className="text-[1.12em]">Σ</span> <i>J</i>
+            <MathSub>k</MathSub>
+          </>
+        }
+        den={
+          <>
+            <span className="text-[1.12em]">Σ</span> <i>C</i>
+            <MathSub>k</MathSub>
+          </>
+        }
+      />
+    </span>
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -167,16 +194,18 @@ function IntroProblemSlide({ index, total }: SlideProps) {
             ))}
           </div>
           <SlideDepthLadder />
-          <SlideFormula>E(k) = Σ J_k / Σ C_k</SlideFormula>
+          <SlideFormula>
+            <EnergyFormula />
+          </SlideFormula>
           <div
             className="grid grid-cols-2 gap-x-[1.2cqw] gap-y-[0.45cqh] text-[2.0cqh] font-semibold leading-snug"
             style={{ color: S.ink }}
           >
-            <p><b>k</b> = passages retrieved</p>
-            <p><b>J_k</b> = energy for one question</p>
-            <p><b>C_k</b> = 1 correct, 0 wrong</p>
-            <p><b>E(k)</b> = energy per correct answer</p>
-            <p><b>Σ</b> = sum over questions</p>
+            <p><i>k</i> = passages retrieved</p>
+            <p><i>J</i><MathSub>k</MathSub> = energy for one question at depth <i>k</i></p>
+            <p><i>C</i><MathSub>k</MathSub> = 1 if correct, 0 if wrong</p>
+            <p><i>E</i>(<i>k</i>) = energy per correct answer</p>
+            <p><span className="text-[1.12em]">Σ</span> = sum over questions</p>
             <p><b>BM25</b> = Best Matching 25</p>
           </div>
         </div>
@@ -399,23 +428,86 @@ function MethodSlide({ index, total }: SlideProps) {
     >
       <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
         <SlideCard title="Energy per correct answer" tone="deep" icon={<Gauge size="2.8cqh" />}>
-          <SlideFormula>E(k) = Σ J_k / Σ C_k</SlideFormula>
+          <SlideFormula>
+            <EnergyFormula />
+          </SlideFormula>
           <p className="mt-[0.9cqh] text-[2.15cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            k = passages; J = energy; C = 1 if correct, 0 if wrong.
+            Read as: total energy ÷ total correct answers.
+          </p>
+          <p className="mt-[0.45cqh] text-[2.1cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            <i>k</i> = passages; <i>J</i> = energy; <i>C</i> = 1 if correct, 0 if wrong.
           </p>
         </SlideCard>
         <SlideCard title="Energy–accuracy link" tone="teal" icon={<GitBranch size="2.8cqh" />}>
-          <SlideFormula>k J′(k) / J(k) = k A′(k) / A(k)</SlideFormula>
+          <SlideFormula>
+            <span className="inline-flex items-center gap-[0.18em]">
+              <Frac
+                num={
+                  <>
+                    <i>k</i> <i>J</i>′(<i>k</i>)
+                  </>
+                }
+                den={
+                  <>
+                    <i>J</i>(<i>k</i>)
+                  </>
+                }
+              />
+              <span>{" = "}</span>
+              <Frac
+                num={
+                  <>
+                    <i>k</i> <i>A</i>′(<i>k</i>)
+                  </>
+                }
+                den={
+                  <>
+                    <i>A</i>(<i>k</i>)
+                  </>
+                }
+              />
+            </span>
+          </SlideFormula>
           <p className="mt-[0.9cqh] text-[2.15cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            At the best depth, energy and accuracy change by the same percentage. J′ and A′ are rates
-            of change.
+            At the best depth, energy and accuracy change by the same percentage. <i>J</i>′ and{" "}
+            <i>A</i>′ are rates of change.
           </p>
         </SlideCard>
         <SlideCard title="Break-even measurement" tone="amber" icon={<Timer size="2.8cqh" />}>
-          <SlideFormula>N* = C_cert / [A(k*)(E(k₀) − E(k*))]</SlideFormula>
+          <SlideFormula>
+            <span className="inline-flex items-center gap-[0.12em]">
+              <span>
+                <i>N</i>
+                <MathSup>*</MathSup>
+                {" = "}
+              </span>
+              <Frac
+                num={
+                  <>
+                    <i>C</i>
+                    <MathSub>cert</MathSub>
+                  </>
+                }
+                den={
+                  <>
+                    <i>A</i>(<i>k</i>
+                    <MathSup>*</MathSup>)(<i>E</i>(<i>k</i>
+                    <MathSub>0</MathSub>) − <i>E</i>(<i>k</i>
+                    <MathSup>*</MathSup>))
+                  </>
+                }
+              />
+            </span>
+          </SlideFormula>
           <p className="mt-[0.9cqh] text-[2.15cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            N* = questions needed before the sweep saves more energy than it costs. C_cert = sweep
-            energy; k₀ = default depth; k* = best depth.
+            <i>N</i>
+            <MathSup>*</MathSup> = questions needed before the sweep saves more energy than it costs.
+          </p>
+          <p className="mt-[0.45cqh] text-[2.1cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            <i>C</i>
+            <MathSub>cert</MathSub> = sweep energy; <i>k</i>
+            <MathSub>0</MathSub> = default depth; <i>k</i>
+            <MathSup>*</MathSup> = best depth.
           </p>
         </SlideCard>
         <SlideCard title="Energy-cost test" tone="rose" icon={<FlaskConical size="2.8cqh" />}>
@@ -537,14 +629,19 @@ function AnalysisSlide({ index, total }: SlideProps) {
           <p className="text-[2.35cqh] font-semibold leading-snug" style={{ color: S.ink }}>
             k=4 must be no more than 5 accuracy points below k=32 (non-inferiority, NI).
           </p>
-          <p className="mt-[0.8cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            At least 20% energy savings.
-          </p>
+          <div className="mt-[0.9cqh]">
+            <SlideFormula tone="rose">
+              <span className="text-[2.3cqh]">
+                <i>A</i>(4) − <i>A</i>(32) &gt; −5 pp · savings ≥ 20%
+              </span>
+            </SlideFormula>
+          </div>
           <p className="mt-[0.8cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.ink }}>
             5% one-sided false-positive limit; 10,000 resamples.
           </p>
           <p className="mt-[0.8cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            P(k*) = chance the chosen depth is truly best.
+            <i>P</i>(<i>k</i>
+            <MathSup>*</MathSup>) = chance the chosen depth is truly best.
           </p>
           <p className="mt-[0.8cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
             The 2-point rule is only an estimate.
@@ -558,7 +655,10 @@ function AnalysisSlide({ index, total }: SlideProps) {
               </p>
               <ul className="mt-[0.5cqh] space-y-[0.5cqh] text-[2.0cqh] font-semibold leading-snug" style={{ color: S.ink }}>
                 <li>G1 · 5-point rule + ≥20%</li>
-                <li>G2 · upper confidence bound ≤5 points; P(k*) ≥ 0.8</li>
+                <li>
+                  G2 · upper confidence bound ≤5 points; <i>P</i>(<i>k</i>
+                  <MathSup>*</MathSup>) ≥ 0.8
+                </li>
                 <li>G3 · energy on passages 10–70%</li>
                 <li>G4 · best-possible gain ≥20%; policy ≥50%</li>
                 <li>G5 · replication</li>
@@ -571,7 +671,10 @@ function AnalysisSlide({ index, total }: SlideProps) {
               <ul className="mt-[0.5cqh] space-y-[0.5cqh] text-[2.0cqh] font-semibold leading-snug" style={{ color: S.ink }}>
                 <li>K1 · energy effect &lt;10%</li>
                 <li>K2 · best depth at boundary</li>
-                <li>K3 · P(k*) &lt; 0.8</li>
+                <li>
+                  K3 · <i>P</i>(<i>k</i>
+                  <MathSup>*</MathSup>) &lt; 0.8
+                </li>
                 <li>K4 · energy on passages &lt;5%</li>
                 <li>K5 · best depth moves &gt;1</li>
                 <li>K6 · best-possible gain &lt;15%</li>
@@ -605,7 +708,9 @@ function ExpectedSlide({ index, total }: SlideProps) {
       <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
         <SlideCard title="H1 · energy is linear in depth" tone="deep" icon={<TrendingUp size="2.8cqh" />}>
           <p className="text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Pass if R² (fit quality) ≥ 0.95 and the lack-of-fit test does not fail at 5%. Fail if not.
+            Pass if <i>R</i>
+            <MathSup>2</MathSup> (fit quality) ≥ 0.95 and the lack-of-fit test does not fail at 5%.
+            Fail if not.
           </p>
         </SlideCard>
         <SlideCard title="H2 · main decision" tone="rose" icon={<Target size="2.8cqh" />}>
@@ -621,8 +726,10 @@ function ExpectedSlide({ index, total }: SlideProps) {
         </SlideCard>
         <SlideCard title="H5–H6 · policy and energy costs" tone="amber" icon={<FlaskConical size="2.8cqh" />}>
           <p className="text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Pass if the best-possible gain is ≥20%, the policy gets ≥50% of it, a fixed cost raises k*,
-            and a per-passage cost lowers k*. Fail if not.
+            Pass if the best-possible gain is ≥20%, the policy gets ≥50% of it, a fixed cost raises{" "}
+            <i>k</i>
+            <MathSup>*</MathSup>, and a per-passage cost lowers <i>k</i>
+            <MathSup>*</MathSup>. Fail if not.
           </p>
         </SlideCard>
       </div>
