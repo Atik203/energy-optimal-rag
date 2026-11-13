@@ -14,10 +14,10 @@
 
 | ক্রম | সদস্য | স্লাইড | বিষয় | সময় |
 |---:|---|---|---|---:|
-| 1 | **Pratay Paul** | 1–3 | Title + Introduction & Problem Statement + Motivation & Research Gap | 2:15 |
-| 2 | **Md. Sarowar Alam Sourov** | 4–5 | Objectives & Scope + Dataset | 1:50 |
+| 1 | **Pratay Paul** | 1–3 | Title + Introduction & Problem Statement + Motivation & Literature Review | 2:10 |
+| 2 | **Md. Sarowar Alam Sourov** | 4–5 | Objectives & Scope + Dataset | 1:45 |
 | 3 | **Md. Atikur Rahaman** | 6–7 | Proposed Method + Methodology Flow | 1:50 |
-| 4 | **Sadman Ifaz** | 8–9 | Experimental Setup + Analysis & Gates | 1:45 |
+| 4 | **Sadman Ifaz** | 8–9 | Experimental Setup + Analysis & Gates | 1:55 |
 | 5 | **Jayed Bin Khalid** | 10–11 | Expected Results + Applications, Risks & Conclusion | 1:40 |
 
 **Slide 12 — References:** কেউ উপস্থাপন করবে না। প্রশ্নের সময় দরকার হলে দেখানো যাবে।
@@ -27,158 +27,160 @@
 | সময় | কী হবে |
 |---:|---|
 | 0:00 | Pratay শুরু করবে |
-| 2:15 | Sourov শুরু করবে |
-| 4:05 | Atik শুরু করবে |
-| 5:55 | Sadman শুরু করবে |
+| 2:10 | Sourov শুরু করবে |
+| 3:55 | Atik শুরু করবে |
+| 5:45 | Sadman শুরু করবে |
 | 7:40 | Jayed শুরু করবে |
 | 9:20 | শেষ |
 | 9:20–10:00 | প্রশ্ন-উত্তর শুরু |
 
 ---
 
-## 2. Pratay Paul — 2:15
+## 2. Pratay Paul — 2:10
 
-### Slide 1 — Title (0:00–0:25)
+### Slide 1 — Title (0:00–0:20)
 
 [স্লাইড ১]
 
-শুভ দিন, স্যার। আমি প্রতয় পল। আমাদের টিমের পক্ষ থেকে আপনাদের স্বাগতম। আমাদের টিমে আছেন আতিকুর, সারোয়ার, সাদমান, জায়েদ এবং আমি।
+[সকাল হলে “শুভ সকাল”, দুপুর হলে “শুভ দুপুর” বলুন।]
 
-আমাদের প্রজেক্টের নাম: **Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation**।
+আমি প্রতয় পল। আজ আমাদের দলের প্রজেক্টটি উপস্থাপন করছি।
 
-সহজ ভাষায়: RAG-এ আমরা কতগুলো passage পড়ব, সেটা এমনভাবে বাছাই করতে চাই যাতে **প্রতি সঠিক উত্তরের energy cost সবচেয়ে কম** হয়।
+আমাদের প্রজেক্টের নাম **Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation**।
 
-### Slide 2 — Introduction & Problem Statement (0:25–1:25)
+Retrieval-Augmented Generation, সংক্ষেপে RAG, এমন পদ্ধতি যেখানে মডেল উত্তর দেওয়ার আগে প্রাসঙ্গিক লেখা খুঁজে নিয়ে ব্যবহার করে।
+
+আমাদের প্রশ্ন হলো: কতগুলো passage দিলে উত্তর ঠিক থাকে, অথচ energy খরচ কম হয়?
+
+### Slide 2 — Introduction & Problem Statement (0:20–1:05)
 
 [স্লাইড ২]
 
-RAG-এর ধাপগুলো দেখুন। প্রথমে প্রশ্ন আসে। তারপর BM25 দিয়ে কিছু passage খোঁজা হয়। এরপর k-টি passage reader-কে দেওয়া হয়। Reader মানে যে model passage পড়ে উত্তর তৈরি করে। শেষে উত্তর আসে।
+প্রথমে প্রশ্ন আসে। BM25, অর্থাৎ Best Matching 25, প্রাসঙ্গিক passage খোঁজে। Reader model-কে k-টি passage দিলে সে সেগুলো পড়ে উত্তর তৈরি করে।
 
-এখানে **k হলো retrieval depth** — অর্থাৎ reader কতগুলো passage দেখবে।
+এখানে **k হলো retrieval depth**—reader-কে দেওয়া passage-এর সংখ্যা।
 
-More passages মানে বেশি evidence। Accuracy বাড়তে পারে, কিন্তু energy খরচও বাড়ে। Fewer passages মানে energy কম, কিন্তু উত্তর ভুল হতে পারে। তাই শুধু accuracy বা শুধু energy দেখলে সঠিক depth পাওয়া যায় না।
+বেশি passage accuracy বাড়াতে পারে, তবে energy-ও বাড়ে। কম passage energy বাঁচায়, কিন্তু দরকারি তথ্য বাদ পড়তে পারে। তাই শুধু accuracy বা শুধু energy দেখে depth বাছাই করা যায় না।
 
-আমরা মাপি: **E(k) = ΣJ_k / ΣC_k**।
+আমরা **E(k) = ΣJ_k / ΣC_k** দিয়ে প্রতি সঠিক উত্তরের energy মাপি।
 
-এখানে **J_k** হলো depth k-তে এক প্রশ্নের energy; **C_k** হলো ১ যদি উত্তর সঠিক হয়, ০ যদি ভুল হয়; **Σ** হলো সব প্রশ্নের যোগফল। সহজভাবে: **মোট energy ÷ মোট সঠিক উত্তর**।
+**J_k** হলো depth k-তে এক প্রশ্নের energy; **C_k** হলো সঠিক হলে ১, ভুল হলে ০; আর **Σ** মানে সব প্রশ্নের যোগফল। সহজভাবে, মোট energy ভাগ মোট সঠিক উত্তর।
 
-আমরা k বাছাই করি একটি **accuracy floor**-এর নিচে না গিয়ে। ৫ accuracy point মানে ৫ percentage point, সংক্ষেপে **pp**।
+আমরা k=32-এর তুলনায় accuracy loss ৫ percentage point-এর মধ্যে রেখে E(k) কমাতে চাই। Percentage point-কে সংক্ষেপে **pp** বলি।
 
-### Slide 3 — Motivation & Research Gap (1:25–2:15)
+### Slide 3 — Motivation & Literature Review (1:05–2:10)
 
 [স্লাইড ৩]
 
-Motivation: pilot study-তে **k=32**-এ প্রতি সঠিক উত্তরের energy **k=1**-এর তুলনায় **3.45 গুণ** বেশি। k=32-এ energy-এর **85.1%** যায় passage পড়ার পেছনে। Accuracy 4 থেকে 16 passage পর্যন্ত প্রায় flat থাকে। আর 5 pp margin-এ **k=4**-এ savings **69.3%**। এগুলো early result, final নয়।
+Pilot-এ k=32-এ প্রতি সঠিক উত্তরের energy k=1-এর **3.45 গুণ** ছিল। k=32-এ retrieval ও passage processing-সহ context-side share ছিল **85.1%**। k=4–16-এ accuracy ছিল **52%–53.5%**।
 
-এই table-এ দেখুন: static top-k শুধু accuracy দেখে; adaptive-k token বা latency দেখে; energy benchmark শুধু power বা energy দেখে। কিন্তু কেউ একসাথে **energy per correct answer, accuracy floor, break-even, আর policy** দেখে না। এটাই আমাদের research gap।
+৫ pp margin-এ pilot analysis k=4 বেছে নিয়েছিল, যা k=32-এর তুলনায় প্রতি সঠিক উত্তরের energy **69.3%** বাঁচায়। এগুলো pilot result, চূড়ান্ত নয়।
+
+Literature review-তে কয়েকটি ধারা আছে। Lewis et al. RAG-এর ভিত্তি স্থাপন করেন; Jeong, Hwang, Hashemi, Song ও Taguchi query অনুযায়ী retrieval বদলান; Pan, RAGMark ও Token Arena RAG-এর energy মাপে। Token Arena-তেই modeled joules per correct answer আছে, তাই metric নিজে নতুন নয়। আমাদের gap হলো measured energy দিয়ে accuracy limit-এর মধ্যে k বাছাই, break-even cost, causal tax test, এবং matched-accuracy policy একসঙ্গে পরীক্ষা করা।
 
 [হ্যান্ডঅফ] এখন সারোয়ার আলম সৌরভ Objectives ও Dataset নিয়ে বলবেন।
 
 ---
 
-## 3. Md. Sarowar Alam Sourov — 1:50
+## 3. Md. Sarowar Alam Sourov — 1:45
 
-### Slide 4 — Objectives & Scope (2:15–3:10)
+### Slide 4 — Objectives & Scope (2:10–3:05)
 
 [স্লাইড ৪]
 
-ধন্যবাদ। আমি সারোয়ার আলম সৌরভ।
+ধন্যবাদ। আমি সারোয়ার আলম সৌরভ। আমাদের তিনটি প্রশ্ন।
 
-আমাদের তিনটি প্রশ্ন।
+**এক: Static depth।** k=32-এর তুলনায় accuracy loss ৫ pp-এর মধ্যে রেখে কোন k-তে E(k) সবচেয়ে কম? এতে H1–H4 পরীক্ষা হবে; H7-তে অন্য reader বা dataset-এ একই দিকের ফল আসে কি না দেখব।
 
-**এক: Static depth।** কোন k-তে E(k) সবচেয়ে কম, যদি k=32-এর থেকে 5 pp-এর বেশি accuracy না কমি? এটি H1–H4 এবং H7 replication পরীক্ষা করে।
+**দুই: Adaptivity।** প্রতি প্রশ্নে আলাদা k বেছে নিয়ে best static depth-এর সমান accuracy রাখা যায় কি না—এটি H5।
 
-**দুই: Adaptivity।** প্রতিটি প্রশ্নের জন্য আলাদা k বেছে নিলে কি best static depth-এর সমান accuracy রাখা যায়? এটি H5।
+**তিন: কারণ ও খরচ।** Fixed বা প্রতি-passage energy cost দিলে k* কীভাবে বদলায়, তা H6 পরীক্ষা করে। Sweep-এর energy খরচ কত প্রশ্নে পুষিয়ে যায়, তা N* বলে।
 
-**তিন: Cause and cost।** Energy tax দিলে k* predicted দিকে যায় কি না, আর measurement sweep তার energy ফেরত দেয় কি না? এটি H6, আর N* break-even।
+H1–H7 হলো সাতটি পরীক্ষামূলক বক্তব্য; H মানে hypothesis। আমরা ৫ pp rule, ≥20% সাশ্রয়, energy–accuracy সম্পর্ক, context share, policy ও cost effect পরীক্ষা করব। একটি universal best depth claim করছি না। ২ pp শুধু estimate; ৫ pp-এর ফল powered rerun-এর আগে pilot signal।
 
-**H1–H7** হলো সাতটি hypothesis। **H মানে hypothesis** — একটি পরীক্ষামূলক statement, যার clear pass/fail rule আছে।
-
-আমরা 5 pp rule, ≥20% savings, energy–accuracy link, passage share, policy, এবং tax signs পরীক্ষা করব। আমরা universal k*, 2 pp optimum, বা rerun-এর আগে certified 5 pp result claim করব না।
-
-### Slide 5 — Dataset (3:10–4:05)
+### Slide 5 — Dataset (3:05–3:55)
 
 [স্লাইড ৫]
 
-প্রথম dataset: **SQuAD** — Stanford Question Answering Dataset — v1.1 dev। এতে 10,570 প্রশ্ন, 20,958 context, এবং 45,651 passage আছে। আমরা BM25 top-32 ব্যবহার করব।
+প্রথম dataset **SQuAD**, অর্থাৎ Stanford Question Answering Dataset v1.1 dev। এতে 10,570টি প্রশ্ন, 20,958টি context, এবং 45,651টি passage আছে। Retriever BM25 top-32।
 
-আমাদের primary run 1,000 প্রশ্ন, replication 500, boundary 200। Metric exact match; license CC BY-SA 4.0।
+Primary run-এ 1,000টি, reader replication-এ 500টি, আর boundary test-এ 200টি প্রশ্ন থাকবে। Primary metric normalized exact match।
 
-দ্বিতীয় dataset: **HotpotQA** — multi-hop question answering dataset। distractor version-এ 7,405 প্রশ্ন; আমরা 500 ব্যবহার করব। প্রতি প্রশ্নে 10 paragraph: 2 gold + 8 distractor। k = 0, 1, 2, 4, 8, 10; BM25 top-10।
+দ্বিতীয় dataset **HotpotQA**। Distractor version-এ 7,405টি প্রশ্ন আছে; আমরা 500টি নেব। প্রতি প্রশ্নে 10টি paragraph—2টি gold, 8টি distractor। k হবে 0, 1, 2, 4, 8, 10; retriever BM25 top-10।
 
-SQuAD depth isolate করে; HotpotQA multi-hop ও distractor stress test করে।
+SQuAD-এ একই corpus রেখে depth-এর প্রভাব দেখি। HotpotQA-তে multi-hop evidence ও distractor থাকে, তাই এটি stress test।
 
-[হ্যান্ডঅফ] এখন আতিকুর রাহামান Proposed Method ও Methodology Flow নিয়ে বলবেন।
+[হ্যান্ডঅফ] এখন আতিকুর রহমান Proposed Method ও Methodology Flow ব্যাখ্যা করবেন।
 
 ---
 
 ## 4. Md. Atikur Rahaman — 1:50
 
-### Slide 6 — Proposed Method (4:05–5:10)
+### Slide 6 — Proposed Method (3:55–4:55)
 
 [স্লাইড ৬]
 
-ধন্যবাদ। আমি আতিকুর রাহামান।
+ধন্যবাদ। আমি আতিকুর রহমান।
 
-Method-এ চারটি idea।
+আমাদের method-এ চারটি অংশ।
 
-**এক: Energy per correct answer।** E(k) = ΣJ_k / ΣC_k, accuracy floor দিয়ে gated। Read as: total energy ÷ total correct answers।
+**এক:** accuracy limit-এর মধ্যে E(k), অর্থাৎ মোট energy ভাগ মোট সঠিক উত্তর, কমানো।
 
-**দুই: Energy–accuracy link।** k J′(k) / J(k) = k A′(k) / A(k)। Best depth-এ energy ও accuracy একই percentage-এ বদলায়। J′ ও A′ হলো rate of change।
+**দুই:** interior optimum-এ energy ও accuracy-র শতকরা পরিবর্তনের হার সমান কি না দেখা। J′ ও A′ হলো k বদলালে তাদের পরিবর্তনের হার।
 
-**তিন: Break-even।** N* = C_cert / [A(k*)(E(k₀) − E(k*))]। N* মানে কতগুলো প্রশ্নের পরে sweep-এর energy সাশ্রয় তার খরচের চেয়ে বেশি। C_cert হলো sweep energy, k₀ default depth, k* best depth।
+**তিন:** N* দিয়ে sweep-এর break-even প্রশ্নসংখ্যা বের করা। C_cert হলো sweep energy; k₀ default depth; k* হলো বাছাই করা depth।
 
-**চার: Energy-cost test।** Fixed cost (a) k* বাড়ায়; per-passage cost (b) k* কমায়। উল্টো sign হলে model ভুল।
+**চার:** Accuracy gate একই রেখে fixed cost বাড়ালে k* বাড়ে, প্রতি-passage cost বাড়ালে কমে কি না পরীক্ষা করা।
 
-Baseline হলো একটাই fixed top-k, শুধু accuracy বা speed দেখে tune করা। আমাদের proposal হলো accuracy floor-এর মধ্যে energy per correct answer দিয়ে depth বাছাই করা।
+Baseline-এ সবার জন্য একই top-k। আমাদের প্রস্তাব accuracy limit রেখে energy per correct answer দিয়ে depth বেছে নেয়।
 
-### Slide 7 — Methodology Flow (5:10–5:55)
+### Slide 7 — Methodology Flow (4:55–5:45)
 
 [স্লাইড ৭]
 
-এই slide-এ experiment-এর flow।
+এই স্লাইডে study workflow। Primary SQuAD run-এ 7টি depth, HotpotQA-তে 6টি। এরপর NVML ও block calibration-এ energy মাপি, normalized exact match score করি, তারপর paired NI test, bootstrap, E(k), N*, ও policy বিশ্লেষণ করি।
 
-উপরে pipeline: Prepare SQuAD ও HotpotQA → Index BM25 → Sweep ৭টি depth → Measure NVML ও block → Score exact match ও bootstrap → Analyze E(k), N*, policy।
+নিচে: 200 প্রশ্নের P0 check, P1-এর আগে plan freeze, 1,000 প্রশ্নের full run, gate review, তারপর replication, tax, policy ও theory test।
 
-নিচে decision flow: Freeze plan → Small re-run 200 প্রশ্ন → Full re-run 1,000 × 7 → Checkpoints G1–G5 ও K1–K7 → More tests: replication, policy, theory।
+মূল কথা: **run measurement দেয়; checkpoint বলে আমরা এগোব কি না।**
 
-মূল কথা: **run হলো measurement, checkpoint হলো decision**।
-
-[হ্যান্ডঅফ] এখন সাদমান ইফাজ Experimental Setup ও Analysis-এর Gates নিয়ে বলবেন।
+[হ্যান্ডঅফ] এখন সাদমান ইফাজ Experimental Setup এবং Analysis-এর gate-গুলো ব্যাখ্যা করবেন।
 
 ---
 
-## 5. Sadman Ifaz — 1:45
+## 5. Sadman Ifaz — 1:55
 
-### Slide 8 — Experimental Setup (5:55–6:50)
+### Slide 8 — Experimental Setup (5:45–6:40)
 
 [স্লাইড ৮]
 
 ধন্যবাদ। আমি সাদমান ইফাজ।
 
-Setup-এ runs: SQuAD 1,000 × 7; Qwen2.5-1.5B 500 × 7; HotpotQA 500 × 6; boundary 200 × 3; taxes 150 × 2।
+Run plan: SQuAD 1,000 × 7 depth; Qwen2.5-1.5B replication 500 × 7; HotpotQA 500 × 6; boundary test 200 × 3; energy-tax test 150 × 2 condition। Policy split-এর target 600 train, 200 validation, 200 test।
 
-Measurement: NVML প্রতি 100 ms-এ power পড়ে। 60 সেকেন্ড idle baseline; 20 প্রশ্নের block; প্রতিটি request-এ unique code, যাতে cached prompt না আসে; heat ও speed log; wall meter; repeat block।
+NVML প্রতি 100 মিলিসেকেন্ডে power sample করে, কিন্তু এই laptop-এ sensor reading প্রায় প্রতি এক সেকেন্ডে update হয়। তাই 100 মিলিসেকেন্ড sampling মানে 100 মিলিসেকেন্ডের sensor precision নয়।
 
-Decision: k=4, k=32-এর থেকে 5 pp-এর বেশি খারাপ নয় — এটা **non-inferiority, NI**; অন্তত 20% energy savings; 5% one-sided false-positive limit; 10,000 resamples। 2-point rule শুধু estimate।
+60 সেকেন্ডের idle baseline বাদ দিয়ে 20-query block calibrate করব। Unique code cache reuse কমায়। Temperature ও clock log করব, block repeat করব, এবং 30-query subset-এ wall meter ব্যবহার করব।
 
-Budget: **15–20 GPU hours**, RTX 3060 6 GB, একসাথে একটাই job, wall power, screen off।
+H2 pass করতে paired one-sided 5% test-এর lower bound −5 pp-এর ওপরে এবং energy saving অন্তত 20% হতে হবে। Energy uncertainty-র জন্য 10,000 paired bootstrap নেব। 2 pp শুধু estimate করব।
 
-### Slide 9 — Analysis & Gates (6:50–7:40)
+Budget **15–20 GPU hours**। RTX 3060 6 GB-তে একবারে একটি job; wall power, screen off।
+
+### Slide 9 — Analysis & Gates (6:40–7:40)
 
 [স্লাইড ৯]
 
 এখন Analysis ও Gates।
 
-**G মানে go** — checkpoint pass হলে এগিয়ে যাব। **K মানে stop/reframe** — fail হলে report করে claim বদলাব। **H মানে hypothesis** — পরীক্ষার statement।
+**G মানে go**—pass হলে এগোব। **K মানে stop/reframe**—fail হলে ফল report করে claim বদলাব। **H মানে hypothesis**, অর্থাৎ পরীক্ষার বক্তব্য।
 
-Main decision: k=4, k=32-এর থেকে 5 pp-এর বেশি খারাপ নয়, এবং অন্তত 20% energy savings। Formula: **A(4) − A(32) > −5 pp · savings ≥ 20%**। 5% one-sided false-positive limit, 10,000 resamples। P(k*) হলো সম্ভাবনা যে বাছাই করা depth-টাই সত্যিই সবচেয়ে ভালো।
+Main decision: k=4-এর accuracy loss 5 pp-এর বেশি নয়, আর energy per correct answer-এ সাশ্রয় অন্তত 20%। `P(k*)` হলো 10,000 bootstrap sample-এর কত অংশে ওই depth-টি accuracy gate মেনে best হয়—সত্যিই best হওয়ার নিশ্চয়তা নয়।
 
-Go gates: G1 5-point rule + ≥20%; G2 upper confidence bound ≤5 points এবং P(k*) ≥ 0.8; G3 energy on passages 10–70%; G4 best-possible gain ≥20%, policy ≥50%; G5 replication।
+G1–G2 static সিদ্ধান্ত ও stability দেখে; G3 context-side share; G4 oracle gain ≥20% হলে policy matched accuracy-তে তার ≥50% ধরে কি না; G5 replication।
 
-Stop gates: K1 energy effect <10%; K2 best depth boundary-তে; K3 P(k*) < 0.8; K4 energy on passages <5%; K5 best depth 1-এর বেশি নড়ে; K6 best-possible gain <15%; K7 repeat error >20%।
+K1–K7 ছোট effect, boundary বা unstable best depth, কম context share বা oracle gain, এবং noisy measurement ধরার জন্য। নির্দিষ্ট threshold স্লাইডে আছে।
 
-কোনো checkpoint fail করলে আমরা সেটা report করি এবং claim বদলাই।
+কোনো checkpoint fail করলে সেটি লুকাব না—report করব এবং claim সীমিত বা বদলাব।
 
 [হ্যান্ডঅফ] এখন জায়েদ বিন খালিদ Expected Results ও Conclusion নিয়ে বলবেন।
 
@@ -192,33 +194,33 @@ Stop gates: K1 energy effect <10%; K2 best depth boundary-তে; K3 P(k*) < 0.8
 
 ধন্যবাদ। আমি জায়েদ বিন খালিদ।
 
-Expected results:
+H1 থেকে H7 পর্যন্ত আমাদের pass/fail নিয়মগুলো এই স্লাইডে আছে।
 
-- **H1** — energy linear: R² ≥ 0.95 এবং lack-of-fit test 5%-এ fail না করলে pass।
-- **H2** — main decision: k=4 5 pp-এর মধ্যে এবং ≥20% savings।
-- **H3–H4** — 95% confidence range-এ 0 থাকবে; energy share on passages 10–70% এবং বাড়বে।
-- **H5–H6** — best-possible gain ≥20%, policy ≥50%, fixed cost k* বাড়াবে, per-passage cost কমাবে।
-- **H7** — Qwen2.5-1.5B বা HotpotQA-তে replication।
+- **H1:** `J(k)=a+bk`-তে `b>0`, `R²≥0.95`, এবং 5% lack-of-fit test-এ fit বাতিল হয় না।
+- **H2:** paired one-sided test-এর lower bound −5 pp-এর ওপরে, energy saving অন্তত 20%।
+- **H3–H4:** identity-gap interval-এ 0; selected depth-এ context share 10–70% এবং k-এর সঙ্গে বাড়ে।
+- **H5–H6:** oracle gain অন্তত 20%; policy matched accuracy-তে তার অন্তত অর্ধেক ধরে; fixed ও per-passage cost k* প্রত্যাশিত দিকে সরায়।
+- **H7:** H2-এর দিক Qwen2.5-1.5B বা HotpotQA-তে মেলে কি না।
 
-Null result-ও result।
+কোনো hypothesis সমর্থন না পেলেও সেটি report করব। Null result-ও ফল।
 
 ### Slide 11 — Applications, Risks & Conclusion (8:25–9:20)
 
 [স্লাইড ১১]
 
-Applications: green RAG serving ও capacity planning; ছোট GPU ও edge device; energy-aware benchmark; accuracy-margin policy; open harness।
+এই ফল energy-aware RAG serving, capacity planning, ছোট GPU ও edge device-এর নকশায় কাজে লাগতে পারে। Reusable code প্রকাশেরও পরিকল্পনা আছে।
 
-Risks: exact match vs lenient scoring; reader strength ও এক dataset; GPU heat ও power sensor limit; cached prompt ও policy overfitting; budget 15–20 GPU hours, ≤$47।
+প্রধান ঝুঁকি হলো scoring rule, সীমিত reader ও dataset, GPU heat ও sensor-এর সীমা, এবং cache বা policy overfitting। Budget 15–20 GPU hours; মোট cash cap 47 dollar।
 
-আমাদের proposal তিনটি:
+আমাদের প্রস্তাব তিনটি:
 
-1. Accuracy floor-এর মধ্যে energy per correct answer দিয়ে depth বাছাই।
-2. Energy cost দিয়ে causal test।
-3. প্রতি প্রশ্নে আলাদা depth বেছে নেওয়া policy, matched accuracy-তে।
+1. Accuracy limit মেনে প্রতি সঠিক উত্তরের energy দিয়ে depth বাছাই।
+2. Energy cost বদলে best depth-এর ওপর তার causal effect পরীক্ষা।
+3. প্রতিটি প্রশ্নের জন্য আলাদা depth বেছে নেওয়া policy-কে একই accuracy-তে পরীক্ষা।
 
-আমরা 1,000 প্রশ্নের study চালিয়ে result report করতে চাই — positive বা null।
+আমরা 1,000 প্রশ্নের study চালিয়ে ফল positive বা null—যাই হোক—report করতে চাই।
 
-ধন্যবাদ, স্যার। প্রশ্ন থাকলে আমরা উত্তর দিতে প্রস্তুত।
+ধন্যবাদ, স্যার। এখন আপনাদের প্রশ্নের উত্তর দেব।
 
 ---
 
@@ -227,177 +229,235 @@ Risks: exact match vs lenient scoring; reader strength ও এক dataset; GPU h
 > [!TIP]
 > উত্তর শুরু করার আগে এক সেকেন্ড থামুন। তারপর প্রথম বাক্যে সরাসরি উত্তর দিন। বিস্তারিত লাগলে স্লাইডে ফিরে যান।
 
-## A. Basic definitions
+## A. প্রাথমিক ধারণা
 
 ### ১. `k` কী?
 
-**উত্তর:** `k` হলো retrieval depth — reader-কে কতগুলো passage দেওয়া হচ্ছে। `k=4` মানে reader ৪টি passage দেখছে; `k=32` মানে ৩২টি passage দেখছে। স্লাইড ২-এ এটি দেখানো আছে।
+**উত্তর:** `k` হলো retrieval depth—reader-কে দেওয়া passage-এর সংখ্যা। `k=4` হলে reader ৪টি passage পায়; `k=32` হলে ৩২টি পায়।
 
 ### ২. `E(k)` কী?
 
-**উত্তর:** `E(k)` হলো প্রতি সঠিক উত্তরের energy। এটি মোট energy-কে মোট সঠিক উত্তর দিয়ে ভাগ করে। সহজভাবে: **total energy ÷ total correct answers**। স্লাইড ২ ও ৬-এ সূত্রটি আছে।
+**উত্তর:** `E(k)` হলো প্রতি সঠিক উত্তরের energy। সব প্রশ্নে খরচ হওয়া মোট energy-কে সঠিক উত্তরের মোট সংখ্যা দিয়ে ভাগ করি। তাই এটি per-query ratio-র গড় নয়; এটি মোট energy ভাগ মোট সঠিক উত্তর।
 
 ### ৩. `J_k` ও `C_k` কী?
 
-**উত্তর:** `J_k` হলো depth `k`-তে এক প্রশ্নের energy। `C_k` হলো ১ যদি উত্তর সঠিক হয়, ০ যদি ভুল হয়। `Σ` মানে সব প্রশ্নের যোগফল।
+**উত্তর:** `J_k` হলো depth `k`-তে একটি প্রশ্নের energy। `C_k` হলো correctness indicator—সঠিক হলে ১, ভুল হলে ০। `Σ` মানে সব প্রশ্নের যোগফল।
 
 ### ৪. `pp` কী?
 
-**উত্তর:** `pp` মানে **percentage point**। ৫ pp মানে ৫ accuracy point — এটি ৫% relative নয়। উদাহরণ: accuracy ৮০% থেকে ৭৫% হলে ৫ pp কমে।
+**উত্তর:** `pp` মানে **percentage point**। Accuracy ৮০% থেকে ৭৫% হলে কমে ৫ pp। এটি ৫% relative decrease নয়।
 
 ### ৫. `EM` কী?
 
-**উত্তর:** `EM` মানে **exact match**। Predicted answer এবং gold answer হুবহু মিললে ১, না মিললে ০। আমাদের primary metric exact match।
+**উত্তর:** `EM` মানে **exact match**। Normalization-এর পরে model-এর উত্তরটি gold answer-এর সঙ্গে পুরো মিললে ১, না মিললে ০। এটিই আমাদের primary metric।
 
 ### ৬. `NI` কী?
 
-**উত্তর:** `NI` মানে **non-inferiority** — অর্থাৎ নতুনটি পুরোনোটির চেয়ে নির্দিষ্ট margin-এর বেশি খারাপ নয়। এখানে `k=4`, `k=32`-এর থেকে ৫ pp-এর বেশি খারাপ না হলে NI pass।
+**উত্তর:** `NI` মানে **non-inferiority**—নতুন পদ্ধতি নির্ধারিত margin-এর বেশি খারাপ নয়। এখানে `k=4`-এর accuracy `k=32`-এর চেয়ে ৫ pp-এর বেশি কম নয়—এটি শুধু observed difference দেখে বলা যাবে না; paired one-sided test-ও pass করতে হবে।
 
 ### ৭. `P(k*)` কী?
 
-**উত্তর:** `P(k*)` হলো bootstrap probability যে আমরা বাছাই করা depth-টাই সত্যিই সবচেয়ে ভালো। G2-তে `P(k*) ≥ 0.8` দরকার; K3-তে `P(k*) < 0.8` হলে stop/reframe।
+**উত্তর:** `P(k*)` হলো 10,000 bootstrap resample-এর যে অংশে ওই depth-টি accuracy gate মেনে সবচেয়ে কম energy দেয়। এটি “সত্যিই best হওয়ার সম্ভাবনা” নয়। G2-তে এই অংশ অন্তত 0.8 হতে হবে।
 
 ### ৮. `R²` কী?
 
-**উত্তর:** `R²` হলো goodness of fit — model data-কে কতটা ভালোভাবে ব্যাখ্যা করছে। H1-এ `R² ≥ 0.95` এবং lack-of-fit test ৫%-এ fail না করলে pass।
+**উত্তর:** `R²` হলো fit quality—সরলরেখাটি data-র সঙ্গে কতটা মেলে। H1 pass করতে `R² ≥ 0.95` এবং ৫% lack-of-fit test-এ fit বাতিল না হওয়া দরকার।
 
 ### ৯. `N*` কী?
 
-**উত্তর:** `N*` হলো break-even প্রশ্নের সংখ্যা — কতগুলো প্রশ্নের পরে measurement sweep-এর energy সাশ্রয় তার খরচের চেয়ে বেশি হয়। স্লাইড ৬-এ সূত্রটি আছে।
+**উত্তর:** `N*` হলো break-even question count—কতটি query-র পরে sweep চালাতে খরচ হওয়া energy, বেছে নেওয়া depth-এর মাধ্যমে সাশ্রয় হওয়া energy দিয়ে পুষিয়ে যায়।
 
 ### ১০. `C_cert`, `k₀`, `k*` কী?
 
-**উত্তর:** `C_cert` হলো sweep-এর energy cost। `k₀` হলো default depth। `k*` হলো selected বা best depth।
+**উত্তর:** `C_cert` হলো depth খুঁজতে sweep-এর মোট energy cost। `k₀` হলো default depth, আর `k*` হলো accuracy gate মেনে সবচেয়ে কম energy দেওয়া depth।
 
 ### ১১. `a` ও `b` কী?
 
-**উত্তর:** Energy model `J(k) = a + bk`-তে `a` হলো fixed cost, `b` হলো per-passage cost। Fixed cost বাড়লে `k*` বাড়ে; per-passage cost বাড়লে `k*` কমে। উল্টো sign হলে model ভুল।
+**উত্তর:** `J(k)=a+bk`-তে `a` হলো fixed energy cost, আর `b` হলো প্রতি passage যোগ হলে বাড়তি energy। আমাদের prediction হলো: fixed cost বাড়ালে `k*` বাড়বে; প্রতি-passage cost বাড়ালে `k*` কমবে।
 
-## B. Gates and hypotheses
+## B. Gate ও hypothesis
 
 ### ১২. `G1–G5` কী?
 
-**উত্তর:** এগুলো **go gates** — pass হলে পরের ধাপে যাব।
+**উত্তর:** এগুলো **go gate**—শর্ত পূরণ হলে পরের ধাপে যাব।
 
-- G1: ৫ pp non-inferiority + ≥20% energy savings
-- G2: upper confidence bound ≤5 pp এবং `P(k*) ≥ 0.8`
-- G3: energy on passages 10–70%
-- G4: best-possible gain ≥20%, policy capture ≥50%
-- G5: Qwen2.5-1.5B বা HotpotQA-তে replication
+- G1: `k=32`-এর তুলনায় interior depth-এ ৫ pp non-inferiority এবং ≥20% energy savings
+- G2: accuracy loss-এর upper confidence bound ≤5 pp এবং `P(k*) ≥ 0.8`
+- G3: selected depth-এ context-side share 10–70%, এবং depth বদলালে share-ও বদলায়
+- G4: oracle gain ≥20%, policy matched accuracy-তে তার ≥50% পায়
+- G5: Qwen2.5-1.5B reader অথবা HotpotQA-তে replication
 
 ### ১৩. `K1–K7` কী?
 
-**উত্তর:** এগুলো **stop/reframe gates** — fail হলে result report করব এবং claim বদলাব।
+**উত্তর:** এগুলো **stop/reframe gate**—শর্ত fail হলে ফলটি report করব এবং claim সীমিত বা বদলাব।
 
 - K1: energy effect <10%
 - K2: best depth boundary-তে
 - K3: `P(k*) < 0.8`
-- K4: energy on passages <5%
-- K5: best depth ১-এর বেশি নড়ে
+- K4: context-side share <5% এবং depth-এর সঙ্গে বাড়ে না
+- K5: bootstrap sample বা dataset বদলালে best depth ১-এর বেশি depth জুড়ে ছড়ায়
 - K6: best-possible gain <15%
-- K7: repeat error >20%
+- K7: repeat coefficient of variation (CV) >20% অথবা minimum detectable effect (MDE), observed effect-এর চেয়ে বড়
 
 ### ১৪. `H1–H7` কী?
 
-**উত্তর:** সাতটি hypothesis:
+**উত্তর:** সাতটি পরীক্ষামূলক বক্তব্য:
 
-- H1: energy depth-এ affine
-- H2: ৫ pp primary decision
-- H3: optimal-depth identity
-- H4: passage-energy share
-- H5: query-conditional policy
-- H6: energy-tax signs
-- H7: replication
+- H1: প্রতি query-র energy depth-এর সঙ্গে positive slope-এ affine line মেনে বাড়ে; `R² ≥ 0.95` এবং ৫% lack-of-fit test-এ fit বাতিল হয় না।
+- H2: `k=4`-এর paired ৫ pp non-inferiority test pass করে এবং ≥20% সাশ্রয় দেয়।
+- H3: নির্বাচিত interior depth-এ energy–accuracy identity gap-এর 95% interval-এ 0 থাকে।
+- H4: selected depth-এ context-side share 10–70% এবং depth বাড়লে share বাড়ে।
+- H5: 200 held-out প্রশ্নে learned policy matched accuracy-তে oracle gain-এর অন্তত অর্ধেক ধরে।
+- H6: accuracy gate একই রেখে fixed cost বাড়ালে `k*` বাড়ে, প্রতি-passage cost বাড়ালে `k*` কমে।
+- H7: H2-এর দিক Qwen2.5-1.5B বা HotpotQA-তে মেলে।
 
 প্রতিটির pass/fail rule স্লাইড ১০-এ আছে।
 
 ### ১৫. `H` কী?
 
-**উত্তর:** `H` মানে **hypothesis** — একটি পরীক্ষামূলক statement, যার clear pass/fail rule আছে। যেমন H2 বলে `k=4` কি `k=32`-এর থেকে ৫ pp-এর বেশি খারাপ নয়।
+**উত্তর:** `H` মানে **hypothesis**—আমরা যে বক্তব্যটি data দিয়ে পরীক্ষা করব। যেমন H2 পরীক্ষা করে `k=4`-এর accuracy `k=32`-এর চেয়ে ৫ pp-এর বেশি কম কি না, এবং energy সাশ্রয় অন্তত ২০% কি না।
 
 ### ১৬. `G` ও `K` কী?
 
-**উত্তর:** `G` মানে **go** — checkpoint pass হলে এগিয়ে যাব। `K` মানে **stop/reframe** — fail হলে report করে claim বদলাব। স্লাইড ৯-এ এটি লেখা আছে।
+**উত্তর:** `G` মানে **go**—শর্ত পূরণ হলে এগোব। `K` মানে **stop/reframe**—শর্ত পূরণ না হলে ফল report করে claim বদলাব।
 
-## C. Project design
+## C. Project-এর নকশা
 
 ### ১৭. প্রাইমারি reader কোনটি? কেন Qwen2.5-1.5B?
 
-**উত্তর:** প্রাইমারি reader **Qwen3.5-4B** — এটি local Ollama-তে Q4, 4096 context-এ installed। Replication reader **Qwen2.5-1.5B-Instruct** — ভিন্ন family ও size, তাই external validity বেশি। একই 4B দিয়ে করলে সেটা replication নয়, repeat হতো।
+**উত্তর:** Primary reader হলো **Qwen3.5-4B**, local Ollama-তে Q4 quantization ও 4096-token context-সহ। Replication-এ **Qwen2.5-1.5B-Instruct** নেব, কারণ এটি ভিন্ন generation ও size-এর reader। একই 4B আবার চালালে সেটি repeat হতো, cross-reader replication নয়।
 
 ### ১৮. `5 pp` কেন, `2 pp` নয়?
 
-**উত্তর:** `2 pp` static claim-টি dead — pilot-এ `P(k*)=0.61`, যা G2-এর 0.8-এর নিচে। তাই 2 pp শুধু estimation target, hypothesis নয়। `5 pp` হলো pre-registered primary margin, সঙ্গে ≥20% savings। এটি এখনো pilot signal, certified result নয়।
+**উত্তর:** ২ pp-কে decision threshold ধরে best depth certify করার claim আমরা বাদ দিয়েছি। Pilot-এ ২ pp gate-এ `k*=32` boundary-তে ছিল এবং `P(k*)=0.61`, যা G2-এর 0.8-এর নিচে। ২ pp এখন শুধু estimate করব। ৫ pp হলো planned primary margin; সঙ্গে অন্তত ২০% সাশ্রয়ও লাগবে। Pilot-এর ৫ pp ফল signal, certification নয়।
 
 ### ১৯. `69.3%` কী?
 
-**উত্তর:** Pilot study-তে ৫ pp margin-এ `k=4`-এ `k=32`-এর তুলনায় energy savings 69.3%। এটি early result — powered rerun-এ যাচাই করতে হবে।
+**উত্তর:** Pilot-এ ৫ pp margin-এ `k=4` বেছে নেওয়া হয়েছিল। `k=32`-এর তুলনায় প্রতি সঠিক উত্তরের energy-তে সাশ্রয় ছিল 69.3%। এটি pilot signal; 1,000-প্রশ্নের run-এ যাচাই করতে হবে।
 
 ### ২০. `78.8%` কী?
 
-**উত্তর:** এটি pilot-এর **oracle upper bound** — matched accuracy-তে সবচেয়ে ভালো সম্ভাব্য gain। কোনো learned policy এখনো train করা হয়নি, তাই এটি learned-policy result নয়। H5/G4 এই upper bound-এর দিকে তাকায়।
+**উত্তর:** 78.8% হলো pilot-এর **oracle upper bound**—একই accuracy রেখে hindsight-এ প্রতিটি প্রশ্নের জন্য সেরা depth বেছে নিলে যে gain পাওয়া যেত। কোনো learned policy এখনো test করা হয়নি, তাই 78.8% policy-র result নয়। H5/G4 পরীক্ষা করবে learned policy এই gain-এর কতটা ধরতে পারে।
 
 ### ২১. Universal `k*` আছে কি?
 
-**উত্তর:** না। Optimal depth নির্ভর করে reader, dataset, accuracy floor, এবং energy cost-এর উপর। আমরা universal `k*` claim করি না; আমরা একটি **decision rule** estimate করি।
+**উত্তর:** না। Best depth reader, dataset, accuracy limit ও energy cost-এর ওপর নির্ভর করতে পারে। তাই আমরা সবার জন্য একটিমাত্র `k*` বলি না; পরিস্থিতি অনুযায়ী depth বাছাইয়ের decision rule পরীক্ষা করি।
 
 ### ২২. `k=4` কি `k*`?
 
-**উত্তর:** না। `k=4` হলো ৫ pp rule-এর pre-registered candidate। `k*` হলো estimated best depth। Pilot-এ `k*` boundary-তে ছিল এবং `P(k*)=0.61`; final rerun-এ এটি estimate হবে।
+**উত্তর:** `k=4` হলো primary test-এর নির্ধারিত candidate; `k*` হলো accuracy gate মেনে সবচেয়ে কম energy দেওয়া estimated depth। ২ pp gate-এ pilot `k*=32` বেছে নিয়েছিল, `P(k*)=0.61`। ৫ pp gate-এ `k=4`-এর pilot selection probability ছিল `0.537`। তাই `k=4`-কে universal best বলা যাবে না।
 
 ### ২৩. Gate fail করলে কী হবে?
 
-**উত্তর:** আমরা result report করব এবং claim বদলাব। K1–K4 ও K6 kill/reframe; K5 ও K7 measurement/framing fix করার সুযোগ। Negative result-ও একটি result।
+**উত্তর:** Gate fail করলে ফলটি report করব; threshold বদলে pass করানোর চেষ্টা করব না। K1–K4 ও K6 claim stop বা reframe করতে পারে। K5 ও K7 আগে measurement বা framing ঠিক করার সুযোগ দেয়। Negative result-ও report হবে।
 
 ### ২৪. কেন SQuAD ও HotpotQA?
 
-**উত্তর:** SQuAD-এর closed corpus depth isolate করে — retriever বদলায় না, শুধু `k` বদলায়। HotpotQA multi-hop reasoning ও distractors যোগ করে, তাই external validity stress test হয়।
+**উত্তর:** SQuAD-এ corpus স্থির থাকে, তাই একই retriever রেখে শুধু `k` বদলে depth-এর প্রভাব দেখা যায়। HotpotQA-তে multi-hop প্রশ্ন ও distractor আছে; এটি অন্য ধরনের কঠিন প্রশ্নে পদ্ধতিটি পরীক্ষা করে।
 
 ### ২৫. কেন BM25?
 
-**উত্তর:** BM25 হলো একটি fixed lexical retriever — Best Matching 25। এটি fixed রাখলে depth-এর effect পরিষ্কার দেখা যায়। Retriever বদলালে depth-এর সঙ্গে retrieval quality মিশে যেত।
+**উত্তর:** BM25 হলো fixed keyword-based retriever। এটিকে একই রাখলে `k` বদলানোর প্রভাব আলাদা করে দেখা যায়। Retriever-ও বদলালে depth-এর সঙ্গে retrieval-এর প্রভাব মিশে যেত।
 
 ### ২৬. `n=1,000` কেন?
 
-**উত্তর:** ৫ pp decision-এর precision ও power-এর জন্য primary run `n=1,000`। Pilot `n=200` accuracy-এর জন্য underpowered ছিল। Replication 500, boundary 200।
+**উত্তর:** Primary run-এ 1,000টি প্রশ্ন রাখা হয়েছে, যাতে ৫ pp non-inferiority test-এর জন্য বেশি precision ও power থাকে। 200-প্রশ্নের pilot-এ ২ pp margin certify করার মতো power ছিল না। Replication-এ 500, boundary test-এ 200টি প্রশ্ন।
 
 ### ২৭. `20%` savings কেন?
 
-**উত্তর:** G1-এর practical threshold হলো `k=32`-এর তুলনায় অন্তত ২০% energy savings। কম savings হলে depth বদলানোর engineering benefit প্রশ্নবিদ্ধ।
+**উত্তর:** আমাদের পরিকল্পনায় `k=32`-এর তুলনায় অন্তত ২০% energy savings-কে G1-এর শর্ত ধরা হয়েছে। শুধু accuracy ধরে রাখলেই হবে না; energy-তেও এই ন্যূনতম সাশ্রয় দেখাতে হবে।
 
 ### ২৮. Measurement কীভাবে করবেন?
 
-**উত্তর:** NVML প্রতি 100 ms-এ GPU power পড়ে। 60 সেকেন্ড idle baseline নিই; 20 প্রশ্নের block-এ measure করি; প্রতিটি request-এ unique code দিই যাতে cached prompt না আসে; wall meter দিয়ে total energy check করি; heat ও speed log করি; একটি block repeat করি noise দেখতে।
+**উত্তর:** NVML প্রতি 100 ms-এ power sample করে, কিন্তু এই laptop-এ sensor reading প্রায় প্রতি এক সেকেন্ডে update হয়। তাই 100 ms sampling-কে 100 ms precision বলা যাবে না। আমরা 60 সেকেন্ডের idle baseline বাদ দিই, 20-query block দিয়ে energy calibrate করি, unique code দিয়ে prefix-cache reuse কমাই, temperature ও clock log করি, এবং 30-query subset-এ wall meter দিয়ে পুরো system-এর energy cross-check করি।
 
 ### ২৯. `10,000 bootstrap` কেন?
 
-**উত্তর:** Paired accuracy ও energy-এর uncertainty estimate করতে এবং `P(k*)` বের করতে 10,000 bootstrap resamples ব্যবহার করি।
+**উত্তর:** প্রশ্নগুলোকে paired unit ধরে 10,000 বার bootstrap resample করি। এতে energy ও accuracy-র uncertainty এবং কোন depth কতবার best হয়েছে, তা হিসাব করা যায়।
 
 ### ৩০. `5% one-sided` কেন?
 
-**উত্তর:** Non-inferiority test-এ one-sided alpha 0.05 ব্যবহার করি — অর্থাৎ 95% confidence level-এ `k=4` যে ৫ pp-এর বেশি খারাপ নয়, সেটি পরীক্ষা করি।
+**উত্তর:** Paired one-sided non-inferiority test-এ `α=0.05` ব্যবহার করি। `k=4` ও `k=32`-এর accuracy difference-এর one-sided 95% lower bound −5 pp-এর ওপরে হলে non-inferiority সমর্থিত হয়।
 
-## D. Scope and limitations
+## D. Scope ও সীমাবদ্ধতা
 
 ### ৩১. Carbon optimality বলছেন কি?
 
-**উত্তর:** না। আমরা GPU energy মাপি, carbon নয়। Carbon নির্ভর করে grid mix-এর উপর; এটি আমাদের current scope-এর বাইরে।
+**উত্তর:** না। আমরা GPU energy মাপি, carbon emission নয়। Carbon হিসাব করতে electricity grid-এর emission factor লাগবে; সেটি এই study-র scope-এর বাইরে।
 
 ### ৩২. Frontier model, dense retriever, full Natural Questions — এগুলো কি cover করছেন?
 
-**উত্তর:** না। আমাদের scope হলো SQuAD, HotpotQA, BM25, Qwen3.5-4B এবং Qwen2.5-1.5B। Frontier/dense/full NQ generalization future work।
+**উত্তর:** না। আমাদের scope হলো SQuAD ও HotpotQA, BM25, Qwen3.5-4B এবং Qwen2.5-1.5B। Frontier model, dense retriever, বা পুরো Natural Questions dataset-এ generalization পরীক্ষা করছি না।
 
 ### ৩৩. সবচেয়ে বড় risk কী?
 
-**উত্তর:** চারটি 주요 risk: scoring rule (exact match vs lenient), reader strength ও এক dataset, GPU heat/power sensor limit, এবং cached prompt/policy overfitting। এগুলোর mitigation স্লাইড ১১-এ আছে।
+**উত্তর:** প্রধান ঝুঁকি চারটি: exact-match ও lenient scoring-এ ভিন্ন ফল, reader ও dataset-এর সীমিত পরিসর, GPU heat ও power sensor-এর সীমা, এবং cache বা policy overfitting। স্লাইড ১১-তে এগুলো দেখানো আছে।
 
 ### ৩৪. Budget কত?
 
-**উত্তর:** 15–20 GPU hours, local RTX 3060 6 GB, একসাথে একটাই job। Cash budget ≤$47।
+**উত্তর:** Local RTX 3060 6 GB-তে মোট 15–20 GPU hours, একবারে একটি job। মোট cash budget সর্বোচ্চ 47 dollar।
 
 ### ৩৫. Novelty কী?
 
-**উত্তর:** Prior work আলাদাভাবে accuracy, token/latency, বা energy দেখে। আমরা একসাথে দেখি: **gated E(k)** (energy per correct answer under accuracy floor), **causal energy taxes**, **break-even N***, এবং **query-conditional policy at matched accuracy**।
+**উত্তর:** আমাদের contribution হলো একই study-তে চারটি বিষয় দেখা: accuracy limit-সহ energy per correct answer, energy cost বদলানোর causal test, sweep-এর break-even query count, এবং matched accuracy-তে query-conditional policy। এই সমন্বয়টি আমাদের পর্যালোচিত prior work-এ পাইনি।
+
+### ৩৬. এই flow diagram-টাই কি journal paper-এর পুরো flow?
+
+**উত্তর:** না। এটি study workflow ও planned gates-এর overview, paper-এর section-by-section flow নয়। Journal-এর methods overview figure হিসেবে ব্যবহার করা যাবে, তবে actual runs, dataset-specific depth grid, calibration, paired test ও bootstrap দেখিয়ে update করতে হবে। P0 check-এর পরে P1-এর আগে plan freeze হবে। Planned run-কে completed result হিসেবে দেখানো যাবে না।
+
+---
+
+# References: প্রশ্ন এলে কী বলবেন
+
+এই নোটগুলো 9 মিনিট 20 সেকেন্ডের মূল বক্তৃতায় পড়ার দরকার নেই। স্যার কোনো citation সম্পর্কে জানতে চাইলে ১–২টি বাক্য বলুন।
+
+### 1. Lewis et al. (2020) — RAG-এর ভিত্তি
+
+এই কাজটি language model-এর নিজস্ব জ্ঞানের সঙ্গে বাইরের document থেকে আনা তথ্য যুক্ত করে RAG পদ্ধতি প্রস্তাব করে। এটি RAG-এর মূল ধারণা, তবে energy অনুযায়ী retrieval depth বাছাই করে না।
+
+### 2. Jeong et al. (2024) — Adaptive-RAG
+
+এই পদ্ধতি প্রশ্নের complexity দেখে no retrieval, একবার retrieval, বা iterative retrieval বেছে নেয়। এটি adaptive retrieval-এর গুরুত্বপূর্ণ উদাহরণ, তবে GPU joules per correct answer-কে সিদ্ধান্তের metric হিসেবে পরীক্ষা করে না।
+
+### 3. Pan et al. (2025) — RAG configuration ও energy
+
+তারা দেখিয়েছেন, কাছাকাছি accuracy-র RAG configuration-গুলোর energy cost অনেক ভিন্ন হতে পারে। কাজটি energy–accuracy trade-off দেখায়, কিন্তু pre-set accuracy margin-এর অধীনে retrieval depth-এর break-even সিদ্ধান্ত দেয় না।
+
+### 4. Hwang (2026) — Query Complexity-Aware Adaptive Retrieval
+
+এই OpenReview direct upload-এ query complexity দেখে retrieval depth ও context ব্যবহার বদলানো হয়, যাতে retrieval ও token cost কমে। এটি peer-reviewed conference paper নয়।
+
+### 5. Hashemi et al. (2025) — Cost-Aware Adaptive Retrieval Depth
+
+তারা reasoning model-এর জন্য reinforcement learning-ভিত্তিক cost-aware adaptive retrieval পরীক্ষা করেছেন। তাদের abstract-এ latency কমা ও exact-match accuracy বাড়ার কথা আছে; আমাদের মতো GPU energy per correct answer gate নেই।
+
+### 6. Feric et al. (2026) — RAGMark
+
+RAGMark হলো RAG system benchmark, যা latency, GPU use, memory, power ও answer quality-সহ বিভিন্ন stage মাপে। এটি energy benchmarking-এর প্রয়োজন দেখায়, কিন্তু আমাদের study-এর accuracy-gated retrieval-depth decision নয়।
+
+### 7. Song et al. (2026) — Tail-Aware Adaptive-k
+
+এই পদ্ধতি similarity score-এর tail দেখে প্রতিটি query-র জন্য adaptive cutoff বেছে নেয়। Springer/Crossref-এ online publication 2026 এবং print citation year 2027; slide-এ ECML PKDD conference year 2026 রাখা হয়েছে।
+
+### 8. Taguchi et al. (2025) — Just Adaptive-k
+
+তারা long-context question answering-এর জন্য tuning বা iterative prompting ছাড়াই context size বেছে নেওয়ার পদ্ধতি দেন। কাজটি context selection-এ প্রাসঙ্গিক, কিন্তু energy-calibrated depth decision নয়।
+
+### 9. Gao et al. (2026) — Token Arena
+
+Token Arena বিভিন্ন model-serving endpoint benchmark করে এবং modeled energy-সহ joules per correct answer মেট্রিকও দেয়। তাই আমাদের metric নিজে নতুন নয়; Token Arena retrieval depth-এর accuracy-gated সিদ্ধান্তটি পরীক্ষা করে না।
+
+### 10. Rajpurkar et al. (2016) — SQuAD
+
+SQuAD হলো Wikipedia passage-ভিত্তিক extractive question-answering dataset; উত্তরের text passage থেকে নেওয়া হয়। আমাদের study-তে SQuAD-কে primary dataset হিসেবে ব্যবহার করি।
+
+### 11. Yang et al. (2018) — HotpotQA
+
+HotpotQA multi-hop প্রশ্ন ও supporting-fact annotation-সহ তৈরি করা হয়েছে। আমরা distractor version নিই, যেখানে প্রতি প্রশ্নে 2টি gold ও 8টি distractor paragraph থাকে।
+
+### 12. Robertson & Zaragoza (2009) — BM25
+
+এই survey probabilistic relevance framework ব্যাখ্যা করে এবং BM25-এর ধারণা ও বিকাশ নিয়ে আলোচনা করে। আমাদের পরীক্ষায় BM25 fixed রাখি, যাতে retrieval depth বদলানোর প্রভাব আলাদা করে দেখা যায়।
 
 ---
 
@@ -414,11 +474,12 @@ Risks: exact match vs lenient scoring; reader strength ও এক dataset; GPU h
 | HotpotQA run | 500 × 6 |
 | Boundary | 200 × 3 |
 | Taxes | 150 × 2 |
+| Policy split target | 600 / 200 / 200 |
 | Energy span | 3.45× |
 | Context share at k=32 | 85.1% |
 | Pilot savings at k=4 | 69.3% |
 | Oracle upper bound | 78.8% |
-| 2 pp claim | dead |
+| 2 pp decision claim | বাদ; estimation only |
 | 5 pp result | pilot signal, not certified |
 | Bootstrap | 10,000 |
 | Alpha | 0.05, one-sided |
@@ -431,16 +492,16 @@ Risks: exact match vs lenient scoring; reader strength ও এক dataset; GPU h
 
 | Equation | বলবেন |
 |---|---|
-| `E(k) = ΣJ_k / ΣC_k` | “ই অফ কে সমান মোট জে কে ভাগ মোট সি কে” — অথবা “মোট energy ভাগ মোট সঠিক উত্তর” |
-| `k J′(k)/J(k) = k A′(k)/A(k)` | “কে জে প্রাইম অফ কে ভাগ জে অফ কে, সমান কে এ প্রাইম অফ কে ভাগ এ অফ কে” |
-| `N* = C_cert / [A(k*)(E(k₀) − E(k*))]` | “এন স্টার সমান সি সার্ট ভাগ, এ অফ কে স্টার গুণ ই অফ কে জিরো মাইনাস ই অফ কে স্টার” |
-| `A(4) − A(32) > −5 pp` | “এ অফ ফোর মাইনাস এ অফ থার্টি-টু, মাইনাস ফাইভ পিপি-এর চেয়ে বড়” |
+| `E(k) = ΣJ_k / ΣC_k` | “ই অফ কে: সব প্রশ্নের মোট energy ভাগ মোট সঠিক উত্তর।” |
+| `k J′(k)/J(k) = k A′(k)/A(k)` | “এই সমীকরণে interior optimum-এ energy ও accuracy-র শতকরা পরিবর্তনের হার সমান।” |
+| `N* = C_cert / [A(k*)(E(k₀) − E(k*))]` | “এন স্টার: sweep-এর energy cost ভাগ, best depth-এর accuracy গুণ প্রতি query-তে সাশ্রয় হওয়া energy।” |
+| `A(4) − A(32) > −5 pp` | “চার passage-এর accuracy থেকে বত্রিশ passage-এর accuracy বাদ দিলে ফল মাইনাস পাঁচ pp-এর চেয়ে বড় হতে হবে।” |
 
 ---
 
 # শেষ পরামর্শ
 
 - প্রতি স্লাইডে কমপক্ষে **একটি সংখ্যা** বলবেন — এতে শিক্ষক বুঝবেন কাজটি সুনির্দিষ্ট।
-- `k`, `E(k)`, `pp`, `NI`, `P(k*)` — এই পাঁচটি শব্দ প্রতিটি সদস্য জানবেন।
-- কোনো প্রশ্নের উত্তর না জানলে বলবেন: **“স্যার, এটি আমাদের current scope-এর বাইরে; আমরা এটি future work হিসেবে দেখছি।”**
+- `k`, `E(k)`, `pp`, `NI`, `P(k*)` — এই পাঁচটি ধারণা প্রতিটি সদস্য বুঝে বলবেন।
+- কোনো প্রশ্নের উত্তর না জানলে বলবেন: **“স্যার, বিষয়টি আমাদের এই study-র scope-এর বাইরে; আমরা এটিকে future work হিসেবে দেখছি।”**
 - সময় কম হলে প্রতিটি speaker শেষের ১–২টি বাক্য বাদ দেবে, কিন্তু সংখ্যা ও gate-এর নাম বাদ দেবে না।

@@ -82,6 +82,8 @@ The metric is not new (Token Arena) and adaptive depth is not new (Hwang; Hashem
 **Closest prior work** (search to 8 November 2026; re-run before submission):
 
 - **Pan et al. (NeurIPS 2025 MLForSys):** accuracy–energy landscape; ≤3% accuracy differences span up to 20.2× energy. No `E(k)=J/correct`, gated `k*`, policy, or calibration decision; workshop, cloud models.
+- **Lewis et al. (NeurIPS 2020)** introduced retrieval-augmented generation by combining a parametric language model with retrieved documents. It establishes the RAG setting, not an energy-aware retrieval-depth rule.
+- **Jeong et al. (NAACL 2024, Adaptive-RAG)** choose among no retrieval, single-step retrieval, and iterative retrieval based on query complexity. This is adaptive retrieval, but it does not optimize measured GPU joules per correct answer.
 - **Hwang (2026, OpenReview upload)** adapts depth/context from query difficulty for lower token cost; **Hashemi et al. (arXiv:2510.15719)** use cost-aware RL for ~16–20% lower latency. Both optimize tokens or latency, not joules; neither has `k*` or a guarantee; Hwang is unrefereed.
 - **Feric et al., RAGMark (arXiv:2609.05760)** benchmarks per-stage power and reports up to 66% lower energy from context reduction; **Song et al., Tail-Aware Adaptive-k (ECML PKDD 2026)** and **Taguchi et al. (EMNLP 2025)** adapt `k` for retrieval quality or tokens. None measures joules per correct answer or certifies a depth.
 - **Gao et al., Token Arena (arXiv:2605.00300)** reports joules per correct answer at endpoint granularity but does not optimize retrieval depth.
@@ -94,11 +96,12 @@ We do not claim the metric, adaptive depth, or bandit machinery is new. The comb
 
 ```mermaid
 flowchart TD
-    A[Freeze prereg and configs] --> B[Prepare SQuAD/HotpotQA; build BM25]
-    B --> C[P0: 200-question golden reproduction]
-    C --> D{Within 10% of pilot?}
-    D -- No --> C2[Diagnose harness; do not start P1]
-    D -- Yes --> E[P1: SQuAD n=1,000 x 7 depths]
+    A[Prepare SQuAD/HotpotQA; build BM25] --> B[P0: 200-question golden reproduction]
+    B --> C{Within 10% of pilot?}
+    C -- No --> B2[Diagnose harness; rerun P0]
+    B2 --> B
+    C -- Yes --> D[Freeze prereg and configs before P1]
+    D --> E[P1: SQuAD n=1,000 x 7 depths]
     E --> F[Energy, blocks, correctness]
     F --> G[5 pp non-inferiority; gates]
     G --> H[P2: 1.5B, HotpotQA, boundary, taxes]
@@ -345,13 +348,15 @@ The preregistration is frozen before P1 and tagged `prereg-freeze-v1`. Deviation
 
 Only works and resources named in the project's source documents. Details are reproduced as recorded there; some full texts were unavailable during the source audit.
 
-1. Pan, M., et al. *Towards Automatically Optimizing Retrieval Augmented AI Systems.* NeurIPS 2025 MLForSys Workshop. OpenReview `an17DUVvuS`.
-2. Hwang, M. *Query Complexity–Aware Adaptive Retrieval for Cost-Efficient Retrieval-Augmented Generation.* OpenReview direct upload, 2026. `ObkC4BCAFt`.
-3. Hashemi, H., Rühle, V., Rajmohan, S. *Cost-Aware Retrieval-Augmentation Reasoning Models with Adaptive Retrieval Depth.* arXiv:2510.15719, 2025.
-4. Feric, Z., et al. *RAGMark: A Comprehensive Framework for Benchmarking Retrieval-Augmented Generation Systems.* arXiv:2609.05760, 2026.
-5. Song, Z., et al. *Tail-Aware Adaptive-k: Query-Adaptive Context Selection for Retrieval-Augmented Generation.* ECML PKDD 2026, LNCS LNAI 16944, pp. 193–209. DOI 10.1007/978-3-032-37667-1_12.
-6. Taguchi, C., Maekawa, S., Bhutani, N. *Efficient Context Selection for Long-Context QA: No Tuning, No Iteration, Just Adaptive-k.* EMNLP 2025, pp. 20105–20130. DOI 10.18653/v1/2025.emnlp-main.1017.
-7. Gao, Y., Wang, M., Yu, Y. L. *Token Arena: A Continuous Benchmark Unifying Energy and Cognition in AI Inference.* arXiv:2605.00300, 2026.
+1. Lewis, P., et al. *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.* NeurIPS 2020.
+2. Jeong, S., et al. *Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity.* NAACL 2024, pp. 7036–7050. DOI 10.18653/v1/2024.naacl-long.389.
+3. Pan, M., et al. *Towards Automatically Optimizing Retrieval Augmented AI Systems.* NeurIPS 2025 MLForSys Workshop. OpenReview `an17DUVvuS`.
+4. Hwang, M. *Query Complexity–Aware Adaptive Retrieval for Cost-Efficient Retrieval-Augmented Generation.* OpenReview direct upload, 2026. `ObkC4BCAFt`.
+5. Hashemi, H., Rühle, V., Rajmohan, S. *Cost-Aware Retrieval-Augmentation Reasoning Models with Adaptive Retrieval Depth.* arXiv:2510.15719, 2025.
+6. Feric, Z., et al. *RAGMark: A Comprehensive Framework for Benchmarking Retrieval-Augmented Generation Systems.* arXiv:2609.05760, 2026.
+7. Song, Z., et al. *Tail-Aware Adaptive-k: Query-Adaptive Context Selection for Retrieval-Augmented Generation.* ECML PKDD 2026, LNCS 16944, pp. 193–209. DOI 10.1007/978-3-032-37667-1_12.
+8. Taguchi, C., Maekawa, S., Bhutani, N. *Efficient Context Selection for Long-Context QA: No Tuning, No Iteration, Just Adaptive-k.* EMNLP 2025, pp. 20105–20130. DOI 10.18653/v1/2025.emnlp-main.1017.
+9. Gao, Y., Wang, M., Yu, Y. L. *Token Arena: A Continuous Benchmark Unifying Energy and Cognition in AI Inference.* arXiv:2605.00300, 2026.
 **Data and tools.** SQuAD v1.1 dev (CC BY-SA 4.0); HotpotQA distractor dev (CC BY-SA 4.0); BM25 Okapi via `rank_bm25`; NVML via `pynvml`; Ollama `qwen3.5:4b`; Qwen2.5-1.5B-Instruct; Ember *Yearly Electricity Data*. URLs, versions, and SHA-256 are in `data/manifest.json`.
 
 ---

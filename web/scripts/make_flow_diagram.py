@@ -142,15 +142,15 @@ def arrow(x0: float, y0: float, x1: float, y1: float, color: str) -> None:
 # ---------------------------------------------------------------------------
 
 ax.text(0.08, 6.22, "EXPERIMENT PIPELINE", fontsize=21, fontweight="bold", color=TEAL, ha="left")
-ax.text(0.08, 5.86, "one controlled sweep", fontsize=14.5, fontweight="semibold", color=INK_SOFT, ha="left")
+ax.text(0.08, 5.86, "primary and stress runs", fontsize=14.5, fontweight="semibold", color=INK_SOFT, ha="left")
 
 top = [
     ("01", "PREPARE", "SQuAD +\nHotpotQA", TEAL),
     ("02", "INDEX", "BM25\ncorpus", DEEP),
-    ("03", "SWEEP", "7 depths\n× n", TEAL),
-    ("04", "MEASURE", "NVML +\nblocks", DEEP),
-    ("05", "SCORE", "EM +\nbootstrap", TEAL),
-    ("06", "ANALYZE", "E(k), N*,\npolicy", DEEP),
+    ("03", "SWEEP", "SQuAD: 7 depths\nHotpotQA: 6", TEAL),
+    ("04", "MEASURE", "NVML + idle\nblock calibration", DEEP),
+    ("05", "SCORE", "normalized\nexact match", TEAL),
+    ("06", "ANALYZE", "NI + bootstrap\nE(k), N*, policy", DEEP),
 ]
 
 top_y, top_h, top_w, top_gap = 3.55, 2.0, 2.35, 0.25
@@ -170,11 +170,11 @@ ax.text(0.08, 2.98, "DECISION FLOW", fontsize=21, fontweight="bold", color=AMBER
 ax.text(0.08, 2.62, "pre-registered gates", fontsize=14.5, fontweight="semibold", color=INK_SOFT, ha="left")
 
 bottom = [
-    ("1", "FREEZE PLAN", "before\noutcomes", AMBER),
-    ("2", "SMALL RE-RUN", "200\nquestions", DEEP),
-    ("3", "FULL RE-RUN", "1,000\n× 7", AMBER),
+    ("1", "SMALL CHECK", "P0 · 200\nquestions", DEEP),
+    ("2", "FREEZE PLAN", "before P1\noutcomes", AMBER),
+    ("3", "FULL RE-RUN", "P1 · 1,000\n× 7", DEEP),
     ("4", "CHECKPOINTS", "G1–G5\nK1–K7", ROSE),
-    ("5", "MORE TESTS", "replication\npolicy · theory", DEEP),
+    ("5", "MORE TESTS", "replication · taxes\npolicy · theory", DEEP),
 ]
 
 bot_y, bot_h, bot_w, bot_gap = 0.55, 1.95, 2.86, 0.30
@@ -190,8 +190,8 @@ for i, (num, title, sub, color) in enumerate(bottom):
 # Save
 # ---------------------------------------------------------------------------
 
-svg_path = PUBLIC / "flow-diagram-v2.svg"
-png_path = PUBLIC / "flow-diagram-v2.png"
+svg_path = PUBLIC / "flow-diagram-v4.svg"
+png_path = PUBLIC / "flow-diagram-v4.png"
 fig.savefig(svg_path, format="svg", bbox_inches="tight", pad_inches=0.06, facecolor=WHITE)
 fig.savefig(png_path, format="png", dpi=600, bbox_inches="tight", pad_inches=0.06, facecolor=WHITE)
 plt.close(fig)

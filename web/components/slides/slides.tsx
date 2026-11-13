@@ -242,16 +242,16 @@ function IntroProblemSlide({ index, total }: SlideProps) {
 function MotivationGapSlide({ index, total }: SlideProps) {
   const rows = [
     ["Static top-k / accuracy-only", "Accuracy", "No", "No", "No"],
-    ["Adaptive-k / token or latency", "Tokens or latency", "No", "No", "Partial policy"],
+    ["Adaptive retrieval", "Query-aware context or cost", "No", "No fixed margin", "Partial policy"],
     ["Energy benchmarks", "Power / energy", "Partial", "No", "No"],
     ["This proposal", "Energy per correct", "Yes", "Yes", "Yes"],
   ];
 
   return (
     <SlideFrame
-      badge="Motivation & Research Gap"
+      badge="Motivation & Literature Review"
       badgeTone="teal"
-      title="Energy per correct answer changes a lot with depth."
+      title="Prior work covers parts; the depth decision remains."
       subtitle="In our early study, 32 passages cost 3.45 times more per correct answer than 1 passage. Accuracy was flat from 4 to 16 passages."
       index={index}
       total={total}
@@ -266,7 +266,7 @@ function MotivationGapSlide({ index, total }: SlideProps) {
           },
           {
             value: `${pilot.contextShare.at32}%`,
-            label: "energy used on passages",
+            label: "energy for retrieval + passage input",
             sub: "at k=32",
             tone: "teal",
           },
@@ -288,8 +288,9 @@ function MotivationGapSlide({ index, total }: SlideProps) {
         />
       </div>
       <SlideCallout tone="amber">
-        Early result, not final. Sources: Pan et al. 2025; Hwang 2026; Hashemi et al. 2025; RAGMark
-        2026; Tail-Aware Adaptive-k 2026; Taguchi et al. 2025; Token Arena 2026.
+        Literature: Lewis 2020; Jeong 2024; Hwang 2026; Hashemi 2025; Pan 2025; Song 2026; Taguchi
+        2025; RAGMark and Token Arena 2026. The reviewed work does not combine an accuracy-gated
+        depth decision with break-even, causal tests, and a matched-accuracy policy.
       </SlideCallout>
     </SlideFrame>
   );
@@ -469,8 +470,8 @@ function MethodSlide({ index, total }: SlideProps) {
             </span>
           </SlideFormula>
           <p className="mt-[0.9cqh] text-[2.15cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            At the best depth, energy and accuracy change by the same percentage. <i>J</i>′ and{" "}
-            <i>A</i>′ are rates of change.
+            At an interior optimum, energy and accuracy change by the same percentage. <i>J</i>(<i>k</i>)
+            is energy per query; <i>A</i>(<i>k</i>) is accuracy. Primes show their rates of change.
           </p>
         </SlideCard>
         <SlideCard title="Break-even measurement" tone="amber" icon={<Timer size="2.8cqh" />}>
@@ -537,8 +538,8 @@ function FlowSlide({ index, total }: SlideProps) {
     >
       <div className="flex min-h-0 flex-1 items-center justify-center">
         <Image
-          src="/flow-diagram-v2.png"
-          alt="Experiment pipeline: prepare data, build a BM25 index, sweep seven depths, measure energy with NVML and blocks, score with exact match and bootstrap, and analyze E(k), N*, and policy. Decision flow: freeze the plan, small re-run, full re-run, checkpoints G1-G5 and K1-K7, then replication, policy, and theory."
+          src="/flow-diagram-v4.png"
+          alt="Study workflow: prepare SQuAD and HotpotQA, index with BM25, sweep seven SQuAD depths and six HotpotQA depths, measure NVML power with idle and block calibration, score normalized exact match, then analyze the paired non-inferiority test, bootstrap, E(k), N*, and policy. The decision flow starts with the 200-question P0 check, freezes the plan before P1, runs 1,000 questions across seven depths, reviews gates, then continues to replication, taxes, policy, and theory."
           width={7512}
           height={3167}
           priority
@@ -575,17 +576,18 @@ function SetupSlide({ index, total }: SlideProps) {
               `Qwen2.5-1.5B: ${rerun.replication.n} questions × 7 depths`,
               `HotpotQA: ${rerun.hotpot.n} questions × 6 depths`,
               `Boundary: ${rerun.boundary.n} × 3 · taxes: ${rerun.taxes.n} × 2`,
+              "Policy split target: 600 train / 200 validation / 200 test.",
             ]}
-            size="2.2cqh"
+            size="2.1cqh"
           />
         </SlideCard>
         <SlideCard title="Measurement" tone="teal" icon={<Gauge size="2.8cqh" />}>
           <SlideBullets
             items={[
-              "NVIDIA Management Library (NVML) reads power every 100 ms.",
+              "NVML samples every 100 ms; on this laptop, power readings update about once a second.",
               "60 s idle baseline; 20-question blocks.",
-              "A unique code in each request stops cached prompts.",
-              "We log heat and speed; a wall meter checks total energy.",
+              "A unique code in each request helps prevent cache reuse.",
+              "Log temperature and clock; wall meter checks a 30-query subset.",
               "We repeat a block to check noise.",
             ]}
             size="2.15cqh"
@@ -641,7 +643,7 @@ function AnalysisSlide({ index, total }: SlideProps) {
           </p>
           <p className="mt-[0.8cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.ink }}>
             <i>P</i>(<i>k</i>
-            <MathSup>*</MathSup>) = chance the chosen depth is truly best.
+            <MathSup>*</MathSup>) = share of bootstrap samples where this depth is best under the gate.
           </p>
           <p className="mt-[0.8cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
             The 2-point rule is only an estimate.
@@ -654,13 +656,13 @@ function AnalysisSlide({ index, total }: SlideProps) {
                 Go · G1–G5
               </p>
               <ul className="mt-[0.5cqh] space-y-[0.5cqh] text-[2.0cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-                <li>G1 · 5-point rule + ≥20%</li>
+                <li>G1 · 5 pp NI at an interior depth; ≥20% savings</li>
                 <li>
-                  G2 · upper confidence bound ≤5 points; <i>P</i>(<i>k</i>
+                  G2 · accuracy-loss upper bound ≤5 pp; <i>P</i>(<i>k</i>
                   <MathSup>*</MathSup>) ≥ 0.8
                 </li>
-                <li>G3 · energy on passages 10–70%</li>
-                <li>G4 · best-possible gain ≥20%; policy ≥50%</li>
+                <li>G3 · context share 10–70% at k*; varies with k</li>
+                <li>G4 · oracle ≥20%; policy captures ≥50% at matched accuracy</li>
                 <li>G5 · replication</li>
               </ul>
             </div>
@@ -675,10 +677,10 @@ function AnalysisSlide({ index, total }: SlideProps) {
                   K3 · <i>P</i>(<i>k</i>
                   <MathSup>*</MathSup>) &lt; 0.8
                 </li>
-                <li>K4 · energy on passages &lt;5%</li>
-                <li>K5 · best depth moves &gt;1</li>
+                <li>K4 · context share &lt;5% and flat</li>
+                <li>K5 · k* spans &gt;1 tested depth across samples/datasets</li>
                 <li>K6 · best-possible gain &lt;15%</li>
-                <li>K7 · repeat error &gt;20%</li>
+                <li>K7 · repeat variation &gt;20% or effect below detection limit</li>
               </ul>
             </div>
           </div>
@@ -706,36 +708,37 @@ function ExpectedSlide({ index, total }: SlideProps) {
       total={total}
     >
       <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
-        <SlideCard title="H1 · energy is linear in depth" tone="deep" icon={<TrendingUp size="2.8cqh" />}>
+        <SlideCard title="H1 · energy follows a straight line" tone="deep" icon={<TrendingUp size="2.8cqh" />}>
           <p className="text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Pass if <i>R</i>
-            <MathSup>2</MathSup> (fit quality) ≥ 0.95 and the lack-of-fit test does not fail at 5%.
+            Pass if the slope is positive, <i>R</i>
+            <MathSup>2</MathSup> (fit quality) ≥ 0.95, and the lack-of-fit test is not rejected at 5%.
             Fail if not.
           </p>
         </SlideCard>
         <SlideCard title="H2 · main decision" tone="rose" icon={<Target size="2.8cqh" />}>
           <p className="text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Pass if k=4 is no more than 5 accuracy points below k=32 and saves ≥20%. Fail if not.
+            Pass if the paired one-sided test supports a loss ≤5 pp at the 5% level and savings are
+            ≥20%. Fail if not.
           </p>
         </SlideCard>
         <SlideCard title="H3–H4 · energy link and passage share" tone="teal" icon={<GitBranch size="2.8cqh" />}>
           <p className="text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Pass if the 95% confidence range includes 0 and the energy share on passages is 10–70% and
-            rising. Fail if not.
+            Pass if the 95% interval for the identity gap includes 0; context share at k* is 10–70%
+            and rises with k. Fail if not.
           </p>
         </SlideCard>
         <SlideCard title="H5–H6 · policy and energy costs" tone="amber" icon={<FlaskConical size="2.8cqh" />}>
           <p className="text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Pass if the best-possible gain is ≥20%, the policy gets ≥50% of it, a fixed cost raises{" "}
-            <i>k</i>
+            Pass if the best-possible (oracle) gain is ≥20%, the policy captures ≥50% at matched
+            accuracy, a fixed cost raises <i>k</i>
             <MathSup>*</MathSup>, and a per-passage cost lowers <i>k</i>
             <MathSup>*</MathSup>. Fail if not.
           </p>
         </SlideCard>
       </div>
       <SlideCallout tone="deep">
-        H7 · replication: the H2 result repeats on Qwen2.5-1.5B or HotpotQA. A null result is still a
-        result.
+        H7 · replication: test whether H2&apos;s direction appears on Qwen2.5-1.5B or HotpotQA. A null
+        result is still a result.
       </SlideCallout>
     </SlideFrame>
   );
@@ -838,7 +841,7 @@ function ReferencesSlide({ index, total }: SlideProps) {
         </SlideCard>
         <SlideCard title="Data &amp; tools" tone="amber">
           <ol
-            start={8}
+            start={10}
             className="list-decimal space-y-[1.1cqh] pl-[1.7cqw] text-[2.0cqh] font-semibold leading-snug"
             style={{ color: S.ink }}
           >

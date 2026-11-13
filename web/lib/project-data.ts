@@ -1244,45 +1244,53 @@ export const references = {
   priorWork: [
     {
       id: "R1",
-      text: "Pan, M., et al. Toward Automatically Optimizing Retrieval Augmented AI Systems. NeurIPS 2025 MLForSys Workshop. OpenReview an17DUVvuS.",
+      text: "Lewis, P., et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. NeurIPS 2020.",
     },
     {
       id: "R2",
-      text: "Hwang, M. Query Complexity\u2013Aware Adaptive Retrieval for Cost-Efficient Retrieval-Augmented Generation. OpenReview direct upload, 2026. ObkC4BCAFt.",
+      text: "Jeong, S., et al. Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity. NAACL 2024, pp. 7036\u20137050. DOI 10.18653/v1/2024.naacl-long.389.",
     },
     {
       id: "R3",
-      text: "Hashemi, H., R\u00fchle, V., Rajmohan, S. Cost-Aware Retrieval-Augmentation Reasoning Models with Adaptive Retrieval Depth. arXiv:2510.15719, 2025.",
+      text: "Pan, M., et al. Towards Automatically Optimizing Retrieval Augmented AI Systems. NeurIPS 2025 MLForSys Workshop. OpenReview an17DUVvuS.",
     },
     {
       id: "R4",
-      text: "Feric, Z., et al. RAGMark: A Comprehensive Framework for Benchmarking Retrieval-Augmented Generation Systems. arXiv:2609.05760, 2026.",
+      text: "Hwang, M. Query Complexity\u2013Aware Adaptive Retrieval for Cost-Efficient Retrieval-Augmented Generation. OpenReview direct upload, 2026. ObkC4BCAFt.",
     },
     {
       id: "R5",
-      text: "Song, Z., et al. Tail-Aware Adaptive-k: Query-Adaptive Context Selection for Retrieval-Augmented Generation. ECML PKDD 2026, LNCS LNAI 16944, pp. 193\u2013209. DOI 10.1007/978-3-032-37667-1_12.",
+      text: "Hashemi, H., R\u00fchle, V., Rajmohan, S. Cost-Aware Retrieval-Augmentation Reasoning Models with Adaptive Retrieval Depth. arXiv:2510.15719, 2025.",
     },
     {
       id: "R6",
-      text: "Taguchi, C., Maekawa, S., Bhutani, N. Efficient Context Selection for Long-Context QA: No Tuning, No Iteration, Just Adaptive-k. EMNLP 2025, pp. 20105\u201320130. DOI 10.18653/v1/2025.emnlp-main.1017.",
+      text: "Feric, Z., et al. RAGMark: A Comprehensive Framework for Benchmarking Retrieval-Augmented Generation Systems. arXiv:2609.05760, 2026.",
     },
     {
       id: "R7",
+      text: "Song, Z., et al. Tail-Aware Adaptive-k: Query-Adaptive Context Selection for Retrieval-Augmented Generation. ECML PKDD 2026, LNCS LNAI 16944, pp. 193\u2013209. DOI 10.1007/978-3-032-37667-1_12.",
+    },
+    {
+      id: "R8",
+      text: "Taguchi, C., Maekawa, S., Bhutani, N. Efficient Context Selection for Long-Context QA: No Tuning, No Iteration, Just Adaptive-k. EMNLP 2025, pp. 20105\u201320130. DOI 10.18653/v1/2025.emnlp-main.1017.",
+    },
+    {
+      id: "R9",
       text: "Gao, Y., Wang, M., Yu, Y. L. Token Arena: A Continuous Benchmark Unifying Energy and Cognition in AI Inference. arXiv:2605.00300, 2026.",
     },
   ],
   dataTools: [
     {
       id: "D1",
-      text: "Rajpurkar, P., et al. SQuAD: 100,000+ Questions for Machine Comprehension of Text. EMNLP 2016.",
+      text: "Rajpurkar, P., et al. SQuAD: 100,000+ Questions for Machine Comprehension of Text. EMNLP 2016, pp. 2383\u20132392. DOI 10.18653/v1/D16-1264.",
     },
     {
       id: "D2",
-      text: "Yang, Z., et al. HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering. EMNLP 2018.",
+      text: "Yang, Z., et al. HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering. EMNLP 2018. DOI 10.18653/v1/D18-1259.",
     },
     {
       id: "D3",
-      text: "Robertson, S., Zaragoza, H. The Probabilistic Relevance Framework: BM25 and Beyond. Foundations and Trends in Information Retrieval, 2009.",
+      text: "Robertson, S., Zaragoza, H. The Probabilistic Relevance Framework: BM25 and Beyond. Foundations and Trends in Information Retrieval 3(4), 333\u2013389, 2009. DOI 10.1561/1500000019.",
     },
   ],
 } as const;
