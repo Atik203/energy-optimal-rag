@@ -167,8 +167,9 @@ function ExecSummarySlide({ index, total }: SlideProps) {
         </SlideCard>
         <SlideCard title="Method" tone="teal" icon={<FlaskConical size="2.8cqh" />}>
           <p className="text-[2.6cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            SQuAD n=1,000 × 7 depths, NVML energy, 5 pp non-inferiority, 10,000 bootstrap, taxes,
-            and a 600/200/200 policy.
+            SQuAD (Stanford Question Answering Dataset) n=1,000 × 7 depths, GPU energy
+            measurement, 5 percentage-point non-inferiority, 10,000 bootstrap, taxes, and a
+            600/200/200 policy.
           </p>
         </SlideCard>
         <SlideCard title="Contribution" tone="deep" icon={<Zap size="2.8cqh" />}>
@@ -215,9 +216,19 @@ function IntroSlide({ index, total }: SlideProps) {
           </div>
           <SlideDepthLadder />
           <SlideFormula>E(k) = Σ J_k / Σ C_k</SlideFormula>
-          <p className="text-[2.4cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-            The numerator is total joules; the denominator is correct answers. The gate stops the
-            ratio from rewarding cheap failure.
+          <div
+            className="grid grid-cols-2 gap-x-[1.2cqw] gap-y-[0.55cqh] text-[2.1cqh] font-semibold leading-snug"
+            style={{ color: S.ink }}
+          >
+            <p><b>k</b> = passages retrieved</p>
+            <p><b>J_k</b> = joules at depth k</p>
+            <p><b>C_k</b> = 1 correct, 0 wrong</p>
+            <p><b>Σ</b> = sum over questions</p>
+            <p><b>E(k)</b> = joules per correct answer</p>
+            <p><b>BM25</b> = Best Matching 25</p>
+          </div>
+          <p className="text-[2.1cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+            The accuracy gate stops the ratio from rewarding cheap failure.
           </p>
         </div>
         <div className="grid min-h-0 grid-rows-3 gap-[1.1cqh]">
@@ -272,7 +283,7 @@ function ProblemSlide({ index, total }: SlideProps) {
           <SlideBullets
             items={[
               "A gated ratio E(k) = ΣJ / ΣC.",
-              "A paired 5 pp non-inferiority decision.",
+              "A paired 5 percentage-point (pp) non-inferiority decision.",
               "A causal test of the energy split.",
               "A query-conditional policy at matched accuracy.",
             ]}
@@ -357,10 +368,10 @@ function GapSlide({ index, total }: SlideProps) {
     >
       <div className="flex min-h-0 flex-1 flex-col justify-center gap-[1.6cqh]">
         <SlideTable
-          head={["Approach", "Optimizes", "Gated E(k)?", "Causal test?", "N* + policy?"]}
+          head={["Approach", "Optimizes", "Gated E(k)?", "Causal test?", "Break-even + policy?"]}
           rows={rows}
           tone="amber"
-          widths={["31%", "23%", "15%", "15%", "16%"]}
+          widths={["30%", "22%", "16%", "14%", "18%"]}
         />
         <p className="text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
           The missing object is a decision rule, not another benchmark.
@@ -389,34 +400,37 @@ function ObjectivesSlide({ index, total }: SlideProps) {
       total={total}
     >
       <div className="grid min-h-0 flex-1 grid-cols-3 gap-[1.2cqw]">
-        <SlideCard title="RQ1 · Static depth" tone="deep" icon={<Target size="2.8cqh" />}>
+        <SlideCard title="Question 1 · Static depth" tone="deep" icon={<Target size="2.8cqh" />}>
           <p className="text-[2.5cqh] font-semibold leading-snug" style={{ color: S.ink }}>
             Which depth minimizes E(k) under a 5 pp accuracy floor?
           </p>
           <p className="mt-[1.4cqh] font-mono text-[2.1cqh] font-bold" style={{ color: S.teal }}>
-            H1–H4
+            Hypotheses H1–H4
           </p>
         </SlideCard>
-        <SlideCard title="RQ2 · Adaptivity" tone="teal" icon={<GitBranch size="2.8cqh" />}>
+        <SlideCard title="Question 2 · Adaptivity" tone="teal" icon={<GitBranch size="2.8cqh" />}>
           <p className="text-[2.5cqh] font-semibold leading-snug" style={{ color: S.ink }}>
             Does a query-conditional policy beat the best static depth at matched accuracy?
           </p>
           <p className="mt-[1.4cqh] font-mono text-[2.1cqh] font-bold" style={{ color: S.teal }}>
-            H5
+            Hypothesis H5
           </p>
         </SlideCard>
-        <SlideCard title="RQ3 · Causality & cost" tone="amber" icon={<Timer size="2.8cqh" />}>
+        <SlideCard title="Question 3 · Causality & cost" tone="amber" icon={<Timer size="2.8cqh" />}>
           <p className="text-[2.5cqh] font-semibold leading-snug" style={{ color: S.ink }}>
             Do energy taxes move k* in the predicted direction, and is calibration worth it?
           </p>
           <p className="mt-[1.4cqh] font-mono text-[2.1cqh] font-bold" style={{ color: S.amber }}>
-            H6–H7 · N*
+            Hypotheses H6–H7 · N*
+          </p>
+          <p className="mt-[0.4cqh] text-[1.9cqh] font-semibold" style={{ color: S.inkSoft }}>
+            N* = break-even queries.
           </p>
         </SlideCard>
       </div>
       <SlideCallout tone="teal">
-        Primary decision: 5 pp EM non-inferiority at k=4 vs k=32, with ≥20% savings. The 2 pp
-        margin is estimation-only.
+        Primary decision: 5 percentage-point (pp) exact-match (EM) non-inferiority (NI) at k=4 vs
+        k=32, with ≥20% savings. The 2 pp margin is estimation-only.
       </SlideCallout>
     </SlideFrame>
   );
@@ -455,7 +469,7 @@ function ScopeSlide({ index, total }: SlideProps) {
               "A 2 pp optimum.",
               "5 pp certified before the rerun.",
               "A learned-policy gain from the oracle.",
-              "Carbon optimality or frontier/dense/full-NQ generalization.",
+              "Carbon optimality or frontier/dense/full Natural Questions (NQ) generalization.",
             ]}
             size="2.35cqh"
           />
@@ -486,29 +500,30 @@ function DatasetSlide({ index, total }: SlideProps) {
         <SlideCard title="SQuAD v1.1 dev · primary" tone="teal" icon={<Database size="2.8cqh" />}>
           <SlideBullets
             items={[
-              `${datasets.squad.upstreamQuestions.toLocaleString("en-US")} questions; ${datasets.squad.upstreamContexts.toLocaleString("en-US")} contexts.`,
-              `${datasets.squad.corpus}; ${datasets.squad.retriever}.`,
+              `Stanford Question Answering Dataset (SQuAD) v1.1 dev · ${datasets.squad.upstreamQuestions.toLocaleString("en-US")} questions.`,
+              `Corpus: ${datasets.squad.corpus}.`,
+              "Retriever: BM25 (Best Matching 25) Okapi, top-32.",
               `n=${datasets.squad.usedPrimary.toLocaleString("en-US")} primary · ${datasets.squad.usedReplication} replication · ${datasets.squad.usedBoundary} boundary.`,
-              `${datasets.squad.primaryMetric}; ${datasets.squad.license}.`,
+              `Normalized EM (exact match); ${datasets.squad.license}.`,
             ]}
-            size="2.35cqh"
+            size="2.25cqh"
           />
         </SlideCard>
         <SlideCard title="HotpotQA distractor · stress" tone="amber" icon={<Layers size="2.8cqh" />}>
           <SlideBullets
             items={[
-              `${datasets.hotpot.upstreamQuestions.toLocaleString("en-US")} questions; ${datasets.hotpot.used} used.`,
+              `HotpotQA (multi-hop question answering) distractor dev · ${datasets.hotpot.upstreamQuestions.toLocaleString("en-US")} questions; ${datasets.hotpot.used} used.`,
               `${datasets.hotpot.paragraphs} paragraphs per question: ${datasets.hotpot.goldParagraphs} gold + ${datasets.hotpot.distractors} distractors.`,
-              `k ∈ {${datasets.hotpot.depths.join(",")}}; ${datasets.hotpot.retriever}.`,
+              `k ∈ {${datasets.hotpot.depths.join(",")}}; BM25 (Best Matching 25) Okapi, top-10.`,
               `No pooling across questions; ${datasets.hotpot.license}.`,
             ]}
-            size="2.35cqh"
+            size="2.25cqh"
           />
         </SlideCard>
       </div>
       <SlideCallout tone="deep">
-        Data: SQuAD (Rajpurkar et al. 2016) · HotpotQA (Yang et al. 2018) · readers: qwen3.5:4b /
-        Qwen2.5-1.5B · RTX 3060 6 GB.
+        Sources: SQuAD — Rajpurkar et al. 2016 · HotpotQA — Yang et al. 2018 · BM25 — Robertson &amp;
+        Zaragoza 2009.
       </SlideCallout>
     </SlideFrame>
   );
@@ -544,7 +559,7 @@ function ContrastSlide({ index, total }: SlideProps) {
           <SlideBullets
             items={[
               "Gated E(k) = ΣJ / ΣC.",
-              "Feasible set under A_min.",
+              "Feasible set under the minimum accuracy A_min.",
               "Paired 5 pp non-inferiority.",
               "Identity, N*, causal taxes, and a learned policy.",
             ]}
@@ -567,31 +582,43 @@ function MethodSlide({ index, total }: SlideProps) {
       badge="Method"
       badgeTone="deep"
       title="Four pieces, each falsifiable."
-      subtitle="None of them assumes a universal k*."
+      subtitle="None of them assumes a universal k*. pp = percentage points."
       index={index}
       total={total}
     >
       <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
         <SlideCard title="Gated estimand" tone="deep" icon={<Gauge size="2.8cqh" />}>
           <SlideFormula>E(k) = Σ J_k / Σ C_k</SlideFormula>
-          <p className="mt-[1.2cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Feasible set: A(k) ≥ A(32) − 5 pp.
+          <p className="mt-[1.0cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            k = passages · J_k = joules · C_k = correctness.
+          </p>
+          <p className="mt-[0.7cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            A(k) = accuracy; feasible set: A(k) ≥ A(32) − 5 pp.
           </p>
         </SlideCard>
         <SlideCard title="Optimal-depth identity" tone="teal" icon={<GitBranch size="2.8cqh" />}>
           <SlideFormula>k J′(k) / J(k) = k A′(k) / A(k)</SlideFormula>
-          <p className="mt-[1.2cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            A local diagnostic: it flags over-retrieval.
+          <p className="mt-[1.0cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            J′ and A′ are derivatives; the elasticities are equal at an interior optimum.
+          </p>
+          <p className="mt-[0.7cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+            It is a local diagnostic and flags over-retrieval.
           </p>
         </SlideCard>
         <SlideCard title="Certification threshold" tone="amber" icon={<Timer size="2.8cqh" />}>
           <SlideFormula>N* = C_cert / [A(k*)(E(k₀) − E(k*))]</SlideFormula>
-          <p className="mt-[1.2cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Finding the depth is itself an energy purchase.
+          <p className="mt-[1.0cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            C_cert = sweep energy · k₀ = default depth · k* = selected depth.
+          </p>
+          <p className="mt-[0.7cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+            N* = break-even queries; finding the depth is an energy purchase.
           </p>
         </SlideCard>
         <SlideCard title="Causal energy tax" tone="rose" icon={<FlaskConical size="2.8cqh" />}>
-          <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+          <p className="text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            a = fixed cost · b = per-passage cost · k* = selected depth.
+          </p>
+          <p className="mt-[0.8cqh] text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
             Fixed tax raises k*; per-passage tax lowers k*. A wrong sign falsifies the affine/split
             model.
           </p>
@@ -625,6 +652,9 @@ function FlowSlide({ index, total }: SlideProps) {
           className="h-full w-full object-contain"
         />
       </div>
+      <p className="mt-[0.4cqh] text-center text-[2.0cqh] font-semibold" style={{ color: S.inkSoft }}>
+        BM25 = Best Matching 25 · NVML = NVIDIA Management Library · EM = exact match
+      </p>
       <SlideCallout tone="teal">The sweep is the measurement; the gates are the decision.</SlideCallout>
     </SlideFrame>
   );
@@ -648,9 +678,9 @@ function SetupSlide({ index, total }: SlideProps) {
         <SlideCard title="Conditions" tone="deep" icon={<Layers size="2.8cqh" />}>
           <SlideBullets
             items={[
-              `SQuAD ${rerun.primary.n.toLocaleString("en-US")} × 7 depths`,
-              `1.5B replication ${rerun.replication.n} × 7`,
-              `HotpotQA ${rerun.hotpot.n} × 6`,
+              `SQuAD: ${rerun.primary.n.toLocaleString("en-US")} × 7 depths`,
+              `Qwen2.5-1.5B replication: ${rerun.replication.n} × 7`,
+              `HotpotQA: ${rerun.hotpot.n} × 6`,
               `Boundary ${rerun.boundary.n} × 3 · taxes ${rerun.taxes.n} × 2`,
             ]}
             size="2.25cqh"
@@ -659,9 +689,9 @@ function SetupSlide({ index, total }: SlideProps) {
         <SlideCard title="Measurement" tone="teal" icon={<Gauge size="2.8cqh" />}>
           <SlideBullets
             items={[
-              "NVML 100 ms; idle 60 s.",
+              "NVIDIA Management Library (NVML): 100 ms; idle 60 s.",
               "20-query blocks; 10-hex nonce.",
-              "Thermal log; repeat CV; wall meter.",
+              "Thermal log; coefficient of variation (CV); wall meter.",
               "10,000 paired bootstrap resamples.",
             ]}
             size="2.25cqh"
@@ -670,17 +700,17 @@ function SetupSlide({ index, total }: SlideProps) {
         <SlideCard title="Decision" tone="rose" icon={<ShieldCheck size="2.8cqh" />}>
           <SlideBullets
             items={[
-              "5 pp NI at k=4 vs k=32.",
+              "5 percentage-point (pp) non-inferiority (NI) at k=4 vs k=32.",
               "≥20% energy savings.",
-              "One-sided α = 0.05.",
-              "2 pp estimation-only; G1–G5 / K1–K7.",
+              "One-sided significance level α = 0.05.",
+              "2 pp estimation-only; go/kill gates.",
             ]}
             size="2.25cqh"
           />
         </SlideCard>
       </div>
       <SlideCallout tone="amber">
-        15–20 GPU-hours · RTX 3060 6 GB · batch 1 · AC power · screen off.
+        15–20 GPU (graphics processing unit) hours · RTX 3060 6 GB · batch 1 · AC power · screen off.
       </SlideCallout>
     </SlideFrame>
   );
@@ -702,14 +732,17 @@ function AnalysisSlide({ index, total }: SlideProps) {
     >
       <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.4cqw]">
         <SlideCard title="Primary decision" tone="rose" icon={<Target size="2.8cqh" />}>
-          <p className="text-[2.55cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            5 pp EM non-inferiority at k=4 vs k=32.
+          <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            5 percentage-point (pp) exact-match (EM) non-inferiority (NI) at k=4 vs k=32.
           </p>
-          <div className="mt-[1.2cqh]">
+          <div className="mt-[1.0cqh]">
             <SlideFormula>A(4) − A(32) &gt; −5 pp · savings ≥ 20%</SlideFormula>
           </div>
-          <p className="mt-[1.2cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            One-sided α = .05 · 10,000 paired bootstrap resamples.
+          <p className="mt-[0.9cqh] text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            P(k*) = bootstrap probability that the selected depth is optimal.
+          </p>
+          <p className="mt-[0.9cqh] text-[2.3cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            One-sided significance level α = .05 · 10,000 paired bootstrap resamples.
           </p>
           <p className="mt-[0.9cqh] text-[2.4cqh] font-semibold leading-snug" style={{ color: S.ink }}>
             Paired n, discordant counts, and invalid counts are reported.
@@ -722,10 +755,10 @@ function AnalysisSlide({ index, total }: SlideProps) {
           <div className="grid grid-cols-2 gap-[1.2cqw]">
             <div>
               <p className="font-mono text-[2.05cqh] font-bold uppercase tracking-[0.1em]" style={{ color: S.teal }}>
-                Go · G1–G5
+                Go gates · G1–G5
               </p>
               <ul className="mt-[0.6cqh] space-y-[0.55cqh] text-[2.15cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-                <li>G1 · 5 pp NI + ≥20%</li>
+                <li>G1 · 5 pp non-inferiority + ≥20%</li>
                 <li>G2 · upper bound ≤5 pp</li>
                 <li>G3 · context share [0.10, 0.70]</li>
                 <li>G4 · oracle ≥20%, capture ≥50%</li>
@@ -734,7 +767,7 @@ function AnalysisSlide({ index, total }: SlideProps) {
             </div>
             <div>
               <p className="font-mono text-[2.05cqh] font-bold uppercase tracking-[0.1em]" style={{ color: S.rose }}>
-                Kill · K1–K7
+                Kill gates · K1–K7
               </p>
               <ul className="mt-[0.6cqh] space-y-[0.55cqh] text-[2.15cqh] font-semibold leading-snug" style={{ color: S.ink }}>
                 <li>K1 · energy effect &lt;10%</li>
@@ -788,13 +821,13 @@ function PreliminarySlide({ index, total }: SlideProps) {
           },
           {
             value: `${pilot.repeatCv.median.toFixed(2)}%`,
-            label: "median repeat CV",
+            label: "median coefficient of variation (CV)",
             sub: `max ${pilot.repeatCv.max.toFixed(2)}%; k=${pilot.repeatCv.k}`,
             tone: "amber",
           },
           {
             value: pilot.accuracy.a32.toFixed(3),
-            label: "A_EM at k=32",
+            label: "exact-match accuracy (A_EM) at k=32",
             sub: `${pilot.accuracy.a1.toFixed(3)} at k=1; plateau ${pilot.accuracy.plateauLow.toFixed(3)}–${pilot.accuracy.plateauHigh.toFixed(3)}`,
             tone: "deep",
           },
@@ -814,7 +847,7 @@ function PreliminarySlide({ index, total }: SlideProps) {
       />
       <div className="mt-[1.3cqh] border-l-[0.4cqw] px-[1.4cqw] py-[0.8cqh]" style={{ borderColor: S.rose, background: S.roseSoft }}>
         <p className="text-[2.25cqh] font-bold leading-snug" style={{ color: S.ink }}>
-          The 2 pp static claim is DEAD. The 5 pp result is a preliminary signal, not a certificate.
+          pp = percentage points. The 2 pp static claim is DEAD. The 5 pp result is a preliminary signal, not a certificate.
         </p>
       </div>
       <div className="mt-[1.2cqh] grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
@@ -822,8 +855,8 @@ function PreliminarySlide({ index, total }: SlideProps) {
           <SlideBullets
             items={[
               "Steep energy–depth tradeoff: 3.45×.",
-              "Affine fit R² = 0.9990; context share 36.3% → 85.1%.",
-              "Identity holds at k=2; repeat CV median 3.80%.",
+              "Affine fit R² (goodness of fit) = 0.9990; context share 36.3% → 85.1%.",
+              "Optimal-depth identity holds at k=2; repeat CV median 3.80%.",
             ]}
             size="2.2cqh"
           />
@@ -853,38 +886,39 @@ function ExpectedSlide({ index, total }: SlideProps) {
       badge="Expected results"
       badgeTone="deep"
       title="What the rerun must show — and what would falsify it."
-      subtitle="We pre-commit to the decision, not to a positive result."
+      subtitle="We pre-commit to the decision, not to a positive result. H1–H7 are the pre-registered hypotheses."
       index={index}
       total={total}
     >
       <div className="grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
-        <SlideCard title="H1 · affine energy" tone="deep" icon={<TrendingUp size="2.8cqh" />}>
+        <SlideCard title="Hypothesis 1 · affine energy" tone="deep" icon={<TrendingUp size="2.8cqh" />}>
           <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Supported if R² ≥ 0.95 and lack-of-fit is not rejected at 5%.
+            Supported if R² (goodness of fit) ≥ 0.95 and lack-of-fit is not rejected at 5%.
           </p>
           <p className="mt-[1.0cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
             Falsified if R² &lt; 0.95 or the lack-of-fit check rejects.
           </p>
         </SlideCard>
-        <SlideCard title="H2 · primary decision" tone="rose" icon={<Target size="2.8cqh" />}>
+        <SlideCard title="Hypothesis 2 · primary decision" tone="rose" icon={<Target size="2.8cqh" />}>
           <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Supported if the 5 pp lower bound &gt; −5 pp and savings ≥ 20%.
+            Supported if the 5 percentage-point (pp) lower bound &gt; −5 pp and savings ≥ 20%.
           </p>
           <p className="mt-[1.0cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
             Falsified if the lower bound ≤ −5 pp or savings &lt; 20%.
           </p>
         </SlideCard>
-        <SlideCard title="H3–H4 · identity + split" tone="teal" icon={<GitBranch size="2.8cqh" />}>
+        <SlideCard title="Hypotheses 3–4 · identity + split" tone="teal" icon={<GitBranch size="2.8cqh" />}>
           <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Identity CI includes 0; context share in [0.10, 0.70] and rising.
+            Optimal-depth identity confidence interval (CI) includes 0; context share in [0.10, 0.70]
+            and rising.
           </p>
           <p className="mt-[1.0cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
             Falsified if the CI excludes 0 or the share leaves the band.
           </p>
         </SlideCard>
-        <SlideCard title="H5–H6 · policy + taxes" tone="amber" icon={<FlaskConical size="2.8cqh" />}>
+        <SlideCard title="Hypotheses 5–6 · policy + taxes" tone="amber" icon={<FlaskConical size="2.8cqh" />}>
           <p className="text-[2.45cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            Oracle ≥ 20%, capture ≥ 50%; fixed tax ↑ k*, per-passage ↓ k*.
+            Hindsight oracle ≥ 20%, capture ≥ 50%; fixed tax ↑ k*, per-passage ↓ k*.
           </p>
           <p className="mt-[1.0cqh] text-[2.25cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
             Falsified if capture &lt; 50% or a tax sign is wrong.
@@ -892,8 +926,8 @@ function ExpectedSlide({ index, total }: SlideProps) {
         </SlideCard>
       </div>
       <SlideCallout tone="deep">
-        H7: the H2 direction replicates on Qwen2.5-1.5B or HotpotQA. A null or fired gate is a
-        reportable result.
+        Hypothesis H7: the primary-decision direction replicates on Qwen2.5-1.5B or HotpotQA. A
+        null or fired gate is a reportable result.
       </SlideCallout>
     </SlideFrame>
   );
@@ -963,50 +997,41 @@ function ImpactSlide({ index, total }: SlideProps) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 18 · References (backup)                                            */
+/* 18 · References                                                     */
 /* ------------------------------------------------------------------ */
 
 function ReferencesSlide({ index, total }: SlideProps) {
   return (
     <SlideFrame
-      badge="Backup · References"
+      badge="References"
       badgeTone="amber"
       title="References"
-      subtitle="Full citations for the research gap, datasets, and measurement tools. Backup slide — not part of the 10-minute talk."
       index={index}
       total={total}
     >
-      <div className="grid min-h-0 flex-1 grid-cols-2 gap-[2cqw]">
-        <div className="min-w-0">
-          <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.12em]" style={{ color: S.teal }}>
-            Prior work
-          </p>
+      <div className="grid min-h-0 flex-1 grid-cols-[1.2fr_0.8fr] gap-[1.4cqw]">
+        <SlideCard title="Prior work" tone="teal">
           <ol
-            className="mt-[0.9cqh] list-decimal space-y-[0.65cqh] pl-[1.5cqw] text-[1.95cqh] font-semibold leading-snug"
+            className="list-decimal space-y-[0.75cqh] pl-[1.7cqw] text-[2.0cqh] font-semibold leading-snug"
             style={{ color: S.ink }}
           >
             {references.priorWork.map((ref) => (
               <li key={ref.id}>{ref.text}</li>
             ))}
           </ol>
-        </div>
-        <div className="min-w-0">
-          <p className="font-mono text-[2.0cqh] font-bold uppercase tracking-[0.12em]" style={{ color: S.amber }}>
-            Data &amp; tools
-          </p>
-          <ul
-            className="mt-[0.9cqh] list-disc space-y-[0.8cqh] pl-[1.5cqw] text-[1.95cqh] font-semibold leading-snug"
+        </SlideCard>
+        <SlideCard title="Data &amp; tools" tone="amber">
+          <ol
+            start={8}
+            className="list-decimal space-y-[1.1cqh] pl-[1.7cqw] text-[2.0cqh] font-semibold leading-snug"
             style={{ color: S.ink }}
           >
             {references.dataTools.map((ref) => (
               <li key={ref.id}>{ref.text}</li>
             ))}
-          </ul>
-        </div>
+          </ol>
+        </SlideCard>
       </div>
-      <SlideCallout tone="amber">
-        Full citations are kept in docs/proposal.md §19 and the repository record.
-      </SlideCallout>
     </SlideFrame>
   );
 }
