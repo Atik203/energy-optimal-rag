@@ -68,27 +68,29 @@ function TitleSlide({ index }: SlideProps) {
             </div>
           </div>
 
-          <div className="mt-auto">
-            <p className="font-mono text-[2.1cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.teal }}>
-              Project Proposal · 2026
-            </p>
-            <h1
-              className="mt-[1.4cqh] text-[5.8cqh] font-semibold leading-[1.02] tracking-[-0.03em]"
-              style={{ fontFamily: "var(--font-serif)", color: S.ink }}
-            >
-              Energy-Optimal Retrieval Depth in{" "}
-              <span style={{ fontStyle: "italic", color: S.teal, borderBottom: `0.2cqw solid ${S.lime}` }}>
-                Retrieval-Augmented Generation
-              </span>
-            </h1>
-            <p className="mt-[1.9cqh] text-[2.55cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-              Measuring joules per correct answer, and deciding whether calibrating the retrieval
-              depth is worth its own energy.
-            </p>
-            <div className="mt-[2.0cqh] flex flex-wrap gap-[0.8cqw]">
-              <SlideChip tone="deep">
-                {course.code} · Section {course.section}
-              </SlideChip>
+          <div className="flex min-h-0 flex-1 items-center">
+            <div className="w-full">
+              <p className="font-mono text-[2.1cqh] font-bold uppercase tracking-[0.14em]" style={{ color: S.teal }}>
+                Project Proposal · 2026
+              </p>
+              <h1
+                className="mt-[1.4cqh] text-[5.8cqh] font-semibold leading-[1.02] tracking-[-0.03em]"
+                style={{ fontFamily: "var(--font-serif)", color: S.ink }}
+              >
+                Energy-Optimal Retrieval Depth in{" "}
+                <span style={{ fontStyle: "italic", color: S.teal, borderBottom: `0.2cqw solid ${S.lime}` }}>
+                  Retrieval-Augmented Generation
+                </span>
+              </h1>
+              <p className="mt-[1.9cqh] text-[2.55cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
+                Measuring joules per correct answer, and deciding whether calibrating the retrieval
+                depth is worth its own energy.
+              </p>
+              <div className="mt-[2.0cqh] flex flex-wrap gap-[0.8cqw]">
+                <SlideChip tone="deep">
+                  {course.code} · Section {course.section}
+                </SlideChip>
+              </div>
             </div>
           </div>
 
