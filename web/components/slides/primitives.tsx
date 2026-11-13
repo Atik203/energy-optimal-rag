@@ -180,7 +180,7 @@ export function SlideCard({
           {title}
         </span>
       </div>
-      <div className="mt-[1.1cqh] min-h-0 flex-1">{children}</div>
+      <div className="mt-[1.1cqh] flex min-h-0 flex-1 flex-col justify-center">{children}</div>
     </div>
   );
 }

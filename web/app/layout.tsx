@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -39,7 +38,7 @@ export const metadata: Metadata = {
     template: "%s \u2014 Energy Observatory",
   },
   description:
-    "A measurement study of retrieval depth in retrieval-augmented generation: joules per correct answer, a margin-indexed decision rule, and the energy cost of finding it. Post-pilot MARGINAL; no confirmatory results.",
+    "Project proposal: retrieval depth, joules per correct answer, preliminary evidence, and the design of a powered rerun.",
   applicationName: "Energy Observatory",
   authors: [{ name: "Atikur Rahaman" }],
   creator: "Atikur Rahaman",
@@ -81,12 +80,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <meta name="darkreader-lock" />
+        <script
+          id="energy-observatory-theme"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("eor-theme");if(t==="light"){document.documentElement.classList.remove("dark")}else{document.documentElement.classList.add("dark")}}catch(e){document.documentElement.classList.add("dark")}})();`,
+          }}
+        />
+      </head>
       <body
         className={`${instrument.variable} ${newsreader.variable} ${jetbrains.variable} font-sans min-h-dvh flex flex-col bg-background text-foreground antialiased`}
       >
-        <Script id="energy-observatory-theme" strategy="beforeInteractive">
-          {`(function(){try{var t=localStorage.getItem("eor-theme");if(t==="light"){document.documentElement.classList.remove("dark")}else{document.documentElement.classList.add("dark")}}catch(e){document.documentElement.classList.add("dark")}})();`}
-        </Script>
         {children}
       </body>
     </html>
