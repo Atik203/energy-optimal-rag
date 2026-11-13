@@ -17,8 +17,8 @@
 | 1 | **Pratay Paul** | 1–3 | Title + Introduction & Problem Statement + Motivation & Literature Review | 2:10 |
 | 2 | **Md. Sarowar Alam Sourov** | 4–5 | Objectives & Scope + Dataset | 1:45 |
 | 3 | **Md. Atikur Rahaman** | 6–7 | Proposed Method + Methodology Flow | 1:50 |
-| 4 | **Sadman Ifaz** | 8–9 | Experimental Setup + Analysis & Gates | 1:55 |
-| 5 | **Jayed Bin Khalid** | 10–11 | Expected Results + Applications, Risks & Conclusion | 1:40 |
+| 4 | **Jayed Bin Khalid** | 8–9 | Experimental Setup + Analysis & Gates | 1:55 |
+| 5 | **Sadman Ifaz** | 10–11 | Expected Results + Applications, Risks & Conclusion | 1:40 |
 
 **Slide 12 — References:** কেউ উপস্থাপন করবে না। প্রশ্নের সময় দরকার হলে দেখানো যাবে।
 
@@ -29,8 +29,8 @@
 | 0:00 | Pratay শুরু করবে |
 | 2:10 | Sourov শুরু করবে |
 | 3:55 | Atik শুরু করবে |
-| 5:45 | Sadman শুরু করবে |
-| 7:40 | Jayed শুরু করবে |
+| 5:45 | Jayed শুরু করবে |
+| 7:40 | Sadman শুরু করবে |
 | 9:20 | শেষ |
 | 9:20–10:00 | প্রশ্ন-উত্তর শুরু |
 
@@ -144,17 +144,17 @@ Baseline-এ সবার জন্য একই top-k। আমাদের প
 
 মূল কথা: **run measurement দেয়; checkpoint বলে আমরা এগোব কি না।**
 
-[হ্যান্ডঅফ] এখন সাদমান ইফাজ Experimental Setup এবং Analysis-এর gate-গুলো ব্যাখ্যা করবেন।
+[হ্যান্ডঅফ] এখন জায়েদ বিন খালিদ Experimental Setup এবং Analysis-এর gate-গুলো ব্যাখ্যা করবেন।
 
 ---
 
-## 5. Sadman Ifaz — 1:55
+## 5. Jayed Bin Khalid — 1:55
 
 ### Slide 8 — Experimental Setup (5:45–6:40)
 
 [স্লাইড ৮]
 
-ধন্যবাদ। আমি সাদমান ইফাজ।
+ধন্যবাদ। আমি জায়েদ বিন খালিদ।
 
 Run plan: SQuAD 1,000 × 7 depth; Qwen2.5-1.5B replication 500 × 7; HotpotQA 500 × 6; boundary test 200 × 3; energy-tax test 150 × 2 condition। Policy split-এর target 600 train, 200 validation, 200 test।
 
@@ -182,17 +182,17 @@ K1–K7 ছোট effect, boundary বা unstable best depth, কম context sh
 
 কোনো checkpoint fail করলে সেটি লুকাব না—report করব এবং claim সীমিত বা বদলাব।
 
-[হ্যান্ডঅফ] এখন জায়েদ বিন খালিদ Expected Results ও Conclusion নিয়ে বলবেন।
+[হ্যান্ডঅফ] এখন সাদমান ইফাজ Expected Results ও Conclusion নিয়ে বলবেন।
 
 ---
 
-## 6. Jayed Bin Khalid — 1:40
+## 6. Sadman Ifaz — 1:40
 
 ### Slide 10 — Expected Results (7:40–8:25)
 
 [স্লাইড ১০]
 
-ধন্যবাদ। আমি জায়েদ বিন খালিদ।
+ধন্যবাদ। আমি সাদমান ইফাজ।
 
 H1 থেকে H7 পর্যন্ত আমাদের pass/fail নিয়মগুলো এই স্লাইডে আছে।
 
