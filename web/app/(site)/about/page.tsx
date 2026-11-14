@@ -39,6 +39,8 @@ const statusRows = [
   ["Freeze tag", "prereg-freeze-v1 (pending)"],
   ["External registry", "none; a frozen git tag and SHA-256 will be the record"],
   ["Pilot raw data", "not in this repository; run CSVs are git-ignored"],
+  ["Exploratory arms", "Llama 3.2 3B reader; 16k context-budget probe; no gate"],
+  ["H200 check", "optional 64k accuracy-only; no energy claim; not run"],
   ["Evidence map", "artifacts/claims_evidence.csv"],
   ["Run registry", "runs/registry.csv (tracked); raw runs are git-ignored"],
   ["Code license", "MIT"],
@@ -291,10 +293,10 @@ export default function AboutPage() {
           id="licenses-heading"
           title={
             <>
-              Three licenses, <em>three different objects.</em>
+              Three licenses, <em>plus model terms.</em>
             </>
           }
-          description="The code, the documentation, and the upstream datasets do not share a license. The distinction matters for redistribution."
+          description="The code, documentation, datasets, and model weights do not share a license. Qwen models are Apache 2.0; Llama 3.2 3B uses the Llama 3.2 Community License. Model weights are not redistributed."
         />
 
         <div className="mt-8 grid gap-3 sm:grid-cols-3">

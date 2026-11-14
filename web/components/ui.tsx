@@ -189,7 +189,12 @@ export function FormulaBlock({
         <span className="inst-label">{label}</span>
         <span className="inst-label">Readout</span>
       </div>
-      <div className="mt-3 overflow-x-auto pb-1 font-mono text-[0.95rem] leading-relaxed text-[#eef3e5] sm:text-lg">
+      <div
+        className="mt-3 overflow-x-auto pb-1 text-[1.05rem] leading-relaxed text-[#eef3e5] sm:text-lg"
+        style={{
+          fontFamily: '"Cambria Math", "STIX Two Math", "Times New Roman", serif',
+        }}
+      >
         {children}
       </div>
       {note && <p className="mt-2 text-xs leading-relaxed text-[#8aa294]">{note}</p>}

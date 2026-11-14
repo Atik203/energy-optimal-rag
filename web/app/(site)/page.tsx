@@ -30,6 +30,7 @@ import {
 } from "@/components/ui";
 import { ClaimLedger } from "@/components/claim-ledger";
 import { DepthRuler, EnergyBars } from "@/components/charts";
+import { MathFrac, MathLine, MathSub, MathSup } from "@/components/math";
 
 const heroMetrics = [
   {
@@ -278,9 +279,25 @@ export default function HomePage() {
             label="Primary estimand"
             note="Total joules over total correct answers — not the mean of per-query ratios. Every E(k) is reported with A(k) and the gate."
           >
-            <div className="text-[1.35rem] sm:text-[1.6rem]">
-              E(k) = Σ J<sub>k</sub>(q) / Σ C<sub>k</sub>(q)
-            </div>
+            <MathLine className="text-[1.35rem] sm:text-[1.6rem]">
+              <span>
+                <i>E</i>(<i>k</i>) =
+              </span>
+              <MathFrac
+                num={
+                  <>
+                    <span className="text-[1.12em]">Σ</span> <i>J</i>
+                    <MathSub>k</MathSub>(q)
+                  </>
+                }
+                den={
+                  <>
+                    <span className="text-[1.12em]">Σ</span> <i>C</i>
+                    <MathSub>k</MathSub>(q)
+                  </>
+                }
+              />
+            </MathLine>
           </FormulaBlock>
 
           <div className="panel flex flex-col p-5">
@@ -288,7 +305,12 @@ export default function HomePage() {
               <span className="eyebrow">Decision gate</span>
               <ShieldCheck className="h-4 w-4 text-data" aria-hidden />
             </div>
-            <p className="mt-4 font-mono text-lg">A_min = A(32) − 0.05</p>
+            <div className="mt-4 text-lg">
+              <MathLine>
+                <i>A</i>
+                <MathSub>min</MathSub> = <i>A</i>(32) − 0.05
+              </MathLine>
+            </div>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Primary margin: 5 pp EM. The 2 pp margin is estimated with a confidence interval,
               never used for certification.
@@ -300,9 +322,30 @@ export default function HomePage() {
               <span className="eyebrow">Certification</span>
               <Gauge className="h-4 w-4 text-caution" aria-hidden />
             </div>
-            <p className="mt-4 font-mono text-[0.92rem] leading-relaxed">
-              N* = C_cert / [A(k*)(E(k₀) − E(k*))]
-            </p>
+            <div className="mt-4 text-[0.98rem] leading-relaxed">
+              <MathLine>
+                <span>
+                  <i>N</i>
+                  <MathSup>*</MathSup> =
+                </span>
+                <MathFrac
+                  num={
+                    <>
+                      <i>C</i>
+                      <MathSub>cert</MathSub>
+                    </>
+                  }
+                  den={
+                    <>
+                      <i>A</i>(<i>k</i>
+                      <MathSup>*</MathSup>)(<i>E</i>(<i>k</i>
+                      <MathSub>0</MathSub>) − <i>E</i>(<i>k</i>
+                      <MathSup>*</MathSup>))
+                    </>
+                  }
+                />
+              </MathLine>
+            </div>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Finding the depth is itself an energy purchase. N* is reported descriptively, per
               dataset and reader.
@@ -313,8 +356,10 @@ export default function HomePage() {
         <div className="mt-5 flex items-center justify-between gap-4 border-t border-line pt-4">
           <Callout tone="caution" className="max-w-2xl">
             The ratio can be gamed by failing cheaply. The accuracy gate is what makes{" "}
-            <span className="font-mono text-foreground">E(k)</span> a decision object rather than
-            a cost-per-answer trick.
+            <span className="text-foreground">
+              <i>E</i>(<i>k</i>)
+            </span>{" "}
+            a decision object rather than a cost-per-answer trick.
           </Callout>
           <Link
             href="/research"

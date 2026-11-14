@@ -26,6 +26,7 @@ import {
   IdentityPlot,
 } from "@/components/charts";
 import { ClaimLedger } from "@/components/claim-ledger";
+import { MathFrac, MathLine, MathSub, MathSup } from "@/components/math";
 
 export const metadata: Metadata = {
   title: "Pilot evidence",
@@ -168,7 +169,12 @@ export default function ResultsPage() {
 
             <div className="mt-5">
               <p className="eyebrow">Affine fit</p>
-              <p className="mt-2 font-mono text-sm">{pilot.fit.formula} J</p>
+              <div className="mt-2 text-sm">
+                <MathLine>
+                  <i>J</i>(<i>k</i>) = {pilot.fit.a} + {pilot.fit.b}
+                  <i>k</i> <span className="text-muted-foreground">J</span>
+                </MathLine>
+              </div>
               <p className="mt-1 font-mono text-xs text-data">R² = {pilot.fit.r2.toFixed(4)}</p>
             </div>
 
@@ -214,7 +220,8 @@ export default function ResultsPage() {
           </div>
           <p className="border-t border-line px-4 py-3 text-xs leading-relaxed text-muted-foreground">
             These are the pilot’s documented worked-example values. They illustrate the arithmetic
-            of E(k) = J(k) / A(k); they are not new estimates.
+            of <MathLine><i>E</i>(<i>k</i>) = <i>J</i>(<i>k</i>) / <i>A</i>(<i>k</i>)</MathLine>;
+            they are not new estimates.
           </p>
         </div>
       </section>
@@ -247,12 +254,20 @@ export default function ResultsPage() {
 
             <div className="mt-5 space-y-4">
               <div>
-                <p className="font-mono text-4xl font-medium tracking-[-0.04em] text-dead tnum">k* = 32</p>
+                <p className="text-4xl font-medium tracking-[-0.04em] text-dead tnum">
+                  <MathLine>
+                    <i>k</i>
+                    <MathSup>*</MathSup> = 32
+                  </MathLine>
+                </p>
                 <p className="mt-1 text-xs text-muted-foreground">The grid boundary, not an interior optimum.</p>
               </div>
               <div className="border-t border-line pt-4">
-                <p className="font-mono text-2xl font-medium tracking-[-0.03em] tnum">
-                  P(k* optimal) = 0.61
+                <p className="text-2xl font-medium tracking-[-0.03em] tnum">
+                  <MathLine>
+                    <i>P</i>(<i>k</i>
+                    <MathSup>*</MathSup> optimal) = 0.61
+                  </MathLine>
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Below the 0.8 threshold. The selection is not stable enough to certify.
@@ -299,11 +314,43 @@ export default function ResultsPage() {
           <div className="space-y-4">
             <FormulaBlock
               label="Share definitions"
-              note="S(k) uses J_ret + J_pre. S_r(k) uses only J_ret and the CPU proxy. They are different quantities."
+              note="The context-side share includes retrieval plus prefill. The retrieval-only share uses only the CPU proxy. They are different quantities."
             >
-              <div className="space-y-2 text-sm sm:text-base">
-                <p>S(k) = (J_ret(k) + J_pre(k)) / J(k)</p>
-                <p>S_r(k) = J_ret(k) / J(k)</p>
+              <div className="space-y-3 text-sm sm:text-base">
+                <MathLine>
+                  <i>S</i>(<i>k</i>) =
+                  <MathFrac
+                    num={
+                      <>
+                        <i>J</i>
+                        <MathSub>ret</MathSub>(<i>k</i>) + <i>J</i>
+                        <MathSub>pre</MathSub>(<i>k</i>)
+                      </>
+                    }
+                    den={
+                      <>
+                        <i>J</i>(<i>k</i>)
+                      </>
+                    }
+                  />
+                </MathLine>
+                <MathLine>
+                  <i>S</i>
+                  <MathSub>r</MathSub>(<i>k</i>) =
+                  <MathFrac
+                    num={
+                      <>
+                        <i>J</i>
+                        <MathSub>ret</MathSub>(<i>k</i>)
+                      </>
+                    }
+                    den={
+                      <>
+                        <i>J</i>(<i>k</i>)
+                      </>
+                    }
+                  />
+                </MathLine>
               </div>
             </FormulaBlock>
 
@@ -352,7 +399,12 @@ export default function ResultsPage() {
         <div className="mt-8 grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="panel p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold">Identity gap, ε_J − ε_A</h3>
+              <h3 className="text-sm font-semibold">
+                Identity gap,{" "}
+                <MathLine>
+                  ε<MathSub>J</MathSub> − ε<MathSub>A</MathSub>
+                </MathLine>
+              </h3>
               <PilotChip />
             </div>
             <div className="mt-4">
@@ -576,9 +628,26 @@ export default function ResultsPage() {
                 <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
                   Capture
                 </p>
-                <p className="mt-1 font-mono text-sm">
-                  (E_static − E_policy) / (E_static − E_oracle)
-                </p>
+                <div className="mt-1 text-sm">
+                  <MathLine>
+                    <MathFrac
+                      num={
+                        <>
+                          <i>E</i>
+                          <MathSub>static</MathSub> − <i>E</i>
+                          <MathSub>policy</MathSub>
+                        </>
+                      }
+                      den={
+                        <>
+                          <i>E</i>
+                          <MathSub>static</MathSub> − <i>E</i>
+                          <MathSub>oracle</MathSub>
+                        </>
+                      }
+                    />
+                  </MathLine>
+                </div>
               </div>
             </div>
           </div>

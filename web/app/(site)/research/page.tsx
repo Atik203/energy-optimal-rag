@@ -30,6 +30,7 @@ import {
   StatusTag,
   type Tone,
 } from "@/components/ui";
+import { MathFrac, MathLine, MathSub, MathSup } from "@/components/math";
 
 export const metadata: Metadata = {
   title: "Research design",
@@ -47,6 +48,97 @@ const symbols = [
   { symbol: "N*", meaning: "Queries at which calibration energy equals the energy it saves." },
   { symbol: "capture", meaning: "The fraction of the oracle gap a learned policy recovers." },
 ];
+
+function TheoremFormula({ id }: { id: string }) {
+  if (id === "Theorem 1") {
+    return (
+      <MathLine>
+        <MathFrac
+          num={
+            <>
+              <i>k</i> <i>J</i>′(<i>k</i>)
+            </>
+          }
+          den={
+            <>
+              <i>J</i>(<i>k</i>)
+            </>
+          }
+        />
+        <span>=</span>
+        <MathFrac
+          num={
+            <>
+              <i>k</i> <i>A</i>′(<i>k</i>)
+            </>
+          }
+          den={
+            <>
+              <i>A</i>(<i>k</i>)
+            </>
+          }
+        />
+      </MathLine>
+    );
+  }
+  if (id === "Theorem 2") {
+    return (
+      <MathLine>
+        <MathFrac
+          num={
+            <>
+              <i>E</i>
+              <MathSub>static</MathSub>
+            </>
+          }
+          den={
+            <>
+              <i>E</i>
+              <MathSub>oracle</MathSub>
+            </>
+          }
+        />
+        <span>→ 1 +</span>
+        <MathFrac
+          num={
+            <>
+              <i>b</i>
+              <i>K</i>
+            </>
+          }
+          den={<i>a</i>}
+        />
+      </MathLine>
+    );
+  }
+  if (id === "Theorem 3") {
+    return (
+      <MathLine>
+        <span>
+          <i>N</i>
+          <MathSup>*</MathSup> =
+        </span>
+        <MathFrac
+          num={
+            <>
+              <i>C</i>
+              <MathSub>cert</MathSub>
+            </>
+          }
+          den={
+            <>
+              <i>A</i>(<i>k</i>
+              <MathSup>*</MathSup>)(<i>E</i>(<i>k</i>
+              <MathSub>0</MathSub>) − <i>E</i>(<i>k</i>
+              <MathSup>*</MathSup>))
+            </>
+          }
+        />
+      </MathLine>
+    );
+  }
+  return null;
+}
 
 function hypothesisTone(type: string): Tone {
   if (type === "Primary") return "signal";
@@ -149,11 +241,27 @@ export default function ResearchPage() {
           <div className="space-y-4">
             <FormulaBlock
               label="Primary estimand"
-              note="Estimated as sum(J_k) / sum(C_k) over the analysis population. Reported with A(k), the gate, and a 10,000-resample paired bootstrap interval."
+              note="Estimated as total joules divided by total correct answers over the analysis population. Reported with accuracy, the gate, and a 10,000-resample paired bootstrap interval."
             >
-              <div className="text-[1.35rem] sm:text-[1.7rem]">
-                E(k) = Σ J<sub>k</sub>(q) / Σ C<sub>k</sub>(q)
-              </div>
+              <MathLine className="text-[1.35rem] sm:text-[1.7rem]">
+                <span>
+                  <i>E</i>(<i>k</i>) =
+                </span>
+                <MathFrac
+                  num={
+                    <>
+                      <span className="text-[1.12em]">Σ</span> <i>J</i>
+                      <MathSub>k</MathSub>(q)
+                    </>
+                  }
+                  den={
+                    <>
+                      <span className="text-[1.12em]">Σ</span> <i>C</i>
+                      <MathSub>k</MathSub>(q)
+                    </>
+                  }
+                />
+              </MathLine>
             </FormulaBlock>
 
             <div className="panel p-5">
@@ -193,12 +301,18 @@ export default function ResearchPage() {
               {[
                 ["Margin", "5 pp normalized EM"],
                 ["Test", "One-sided paired non-inferiority, α = 0.05"],
-                ["Gate", "A_min = A(32) − 0.05"],
+                [
+                  "Gate",
+                  <MathLine key="gate">
+                    <i>A</i>
+                    <MathSub>min</MathSub> = <i>A</i>(32) − 0.05
+                  </MathLine>,
+                ],
                 ["Energy", "≥ 20% savings, ratio of sums"],
                 ["Uncertainty", "10,000 paired bootstrap resamples"],
                 ["2 pp margin", "Estimation only; never a certification target"],
               ].map(([label, value]) => (
-                <div key={label} className="grid grid-cols-[100px_1fr] gap-3 py-2.5">
+                <div key={String(label)} className="grid grid-cols-[100px_1fr] gap-3 py-2.5">
                   <dt className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
                     {label}
                   </dt>
@@ -296,8 +410,14 @@ export default function ResearchPage() {
                 </div>
                 <Scale className="h-4 w-4 shrink-0 text-data" aria-hidden />
               </div>
-              <div className="surface-inset mt-4 overflow-x-auto p-3 font-mono text-[0.82rem] leading-relaxed">
-                {theorem.formula}
+              <div
+                className="surface-inset mt-4 overflow-x-auto p-3 text-[0.95rem] leading-relaxed"
+                style={{
+                  fontFamily:
+                    '"Cambria Math", "STIX Two Math", "Times New Roman", serif',
+                }}
+              >
+                <TheoremFormula id={theorem.id} />
               </div>
               <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">{theorem.body}</p>
               <div className="mt-4 border-t border-line pt-3">

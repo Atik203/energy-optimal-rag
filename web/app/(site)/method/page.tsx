@@ -35,6 +35,7 @@ import {
   SourceNote,
 } from "@/components/ui";
 import { BlockFactorBars, ContextShareChart, RecallBars } from "@/components/charts";
+import { MathLine, MathSub, MathSup } from "@/components/math";
 
 export const metadata: Metadata = {
   title: "Method",
@@ -162,12 +163,30 @@ export default function MethodPage() {
           <div className="space-y-4 min-w-0">
             <FormulaBlock
               label="Per query, per depth"
-              note="The GPU sensor captures J_pre and J_dec; J_ret is a CPU proxy; J_fix is partly captured and partly amortized."
+              note="The GPU sensor captures prefill and decode; retrieval is a CPU proxy; fixed overhead is partly captured and partly amortized."
             >
-              <div className="text-[1.15rem] sm:text-[1.35rem]">
-                J<sub>k</sub>(q) = J<sub>ret,k</sub>(q) + J<sub>pre,k</sub>(q) + J
-                <sub>dec,k</sub>(q) + J<sub>fix</sub>(q)
-              </div>
+              <MathLine className="text-[1.15rem] sm:text-[1.35rem]">
+                <span>
+                  <i>J</i>
+                  <MathSub>k</MathSub>(q) =
+                </span>
+                <span>
+                  <i>J</i>
+                  <MathSub>ret,k</MathSub>(q) +
+                </span>
+                <span>
+                  <i>J</i>
+                  <MathSub>pre,k</MathSub>(q) +
+                </span>
+                <span>
+                  <i>J</i>
+                  <MathSub>dec,k</MathSub>(q) +
+                </span>
+                <span>
+                  <i>J</i>
+                  <MathSub>fix</MathSub>(q)
+                </span>
+              </MathLine>
             </FormulaBlock>
 
             <div className="grid gap-3 sm:grid-cols-2">
@@ -594,14 +613,24 @@ export default function MethodPage() {
             <div className="mt-4 grid grid-cols-2 gap-3">
               <div className="border border-[rgba(200,240,79,0.16)] p-3">
                 <p className="font-mono text-xs text-[#8aa294]">Fixed tax Δa &gt; 0</p>
-                <p className="inst-signal mt-2 font-mono text-lg">k* ↑</p>
+                <p className="inst-signal mt-2 text-lg">
+                  <MathLine>
+                    <i>k</i>
+                    <MathSup>*</MathSup> ↑
+                  </MathLine>
+                </p>
                 <p className="mt-1 text-[10px] leading-relaxed text-[#8aa294]">
                   The fixed cost is spread over more passages.
                 </p>
               </div>
               <div className="border border-[rgba(200,79,79,0.2)] p-3">
                 <p className="font-mono text-xs text-[#8aa294]">Per-passage tax Δb &gt; 0</p>
-                <p className="inst-caution mt-2 font-mono text-lg">k* ↓</p>
+                <p className="inst-caution mt-2 text-lg">
+                  <MathLine>
+                    <i>k</i>
+                    <MathSup>*</MathSup> ↓
+                  </MathLine>
+                </p>
                 <p className="mt-1 text-[10px] leading-relaxed text-[#8aa294]">
                   Each additional passage costs more.
                 </p>

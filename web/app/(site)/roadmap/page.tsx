@@ -87,7 +87,7 @@ export default function RoadmapPage() {
               P0 to P6. <em>Human time is the binding constraint.</em>
             </>
           }
-          description="Compute is local and cheap. The schedule is not. P5 and P6 are staffed for writing and release; the buffer is real, not a label for overtime."
+          description="Energy compute is local and cheap. The schedule is not. P5 and P6 are staffed for writing and release; the buffer is real, not a label for overtime."
         />
 
         <ol className="relative mt-8 space-y-4">
