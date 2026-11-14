@@ -27,6 +27,9 @@ jobs:
       - name: Install package without runtime dependencies
         run: python -m pip install -e . --no-deps
 
+      - name: Install test runner
+        run: python -m pip install pytest
+
       - name: Smoke test without runtime dependencies
         run: python -m pytest -q tests/test_smoke.py
 
