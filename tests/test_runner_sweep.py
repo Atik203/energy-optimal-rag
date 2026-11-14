@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -215,6 +216,7 @@ def test_run_depth_sweep_writes_rows_and_registry(tmp_path: Path) -> None:
     assert manifest["run_id"] == "test_run"
     assert manifest["counts"]["rows"] == 6
     assert manifest["id_split"] == "p0_golden"
+    assert manifest["environment"]["executable"] == sys.executable
 
 
 def test_run_depth_sweep_marks_reader_failure_invalid(tmp_path: Path) -> None:

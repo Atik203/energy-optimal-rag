@@ -448,6 +448,7 @@ def run_depth_sweep(
             },
             "environment": {
                 "python": sys.version.split()[0],
+                "executable": sys.executable,
                 "platform": platform.platform(),
             },
         }
