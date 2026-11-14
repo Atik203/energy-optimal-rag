@@ -54,8 +54,9 @@ log. `runs/` holds the registry and git-ignored raw runs. `artifacts/` holds the
 claims-evidence map. `paper/` and `docs/` are the writing surface.
 
 The tracked data surface is deliberately small: `data/manifest.json`, `data/README.md`,
-`runs/registry.csv`, `artifacts/ledger.csv`, and `artifacts/claims_evidence.csv`. Everything
-else under `data/`, `runs/<run_id>/`, and generated analysis output is git-ignored. Raw text is
+`data/splits/*.json` (IDs only), `runs/registry.csv`, `artifacts/ledger.csv`, and
+`artifacts/claims_evidence.csv`. Everything else under `data/`, `runs/<run_id>/`, and large
+generated figures is git-ignored; small tabular analysis reports may be tracked. Raw text is
 never committed.
 
 ## 3. Environment and harness reuse

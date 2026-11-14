@@ -122,7 +122,7 @@ P1: [`prereg/PREREGISTRATION.md`](prereg/PREREGISTRATION.md).
 ├─ tests/              smoke tests that run without numpy/pandas
 ├─ prereg/             preregistration, analysis plan, amendment log
 ├─ runs/               run registry and per-run raw outputs (raw outputs git-ignored)
-├─ analysis/           analysis outputs and notebooks (outputs git-ignored)
+├─ analysis/           derived reports; large figures are git-ignored
 ├─ artifacts/          energy ledger, claims-evidence map, checksummed artifacts
 ├─ paper/              manuscript workspace
 └─ docs/               implementation plan, protocol, measurement, data card, risks, runbook
