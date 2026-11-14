@@ -11,4 +11,6 @@
 | 32 | 200 | 0 | 0.5250 | 76.15 | 145.05 |
 
 Affine fit: `J(k) = 11.1023 + 2.0225 k`, R² = 0.9941.
+Calibration: **not applied**.
 P0 anchor check: **FAIL**.
+The anchor check is not adjudicable as a clean energy test.

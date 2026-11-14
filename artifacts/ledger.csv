@@ -1,6 +1,10 @@
 artifact_id,run_id,kind,path,sha256,bytes,created_utc,license,notes
-A-0001,pilot,document,docs/PILOT_EVIDENCE.md,1465d8308a0a0ca2078fbe4bf063d608e80838eee86f12ab70c983bff712bcf7,5622,2026-11-11T12:05:06Z,CC-BY-4.0,"Pilot evidence transcription; raw CSVs not in repository"
+A-0001,pilot,document,docs/PILOT_EVIDENCE.md,1465d8308a0a0ca2078fbe4bf063d608e80838eee86f12ab70c983bff712bcf7,5622,2026-11-11T12:05:06Z,CC-BY-4.0,Pilot evidence transcription; raw CSVs not in repository
 A-0002,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/estimates.csv,e647e19a5eef99209469bc4e1eb0932ebf640c8c5aad1ba2f0e74dcbf8d33ce3,605,2026-11-14T19:02:40Z,CC-BY-4.0,P0 sweep estimates; uncalibrated because block calibration failed
-A-0003,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/p0_check.json,f4df7b3a5fd5afac21eb69e93f13525288030849a7bf6a74176610701237aaf4,1376,2026-11-14T19:02:40Z,CC-BY-4.0,P0 anchor check; FAIL
-A-0004,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/report.md,622e12e7a476986b209499674aa7160772f9b446ad3dfe2cf7f7648f07afd213,515,2026-11-14T19:02:40Z,CC-BY-4.0,P0 analysis report; FAIL
-A-0005,golden_squad_qwen4b_p0,report,docs/P0_HARNESS_REPORT.md,6924d750ec9504b8b4b35e644d0a8c7dc465b934f19586f47e58f19d99cfb429,6434,2026-11-14T19:02:40Z,CC-BY-4.0,P0 harness failure report
+A-0003,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/p0_check.json,f36b1dd78935371a8320a0a9c7b0c542f344808951ab74158dbdb27f4bc6963a,1548,2026-11-14T19:02:40Z,CC-BY-4.0,P0 anchor check; FAIL
+A-0004,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/report.md,8242cab87ff04429c76b2b916de0cc1360a8671f2ee1b8c741cd1ac2f97b47ad,605,2026-11-14T19:02:40Z,CC-BY-4.0,P0 analysis report; FAIL
+A-0005,golden_squad_qwen4b_p0,report,docs/P0_HARNESS_REPORT.md,932384ba3ce4986f97e18ccf01c31fdbc32990ceb59bdfa183c47a3cde11dd9d,8560,2026-11-14T19:02:40Z,CC-BY-4.0,P0 harness failure report
+A-0006,golden_squad_qwen4b_p0,analysis,analysis/p0_calibration_diagnostic/README.md,959074f3e746f3f76134f9aadf0323e9938287580688bcf04bee81472347e38a,3651,2026-11-14T19:49:52Z,CC-BY-4.0,P0 block/thermal diagnostic archive; failure evidence
+A-0007,golden_squad_qwen4b_p0,analysis,analysis/p0_calibration_diagnostic/diag_blocks.py,d210c6b8d05954956452c20f4c085e6339177866f62a4876439e71036d893930,3372,2026-11-14T19:49:52Z,CC-BY-4.0,Historical block diagnostic script
+A-0008,golden_squad_qwen4b_p0,analysis,analysis/p0_calibration_diagnostic/diag_thermal_block.py,88a7c5f07d0b0cdeb6181271b9da595c66736d40b6f285e9e347eeaa47cc8e95,2852,2026-11-14T19:49:52Z,CC-BY-4.0,Historical thermal block diagnostic script
+A-0009,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/metadata.json,718abef6a1b6aedf4fa9eed64e0d749bb9ab642018938c238f6a164ecba295da,221,2026-11-14T19:51:18Z,CC-BY-4.0,Analysis provenance: config/prereg/git/seed/calibration flag

@@ -13,10 +13,13 @@ contains no confirmatory results. The pilot evidence is reported below exactly a
 including the claim that failed.
 
 **P0 harness status (2026-11-15): FAIL — P1 is blocked.** The first golden run collected
-1,400/1,400 valid rows and reproduced the exact corpus counts, but the J anchors and affine
-intercept/slope missed the pre-set tolerances, and block factors were outside [0.8, 1.4].
-The failure is an energy-calibration and thermal-state problem, not a row-collection problem.
-See [`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). P1 has not started.
+1,400/1,400 valid rows and reproduced the exact corpus counts, but block calibration failed
+(factors 0.732 cold and 1.676 warm, outside [0.8, 1.4]) and the idle CV was 46.4%. The J table
+is **uncalibrated**, so its 15–21% shortfall against the calibrated pilot is not adjudicable as
+a clean energy test. The failure is in calibration and thermal state, not row collection.
+See [`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). A clean `_r3` rerun with a
+0.3 s measured tail and strict `factor_csv` gate is next; `_r2` was aborted after 409 rows
+because it started from an uncommitted tree. P1 has not started.
 
 ---
 

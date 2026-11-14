@@ -1,5 +1,8 @@
 {
   "passed": false,
+  "calibrated": false,
+  "adjudicable": false,
+  "note": "No block calibration was applied; the anchor check is confounded and is not adjudicable as a clean energy test.",
   "checks": [
     {
       "name": "J(1)",

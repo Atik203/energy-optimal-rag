@@ -77,9 +77,26 @@ prove the harness, not to produce new evidence. The repo has documented pilot J 
 without a gate. If the anchors or fit differ by more than 10%, stop and diagnose before P1.
 
 **P0 status (2026-11-15): FAIL.** The first golden run collected 1,400 valid rows and the exact
-corpus counts, but the J anchors were 15-21% low and the block factors were outside
-[0.8, 1.4]. P1 is blocked pending a pre-specified measurement-protocol fix and an `_r2` run.
-See [`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md).
+corpus counts, but block calibration failed (0.732 cold, 1.676 warm) and the idle CV was
+46.4%. The J table is uncalibrated, so its 15-21% shortfall against the calibrated pilot is
+not adjudicable as a clean energy test. P1 is blocked pending a pre-specified
+measurement-protocol fix and a clean `_r3` run. See
+[`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md).
+
+**P0 implementation checklist (2026-11-15):**
+
+| Item | Status |
+|---|---|
+| Config resolver, P0/boundary configs, registry hashes | **DONE** |
+| SQuAD train+dev prep, manifest, tracked ID splits | **DONE** — 10,570 / 20,958 / 45,651; verified |
+| Live Ollama reader + NVML sampler | **DONE** |
+| Depth sweep, block calibration, repeat CV, P0 analysis | **DONE** |
+| P0 golden run #1 | **FAILED** — block factors 0.732 cold / 1.676 warm; idle CV 46.4% |
+| Independent audits (math, tests/CI, data/claims) | **DONE** |
+| Protocol revision: 0.3 s tail, `factor_csv`, idle-CV gate | **DONE** — dry run factors 0.834–1.380 |
+| `_r2` clean-run attempt | **ABORTED** — stopped at 409 rows; uncommitted tree |
+| `_r3` clean golden run | **NEXT** |
+| P1 powered run | **BLOCKED** until `_r3` passes |
 
 **P1 — Powered SQuAD (weeks 2–3).** Freeze the preregistration before looking at the new
 accuracy data. Run `n = 1,000` at 7 depths. Primary test: 5 pp EM non-inferiority at the

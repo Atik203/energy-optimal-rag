@@ -50,11 +50,17 @@ Run window: 2026-11-14T18:30:04Z to 2026-11-14T18:49:31Z (19m27s). Reader
 `J(k)` is the ratio of sums over `j_total` (GPU + CPU retrieval proxy). `E(k)` uses the same
 denominator as the preregistration: total joules over total correct answers.
 
+**These P0 J values are uncalibrated.** No block factors were applied
+(`j_gpu_calibrated == j_gpu_raw`). The pilot J values are block-calibrated. The anchor
+comparison is therefore **confounded with the calibration failure** and is reported as
+**not adjudicable as a clean energy test**; the run is still `invalid` on the calibration
+failure and the 46.4% idle CV. Do not read the table as a calibrated energy miss.
+
 Affine fit: `J(k) = 11.1023 + 2.0225 k`, `R² = 0.9941`.
 
-### P0 anchor check
+### P0 anchor check (uncalibrated; not adjudicable)
 
-| Check | Observed | Pilot | Relative error | Tolerance | Result |
+| Check | Observed (raw) | Pilot (calibrated) | Relative error | Tolerance | Result |
 |---|---:|---:|---:|---:|---|
 | `J(1)` | 15.18 | 17.98 | 15.6% | 10% | **FAIL** |
 | `J(4)` | 19.80 | 25.10 | 21.1% | 10% | **FAIL** |
@@ -64,9 +70,17 @@ Affine fit: `J(k) = 11.1023 + 2.0225 k`, `R² = 0.9941`.
 | `fit.R²` | 0.9941 | ≥0.95 | — | — | PASS |
 
 The E anchors are also low: 33.73 vs 45.5, 39.21 vs 48.3, and 145.05 vs 157.1 J/correct.
-Accuracy is lower at the top depth (0.525 vs 0.570) but higher at `k=1` (0.450 vs 0.395);
-the P0 question draw is disjoint from the unavailable pilot IDs, so this is reported, not
-gated.
+Accuracy is lower at the top depth (0.525 vs 0.570) but higher at `k=1` (0.450 vs 0.395).
+P0 accuracy is **normalized EM**, while the pilot reference is **strict EM**; the E
+comparison inherits that scoring-rule difference and is descriptive only. P0 ∩ P1 = ∅, but
+the pilot IDs are unavailable, so the P0/pilot overlap is unknown (expected about 4 of 200 by
+chance). Do not read the accuracy or E differences as like-for-like effects.
+
+Measurement checklist: sensor NVML `power.draw`, cadence 100 ms; idle 17.027 W, CV 46.4%;
+block factors unavailable (calibration failed); repeat CV not run; CPU retrieval proxy 20 W;
+wall meter not measured (D-016 waiver); model digest
+`d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04`. The run manifest does
+not record the GPU driver; that is a harness gap for the next run.
 
 ## 3. Why the run failed
 
@@ -94,7 +108,9 @@ k=1 block factor 1.676 outside [0.8, 1.4]
 
 The factor is therefore **bimodal**: 0.732 when the first short block starts cold, 1.400–1.676
 when it runs warm. This is a thermal/window-state mismatch, not a threshold accident. The
-pre-registered [0.8, 1.4] range is unchanged.
+pre-specified [0.8, 1.4] range is unchanged. The diagnostic commands and outputs are archived
+in [`analysis/p0_calibration_diagnostic/README.md`](../analysis/p0_calibration_diagnostic/README.md)
+and indexed in `artifacts/ledger.csv`.
 
 ### 3.2 Idle baseline and thermal state
 
@@ -103,9 +119,10 @@ protocol expects a stable pre-run baseline and the pilot's CV was 10.4%. The dia
 before warm-up was 14.924 W, CV 0.9%. The code has since been changed to measure idle before
 warm-up; this run predates that fix.
 
-The GPU reached **90 °C** and **900 MHz**; the pilot reached 88.4 °C and 1003 MHz. Mean power
-was 60.94 W. The sweep is therefore in a more throttled state than the pilot, while the block
-diagnostic ran after cooling; the two states cannot be compared directly.
+The GPU reached **90 °C** with a **clock floor of 900 MHz**; the pilot reached 88.4 °C and
+1003 MHz. Mean power was 60.94 W. The sweep is therefore in a more throttled state than the
+pilot, while the block diagnostic ran after cooling; the two states cannot be compared
+directly.
 
 ### 3.3 What this means
 
@@ -125,8 +142,9 @@ pre-set range.
 
 ## 5. Required fix before a rerun
 
-The next attempt must be a **new run ID** (`_r2`) after a documented measurement-protocol
-amendment. Candidate fixes, to be pre-specified before the rerun:
+The next attempt is the clean **`_r3`** run after the D-019 measurement-protocol amendment.
+An intermediate `_r2` attempt was stopped after 409 rows because it started while the tail/factor
+fixes were uncommitted; its registry row is `aborted`. Candidate fixes, now pre-specified:
 
 1. Measure idle before warm-up (code fixed; not used by this run).
 2. Run block calibration at the **same thermal steady state** as the sweep, or record the
@@ -139,3 +157,14 @@ amendment. Candidate fixes, to be pre-specified before the rerun:
 
 Until those checks pass, the honest status is: **the harness measures rows reliably, but it
 does not yet reproduce the pilot's absolute energy calibration.**
+
+## 6. Clean-rerun status
+
+- **D-019 protocol:** idle before warm-up with CV ≤ 0.20; 0.3 s post-query tail; gate on
+  `factor_csv`; record `factor_block`/consistency; warm each block; repeat cooldown at the
+  start of every block.
+- **20-question dry run (`_dry4`):** idle 16.232 W, CV 7.9%; `factor_csv` **0.834–1.380** at
+  all seven depths; consistency 0.889–1.196. This is a harness calibration check, not a result.
+- **`_r2`:** aborted after 409 rows (uncommitted tree), registered `aborted`.
+- **`_r3`:** clean 200-question run from the committed protocol; see the registry for status.
+  P0 is still failed until `_r3` passes block calibration and the J-anchor check.
