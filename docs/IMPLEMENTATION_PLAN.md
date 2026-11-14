@@ -81,7 +81,7 @@ Optional dependencies are imported lazily inside the functions that need them (`
 
 ## 4. Data preparation
 
-SQuAD v1.1 dev is primary: 10,570 questions, 20,958 unique dev contexts. The pilot truncated
+SQuAD v1.1 dev supplies 10,570 questions; the pilot corpus used 20,958 unique train+dev contexts. The pilot truncated
 contexts to 256 words and chunked them into 70-word passages (45,651 passages), and sampled 200
 questions stratified over the seven wh-types. The powered run uses **1,000** questions with the
 same corpus and chunking, drawn with seed `20261115`; the ID list is hashed into the manifest.
@@ -318,7 +318,8 @@ The first 10 days: scaffold and CI; environment and config validation; data prep
 index; energy-harness validation; golden reproduction of the 200-question pilot curve; prereg
 freeze; power and sample-size lock; two halves of the P1 sweep; gate review. Acceptance checks
 are in [`../ROADMAP.md`](../ROADMAP.md) section 3. The golden reproduction must land within 10%
-of the pilot `E(k)` at every depth; otherwise P1 does not start.
+of the pilot `J(k)` anchors and affine fit; `E(k)` and `A(k)` are reported without a gate.
+Otherwise P1 does not start.
 
 A task is done when it has code, a test, a docs update, and a ledger entry where applicable. A
 result is not a result until it traces to `runs/<run_id>/raw.csv` and is mapped in

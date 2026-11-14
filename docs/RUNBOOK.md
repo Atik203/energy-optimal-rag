@@ -23,6 +23,10 @@ C:\ProgramData\anaconda3\python.exe -m pip install -e ".[dev]"
 C:\ProgramData\anaconda3\python.exe -m pytest -q
 ```
 
+The named environment is the clean-room target. On this machine it is not present, so local
+P0/P1 harness work uses the existing Python 3.12 Anaconda base (D-017). The run manifest records
+the exact `sys.executable`; a clean-room rerun still uses `environment.yml`.
+
 ## 1. Smoke test
 
 ```powershell

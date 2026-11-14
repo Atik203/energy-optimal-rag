@@ -216,4 +216,74 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   claim.
 - **Consequences:** The `k=64` boundary endpoint is no longer silently truncated. The context
   probe can separate context-budget effects from depth effects, but it cannot support a
-  “16k-context saturation” or energy claim. H200 results never enter the energy ledger.
+  "16k-context saturation" or energy claim. H200 results never enter the energy ledger.
+
+---
+
+## D-014 - P0 gates on J anchors and the affine fit
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The repository documents pilot `E(k)` only at `k = 1, 4, 32`; `E(0)` is
+  undefined, and a fresh 200-question draw can shift `A(k)` enough to move `E(k)` by roughly
+  10% even when the harness is correct. The original "E(k) within 10% at every depth" is not
+  adjudicable from tracked evidence.
+- **Decision:** The P0 energy gate is `J(1)`, `J(4)`, and `J(32)` within 10% of 17.98, 25.10,
+  and 89.55 J; affine `a` and `b` within 10% of 15.74 J and 2.283 J/passage; and `R2 >= 0.95`.
+  `E(k)` and `A(k)` are reported with intervals but are not gated. If the pilot IDs are
+  recovered, the E anchors become a secondary check.
+- **Consequences:** ROADMAP, proposal, and implementation-plan wording was updated before the
+  golden run. This is a harness check, not a confirmatory gate; it produces no
+  `claims_evidence.csv` supported row. Do not re-threshold after seeing the golden data.
+
+---
+
+## D-015 - Sampling frame and tracked SQuAD ID splits
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The pilot question IDs are not in the repository. The pilot corpus has 20,958
+  unique contexts, which requires the SQuAD train and dev files together; dev alone has about
+  2,067 paragraphs. The early configs did not define whether the replication and boundary
+  samples were nested.
+- **Decision:** Build the retrieval corpus from unique train+dev contexts. Sample 200 P0
+  questions disjoint from 1,000 P1 questions; nest 500 replication questions inside P1; draw
+  200 boundary questions inside P1 and disjoint from replication; reuse those 200 IDs for the
+  4k/16k context probe; draw 150 tax questions inside P1 and disjoint from the other nested
+  arms. Track IDs and per-split SHA-256 in `data/splits/squad_splits.json`, never raw text.
+- **Consequences:** Run manifests identify the split by name, and reruns are reproducible
+  without redistributing data. If the pilot IDs remain unavailable, disclose the expected
+  overlap of roughly 19 of 1,000 questions (1.9%) and run a sensitivity analysis excluding any
+  IDs that are later recovered; do not claim the pilot was excluded.
+
+---
+
+## D-016 - Wall-meter cross-check waived for P0/P1
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** No AC wall meter is available. A basic 0.01 kWh plug meter cannot resolve a
+  30-query subset, and a cheap meter would add more uncertainty than it removes. The wall
+  meter is a secondary whole-system check; NVML `power.draw` is the primary sensor.
+- **Decision:** Waive the wall-meter cross-check for P0/P1. Use NVML with 20-query block
+  calibration and the 3x20 repeat CV. Report "wall meter: not measured (waiver)" in the
+  measurement table. If a meter is borrowed later, use it over a full run and report the
+  system/GPU factor descriptively, never as a per-query correction.
+- **Consequences:** No whole-system factor is reported, but the GPU-energy claim is unchanged
+  and remains conditional on NVML calibration. The waiver is recorded in the run manifest and
+  the P0 report.
+
+---
+
+## D-017 - Local harness uses the existing Python 3.12 Anaconda base
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The named conda environment `energy-optimal-rag` is not present on the local
+  machine. Creating it writes outside the repository and needs explicit approval. The existing
+  Anaconda base is Python 3.12, has the package editable-installed, and passes the suite.
+- **Decision:** Use the existing `C:\ProgramData\anaconda3\python.exe` for local P0/P1
+  harness work. Record the executable and Python version in every run manifest. Keep the named
+  environment as the documented clean-room target; create it only with approval.
+- **Consequences:** Local runs are reproducible from the manifest even though the named
+  environment is absent. A clean-room rerun must still use the documented environment file.
