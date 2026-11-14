@@ -291,8 +291,9 @@ def prepare_squad(
         seed: Sampling seed.
         passage_words: Words per passage.
         context_word_limit: Context truncation limit in words.
-        corpus_paths: Files supplying retrieval contexts. Defaults to ``[raw_path]``;
-            pass train and dev to reproduce the pilot's full unique-context corpus.
+        corpus_paths: Additional files supplying retrieval contexts. The question
+            file is always included; pass the train file to reproduce the pilot's
+            full unique-context corpus.
         split_sizes: Optional overrides for the six named split sizes.
         splits_out: Optional tracked JSON path for the ID lists.
         manifest_path: Optional tracked ``data/manifest.json`` to update.
@@ -311,7 +312,16 @@ def prepare_squad(
     dev_document = _load_squad(raw_path)
     questions = _collect_questions(dev_document)
 
-    corpus_files = [raw_path] if corpus_paths is None else [Path(path) for path in corpus_paths]
+    candidates = [raw_path]
+    if corpus_paths is not None:
+        candidates.extend(Path(path) for path in corpus_paths)
+    corpus_files: list[Path] = []
+    seen_paths: set[Path] = set()
+    for candidate in candidates:
+        resolved = candidate.resolve()
+        if resolved not in seen_paths:
+            seen_paths.add(resolved)
+            corpus_files.append(candidate)
     contexts: dict[str, dict[str, str]] = {}
     for corpus_path in corpus_files:
         for context_id, context in _collect_contexts(_load_squad(corpus_path)).items():

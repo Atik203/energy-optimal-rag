@@ -263,6 +263,47 @@ def test_prepare_squad_rejects_bad_squad_document(tmp_path: Path) -> None:
         prepare_squad(raw, out_dir=tmp_path / "processed")
 
 
+def test_prepare_squad_keeps_question_file_in_corpus(tmp_path: Path) -> None:
+    raw = _write_fixture(tmp_path / "dev.json")
+    extra = tmp_path / "train.json"
+    extra.write_text(
+        json.dumps(
+            {
+                "data": [
+                    {
+                        "title": "C",
+                        "paragraphs": [
+                            {"context": "extra corpus context", "qas": []}
+                        ],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    manifest_out = prepare_squad(
+        raw,
+        out_dir=tmp_path / "processed",
+        n_questions=5,
+        seed=7,
+        passage_words=5,
+        context_word_limit=10,
+        corpus_paths=[extra],
+        split_sizes={
+            "p0_golden": 2,
+            "p1_primary": 5,
+            "replication": 2,
+            "boundary": 1,
+            "context": 1,
+            "tax": 1,
+        },
+    )
+
+    summary = json.loads(manifest_out.read_text(encoding="utf-8"))
+    assert summary["counts"]["n_contexts"] == 6
+
+
 def test_cli_prepare_runs_on_fixture(tmp_path: Path) -> None:
     raw = _write_fixture(tmp_path / "dev.json")
     out = tmp_path / "processed"
