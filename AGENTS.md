@@ -27,6 +27,33 @@ silently strengthen a claim, add a "certified" result, or introduce a universal 
 - Do not install CUDA toolkits, download model weights, or change the GPU power mode
   without asking.
 
+### Shared university GPU server
+
+Use the university GPU server only for approved project work. These rules apply to every
+agent and every session:
+
+- Use only the assigned account and the allocated GPU/MIG partition. Do not touch other
+  users' processes, partitions, files, or jobs.
+- Do not change or overwrite the NVIDIA driver, CUDA toolkit, system libraries, GPU clocks,
+  power limits, or MIG configuration.
+- Do not change the SSH daemon, host keys, account name, login method, or another user's
+  `authorized_keys`. Do not create shared accounts or expose SSH ports.
+- Do not modify shared storage, mount points, quotas, directory ownership, or permissions.
+  Stay inside the allocated home/project space, monitor disk use, and back up important data
+  regularly.
+- Do not install system-wide packages or use `sudo` without administrator approval. Use a
+  project-local virtual environment or conda environment and install only required packages.
+- Do not run cryptocurrency mining, public-facing services, port scanners, or unrelated
+  workloads. Long jobs must run inside `tmux` or `screen`; stop jobs cleanly and do not leave
+  idle GPU processes.
+- Never commit or paste a server address, hostname, username, account ID, password, SSH key,
+  host fingerprint, or connection alias into the repository, docs, slides, or chat logs.
+- Follow the university's monitoring, acceptable-use, and data-handling policies.
+- Hardware and energy results from the shared server are a separate condition. Do not mix
+  them with the local RTX 3060 results or present them as the same measurement.
+- Record any approved hardware, driver, CUDA, or environment change in
+  `docs/DECISIONS.md` before running confirmatory work.
+
 ## 3. Never commit
 
 - `data/processed/` or any raw SQuAD/HotpotQA text.
