@@ -366,6 +366,14 @@ export default function ResearchPage() {
             </div>
           ))}
         </div>
+        <div className="panel mt-4 p-4">
+          <p className="eyebrow">Exploratory, not hypotheses</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Llama 3.2 3B is a direction-only reader panel (500 paired IDs, 4k, Q4). The 16k
+            context-budget probe uses Qwen3.5-4B on 200 boundary IDs with a 4k control. Neither
+            changes H7 or G5, and neither has a gate.
+          </p>
+        </div>
         <SourceNote>
           Source: prereg/PREREGISTRATION.md §2. The preregistration is a draft until
           prereg-freeze-v1; the hash is TBD until freeze.
