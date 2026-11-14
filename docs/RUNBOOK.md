@@ -58,13 +58,14 @@ ollama list
 ollama ps
 ```
 
-Record the driver, GPU name, and model digest in the run registry. Confirm `qwen3.5:4b` is
-present and that no other job is using the GPU.
+Record the driver, GPU name, and model digest in `runs/<run_id>/manifest.json`; the registry
+stores the model digest, not the full environment. Confirm `qwen3.5:4b` is present and that no
+other job is using the GPU.
 
 ## 4. Run a sweep (P0)
 
 ```powershell
-python scripts\02_run_sweep.py --config configs\runs\squad_qwen4b.toml
+python scripts\02_run_sweep.py --config configs\runs\squad_qwen4b_p0.toml
 ```
 
 Before the run, confirm:
@@ -73,22 +74,25 @@ Before the run, confirm:
 - The nonce is enabled in the config (`nonce_hex_chars = 10`).
 - The idle baseline is 60 s and the block size is 20.
 
-Planned output: `runs\squad_qwen4b_p1\raw.csv` plus `blocks.json`. The run directory is
+Planned output: `runs\golden_squad_qwen4b_p0\raw.csv` plus `blocks.json`. The run directory is
 git-ignored; the registry row is committed.
 
-Register the run:
+Register the run before starting it:
 
 ```powershell
-$row = "squad_qwen4b_p1,$((Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')),P1,squad,qwen3.5:4b,bm25,7,1000,20261115,nvml,completed,$(git rev-parse --short HEAD),configs/runs/squad_qwen4b.toml,runs/squad_qwen4b_p1/raw.csv,primary powered run"
-Add-Content runs\registry.csv $row
+$cfg = (python -c "from pathlib import Path; from rag_energy.config import resolve_run_config; print(resolve_run_config(Path('configs/runs/squad_qwen4b_p0.toml')).config_sha256)").Trim()
+$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+$row = "golden_squad_qwen4b_p0,$ts,P0,squad,qwen3.5:4b,bm25,0|1|2|4|8|16|32,200,20261115,nvml,planned,$(git rev-parse --short HEAD),configs/runs/squad_qwen4b_p0.toml,$cfg,,TBD,runs/golden_squad_qwen4b_p0/raw.csv,golden harness check"
+Add-Content -Path runs\registry.csv -Value $row -Encoding utf8NoBOM
 ```
 
-Use the exact column order in `runs/registry.csv`. A malformed row breaks the registry.
+Use the exact column order in `runs/registry.csv`. A malformed row breaks the registry. After
+the run, update `status` to `completed` and fill `model_digest` from the run manifest.
 
 ## 5. Block calibration (P0)
 
 ```powershell
-python scripts\04_run_blocks.py --config configs\runs\squad_qwen4b.toml
+python scripts\04_run_blocks.py --config configs\runs\squad_qwen4b_p0.toml
 ```
 
 Expected: `runs\<run_id>\blocks.json` with one factor per depth. The pilot factors were

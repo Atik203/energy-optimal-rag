@@ -1,1 +1,1 @@
-run_id,timestamp_utc,phase,dataset,reader,retriever,k_grid,n_questions,seed,energy_sampler,status,git_commit,config_path,raw_csv,notes
+run_id,timestamp_utc,phase,dataset,reader,retriever,k_grid,n_questions,seed,energy_sampler,status,git_commit,config_path,config_sha256,prereg_sha256,model_digest,raw_csv,notes
