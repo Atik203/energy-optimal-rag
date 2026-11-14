@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { navItems, project } from "@/lib/project-data";
+import { navItems, p0, project } from "@/lib/project-data";
 import { ObservatoryMark } from "@/components/observatory-mark";
 
 const EVIDENCE_LINKS = [
@@ -31,7 +31,7 @@ export function SiteFooter() {
             </p>
             <p className="mt-4 inline-flex items-center gap-2 rounded-[2px] border border-caution/30 bg-caution/10 px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-caution">
               <span className="h-1.5 w-1.5 rounded-full bg-caution" aria-hidden />
-              {project.status} · No confirmatory results
+              {project.status} · {p0.label} · No confirmatory results
             </p>
           </div>
 

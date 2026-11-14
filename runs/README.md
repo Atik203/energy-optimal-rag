@@ -21,7 +21,8 @@ runs/
 `<dataset>_<reader>_<phase>`, lowercase, e.g. `squad_qwen4b_p1`, `squad_qwen15b_p2`,
 `hotpot_qwen4b_p2`, `boundary_qwen4b_p2`, `fixed_a_p2`, `per_passage_b_p2`.
 
-A rerun of the same ID gets a suffix `_r2`, not an overwrite. Never overwrite a completed run.
+A rerun of the same ID gets the next free suffix (`_r2`, then `_r3`, ...), not an overwrite.
+Never overwrite a completed run.
 
 ## Registry schema
 

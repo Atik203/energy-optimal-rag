@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import {
   claimBoundary,
+  p0,
   pilot,
   project,
   rerun,
@@ -138,6 +139,9 @@ export default function HomePage() {
             <Chip tone="caution" dot>
               Post-pilot MARGINAL
             </Chip>
+            <Chip tone="caution" dot>
+              {p0.label}
+            </Chip>
             <Chip tone="dead" dot>
               No confirmatory results
             </Chip>
@@ -181,8 +185,8 @@ export default function HomePage() {
               <div className="inst-rule flex flex-wrap items-center justify-between gap-2 border-b pb-3">
                 <span className="inst-label">Joule observatory / pilot</span>
                 <span className="inst-signal inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.16em]">
-                  <span className="h-1.5 w-1.5 animate-blink rounded-full bg-[#c8f04f]" aria-hidden />
-                  Recording
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#c8f04f]" aria-hidden />
+                  Pilot replay
                 </span>
               </div>
 
@@ -413,7 +417,7 @@ export default function HomePage() {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="inst-label">Primary decision / P1</span>
               <span className="inst-caution font-mono text-[9px] uppercase tracking-[0.14em]">
-                Planning target
+                Deferred · planning target
               </span>
             </div>
             <p className="mt-4 font-mono text-3xl tracking-[-0.03em] text-[#eef3e5] sm:text-4xl">

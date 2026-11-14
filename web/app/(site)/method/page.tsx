@@ -62,7 +62,7 @@ const pipeline = [
   {
     id: "04",
     title: "Integrate",
-    body: "NVML every 100 ms, idle subtraction, trapezoid over the call, 20-query block calibration, thermal log.",
+    body: "NVML every 100 ms, idle subtraction, trapezoid over the call + 0.3 s tail, factor_csv block calibration, thermal log.",
   },
   {
     id: "05",
@@ -98,10 +98,10 @@ export default function MethodPage() {
             How a joule is <em>attributed.</em>
           </>
         }
-        lede="GPU energy is the primary measurement. CPU retrieval is a time-to-joules proxy. The wall meter is a cross-check. Absolute joule claims are conditional on the calibration described here."
+        lede="GPU energy is the primary measurement. CPU retrieval is a time-to-joules proxy. The wall meter was a planned cross-check; it is waived for P0/P1 (D-016). Absolute joule claims are conditional on the calibration described here."
         meta={[
           { label: "NVML 100 ms cadence", tone: "data" },
-          { label: "20-query blocks", tone: "signal" },
+          { label: "20-query blocks · 0.3 s tail", tone: "signal" },
           { label: "10,000 bootstrap", tone: "neutral" },
           { label: "No raw text", tone: "caution" },
         ]}
@@ -251,7 +251,7 @@ export default function MethodPage() {
               Every correction is <em>recorded.</em>
             </>
           }
-          description="The pilot's absolute energy is not a raw per-query integral. It is trapezoidal integration, idle-subtracted, block-calibrated, and checked against repeats and a wall meter."
+          description="The pilot's absolute energy is not a raw per-query integral. It is trapezoidal integration, idle-subtracted, block-calibrated with a factor_csv gate, and checked against repeats; the wall-meter cross-check is waived for P0/P1 (D-016)."
         />
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -313,8 +313,9 @@ export default function MethodPage() {
                 {measurement.blockFormula}
               </pre>
               <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                Twenty back-to-back queries per depth are integrated as one window. The per-query
-                integrals are scaled to the block total.
+                Twenty back-to-back queries per depth are integrated as one window. The gate is
+                factor_csv = J_block / sum(raw), not a paired-window gap; factor_block and
+                consistency are recorded (D-019).
               </p>
             </div>
           </div>
@@ -322,7 +323,8 @@ export default function MethodPage() {
 
         <SourceNote>
           Source: docs/MEASUREMENT.md §2–8. Pilot values: idle 15.56 W, block factors 1.041–1.188,
-          repeat CV 3.80% median / 9.24% max, CPU proxy 3.11 J/query.
+          repeat CV 3.80% median / 9.24% max, CPU proxy 3.11 J/query. P0 protocol: D-019
+          (0.3 s tail, factor_csv gate, idle CV ≤ 0.20).
         </SourceNote>
       </section>
 
@@ -688,7 +690,7 @@ export default function MethodPage() {
               "block factors",
               "repeat CV",
               "CPU proxy W",
-              "wall-meter factor",
+              "wall-meter waiver/factor",
               "GPU model",
               "driver",
               "power mode",

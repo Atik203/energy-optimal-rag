@@ -20,7 +20,8 @@ The raw CSV is git-ignored; this directory preserves the diagnostic numbers that
 | Paired exact-window block, `k=1` | 14.892 | 179.687 (block windows) | 396.571 | **2.207** | Same-block windows; block duration 9.500 s |
 | Tail 0.1 s, `k=4` | 15.597 | 403.158 (sweep) | 595.067 | **1.476** | `raw_sum_block=368.766`, `factor_block=1.6137`, consistency 1.0933 |
 | Tail 0.2 s, `k=16` | 16.217 | 859.238 (sweep) | 1226.623 | **1.428** | `raw_sum_block=971.619`, `factor_block=1.2625`, consistency 0.8843 |
-| Tail 0.3 s, all depths | 16.232 (CV 0.079, n=552) | — | — | **0.834–1.380** | Passed all seven depths; consistency 0.889–1.196; `_r3` candidate |
+| Tail 0.3 s, all depths | 16.232 (CV 0.079, n=552) | - | - | **0.834-1.380** | Passed all seven depths; consistency 0.889-1.196; adopted for `_r3` (D-019) |
+| `_r3` full sweep, `k=0` | 15.573 | 446.672 | 354.847 | **0.7944** | q1-q20 selection; hot load; failed the fixed 0.8 floor; no `blocks.json` |
 
 The 0.3 s tail passed the 20-question dry-run block calibration at every depth. The
 [0.8, 1.4] range was not changed; 0.3 s is the pre-specified tail for the clean `_r3` run.
@@ -53,7 +54,8 @@ A-0006 through A-0008).
 ## What the table says
 
 The factor is not stable under thermal/window changes: 0.732 when the first short block is
-cold, 1.40–1.68 when warm, and 1.48–1.43 after adding 0.1–0.2 s of measured tail. That is why
-P0 stopped: the [0.8, 1.4] block-factor guard is a real measurement check, not a formality.
-The tail/paired-window fixes are protocol revisions to be validated on an `_r2` run; they are
-not evidence that the first run passed.
+cold and 1.40-1.68 when warm. The 0.1 s tail still missed at `k=4` (1.476) and the 0.2 s tail
+at `k=16` (1.428); 0.3 s passed all seven depths (0.834-1.380). That is why P0 stopped: the
+[0.8, 1.4] block-factor guard is a real measurement check, not a formality.
+The tail/paired-window fixes are protocol revisions pre-specified in D-019 and applied to the
+clean `_r3` run; they are not evidence that the first run passed.

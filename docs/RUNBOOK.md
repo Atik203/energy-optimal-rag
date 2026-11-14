@@ -86,37 +86,35 @@ Before the run, confirm:
 
 - AC power, screen off, batch size 1, no concurrent GPU job.
 - The nonce is enabled in the config (`nonce_hex_chars = 10`).
-- The idle baseline is 60 s and the block size is 20.
+- The idle baseline is 60 s, measured before warm-up; abort if its CV exceeds 0.20. The block
+  size is 20, and `post_query_tail_s` is 0.3 s (D-019).
 
-Planned output: `runs\golden_squad_qwen4b_p0_r3\raw.csv` plus `blocks.json`. The run directory is
-git-ignored; the registry row is committed.
-
-Register the run before starting it:
+`_r3` is **closed**: sweep complete, block calibration failed at `k=0` (0.7944), no
+`blocks.json`, `repeat.json`, or analysis. The registry row is final (`invalid`); do not run
+steps 5-7 against `_r3`. A future P0 attempt needs a new run ID and config.
 
 ```powershell
-$cfg = (python -c "from pathlib import Path; from rag_energy.config import resolve_run_config; print(resolve_run_config(Path('configs/runs/squad_qwen4b_p0_r3.toml')).config_sha256)").Trim()
-$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
-$row = "golden_squad_qwen4b_p0_r3,$ts,P0,squad,qwen3.5:4b,bm25,0|1|2|4|8|16|32,200,20261115,nvml,planned,$(git rev-parse --short HEAD),configs/runs/squad_qwen4b_p0_r3.toml,$cfg,,TBD,runs/golden_squad_qwen4b_p0_r3/raw.csv,clean P0 harness rerun"
-Add-Content -Path runs\registry.csv -Value $row -Encoding utf8NoBOM
+Select-String -Path runs\registry.csv -Pattern '^golden_squad_qwen4b_p0_r3,'
 ```
-
-Use the exact column order in `runs/registry.csv`. A malformed row breaks the registry. After
-the run, update `status` to `completed` and fill `model_digest` from the run manifest.
 
 ## 5. Block calibration (P0)
 
 ```powershell
+# The _r3 run is closed/invalid after the k=0 factor 0.7944 failure.
+# For a future P0 attempt, use a new run ID and config.
 python scripts\04_run_blocks.py --config configs\runs\squad_qwen4b_p0_r3.toml --cooldown 0
 ```
 
-Expected: `runs\<run_id>\blocks.json` with one factor per depth, and rewritten
-`j_gpu_calibrated` / `j_total` columns in `raw.csv`. The pilot factors were 1.041-1.188. A
-factor outside [0.8, 1.4] means the sensor window is unreliable; stop and diagnose.
+Expected: `runs\<run_id>\blocks.json` with `factor_csv`, `factor_block`, and `consistency` per
+depth, and rewritten `j_gpu_calibrated` / `j_total` columns in `raw.csv`. Gate on `factor_csv`
+in [0.8, 1.4], not the within-block factor. A `factor_csv` outside that range means the sensor
+window is unreliable; stop and diagnose. Pilot factors were 1.041-1.188 under the pilot
+protocol; the 20-question P0 dry run passed at 0.834-1.380.
 
-Repeat the noise block at `k = 8`:
+Repeat the noise block at `k = 8` (generic; **not run for `_r3`** because calibration failed):
 
 ```powershell
-python scripts\04b_repeat_cv.py --config configs\runs\squad_qwen4b_p0_r3.toml --cooldown 120
+python scripts\04b_repeat_cv.py --config configs\runs\sim_run.toml --cooldown 120
 ```
 
 Expected: `runs\<run_id>\repeat.json` with per-query CV, median/max CV, and the K7 pass/fail.
@@ -134,14 +132,16 @@ move it down. If either sign is wrong, record it as a falsification, not as a nu
 ## 7. Analysis (P0/P1)
 
 ```powershell
-python scripts\05_analyze.py --run-id golden_squad_qwen4b_p0   # failed first run
-python scripts\05_analyze.py --run-id golden_squad_qwen4b_p0_r3
+python scripts\05_analyze.py --run-id golden_squad_qwen4b_p0   # failed first run; uncalibrated
+# _r3 has NO analysis directory: block calibration failed at k=0 (0.7944).
 python scripts\05_analyze.py --run-id squad_qwen4b_p1
 ```
 
-P0 writes `analysis\golden_squad_qwen4b_p0_r3\`: `estimates.csv`, `p0_check.json`, and
-`report.md`. P1 adds the planned `bootstrap.json`, `identity.csv`, `noninferiority.json`, and
-`certification.json` outputs under `analysis\squad_qwen4b_p1\`.
+P0 writes `analysis\golden_squad_qwen4b_p0\`: `estimates.csv`, `p0_check.json`,
+`metadata.json`, and `report.md`; it is failure evidence and uncalibrated. `_r3` has no
+analysis because calibration stopped first. P1 adds the planned `bootstrap.json`,
+`identity.csv`, `noninferiority.json`, and `certification.json` under
+`analysis\squad_qwen4b_p1\`.
 
 The script must refuse to run if the prereg hash in the registry does not match the frozen
 hash.

@@ -23,6 +23,10 @@ analysis/
    └─ report.md            human-readable summary
 ```
 
+There is no `analysis/golden_squad_qwen4b_p0_r3/`: the clean `_r3` block calibration failed
+at `k=0` (0.7944), so no calibrated analysis was produced. The first-run failure analysis is
+under `analysis/golden_squad_qwen4b_p0/` and is uncalibrated.
+
 ## Rules
 
 - Analysis code reads only `runs/<run_id>/raw.csv` and the frozen config.

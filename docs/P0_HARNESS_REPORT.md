@@ -1,8 +1,8 @@
 # P0 Harness Report — first golden run
 
 **Date:** 2026-11-15
-**Run:** `golden_squad_qwen4b_p0`
-**Status:** **FAIL — P1 is blocked.**
+**Run:** `golden_squad_qwen4b_p0` (first run) and `golden_squad_qwen4b_p0_r3` (clean rerun)
+**Status:** **FAIL - P1 is deferred.**
 **Purpose:** harness check only. This run is not confirmatory evidence and produces no
 `claims_evidence.csv` claim.
 
@@ -140,11 +140,11 @@ pre-set range.
 - The block-factor range is **not** widened after seeing the outcome.
 - The P0 analysis is uncalibrated and is retained only as failure evidence.
 
-## 5. Required fix before a rerun
+## 5. Fixes applied to the `_r3` rerun
 
-The next attempt is the clean **`_r3`** run after the D-019 measurement-protocol amendment.
-An intermediate `_r2` attempt was stopped after 409 rows because it started while the tail/factor
-fixes were uncommitted; its registry row is `aborted`. Candidate fixes, now pre-specified:
+The `_r3` rerun applied the D-019 measurement-protocol amendment. An intermediate `_r2`
+attempt was stopped after 409 rows because it started while the tail/factor fixes were
+uncommitted; its registry row is `aborted`. The applied fixes were:
 
 1. Measure idle before warm-up (code fixed; not used by this run).
 2. Run block calibration at the **same thermal steady state** as the sweep, or record the
@@ -155,8 +155,9 @@ fixes were uncommitted; its registry row is `aborted`. Candidate fixes, now pre-
    justifies a change on measurement grounds.
 5. Repeat the 5-question dry run and a one-depth block check before the 200-question run.
 
-Until those checks pass, the honest status is: **the harness measures rows reliably, but it
-does not yet reproduce the pilot's absolute energy calibration.**
+Those checks did not all pass: `_r3` failed at `k=0` (`factor_csv = 0.7944`). The honest status
+is: **the harness measures rows reliably, but it does not reproduce the pilot's absolute
+energy calibration. P1 is deferred (D-021).**
 
 ## 6. Clean-rerun status
 
@@ -166,15 +167,19 @@ does not yet reproduce the pilot's absolute energy calibration.**
 - **20-question dry run (`_dry4`):** idle 16.232 W, CV 7.9%; `factor_csv` **0.834–1.380** at
   all seven depths; consistency 0.889–1.196. This is a harness calibration check, not a result.
 - **`_r2`:** aborted after 409 rows (uncommitted tree), registered `aborted`.
-- **`_r3`:** clean 200-question run from the committed protocol; see the registry for status.
-  P0 is still failed until `_r3` passes block calibration and the J-anchor check.
+- **`_r3`:** clean 200-question sweep completed at 2026-11-14T20:37:18Z: 1,400/1,400 rows,
+  0 invalid, pre-warm-up idle 15.573 W (CV 1.12%). Block calibration then **failed at `k=0`**
+  with `factor_csv = 0.7944` (raw_sum 446.672 J, block 354.847 J, idle 15.573 W,
+  `factor_block=0.9989`, consistency 1.2573). No `blocks.json`, repeat CV, or calibrated
+  J analysis exists. `_r3` is registered `invalid`; P0 is FAIL; P1 is deferred.
 
 ## 7. Post-P0 handoff (P1 deliberately deferred)
 
-After `_r3` and the block/repeat/analysis chain finish:
+P0 is finished as a documented failure; the remaining work is handoff, not a new run.
 
-1. Record the result in `runs/registry.csv`, `analysis/golden_squad_qwen4b_p0_r3/`, and
-   `artifacts/ledger.csv`.
+1. Record the result in `runs/registry.csv` (the `_r3` row is `invalid`) and
+   `artifacts/ledger.csv`. There is no `_r3` analysis directory because block calibration
+   failed before analysis.
 2. Update `README.md`, `ROADMAP.md`, this report, `docs/MEASUREMENT.md`,
    `docs/PROTOCOL.md`, `docs/RUNBOOK.md`, `docs/DECISIONS.md`,
    `docs/IMPLEMENTATION_PLAN.md`, `analysis/README.md`, and `paper/README.md`.

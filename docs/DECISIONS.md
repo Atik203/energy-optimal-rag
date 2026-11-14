@@ -346,3 +346,20 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
 - **Consequences:** A disk failure would lose the raw P0 evidence. The tracked analysis,
   registry, and ledger remain, but they cannot reconstruct the raw rows or gold answers.
   The paper's reproducibility package is incomplete until an external copy is made.
+
+---
+
+## D-021 - P0 `_r3` failed block calibration; P1 is deferred
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The clean `_r3` sweep completed 1,400/1,400 rows with 0 invalid and idle CV
+  1.12%. Block calibration then failed at `k=0` with `factor_csv = 0.7944`, below the fixed
+  0.8 floor. A hot-load recovery (30 k=32 queries, sweep idle 15.573 W) still gave 0.7944; a
+  prior hot attempt gave 0.7914. The q1-q20 selection fix did not change the denominator.
+  No `blocks.json`, repeat CV, or calibrated J analysis exists.
+- **Decision:** P0 is FAIL. Mark `_r3` `invalid`; stop calibration tuning. Do not widen
+  [0.8, 1.4] or start P1. P1 is deferred by the PI, not merely gate-blocked.
+- **Consequences:** P0 ends as a documented harness failure. The public record must say
+  "first golden run failed; clean `_r3` sweep complete; block calibration failed at `k=0`
+  0.7944; P1 deferred." No confirmatory result exists, and no claims-evidence row is added.

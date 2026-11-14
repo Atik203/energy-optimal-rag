@@ -15,7 +15,7 @@ provenance, sampling, and limits; it is not a redistribution of the data.
 | Split | dev | dev |
 | Upstream license | CC BY-SA 4.0 | CC BY-SA 4.0 |
 | Upstream size | 10,570 questions | 7,405 questions |
-| Used here | 1,000 primary; 500 (1.5B); 500 (Llama 3B, same IDs); 200 (boundary/context) | 500 questions |
+| Used here | 200 (P0 harness, disjoint from P1); 1,000 primary; 500 (1.5B); 500 (Llama 3B, same IDs); 200 (boundary/context) | 500 questions |
 | Corpus | 20,958 unique train+dev contexts → 45,651 70-word passages | 10 paragraphs per question (2 gold, 8 distractors) |
 | Retriever | BM25 Okapi, top-32 | BM25 Okapi, top-10 |
 | Answer type | Extractive span | Extractive span, multi-hop |

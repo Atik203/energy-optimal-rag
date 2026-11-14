@@ -8,7 +8,9 @@
 **Version:** 0.1 — supervisor review draft
 **Repository:** https://github.com/Atik203/energy-optimal-rag
 **Package / environment:** `rag_energy` / `energy-optimal-rag`
-**Status:** Post-pilot, pre-confirmatory. This document requests approval to start P0 and P1. No confirmatory results exist.
+**Status:** Post-pilot, pre-confirmatory. This document requests approval to start P0 and P1.
+**Current status (2026-11-15):** P0 harness failed block calibration at `k=0`
+(`factor_csv = 0.7944`); P1 is deferred. No confirmatory results exist.
 
 ---
 
@@ -326,7 +328,7 @@ The preregistration is frozen before P1 and tagged `prereg-freeze-v1`. Deviation
 
 **Resources.** Three to four people for 20 weeks; 15–20 GPU-hours on the local 3060; a $47 local cap ($2 electricity, $25 wall meter, $10 USB backup, $10 contingency); supervisor sign-off on the frozen prereg; access to the Ollama store, the cached 1.5B reader, and the optional university H200 accuracy-only check.
 
-**Decision.** Approve P0/P1 now. The first 10 days produce a working harness, reproducible pilot curve, frozen prereg, power memo, and the first half of the powered run. If the golden reproduction differs by more than 10% at any depth, P1 stops until the harness is fixed.
+**Decision.** Approve P0/P1 now. The first 10 days produce a working harness, reproducible pilot curve, frozen prereg, power memo, and the first half of the powered run. If the golden `J(1)`, `J(4)`, and `J(32)` anchors or the affine `a`/`b` differ by more than 10%, P1 stops until the harness is fixed; `E(k)` and `A(k)` are reported without a gate (D-014).
 
 ---
 

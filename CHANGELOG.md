@@ -40,8 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `prereg/PREREGISTRATION.md` and `prereg/analysis_plan.md` status lines record the 2026-11-11
   pre-freeze revision.
 
+### Changed
+- P0 harness FAILED (2026-11-15): the first run had block factors 0.732 cold / 1.676 warm and
+  46.4% idle CV; the clean `_r3` sweep was valid (1,400/1,400, 0 invalid, idle CV 1.12%) but
+  the `k=0` `factor_csv` was 0.7944, below 0.8. No `blocks.json`, repeat CV, or calibrated
+  analysis exists; `_r3` is registered `invalid`; P1 is deferred (D-021).
+
 ### Planned
-- P0 golden reproduction of the 200-question pilot curve.
 - P1 powered SQuAD run (`n = 1,000`, 7 depths, 5 pp non-inferiority primary).
 - P2 1.5B replication, HotpotQA distractor, boundary probe, energy taxes.
 - P3 query-conditional policy with a 600/200/200 split.

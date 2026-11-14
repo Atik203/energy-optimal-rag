@@ -2,7 +2,7 @@
 
 **Project:** Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation (G2)
 **Version:** 0.1.0 · 2026-11-09
-**Status:** post-pilot MARGINAL · scaffold
+**Status:** post-pilot MARGINAL · P0 harness failed (k=0 factor 0.7944); P1 deferred
 **Companion documents:** [`PROTOCOL.md`](PROTOCOL.md), [`MEASUREMENT.md`](MEASUREMENT.md),
 [`DATA_CARD.md`](DATA_CARD.md), [`RISKS.md`](RISKS.md), [`RUNBOOK.md`](RUNBOOK.md),
 [`../prereg/PREREGISTRATION.md`](../prereg/PREREGISTRATION.md)
@@ -171,11 +171,15 @@ temperature, and SM clock recorded. The 100 ms cadence is a sampling label, not 
 claim: on this laptop the driver updates power coarsely, about 1 Hz. Absolute joules therefore
 rely on 20-query block calibration and the repeat CV.
 
-Each query is integrated by the trapezoidal rule over its HTTP call, then idle-subtracted using
-the 60 s pre-run baseline (15.56 W, CV 10.4%; post-run 17.63 W). Using the post-run value lowers
-every energy by ~4% almost uniformly and changes E ratios by under 1%. After the sweep, 20
-back-to-back queries per depth are integrated as a block and the per-query integrals are scaled
-to the block total. Pilot factors ranged from 1.041 to 1.188, largest at `k = 2`.
+Each query is integrated by the trapezoidal rule over its HTTP call plus the configured
+`post_query_tail_s` (0.3 s in the P0 clean-run protocol, D-019), then idle-subtracted using the
+pre-warm-up baseline. Using the pilot's post-run value instead lowers every energy by ~4% almost
+uniformly and changes E ratios by under 1%. After the sweep, 20 back-to-back queries per depth
+are integrated as a block. The gate is `factor_csv = J_block / sum(j_gpu_raw)` over the sweep
+rows; `factor_block = J_block / sum(block_windows)` and
+`consistency = factor_block / factor_csv` are recorded, and `factor_csv` must lie in
+[0.8, 1.4]. Pilot factors ranged from 1.041 to 1.188 under the pilot protocol; they are not
+the P0 gate.
 
 The 16k context-budget probe uses the same integration and block protocol. It records
 `prompt_tokens` and invalidates any row where `prompt_tokens + num_predict > num_ctx`. It also
@@ -319,7 +323,8 @@ index; energy-harness validation; golden reproduction of the 200-question pilot 
 freeze; power and sample-size lock; two halves of the P1 sweep; gate review. Acceptance checks
 are in [`../ROADMAP.md`](../ROADMAP.md) section 3. The golden reproduction must land within 10%
 of the pilot `J(k)` anchors and affine fit; `E(k)` and `A(k)` are reported without a gate.
-Otherwise P1 does not start.
+Otherwise P1 does not start. **P0 ran on 2026-11-15 and failed block calibration at `k=0`
+(`factor_csv = 0.7944`); no P1 half was started and P1 is deferred (D-021).**
 
 A task is done when it has code, a test, a docs update, and a ledger entry where applicable. A
 result is not a result until it traces to `runs/<run_id>/raw.csv` and is mapped in

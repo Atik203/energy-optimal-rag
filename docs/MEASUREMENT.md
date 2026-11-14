@@ -1,6 +1,6 @@
 # Measurement Protocol
 
-**Status:** draft · v0.1.0 · 2026-11-09
+**Status:** draft · v0.1.1 · 2026-11-15 (P0 D-019 protocol)
 **Scope:** GPU energy is the primary measurement; CPU retrieval is a proxy; the wall meter is
 a cross-check. Absolute joule claims are conditional on the calibration described here.
 
@@ -123,6 +123,10 @@ approximated as `2 × CV`. If the observed effect is smaller, report "not measur
 K7.
 
 ## 8. Wall-meter cross-check
+
+**Status: waived for P0/P1 (D-016).** No meter is available; every P0/P1 energy table reports
+"wall meter: not measured (waiver)". The text below applies only if a meter is borrowed later,
+and then only descriptively.
 
 A plug-in wall meter (Kill A Watt class) measures whole-system energy on a 30-query subset per
 condition. The meter reads watt-hours over the subset; the calibration factor is

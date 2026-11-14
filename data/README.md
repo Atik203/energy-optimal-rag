@@ -59,7 +59,8 @@ harness check does not consume the confirmatory sample.
 
 1. Download from the official source; record the URL in `manifest.json`.
 2. Record the SHA-256 of the downloaded file **before** processing.
-3. Run the preparation script (P0/P2; stub in v0.1.0).
+3. Run the preparation script. P0 preparation is complete: `manifest.json` is verified with
+   10,570 questions, 20,958 contexts, and 45,651 passages. P2 HotpotQA preparation remains.
 4. Record question count, corpus count, chunk size, seed, and checksums.
 5. Set `status` to `prepared`, then `verified` after a second check.
 

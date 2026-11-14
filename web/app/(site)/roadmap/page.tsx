@@ -15,6 +15,7 @@ import {
   decisions,
   deliverables,
   gates,
+  p0,
   phases,
   risks,
 } from "@/lib/project-data";
@@ -71,6 +72,7 @@ export default function RoadmapPage() {
         meta={[
           { label: "20 weeks", tone: "data" },
           { label: "3–4 people", tone: "neutral" },
+          { label: p0.label, tone: "caution" },
           { label: "15–20 GPU-hours", tone: "signal" },
           { label: "≤ $47 cash", tone: "caution" },
         ]}
@@ -103,6 +105,27 @@ export default function RoadmapPage() {
                   <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
                     {phase.weeks}
                   </span>
+                  {phase.status && (
+                    <Chip
+                      tone={
+                        phase.status === "pass"
+                          ? "signal"
+                          : phase.status === "fail"
+                            ? "dead"
+                            : phase.status === "deferred"
+                              ? "neutral"
+                              : "caution"
+                      }
+                    >
+                      {phase.status === "pass"
+                        ? "Pass"
+                        : phase.status === "fail"
+                          ? "Fail"
+                          : phase.status === "deferred"
+                            ? "Deferred"
+                            : "Running"}
+                    </Chip>
+                  )}
                 </div>
                 <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{phase.goal}</p>
                 <dl className="mt-4 grid gap-4 border-t border-line pt-3 sm:grid-cols-2">
@@ -120,7 +143,7 @@ export default function RoadmapPage() {
           ))}
         </ol>
         <SourceNote>
-          Source: ROADMAP.md §2. P1 decides whether the paper has a static policy result; P6 is the
+          Source: ROADMAP.md §2. P0 is a harness check; P1 is deferred and decides whether the paper has a static policy result. P6 is the
           buffer, not a second attempt at P1.
         </SourceNote>
       </section>
@@ -388,7 +411,7 @@ export default function RoadmapPage() {
             </article>
           ))}
         </div>
-        <SourceNote>Source: docs/DECISIONS.md D-001–D-011.</SourceNote>
+        <SourceNote>Source: docs/DECISIONS.md D-001-D-021.</SourceNote>
       </section>
 
       {/* 07 — Stop rules / out of scope */}
