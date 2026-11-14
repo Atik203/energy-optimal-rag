@@ -33,6 +33,7 @@ REQUIRED_KEYS: dict[str, tuple[str, ...]] = {
         "dataset",
         "n_questions",
         "k_grid",
+        "id_split",
         "seed",
         "reader",
         "retrieval",
@@ -322,6 +323,8 @@ def _validate_data(data: dict[str, Any], category: str, path: Path) -> list[str]
                 errors.append(f"{path}: run_id must be a non-empty string")
             if not isinstance(data.get("dataset"), str) or not data.get("dataset"):
                 errors.append(f"{path}: dataset must be a non-empty string")
+            if not isinstance(data.get("id_split"), str) or not data.get("id_split"):
+                errors.append(f"{path}: id_split must be a non-empty string")
             grid_id = data.get("grid_id")
             if grid_id is not None and (
                 not isinstance(grid_id, str) or not grid_id.strip() or Path(grid_id).name != grid_id

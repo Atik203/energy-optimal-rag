@@ -91,6 +91,7 @@ run_id = "test_run"
 dataset = "squad"
 n_questions = 500
 k_grid = {k_grid}
+id_split = "{id_split}"
 seed = 20261115
 
 [reader]
@@ -114,6 +115,7 @@ def _write_run_config(
     num_ctx: int = 4096,
     top_k: int = 32,
     k_grid: str = "[0, 1, 2, 4, 8, 16, 32]",
+    id_split: str = "p1_primary",
 ) -> Path:
     """Write a minimal run config and return its path."""
     path = tmp_path / "configs" / "runs" / "test.toml"
@@ -125,6 +127,7 @@ def _write_run_config(
             num_ctx=num_ctx,
             top_k=top_k,
             k_grid=k_grid,
+            id_split=id_split,
         ),
         encoding="utf-8",
     )
@@ -146,6 +149,12 @@ def test_run_rejects_empty_reader_model(tmp_path: Path) -> None:
     path = _write_run_config(tmp_path, model="")
     errors = validate_config(path, root=tmp_path)
     assert any("reader.model" in error for error in errors), errors
+
+
+def test_run_rejects_empty_id_split(tmp_path: Path) -> None:
+    path = _write_run_config(tmp_path, id_split="")
+    errors = validate_config(path, root=tmp_path)
+    assert any("id_split" in error for error in errors), errors
 
 
 def test_run_rejects_nonpositive_num_ctx(tmp_path: Path) -> None:
@@ -192,6 +201,7 @@ run_id = "r1"
 dataset = "squad"
 n_questions = 100
 k_grid = [0, 1]
+id_split = "p0_golden"
 seed = 2
 phase = "P0"
 {grid_line}

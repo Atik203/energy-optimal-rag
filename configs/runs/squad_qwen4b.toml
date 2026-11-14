@@ -9,6 +9,7 @@ n_questions = 1000
 k_grid = [0, 1, 2, 4, 8, 16, 32]
 seed = 20261115
 phase = "P1"
+id_split = "p1_primary"
 grid_id = "primary_k7"
 
 [reader]
