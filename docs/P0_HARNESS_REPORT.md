@@ -185,4 +185,5 @@ After `_r3` and the block/repeat/analysis chain finish:
 5. Merge PR #1 only after the P0 evidence and frontend are consistent. **P1 remains deferred
    until the user starts it**; do not spend P1 GPU hours on P0 completion day.
 6. Back up `runs/`, `analysis/`, `artifacts/`, `data/processed/`, and `data/splits/` to the
-   approved external target; never commit raw/gold data.
+   approved external target; never commit raw/gold data. **Status 2026-11-15:** the user
+   deferred the external backup (D-020); the raw P0 run is local-only.

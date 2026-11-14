@@ -330,3 +330,19 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
 - **Consequences:** No claim or confirmatory threshold changed; this is a harness measurement
   amendment before the confirmatory freeze. P0 remains a harness check. P1 stays blocked
   until `_r3` passes the block-factor and J-anchor checks.
+
+---
+
+## D-020 - External P0 backup deferred; raw data is local-only
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The P0 raw CSV, blocks, repeat, and run manifest are git-ignored by policy and
+  exist only under `E:\PROJECT\energy-optimal-rag\runs\`. The user chose to skip an external
+  backup for now.
+- **Decision:** Keep the run directories intact and mark them local-only. Do not delete or
+  overwrite `runs/golden_squad_qwen4b_p0*` until an external backup exists. Revisit the backup
+  before P1 or before any machine/storage change.
+- **Consequences:** A disk failure would lose the raw P0 evidence. The tracked analysis,
+  registry, and ledger remain, but they cannot reconstruct the raw rows or gold answers.
+  The paper's reproducibility package is incomplete until an external copy is made.

@@ -172,6 +172,9 @@ The run CSVs, parquet files, and gold answers are **never committed**. The local
 directory is the only copy until this step. Create an external backup with the user's
 approval; do not write outside the repository without it.
 
+**Current P0 status (2026-11-15):** external backup deferred by the user (D-020). Treat the
+raw P0 run as local-only and do not delete it.
+
 ```powershell
 $stamp = Get-Date -Format "yyyyMMdd-HHmm"
 $dest = "E:\backup\energy-optimal-rag\$stamp"
