@@ -106,6 +106,17 @@ def _cmd_repeat(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_analyze(args: argparse.Namespace) -> int:
+    from rag_energy.stats.sweep import write_analysis
+
+    root = Path(args.root).resolve() if args.root else REPO_ROOT
+    raw_path = Path(args.raw) if args.raw else root / "runs" / args.run_id / "raw.csv"
+    out_dir = Path(args.out) if args.out else root / "analysis" / args.run_id
+    path = write_analysis(raw_path, out_dir, run_id=args.run_id)
+    print(f"Analysis: {path}")
+    return 0
+
+
 def _cmd_stub(name: str) -> int:
     print(_STUB_TEXT.format(name=name), file=sys.stderr)
     return 2
@@ -195,9 +206,12 @@ def build_parser() -> argparse.ArgumentParser:
     repeat.add_argument("--cooldown", type=float, default=0.0, help="Cooldown seconds.")
     repeat.set_defaults(func=_cmd_repeat)
 
-    analyze = subparsers.add_parser("analyze", help="Analyze a completed run (stub).")
-    analyze.add_argument("--run-id", default=None, help="Registered run identifier.")
-    analyze.set_defaults(func=lambda _args: _cmd_stub("analyze"))
+    analyze = subparsers.add_parser("analyze", help="Analyze a completed run.")
+    analyze.add_argument("--run-id", required=True, help="Registered run identifier.")
+    analyze.add_argument("--root", default=None, help="Repository root.")
+    analyze.add_argument("--raw", default=None, help="Raw CSV path override.")
+    analyze.add_argument("--out", default=None, help="Analysis output directory.")
+    analyze.set_defaults(func=_cmd_analyze)
 
     return parser
 

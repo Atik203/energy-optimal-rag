@@ -127,14 +127,16 @@ python scripts\03_run_taxes.py --config configs\taxes\per_passage_b.toml
 Expected: two raw CSVs and a sign test. Fixed tax should move `k*` up; per-passage tax should
 move it down. If either sign is wrong, record it as a falsification, not as a null result.
 
-## 7. Analysis (P1)
+## 7. Analysis (P0/P1)
 
 ```powershell
+python scripts\05_analyze.py --run-id golden_squad_qwen4b_p0
 python scripts\05_analyze.py --run-id squad_qwen4b_p1
 ```
 
-Planned outputs under `analysis\squad_qwen4b_p1\`: `estimates.csv`, `bootstrap.json`,
-`identity.csv`, `noninferiority.json`, `certification.json`, and `report.md`.
+P0 writes `analysis\golden_squad_qwen4b_p0\`: `estimates.csv`, `p0_check.json`, and
+`report.md`. P1 adds the planned `bootstrap.json`, `identity.csv`, `noninferiority.json`, and
+`certification.json` outputs under `analysis\squad_qwen4b_p1\`.
 
 The script must refuse to run if the prereg hash in the registry does not match the frozen
 hash.
