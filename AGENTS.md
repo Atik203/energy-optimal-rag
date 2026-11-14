@@ -29,33 +29,30 @@ silently strengthen a claim, add a "certified" result, or introduce a universal 
 
 ### Shared university GPU server
 
-Use the university GPU server only for approved project work. These rules apply to every
-agent and every session. The approved local SSH alias is `uiu-h200`.
+Use only for this project. Rules apply to every agent and session. If an action is not
+explicitly allowed here, ask the user for permission first.
 
-- Use only the assigned account and the allocated GPU/MIG partition. Do not touch other
-  users' processes, partitions, files, or jobs.
-- Do not change or overwrite the NVIDIA driver, CUDA toolkit, system libraries, GPU clocks,
-  power limits, or MIG configuration.
-- Do not change the SSH daemon, host keys, account name, login method, or another user's
-  `authorized_keys`. Do not create shared accounts or expose SSH ports.
-- Allocated storage is **200 GB maximum**. Keep the project, datasets, checkpoints, and logs
-  below this quota. Check `df -h` and `du -sh` before large downloads, remove temporary files,
-  and back up important data regularly.
-- Do not modify shared storage, mount points, quotas, directory ownership, or permissions.
-  Stay inside the allocated home/project space and do not delete other users' files.
-- Do not install system-wide packages or use `sudo` without administrator approval. Use a
-  project-local virtual environment or conda environment and install only required packages.
-- Do not run cryptocurrency mining, public-facing services, port scanners, or unrelated
-  workloads. Long jobs must run inside `tmux` or `screen`; stop jobs cleanly and do not leave
-  idle GPU processes.
-- Never commit or paste a server address, hostname, username, account ID, password, SSH key,
-  or host fingerprint into the repository, docs, slides, or chat logs. The local alias
-  `uiu-h200` is the only permitted server identifier.
+- **Access:** SSH via the local alias `uiu-h200` only. Do not expose ports or create another
+  connection method.
+- **GPU:** H200 MIG `1g.18gb`, **18 GB VRAM maximum**. Use only this slice.
+- **Driver / CUDA:** NVIDIA driver `580.178.04`; CUDA `13.5`. Do not change, overwrite,
+  reinstall, or upgrade either; do not replace system libraries.
+- Do not change GPU clocks, power limits, MIG settings, SSH daemon, host keys, account name,
+  login method, or other users' `authorized_keys`.
+- **Storage:** **200 GB maximum**. Check `df -h` and `du -sh`; stay inside the project space;
+  do not change mounts, quotas, or permissions; do not delete other users' files.
+- **Python:** use a project-local `venv` or conda environment only. No system-wide packages
+  or `sudo` without administrator approval.
+- **Jobs:** use `tmux` or `screen`; stop idle GPU jobs. No mining, public services, port
+  scanning, or unrelated workloads.
+- **Secrets:** never commit a server address, hostname, username, account ID, password, SSH
+  key, or host fingerprint. Allowed identifiers: `uiu-h200`, H200 `1g.18gb`, driver
+  `580.178.04`, CUDA `13.5`.
 - Follow the university's monitoring, acceptable-use, and data-handling policies.
-- Hardware and energy results from the shared server are a separate condition. Do not mix
-  them with the local RTX 3060 results or present them as the same measurement.
-- Record any approved hardware, driver, CUDA, or environment change in
-  `docs/DECISIONS.md` before running confirmatory work.
+- Shared-server energy results are a separate hardware condition; do not mix them with the
+  local RTX 3060 results.
+- Record approved hardware, driver, CUDA, or environment changes in `docs/DECISIONS.md`
+  before confirmatory work.
 
 ## 3. Never commit
 
@@ -155,6 +152,7 @@ A PR that changes analysis code without a prereg/amendment check is not done.
 
 - Preserve the claim boundary over adding features.
 - Prefer a documented negative result over a tuned positive one.
+- Ask the user for permission before any action not explicitly covered by these instructions.
 - Ask before deleting or rewriting user work, especially under `prereg/`, `runs/`, and
   `artifacts/`.
 - Stop and report if a command would download data, use a paid API, or write outside
