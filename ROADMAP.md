@@ -95,7 +95,7 @@ measurement-protocol fix and a clean `_r3` run. See
 | Independent audits (math, tests/CI, data/claims) | **DONE** |
 | Protocol revision: 0.3 s tail, `factor_csv`, idle-CV gate | **DONE** — dry run factors 0.834–1.380 |
 | `_r2` clean-run attempt | **ABORTED** — stopped at 409 rows; uncommitted tree |
-| `_r3` clean golden run | **NEXT** |
+| `_r3` clean golden run | **RUNNING** |
 | P1 powered run | **BLOCKED** until `_r3` passes |
 
 **P1 — Powered SQuAD (weeks 2–3).** Freeze the preregistration before looking at the new

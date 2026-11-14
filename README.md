@@ -18,8 +18,8 @@ including the claim that failed.
 is **uncalibrated**, so its 15–21% shortfall against the calibrated pilot is not adjudicable as
 a clean energy test. The failure is in calibration and thermal state, not row collection.
 See [`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). A clean `_r3` rerun with a
-0.3 s measured tail and strict `factor_csv` gate is next; `_r2` was aborted after 409 rows
-because it started from an uncommitted tree. P1 has not started.
+0.3 s measured tail and strict `factor_csv` gate is **running**; `_r2` was aborted after 409
+rows because it started from an uncommitted tree. P1 has not started.
 
 ---
 

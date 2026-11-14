@@ -168,3 +168,21 @@ does not yet reproduce the pilot's absolute energy calibration.**
 - **`_r2`:** aborted after 409 rows (uncommitted tree), registered `aborted`.
 - **`_r3`:** clean 200-question run from the committed protocol; see the registry for status.
   P0 is still failed until `_r3` passes block calibration and the J-anchor check.
+
+## 7. Post-P0 handoff (P1 deliberately deferred)
+
+After `_r3` and the block/repeat/analysis chain finish:
+
+1. Record the result in `runs/registry.csv`, `analysis/golden_squad_qwen4b_p0_r3/`, and
+   `artifacts/ledger.csv`.
+2. Update `README.md`, `ROADMAP.md`, this report, `docs/MEASUREMENT.md`,
+   `docs/PROTOCOL.md`, `docs/RUNBOOK.md`, `docs/DECISIONS.md`,
+   `docs/IMPLEMENTATION_PLAN.md`, `analysis/README.md`, and `paper/README.md`.
+3. Update the public frontend from `web/lib/project-data.ts` and the Home, Research, Method,
+   Results, Roadmap, About, and slide pages. The public status must match the registry, not a
+   hand-written optimistic value.
+4. Run CI, Vercel production deploy, and verify the live pages.
+5. Merge PR #1 only after the P0 evidence and frontend are consistent. **P1 remains deferred
+   until the user starts it**; do not spend P1 GPU hours on P0 completion day.
+6. Back up `runs/`, `analysis/`, `artifacts/`, `data/processed/`, and `data/splits/` to the
+   approved external target; never commit raw/gold data.

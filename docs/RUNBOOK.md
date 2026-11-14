@@ -168,12 +168,34 @@ hand; edit the generator.
 
 ## 10. Backup and release
 
+The run CSVs, parquet files, and gold answers are **never committed**. The local run
+directory is the only copy until this step. Create an external backup with the user's
+approval; do not write outside the repository without it.
+
 ```powershell
 $stamp = Get-Date -Format "yyyyMMdd-HHmm"
-Copy-Item -Recurse runs "E:\backup\energy-optimal-rag\runs-$stamp"
-Copy-Item -Recurse artifacts "E:\backup\energy-optimal-rag\artifacts-$stamp"
-Get-FileHash -Algorithm SHA256 runs\*\raw.csv
+$dest = "E:\backup\energy-optimal-rag\$stamp"
+New-Item -ItemType Directory -Force -Path $dest | Out-Null
+Copy-Item -Recurse runs $dest\runs
+Copy-Item -Recurse analysis $dest\analysis
+Copy-Item -Recurse artifacts $dest\artifacts
+Copy-Item -Recurse data\processed $dest\processed
+Copy-Item -Recurse data\splits $dest\splits
+Copy-Item data\manifest.json $dest\manifest.json
+Get-ChildItem $dest\runs -Recurse -Include raw.csv,blocks.json,repeat.json,manifest.json |
+  Get-FileHash -Algorithm SHA256 |
+  Export-Csv $dest\sha256.csv -NoTypeInformation
 ```
+
+Exclude `runs\_dry*` and `runs\_diag*` from the paper archive; they are diagnostics, not
+registered runs. For the journal package keep:
+
+- `runs/<run_id>/raw.csv`, `blocks.json`, `repeat.json`, `manifest.json` (local/USB; never git)
+- `analysis/<run_id>/estimates.csv`, `p0_check.json`, `metadata.json`, `report.md` (tracked)
+- `runs/registry.csv`, `artifacts/ledger.csv`, `artifacts/claims_evidence.csv` (tracked)
+- `paper/tables/` and `paper/figures/`, generated only from the above.
+
+A table or figure without a registered run ID and artifact hash is not ready for the paper.
 
 For a release:
 
