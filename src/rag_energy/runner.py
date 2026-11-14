@@ -18,7 +18,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from rag_energy.config import load_toml, validate_config
+from rag_energy.config import resolve_run_config
 
 
 @dataclass(frozen=True)
@@ -26,15 +26,20 @@ class RunSpec:
     run_id: str
     config_path: Path
     config: dict[str, Any]
+    config_sha256: str = ""
+    sources: tuple[Path, ...] = ()
 
 
-def load_run_spec(config_path: Path) -> RunSpec:
-    """Load and validate a run config, returning a typed spec."""
-    problems = validate_config(config_path)
-    if problems:
-        raise ValueError("; ".join(problems))
-    data = load_toml(config_path)
-    return RunSpec(run_id=str(data["run_id"]), config_path=config_path, config=data)
+def load_run_spec(config_path: Path, root: Path | None = None) -> RunSpec:
+    """Resolve base, run, and optional grid, returning a typed spec."""
+    resolved = resolve_run_config(config_path, root=root)
+    return RunSpec(
+        run_id=resolved.run_id,
+        config_path=resolved.config_path,
+        config=resolved.data,
+        config_sha256=resolved.config_sha256,
+        sources=resolved.sources,
+    )
 
 
 def run_depth_sweep(config_path: Path) -> Path:

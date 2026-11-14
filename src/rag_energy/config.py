@@ -14,6 +14,8 @@ Config layout
 
 from __future__ import annotations
 
+import hashlib
+import json
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -25,7 +27,7 @@ CONFIG_DIRNAME = "configs"
 # Required top-level keys by config category. Keep this list short and stable:
 # a key belongs here only if an analysis or a run cannot start without it.
 REQUIRED_KEYS: dict[str, tuple[str, ...]] = {
-    "base": ("project", "seed", "paths", "reader", "retriever"),
+    "base": ("project", "seed", "paths", "reader", "retrieval"),
     "run": (
         "run_id",
         "dataset",
@@ -161,9 +163,7 @@ def _check_retrieval_depth(data: dict[str, Any], path: Path, errors: list[str]) 
         and all(_is_int(value) and value >= 0 for value in k_grid)
         and top_k < max(k_grid)
     ):
-        errors.append(
-            f"{path}: retrieval.top_k={top_k} is below max(k_grid)={max(k_grid)}"
-        )
+        errors.append(f"{path}: retrieval.top_k={top_k} is below max(k_grid)={max(k_grid)}")
 
 
 def _check_tax_delta(
@@ -181,10 +181,107 @@ def _check_tax_delta(
         errors.append(f"{path}: {label} is inconsistent with target_fraction * baseline")
 
 
+@dataclass(frozen=True)
+class ResolvedRunConfig:
+    """An effective run config after base, run, and optional grid merge."""
+
+    run_id: str
+    config_path: Path
+    data: dict[str, Any]
+    sources: tuple[Path, ...]
+    config_sha256: str
+
+
+def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
+    """Merge tables recursively; later scalars and lists win."""
+    merged = dict(base)
+    for key, value in override.items():
+        current = merged.get(key)
+        if isinstance(current, dict) and isinstance(value, dict):
+            merged[key] = _deep_merge(current, value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def _normalise_sections(data: dict[str, Any]) -> dict[str, Any]:
+    """Accept the legacy ``[retriever]`` spelling while standardising on ``[retrieval]``."""
+    legacy = data.pop("retriever", None)
+    if legacy is None:
+        return data
+    current = data.get("retrieval")
+    if isinstance(current, dict) and isinstance(legacy, dict):
+        data["retrieval"] = _deep_merge(legacy, current)
+    else:
+        data["retrieval"] = legacy
+    return data
+
+
+def _canonical_hash(data: dict[str, Any]) -> str:
+    """SHA-256 of the effective config, stable across TOML formatting."""
+    payload = json.dumps(data, sort_keys=True, separators=(",", ":"), default=str)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def resolve_run_config(
+    config_path: Path,
+    root: Path | None = None,
+) -> ResolvedRunConfig:
+    """Resolve a run config against ``base.toml`` and its optional named grid.
+
+    Precedence is base < run < grid. The grid is selected by the run's
+    ``grid_id``; its ``base_run`` must name the same run. The returned hash is
+    computed from the effective merged data, not from the raw file text.
+    """
+    root = (root or REPO_ROOT).resolve()
+    config_path = config_path.resolve()
+    base_path = root / CONFIG_DIRNAME / "base.toml"
+    if not base_path.is_file():
+        raise ConfigError(f"required base config is missing: {base_path}")
+
+    base = _normalise_sections(load_toml(base_path))
+    run = _normalise_sections(load_toml(config_path))
+    merged = _deep_merge(base, run)
+    sources: list[Path] = [base_path, config_path]
+
+    grid_id = run.get("grid_id")
+    if grid_id is not None:
+        if not isinstance(grid_id, str) or not grid_id.strip() or Path(grid_id).name != grid_id:
+            raise ConfigError(f"{config_path}: grid_id must be a simple non-empty name")
+        grid_path = root / CONFIG_DIRNAME / "grid" / f"{grid_id}.toml"
+        if not grid_path.is_file():
+            raise ConfigError(f"{config_path}: grid {grid_id!r} not found at {grid_path}")
+        grid = _normalise_sections(load_toml(grid_path))
+        if grid.get("base_run") != run.get("run_id"):
+            raise ConfigError(
+                f"{grid_path}: base_run={grid.get('base_run')!r} does not match "
+                f"run_id={run.get('run_id')!r}"
+            )
+        merged = _deep_merge(merged, grid)
+        sources.append(grid_path)
+
+    # Identity and category belong to the run, not to the grid.
+    merged["kind"] = "run"
+    for key in ("run_id", "dataset", "phase"):
+        if key in run:
+            merged[key] = run[key]
+
+    problems = _validate_data(merged, "run", config_path)
+    if problems:
+        raise ConfigError("; ".join(problems))
+
+    return ResolvedRunConfig(
+        run_id=str(merged["run_id"]),
+        config_path=config_path,
+        data=merged,
+        sources=tuple(sources),
+        config_sha256=_canonical_hash(merged),
+    )
+
+
 def validate_config(path: Path, root: Path | None = None) -> list[str]:
     """Validate one config file and return a list of human-readable errors."""
     root = (root or REPO_ROOT).resolve()
-    errors: list[str] = []
     category = category_for(path, root)
     if category == "unknown":
         return [f"{path}: cannot infer config category from its location"]
@@ -194,6 +291,12 @@ def validate_config(path: Path, root: Path | None = None) -> list[str]:
     except ConfigError as exc:
         return [str(exc)]
 
+    return _validate_data(data, category, path)
+
+
+def _validate_data(data: dict[str, Any], category: str, path: Path) -> list[str]:
+    """Validate an already-parsed config dict for a known category."""
+    errors: list[str] = []
     declared_kind = data.get("kind")
     if declared_kind is not None and declared_kind != category:
         errors.append(
@@ -219,6 +322,11 @@ def validate_config(path: Path, root: Path | None = None) -> list[str]:
                 errors.append(f"{path}: run_id must be a non-empty string")
             if not isinstance(data.get("dataset"), str) or not data.get("dataset"):
                 errors.append(f"{path}: dataset must be a non-empty string")
+            grid_id = data.get("grid_id")
+            if grid_id is not None and (
+                not isinstance(grid_id, str) or not grid_id.strip() or Path(grid_id).name != grid_id
+            ):
+                errors.append(f"{path}: grid_id must be a simple non-empty name")
         if category == "grid":
             if not isinstance(data.get("grid_id"), str) or not data.get("grid_id"):
                 errors.append(f"{path}: grid_id must be a non-empty string")
@@ -327,5 +435,16 @@ def validate_all(root: Path | None = None) -> ConfigReport:
         problems = validate_config(path, root)
         if problems:
             report.errors[str(path.relative_to(root))] = problems
+
+    # Resolve every run so a missing or mismatched grid fails `validate`,
+    # not the first GPU sweep.
+    for path in report.files:
+        rel = str(path.relative_to(root))
+        if category_for(path, root) != "run" or rel in report.errors:
+            continue
+        try:
+            resolve_run_config(path, root)
+        except ConfigError as exc:
+            report.errors[rel] = [str(exc)]
 
     return report

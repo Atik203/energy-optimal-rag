@@ -44,9 +44,11 @@ nonce generation, and the wall-meter record. `stats/` holds the ratio estimator,
 test, curve models, policy scaffold, and multiplicity control.
 
 `configs/` is the single source of run parameters: `base.toml` (seed `20261115`, paths, reader,
-retriever, energy, statistics), `configs/runs/` (one file per experiment), `configs/grid/`
+retrieval, energy, statistics), `configs/runs/` (one file per experiment), `configs/grid/`
 (named depth grids), `configs/taxes/` (two causal conditions), and
-`configs/analysis/prereg.toml` (frozen margins and splits). `scripts/` is the numbered pipeline.
+`configs/analysis/prereg.toml` (frozen margins and splits). A run may name a grid with
+`grid_id`; the resolver applies base < run < grid and hashes the effective config. `scripts/`
+is the numbered pipeline.
 `prereg/` holds the preregistration (draft until the P1 freeze), analysis plan, and amendment
 log. `runs/` holds the registry and git-ignored raw runs. `artifacts/` holds the ledger and
 claims-evidence map. `paper/` and `docs/` are the writing surface.
