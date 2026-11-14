@@ -16,16 +16,17 @@ import pandas as pd
 
 from rag_energy.energy.nvml_sampler import PowerSample
 from rag_energy.readers.base import ReaderResult
-from rag_energy.runner import RAW_FIELDS, run_block_calibration
+from rag_energy.runner import RAW_FIELDS, _window_energy, run_block_calibration
 
 
 class FakeReader:
     name = "fake"
 
     def generate(self, question: str, passages: list[str], nonce: str) -> ReaderResult:
+        time.sleep(0.1)
         return ReaderResult(
             text="alpha",
-            latency_s=0.01,
+            latency_s=0.1,
             prompt_tokens=10,
             output_tokens=1,
             load_s=0.0,
@@ -41,11 +42,22 @@ class BlockSampler:
         self._started = time.monotonic()
 
     def stop(self) -> list[PowerSample]:
-        # 50 W over 0.2 s = 10 J.
+        now = time.monotonic()
+        count = max(2, int((now - self._started) / 0.01) + 1)
         return [
-            PowerSample(t_s=self._started, power_w=50.0),
-            PowerSample(t_s=self._started + 0.2, power_w=50.0),
+            PowerSample(t_s=self._started + index * 0.01, power_w=50.0) for index in range(count)
         ]
+
+
+class SpikeSampler(BlockSampler):
+    def stop(self) -> list[PowerSample]:
+        samples = super().stop()
+        last = samples[-1].t_s
+        # A normal boundary sample, then an out-of-window spike. The spike is
+        # included in the block total but not in any query window.
+        samples.append(PowerSample(t_s=last + 0.01, power_w=50.0))
+        samples.append(PowerSample(t_s=last + 0.11, power_w=500.0))
+        return samples
 
 
 def _write_processed(tmp_path: Path) -> Path:
@@ -176,7 +188,7 @@ def _write_raw(tmp_path: Path, per_row_j: float) -> Path:
 def test_run_block_calibration_writes_factors_and_calibrated_values(tmp_path: Path) -> None:
     processed = _write_processed(tmp_path)
     config_path = _write_config(tmp_path)
-    raw = _write_raw(tmp_path, per_row_j=5.0)
+    raw = _write_raw(tmp_path, per_row_j=100.0)
 
     blocks_path = run_block_calibration(
         config_path,
@@ -190,11 +202,20 @@ def test_run_block_calibration_writes_factors_and_calibrated_values(tmp_path: Pa
 
     blocks = json.loads(blocks_path.read_text(encoding="utf-8"))
     assert len(blocks["depths"]) == 2
-    assert all(item["factor"] == pytest.approx(1.0) for item in blocks["depths"])
-    assert all(item["block_energy_j"] == pytest.approx(10.0) for item in blocks["depths"])
+    assert all(item["factor"] == pytest.approx(1.0, abs=0.05) for item in blocks["depths"])
+    assert all(item["block_energy_j"] > 0 for item in blocks["depths"])
+    assert all(item["raw_sum_j"] > 0 for item in blocks["depths"])
 
     rows = list(csv.DictReader(raw.open(encoding="utf-8", newline="")))
-    assert all(float(row["j_gpu_calibrated"]) == pytest.approx(5.0) for row in rows)
+    assert all(float(row["j_gpu_calibrated"]) == pytest.approx(100.0, rel=0.05) for row in rows)
+
+
+def test_window_energy_integrates_exact_interval_without_neighbor_leak() -> None:
+    samples = [PowerSample(t_s=0.0, power_w=10.0), PowerSample(t_s=1.0, power_w=10.0)]
+
+    energy = _window_energy(samples, 0.2, 0.4, idle_power_w=0.0)
+
+    assert energy == pytest.approx(2.0)
 
 
 def test_run_block_calibration_rejects_out_of_range_factor(tmp_path: Path) -> None:
@@ -209,6 +230,6 @@ def test_run_block_calibration_rejects_out_of_range_factor(tmp_path: Path) -> No
             processed_dir=processed,
             out_root=tmp_path / "runs",
             reader=FakeReader(),
-            sampler_factory=BlockSampler,
+            sampler_factory=SpikeSampler,
             idle_power_w=0.0,
         )

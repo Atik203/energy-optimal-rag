@@ -487,6 +487,44 @@ def _apply_block_factors(raw_path: Path, factors: dict[int, float]) -> None:
     temp.replace(raw_path)
 
 
+def _power_at(samples: Sequence[PowerSample], t_s: float) -> float:
+    """Linearly interpolate power at an exact timestamp."""
+    if not samples:
+        raise ValueError("at least one sample is required")
+    if t_s <= samples[0].t_s:
+        return samples[0].power_w
+    if t_s >= samples[-1].t_s:
+        return samples[-1].power_w
+    for left, right in zip(samples, samples[1:], strict=False):
+        if left.t_s <= t_s <= right.t_s:
+            span = right.t_s - left.t_s
+            if span <= 0:
+                return right.power_w
+            fraction = (t_s - left.t_s) / span
+            return left.power_w + fraction * (right.power_w - left.power_w)
+    return samples[-1].power_w
+
+
+def _window_energy(
+    samples: Sequence[PowerSample],
+    start_s: float,
+    end_s: float,
+    idle_power_w: float,
+) -> float:
+    """Integrate exactly ``[start_s, end_s]`` without leaking into a neighbor."""
+    if end_s <= start_s:
+        raise ValueError("end_s must be greater than start_s")
+    if not samples:
+        return 0.0
+    points: list[tuple[float, float]] = [(start_s, _power_at(samples, start_s))]
+    points.extend(
+        (sample.t_s, sample.power_w) for sample in samples if start_s < sample.t_s < end_s
+    )
+    points.append((end_s, _power_at(samples, end_s)))
+    gross = trapezoid_joules(points)
+    return idle_subtract(gross, end_s - start_s, idle_power_w)
+
+
 def run_block_calibration(
     config_path: Path,
     *,
@@ -553,9 +591,6 @@ def run_block_calibration(
             raise ValueError(
                 f"k={depth}: need {block_size} valid raw rows, found {len(depth_rows)}"
             )
-        raw_sum = sum(float(row["j_gpu_raw"]) for row in depth_rows)
-        if raw_sum <= 0:
-            raise ValueError(f"k={depth}: raw per-query energy sum must be positive")
         if cooldown_s > 0:
             time.sleep(cooldown_s)
         # A cooldown leaves the first short query at a cold, low-power state;
@@ -572,25 +607,35 @@ def run_block_calibration(
         sampler = sampler_factory(interval_ms)
         sampler.start()
         started = _utc_now()
+        windows: list[tuple[float, float]] = []
         try:
             for row in depth_rows:
                 qid = row["question_id"]
                 retrieved = index.search(str(questions[qid]), depth)
+                query_started = time.monotonic()
                 result = reader.generate(
                     str(questions[qid]),
                     [passage.text for passage in retrieved],
                     make_nonce(nonce_hex_chars),
                 )
+                query_finished = time.monotonic()
+                windows.append((query_started, query_finished))
                 if result.load_s is not None and result.load_s > 1.0:
                     raise RuntimeError(f"k={depth}: model reloaded inside the block")
         finally:
             samples = sampler.stop()
         finished = _utc_now()
         block_energy, average_w, duration = _integrate(samples, idle_power_w)
+        per_query = [_window_energy(samples, start, end, idle_power_w) for start, end in windows]
+        raw_sum = sum(per_query)
+        if raw_sum <= 0:
+            raise ValueError(f"k={depth}: raw per-query energy sum must be positive")
         factor = block_energy / raw_sum
         if not 0.8 <= factor <= 1.4:
             raise ValueError(
-                f"k={depth}: block factor {factor:.4f} outside [0.8, 1.4]; "
+                f"k={depth}: block factor {factor:.4f} outside [0.8, 1.4] "
+                f"(raw_sum={raw_sum:.3f} J, block_energy={block_energy:.3f} J, "
+                f"duration={duration:.3f} s, idle={idle_power_w:.3f} W); "
                 "stop and diagnose the sensor window"
             )
         factors[depth] = factor

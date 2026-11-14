@@ -65,6 +65,31 @@ class FakeSampler:
         ]
 
 
+class ContinuousSampler(FakeSampler):
+    """Samples every 10 ms so block windows have multiple points."""
+
+    def stop(self) -> list[PowerSample]:
+        now = time.monotonic()
+        count = max(2, int((now - self._started) / 0.01) + 1)
+        return [
+            PowerSample(
+                t_s=self._started + index * 0.01,
+                power_w=self.watts,
+                temperature_c=60.0,
+                sm_clock_mhz=1500.0,
+            )
+            for index in range(count)
+        ]
+
+
+class SlowReader(FakeReader):
+    """Reader with a realistic-enough duration for window selection."""
+
+    def generate(self, question: str, passages: list[str], nonce: str) -> ReaderResult:
+        time.sleep(0.05)
+        return super().generate(question, passages, nonce)
+
+
 def _write_processed(tmp_path: Path) -> Path:
     processed = tmp_path / "processed"
     processed.mkdir()
@@ -267,8 +292,8 @@ def test_p0_chain_runs_sweep_blocks_repeat_and_analysis(tmp_path: Path) -> None:
         root=tmp_path,
         processed_dir=processed,
         out_root=runs,
-        reader=FakeReader(),
-        sampler_factory=lambda interval_ms: FakeSampler(interval_ms, watts=35.0),
+        reader=SlowReader(),
+        sampler_factory=lambda interval_ms: ContinuousSampler(interval_ms, watts=35.0),
         idle_power_w=0.0,
     )
     repeat_path = run_repeat_cv(
@@ -276,8 +301,8 @@ def test_p0_chain_runs_sweep_blocks_repeat_and_analysis(tmp_path: Path) -> None:
         root=tmp_path,
         processed_dir=processed,
         out_root=runs,
-        reader=FakeReader(),
-        sampler_factory=lambda interval_ms: FakeSampler(interval_ms, watts=35.0),
+        reader=SlowReader(),
+        sampler_factory=lambda interval_ms: ContinuousSampler(interval_ms, watts=35.0),
         idle_power_w=0.0,
     )
     analysis_dir = write_analysis(raw_path, tmp_path / "analysis", run_id="test_run")
