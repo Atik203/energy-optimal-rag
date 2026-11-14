@@ -1,7 +1,8 @@
 # Analysis
 
-Generated analysis outputs live here. They are derived from registered raw runs and are
-git-ignored by default; the tracked summary is `artifacts/ledger.csv` and
+Generated analysis outputs live here. They are derived from registered raw runs. Small
+tabular and report outputs may be tracked; large figures are git-ignored. The tracked
+evidence index is `artifacts/ledger.csv`, and claims are indexed in
 `artifacts/claims_evidence.csv`.
 
 ## Layout
@@ -10,6 +11,7 @@ git-ignored by default; the tracked summary is `artifacts/ledger.csv` and
 analysis/
 └─ <run_id>/
    ├─ estimates.csv        A(k), J(k), E(k), S(k), S_r(k), CIs
+   ├─ p0_check.json        P0 J-anchor and affine-fit check
    ├─ bootstrap.json       P(k* optimal), resample settings, seed
    ├─ identity.csv         elasticities and gap with CI
    ├─ noninferiority.json  5 pp test, 2 pp estimation

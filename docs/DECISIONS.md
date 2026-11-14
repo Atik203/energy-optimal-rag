@@ -287,3 +287,24 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   environment as the documented clean-room target; create it only with approval.
 - **Consequences:** Local runs are reproducible from the manifest even though the named
   environment is absent. A clean-room rerun must still use the documented environment file.
+
+---
+
+## D-018 - P0 golden harness check failed; P1 is blocked
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The first golden run collected 1,400/1,400 valid rows with 1,400 unique nonces
+  and the exact pilot corpus counts, but the J anchors were 15–21% low, the affine intercept
+  was 29.5% low, and the slope was 11.4% low. Block calibration stopped at `k=0` factor 0.732
+  when cold, and at `k=1` factor 1.676 after a block warm-up. The sweep idle CV was 46.4%,
+  measured after warm-up, and the GPU reached 90 °C / 900 MHz. The block factor is bimodal
+  with thermal state, not a stable correction.
+- **Decision:** Mark the run `invalid`, do not start P1, and do not widen the [0.8, 1.4]
+  block-factor range after seeing the outcome. Diagnose and pre-specify a measurement-protocol
+  amendment, then rerun P0 under a new `_r2` run ID. P0 remains a harness check with no
+  confirmatory claim.
+- **Consequences:** The first P0 run is failure evidence, not a result. The raw CSV stays
+  git-ignored; the analysis and this report are tracked. P1 GPU hours are held. The next run
+  must demonstrate stable idle before warm-up, a block factor inside the pre-set range, and
+  the J anchors before any P1 work.

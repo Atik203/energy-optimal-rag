@@ -12,6 +12,12 @@ answer** — and deciding whether the energy spent finding that depth is worth i
 contains no confirmatory results. The pilot evidence is reported below exactly as measured,
 including the claim that failed.
 
+**P0 harness status (2026-11-15): FAIL — P1 is blocked.** The first golden run collected
+1,400/1,400 valid rows and reproduced the exact corpus counts, but the J anchors and affine
+intercept/slope missed the pre-set tolerances, and block factors were outside [0.8, 1.4].
+The failure is an energy-calibration and thermal-state problem, not a row-collection problem.
+See [`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). P1 has not started.
+
 ---
 
 ## Status: what survived the pilot, and what did not

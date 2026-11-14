@@ -69,12 +69,17 @@ generations, on an RTX 3060 Laptop 6 GB with Ollama `qwen3.5:4b` (Q4) and BM25 t
 
 ### Phase detail
 
-**P0 — Scaffold and golden reproduction (week 1).** Build the repository, CI, environment
+**P0 - Scaffold and golden reproduction (week 1).** Build the repository, CI, environment
 lock, config schema, CLI validation, and the measurement harness. Re-run a 200-question
 SQuAD subset on the same reader and compare the energy curve to the pilot. The purpose is to
 prove the harness, not to produce new evidence. The repo has documented pilot J values only at
 `k = 1, 4, 32`; P0 therefore gates on those anchors and the affine fit, and reports E/A
 without a gate. If the anchors or fit differ by more than 10%, stop and diagnose before P1.
+
+**P0 status (2026-11-15): FAIL.** The first golden run collected 1,400 valid rows and the exact
+corpus counts, but the J anchors were 15-21% low and the block factors were outside
+[0.8, 1.4]. P1 is blocked pending a pre-specified measurement-protocol fix and an `_r2` run.
+See [`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md).
 
 **P1 — Powered SQuAD (weeks 2–3).** Freeze the preregistration before looking at the new
 accuracy data. Run `n = 1,000` at 7 depths. Primary test: 5 pp EM non-inferiority at the
