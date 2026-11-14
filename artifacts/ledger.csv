@@ -1,2 +1,6 @@
 artifact_id,run_id,kind,path,sha256,bytes,created_utc,license,notes
 A-0001,pilot,document,docs/PILOT_EVIDENCE.md,1465d8308a0a0ca2078fbe4bf063d608e80838eee86f12ab70c983bff712bcf7,5622,2026-11-11T12:05:06Z,CC-BY-4.0,"Pilot evidence transcription; raw CSVs not in repository"
+A-0002,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/estimates.csv,e647e19a5eef99209469bc4e1eb0932ebf640c8c5aad1ba2f0e74dcbf8d33ce3,605,2026-11-14T19:02:40Z,CC-BY-4.0,P0 sweep estimates; uncalibrated because block calibration failed
+A-0003,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/p0_check.json,f4df7b3a5fd5afac21eb69e93f13525288030849a7bf6a74176610701237aaf4,1376,2026-11-14T19:02:40Z,CC-BY-4.0,P0 anchor check; FAIL
+A-0004,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/report.md,622e12e7a476986b209499674aa7160772f9b446ad3dfe2cf7f7648f07afd213,515,2026-11-14T19:02:40Z,CC-BY-4.0,P0 analysis report; FAIL
+A-0005,golden_squad_qwen4b_p0,report,docs/P0_HARNESS_REPORT.md,6924d750ec9504b8b4b35e644d0a8c7dc465b934f19586f47e58f19d99cfb429,6434,2026-11-14T19:02:40Z,CC-BY-4.0,P0 harness failure report

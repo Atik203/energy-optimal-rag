@@ -1,0 +1,64 @@
+{
+  "passed": false,
+  "checks": [
+    {
+      "name": "J(1)",
+      "observed": 15.179890215,
+      "reference": 17.98,
+      "relative_error": 0.15573469327030035,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "J(4)",
+      "observed": 19.798958815000002,
+      "reference": 25.1,
+      "relative_error": 0.2111968599601593,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "J(32)",
+      "observed": 76.150403665,
+      "reference": 89.55,
+      "relative_error": 0.14963256655499718,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "fit.a",
+      "observed": 11.102327582424817,
+      "reference": 15.74,
+      "relative_error": 0.29464246617377277,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "fit.b",
+      "observed": 2.022495752587719,
+      "reference": 2.283,
+      "relative_error": 0.11410610924760445,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "fit.r2",
+      "observed": 0.9941264491139421,
+      "reference": 0.95,
+      "relative_error": null,
+      "tolerance": null,
+      "passed": true
+    }
+  ],
+  "fit": {
+    "a": 11.102327582424817,
+    "b": 2.022495752587719,
+    "r2": 0.9941264491139421,
+    "n": 7
+  },
+  "e_anchors": {
+    "1": 33.73308936666667,
+    "4": 39.205859039603965,
+    "32": 145.04838793333334
+  }
+}
