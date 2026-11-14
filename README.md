@@ -12,6 +12,15 @@ answer** — and deciding whether the energy spent finding that depth is worth i
 contains no confirmatory results. The pilot evidence is reported below exactly as measured,
 including the claim that failed.
 
+**P0 harness status (2026-11-15): FAIL - P1 is deferred.** The first golden run failed
+calibration. The clean `_r3` rerun then completed 1,400/1,400 valid rows with 0 invalid rows and
+a 1.12% idle CV, but its `k=0` block factor was **0.7944**, below the fixed 0.8 floor. No
+`blocks.json`, repeat CV, or calibrated J analysis was produced. The J table is uncalibrated,
+so the pilot comparison is not adjudicable as a clean energy test. This is an energy-calibration
+and thermal-state failure, not a row-collection failure. See
+[`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). `_r2` was aborted after 409 rows
+because it started from an uncommitted tree. P1 is deferred; no confirmatory run has started.
+
 ---
 
 ## Status: what survived the pilot, and what did not
@@ -122,7 +131,7 @@ P1: [`prereg/PREREGISTRATION.md`](prereg/PREREGISTRATION.md).
 ├─ tests/              smoke tests that run without numpy/pandas
 ├─ prereg/             preregistration, analysis plan, amendment log
 ├─ runs/               run registry and per-run raw outputs (raw outputs git-ignored)
-├─ analysis/           analysis outputs and notebooks (outputs git-ignored)
+├─ analysis/           derived reports; large figures are git-ignored
 ├─ artifacts/          energy ledger, claims-evidence map, checksummed artifacts
 ├─ paper/              manuscript workspace
 └─ docs/               implementation plan, protocol, measurement, data card, risks, runbook

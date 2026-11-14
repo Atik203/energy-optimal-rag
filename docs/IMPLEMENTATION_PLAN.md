@@ -2,7 +2,7 @@
 
 **Project:** Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation (G2)
 **Version:** 0.1.0 · 2026-11-09
-**Status:** post-pilot MARGINAL · scaffold
+**Status:** post-pilot MARGINAL · P0 harness failed (k=0 factor 0.7944); P1 deferred
 **Companion documents:** [`PROTOCOL.md`](PROTOCOL.md), [`MEASUREMENT.md`](MEASUREMENT.md),
 [`DATA_CARD.md`](DATA_CARD.md), [`RISKS.md`](RISKS.md), [`RUNBOOK.md`](RUNBOOK.md),
 [`../prereg/PREREGISTRATION.md`](../prereg/PREREGISTRATION.md)
@@ -44,16 +44,19 @@ nonce generation, and the wall-meter record. `stats/` holds the ratio estimator,
 test, curve models, policy scaffold, and multiplicity control.
 
 `configs/` is the single source of run parameters: `base.toml` (seed `20261115`, paths, reader,
-retriever, energy, statistics), `configs/runs/` (one file per experiment), `configs/grid/`
+retrieval, energy, statistics), `configs/runs/` (one file per experiment), `configs/grid/`
 (named depth grids), `configs/taxes/` (two causal conditions), and
-`configs/analysis/prereg.toml` (frozen margins and splits). `scripts/` is the numbered pipeline.
+`configs/analysis/prereg.toml` (frozen margins and splits). A run may name a grid with
+`grid_id`; the resolver applies base < run < grid and hashes the effective config. `scripts/`
+is the numbered pipeline.
 `prereg/` holds the preregistration (draft until the P1 freeze), analysis plan, and amendment
 log. `runs/` holds the registry and git-ignored raw runs. `artifacts/` holds the ledger and
 claims-evidence map. `paper/` and `docs/` are the writing surface.
 
 The tracked data surface is deliberately small: `data/manifest.json`, `data/README.md`,
-`runs/registry.csv`, `artifacts/ledger.csv`, and `artifacts/claims_evidence.csv`. Everything
-else under `data/`, `runs/<run_id>/`, and generated analysis output is git-ignored. Raw text is
+`data/splits/*.json` (IDs only), `runs/registry.csv`, `artifacts/ledger.csv`, and
+`artifacts/claims_evidence.csv`. Everything else under `data/`, `runs/<run_id>/`, and large
+generated figures is git-ignored; small tabular analysis reports may be tracked. Raw text is
 never committed.
 
 ## 3. Environment and harness reuse
@@ -78,7 +81,7 @@ Optional dependencies are imported lazily inside the functions that need them (`
 
 ## 4. Data preparation
 
-SQuAD v1.1 dev is primary: 10,570 questions, 20,958 unique dev contexts. The pilot truncated
+SQuAD v1.1 dev supplies 10,570 questions; the pilot corpus used 20,958 unique train+dev contexts. The pilot truncated
 contexts to 256 words and chunked them into 70-word passages (45,651 passages), and sampled 200
 questions stratified over the seven wh-types. The powered run uses **1,000** questions with the
 same corpus and chunking, drawn with seed `20261115`; the ID list is hashed into the manifest.
@@ -168,11 +171,15 @@ temperature, and SM clock recorded. The 100 ms cadence is a sampling label, not 
 claim: on this laptop the driver updates power coarsely, about 1 Hz. Absolute joules therefore
 rely on 20-query block calibration and the repeat CV.
 
-Each query is integrated by the trapezoidal rule over its HTTP call, then idle-subtracted using
-the 60 s pre-run baseline (15.56 W, CV 10.4%; post-run 17.63 W). Using the post-run value lowers
-every energy by ~4% almost uniformly and changes E ratios by under 1%. After the sweep, 20
-back-to-back queries per depth are integrated as a block and the per-query integrals are scaled
-to the block total. Pilot factors ranged from 1.041 to 1.188, largest at `k = 2`.
+Each query is integrated by the trapezoidal rule over its HTTP call plus the configured
+`post_query_tail_s` (0.3 s in the P0 clean-run protocol, D-019), then idle-subtracted using the
+pre-warm-up baseline. Using the pilot's post-run value instead lowers every energy by ~4% almost
+uniformly and changes E ratios by under 1%. After the sweep, 20 back-to-back queries per depth
+are integrated as a block. The gate is `factor_csv = J_block / sum(j_gpu_raw)` over the sweep
+rows; `factor_block = J_block / sum(block_windows)` and
+`consistency = factor_block / factor_csv` are recorded, and `factor_csv` must lie in
+[0.8, 1.4]. Pilot factors ranged from 1.041 to 1.188 under the pilot protocol; they are not
+the P0 gate.
 
 The 16k context-budget probe uses the same integration and block protocol. It records
 `prompt_tokens` and invalidates any row where `prompt_tokens + num_predict > num_ctx`. It also
@@ -315,7 +322,9 @@ The first 10 days: scaffold and CI; environment and config validation; data prep
 index; energy-harness validation; golden reproduction of the 200-question pilot curve; prereg
 freeze; power and sample-size lock; two halves of the P1 sweep; gate review. Acceptance checks
 are in [`../ROADMAP.md`](../ROADMAP.md) section 3. The golden reproduction must land within 10%
-of the pilot `E(k)` at every depth; otherwise P1 does not start.
+of the pilot `J(k)` anchors and affine fit; `E(k)` and `A(k)` are reported without a gate.
+Otherwise P1 does not start. **P0 ran on 2026-11-15 and failed block calibration at `k=0`
+(`factor_csv = 0.7944`); no P1 half was started and P1 is deferred (D-021).**
 
 A task is done when it has code, a test, a docs update, and a ledger entry where applicable. A
 result is not a result until it traces to `runs/<run_id>/raw.csv` and is mapped in

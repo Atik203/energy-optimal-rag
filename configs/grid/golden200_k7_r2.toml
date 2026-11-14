@@ -1,0 +1,19 @@
+# P0 golden harness check: 200 questions x the seven pilot depths.
+# This is a measurement-harness reproduction, not confirmatory evidence.
+schema_version = 1
+kind = "grid"
+grid_id = "golden200_k7_r2"
+k_grid = [0, 1, 2, 4, 8, 16, 32]
+n_questions = 200
+base_run = "golden_squad_qwen4b_p0_r2"
+phase = "P0"
+
+[analysis]
+primary_depth = 4
+reference_depth = 32
+primary_margin_pp = 5.0
+secondary_margin_pp = 2.0
+min_energy_savings_pct = 20.0
+
+[notes]
+purpose = "Golden reproduction of the pilot energy curve; no claim, no gate."

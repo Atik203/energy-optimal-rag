@@ -8,7 +8,9 @@
 **Version:** 0.1 — supervisor review draft
 **Repository:** https://github.com/Atik203/energy-optimal-rag
 **Package / environment:** `rag_energy` / `energy-optimal-rag`
-**Status:** Post-pilot, pre-confirmatory. This document requests approval to start P0 and P1. No confirmatory results exist.
+**Status:** Post-pilot, pre-confirmatory. This document requests approval to start P0 and P1.
+**Current status (2026-11-15):** P0 harness failed block calibration at `k=0`
+(`factor_csv = 0.7944`); P1 is deferred. No confirmatory results exist.
 
 ---
 
@@ -140,7 +142,7 @@ Savings at `k=4` vs `k=32`: `1-48.27/157.11=69.3%`. For 570 correct answers, `k=
 | Item | SQuAD v1.1 dev (primary) | HotpotQA distractor (stress) |
 |---|---|---|
 | Role | Closed-corpus extractive QA | Multi-hop/distractor stress |
-| Upstream | 10,570 questions; 20,958 dev contexts | 7,405 questions; 10 paragraphs each |
+| Upstream | 10,570 dev questions; 20,958 train+dev contexts | 7,405 questions; 10 paragraphs each |
 | Used | 1,000 primary; 500 (1.5B); 500 (Llama 3B, same IDs); 200 boundary/context | 500 |
 | Corpus | 20,958 contexts → 45,651 70-word passages | 2 gold + 8 distractors per question; no pooling |
 | Retriever / depths | BM25 top-32; `0,1,2,4,8,16,32` | BM25 top-10; `0,1,2,4,8,10` |
@@ -260,7 +262,7 @@ If G1/G2 pass, the paper reports a 5 pp static policy at `k=4` with ≥20% savin
 
 | Phase | Weeks | Goal | Exit gate |
 |---|---|---|---|
-| **P0** | 1 | Scaffold, CI, environment, manifest, golden reproduction | `E(k)` within 10%; K7; `validate` clean |
+| **P0** | 1 | Scaffold, CI, environment, manifest, golden reproduction | J anchors + affine fit within 10%; E/A reported; K7; `validate` clean |
 | **P1** | 2–3 | Powered SQuAD `n=1,000` × 7 | G1 or documented failure |
 | **P2** | 4–6 | 1.5B, Llama 3B exploratory, HotpotQA, boundary, 16k probe, taxes | G5; tax signs; exploratory arms reported |
 | **P3** | 7–10 | Policy 600/200/200 | G4 or negative |
@@ -326,7 +328,7 @@ The preregistration is frozen before P1 and tagged `prereg-freeze-v1`. Deviation
 
 **Resources.** Three to four people for 20 weeks; 15–20 GPU-hours on the local 3060; a $47 local cap ($2 electricity, $25 wall meter, $10 USB backup, $10 contingency); supervisor sign-off on the frozen prereg; access to the Ollama store, the cached 1.5B reader, and the optional university H200 accuracy-only check.
 
-**Decision.** Approve P0/P1 now. The first 10 days produce a working harness, reproducible pilot curve, frozen prereg, power memo, and the first half of the powered run. If the golden reproduction differs by more than 10% at any depth, P1 stops until the harness is fixed.
+**Decision.** Approve P0/P1 now. The first 10 days produce a working harness, reproducible pilot curve, frozen prereg, power memo, and the first half of the powered run. If the golden `J(1)`, `J(4)`, and `J(32)` anchors or the affine `a`/`b` differ by more than 10%, P1 stops until the harness is fixed; `E(k)` and `A(k)` are reported without a gate (D-014).
 
 ---
 
@@ -403,7 +405,7 @@ Pilot: 200 SQuAD v1.1 dev questions, `k∈{0,1,2,4,8,16,32}`, 1,400 generations,
 | 2 | Environment, CLI, config schema; all configs parse, `validate` exits 0 |
 | 3 | SQuAD prep, 70-word chunks, BM25; 1,000 questions, ≥45k passages, recall@32 reproducible |
 | 4 | Energy harness: NVML, idle, blocks, nonce; idle CV <20%, factors recorded, nonce forces prefill |
-| 5 | Golden reproduction 200×7; `E(k)` within 10%, repeat CV <20% |
+| 5 | Golden reproduction 200x7; J anchors + fit within 10%, E/A reported, repeat CV <20% |
 | 6 | Freeze prereg/configs; hash recorded, no outcome peeking |
 | 7 | Power/sample lock; `n=1,000` justified, 2 pp estimation-only |
 | 8 | P1 sweep, first half; no sampler errors, thermal log complete |

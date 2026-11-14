@@ -585,9 +585,9 @@ function SetupSlide({ index, total }: SlideProps) {
           <SlideBullets
             items={[
               "NVML samples every 100 ms; on this laptop, power readings update about once a second.",
-              "60 s idle baseline; 20-question blocks.",
+              "Idle before warm-up (CV <= 0.20); 20-question blocks; 0.3 s post-query tail.",
               "A unique code in each request helps prevent cache reuse.",
-              "Log temperature and clock; wall meter checks a 30-query subset.",
+              "Log temperature and clock; wall-meter cross-check waived for P0/P1 (D-016).",
               "We repeat a block to check noise.",
             ]}
             size="2.15cqh"
@@ -606,7 +606,7 @@ function SetupSlide({ index, total }: SlideProps) {
         </SlideCard>
       </div>
       <SlideCallout tone="amber">
-        15–20 local GPU hours · RTX 3060 6 GB · optional H200 64k: accuracy-only, no energy claim.
+        15–20 local GPU hours · RTX 3060 6 GB · optional H200 64k: accuracy-only, no energy claim. P0 harness failed block k=0 0.7944; P1 deferred.
       </SlideCallout>
     </SlideFrame>
   );

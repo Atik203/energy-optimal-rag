@@ -32,8 +32,9 @@ export const project = {
   siteName: "Energy Observatory",
   version: "0.1.0",
   status: "post-pilot MARGINAL",
-  statusDetail: "Public scaffold. No confirmatory results. Preregistration not frozen.",
-  updated: "2026-11-14",
+  statusDetail:
+    "Public scaffold. P0 harness failed block calibration on the clean _r3 run; P1 deferred. No confirmatory results. Preregistration not frozen.",
+  updated: "2026-11-15",
   repo: "https://github.com/Atik203/energy-optimal-rag",
   author: "Atikur Rahaman and contributors",
   citationVersion: "0.1.0",
@@ -42,6 +43,16 @@ export const project = {
   licenseDocs: "CC BY 4.0",
   licenseData: "CC BY-SA 4.0",
 } as const;
+
+export type P0Status = "running" | "pass" | "fail";
+
+export const p0 = {
+  runId: "golden_squad_qwen4b_p0_r3",
+  status: "fail" as P0Status,
+  label: "P0 failed",
+  note: "Harness check only; the clean sweep was valid but k=0 block factor was 0.7944.",
+  backup: "local-only; external backup deferred (D-020)",
+};
 
 /* Course and team — EEE 4261 Green Computing, Section C. Sadman Ifaz is
    from Section E; the remaining team is Section C. */
@@ -563,7 +574,8 @@ export const gates = {
       id: "K7",
       criterion: "Repeat CV > 20% or MDE > observed effect",
       pilot: "PASS (3.80% median)",
-      action: "Fix measurement (more repeats, wall meter); do not interpret the curve.",
+      action:
+      "Fix measurement (more repeats); the wall-meter cross-check is waived for P0/P1 (D-016). Do not interpret the curve.",
       status: "pass" as const,
     },
   ],
@@ -606,20 +618,23 @@ export const phases: Array<{
   goal: string;
   outputs: string;
   exit: string;
+  status?: "running" | "pass" | "fail" | "deferred" | "blocked";
 }> = [
   {
     id: "P0",
     weeks: "Week 1",
+    status: "fail",
     name: "Scaffold and golden reproduction",
     goal: "Prove the harness before producing new evidence.",
     outputs:
       "Repository, CI, environment lock, config schema, CLI validation, data manifest, 200-question golden reproduction, measurement harness checks.",
     exit:
-      "Golden E(k) within 10% of the pilot at each depth; K7 passes; validate is clean.",
+      "Golden J(1), J(4), and J(32) anchors and affine a/b within 10% (R\u00b2 \u2265 0.95); E(k) and A(k) reported without a gate; K7 passes; validate is clean.",
   },
   {
     id: "P1",
     weeks: "Weeks 2\u20133",
+    status: "deferred",
     name: "Powered SQuAD rerun",
     goal: "Decide whether the paper has a static policy result.",
     outputs:
@@ -681,7 +696,7 @@ export const budget = {
   items: [
     { item: "GPU compute", cost: "$0", note: "Local RTX 3060 Laptop 6 GB; optional H200 check is accuracy-only." },
     { item: "Electricity", cost: "~$2", note: "15\u201320 GPU-hours at ~100 W plus host overhead; indicative, not metered billing." },
-    { item: "Plug-in wall meter", cost: "$25", note: "Cross-check on a 30-query subset per condition." },
+    { item: "Plug-in wall meter", cost: "$25 (unspent)", note: "Reserved for later; waived for P0/P1 (D-016)." },
     { item: "USB backup drive", cost: "$10", note: "Cold backup of raw runs, manifest, and checksums." },
     { item: "Contingency", cost: "$10", note: "Replacement fan/thermal paste or a spare SSD." },
     { item: "Total", cost: "\u2264 $47", note: "Hard cap. No rental, no paid API, no cloud inference." },
@@ -958,6 +973,70 @@ export const decisions = [
       "The boundary grid uses 8k so k=64 is not truncated. A separate Qwen3.5-4B 16k context-budget probe has a 4k control and is diagnostic, not a new k*. H200 is accuracy-only with no energy claim.",
     status: "accepted",
   },
+  {
+    id: "D-014",
+    date: "2026-11-15",
+    title: "P0 gates on J anchors and the affine fit",
+    summary:
+      "P0 uses J(1), J(4), J(32) and the affine a/b fit within 10%; E/A are reported without a gate because only three pilot anchors exist and a fresh draw shifts accuracy.",
+    status: "accepted",
+  },
+  {
+    id: "D-015",
+    date: "2026-11-15",
+    title: "Sampling frame and tracked SQuAD ID splits",
+    summary:
+      "Train+dev corpus; 200 P0 IDs disjoint from 1,000 P1; 500 replication nested; 200 boundary/context disjoint from replication; 150 tax. IDs are tracked without text.",
+    status: "accepted",
+  },
+  {
+    id: "D-016",
+    date: "2026-11-15",
+    title: "Wall-meter cross-check waived for P0/P1",
+    summary:
+      "NVML with 20-query blocks and repeat CV is the calibration. A cheap 0.01 kWh plug meter cannot resolve a 30-query subset; report the waiver, never a whole-system factor.",
+    status: "accepted",
+  },
+  {
+    id: "D-017",
+    date: "2026-11-15",
+    title: "Local harness uses the existing Python 3.12 Anaconda base",
+    summary:
+      "The named env is absent; the base is Python 3.12 with the editable package. Record sys.executable in the run manifest; the named env remains the clean-room target.",
+    status: "accepted",
+  },
+  {
+    id: "D-018",
+    date: "2026-11-15",
+    title: "P0 golden harness check failed; P1 is blocked",
+    summary:
+      "The first run collected 1,400 valid rows but block factors were 0.732 cold / 1.676 warm and idle CV was 46.4%. The J table is uncalibrated and not adjudicable; do not widen [0.8, 1.4]. Superseded by D-021: P1 is deferred.",
+    status: "accepted",
+  },
+  {
+    id: "D-019",
+    date: "2026-11-15",
+    title: "P0 measurement protocol revision for the clean _r3 rerun",
+    summary:
+      "Idle before warm-up with CV \u2264 0.20; 0.3 s tail in sweep and block windows; gate factor_csv 0.8\u20131.4; record factor_block/consistency. Dry run passed 0.834\u20131.380; _r3 is the clean run.",
+    status: "accepted",
+  },
+  {
+    id: "D-020",
+    date: "2026-11-15",
+    title: "External P0 backup deferred; raw data is local-only",
+    summary:
+      "The raw CSV, blocks, repeat, and manifest are git-ignored and exist only on E:. Keep them intact; revisit the external backup before P1 or any machine change.",
+    status: "accepted",
+  },
+  {
+    id: "D-021",
+    date: "2026-11-15",
+    title: "P0 _r3 failed block calibration; P1 is deferred",
+    summary:
+      "The clean _r3 sweep had 1,400/1,400 valid rows and idle CV 1.12%, but k=0 factor_csv was 0.7944, below the fixed 0.8 floor. No blocks, repeat, or calibrated J analysis exists; P1 is deferred.",
+    status: "accepted",
+  },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -1054,9 +1133,10 @@ export const measurement = {
     caveat:
       "The 100 ms cadence is a sampling label. On the pilot laptop the driver updates power.draw coarsely, approximately once per second. Treat per-query energy as a paired observation, not a 100 ms precision measurement.",
   },
-  integration: "J_gpu_raw(q) = max(0, trapz(power, time) \u2212 idle_power_w \u00d7 duration_s)",
+  integration:
+    "J_gpu_raw(q) = max(0, trapz(power, [t_call, t_end + 0.3 s]) \u2212 idle_power_w \u00d7 duration_s)",
   blockFormula:
-    "factor_k = J_block_k / \u03a3_i J_gpu_raw(q_i, k)\nJ_gpu_calibrated(q, k) = factor_k \u00d7 J_gpu_raw(q, k)",
+    "factor_csv = J_block / \u03a3_i J_gpu_raw(q_i, k)   (gate 0.8\u20131.4)\nfactor_block = J_block / \u03a3_i W_block_i\nconsistency = factor_block / factor_csv\nJ_gpu_calibrated(q, k) = factor_csv \u00d7 J_gpu_raw(q, k)",
   controls: [
     {
       title: "Idle subtraction",
@@ -1084,9 +1164,21 @@ export const measurement = {
       detail: "Three blocks of 20 identical queries at k = 8; max CV 9.24%.",
     },
     {
+      title: "Post-query tail",
+      value: "0.3 s",
+      detail:
+        "Added to sweep and block windows. 0.1 s failed at k = 4 (1.476); 0.2 s at k = 16 (1.428); 0.3 s passed all seven depths (0.834\u20131.380) (D-019).",
+    },
+    {
+      title: "Idle-CV gate",
+      value: "CV \u2264 0.20",
+      detail: "Idle measured before warm-up; the run aborts above 0.20 CV (D-019).",
+    },
+    {
       title: "Wall meter",
-      value: "30-query subset",
-      detail: "Whole-system cross-check. A factor far from 1 is reported, not hidden.",
+      value: "waived",
+      detail:
+        "Whole-system cross-check waived for P0/P1 (D-016). If borrowed later, report the factor descriptively, never per-query.",
     },
   ],
   derived: [
@@ -1100,7 +1192,7 @@ export const measurement = {
     "N* = C_cert / [A(k*)(E(k\u2080) \u2212 E(k*))]",
   ],
   checklist:
-    "Every energy table states the sensor, cadence, idle baseline and its CV, block factors, repeat CV, CPU proxy watts, wall-meter factor, GPU model, driver, power mode, and reader/model digest.",
+    "Every energy table states the sensor, cadence, idle baseline and its CV, block factors and consistency, repeat CV, CPU proxy watts, wall-meter waiver/factor, post-query tail, GPU model, driver, power mode, and reader/model digest.",
 } as const;
 
 /* ------------------------------------------------------------------ */

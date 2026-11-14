@@ -46,6 +46,27 @@ price of static depth, and the cost of certifying `k*`.
 - The 78.8% oracle figure is labeled "upper bound" wherever it appears.
 - The manuscript is not submitted until the clean-room reproduction matches.
 
+## P0 evidence (harness only)
+
+P0 is not a paper result. Its only paper use is the methods/reproducibility section. The
+preserved map is:
+
+| Object | Path | Git status |
+|---|---|---|
+| Raw per-query sweep | `runs/golden_squad_qwen4b_p0_r3/raw.csv` | ignored; local-only (D-020); 1,400 rows present |
+| Block factors | `runs/golden_squad_qwen4b_p0_r3/blocks.json` | **not produced** - `k=0` block factor 0.7944 failed the 0.8 floor |
+| Repeat CV | `runs/golden_squad_qwen4b_p0_r3/repeat.json` | **not produced** - calibration stopped first |
+| Run manifest | `runs/golden_squad_qwen4b_p0_r3/manifest.json` | ignored; local-only (D-020); present |
+| Estimates / P0 check | `analysis/golden_squad_qwen4b_p0_r3/` | **not produced** - no calibrated analysis |
+| Registry / ledger | `runs/registry.csv`, `artifacts/ledger.csv` | tracked; `_r3` row is `invalid` |
+| Failure evidence | `docs/P0_HARNESS_REPORT.md`, `analysis/p0_calibration_diagnostic/` | tracked |
+| First-run failure evidence | `runs/golden_squad_qwen4b_p0/` | ignored; local-only (D-020); `_p0` row `invalid` |
+
+No P0 row is added to `artifacts/claims_evidence.csv`: P0 is a harness check, not a claim.
+**P0 final status: FAIL** - the clean `_r3` sweep was valid, but block calibration failed at
+`k=0` (`factor_csv = 0.7944`). No blocks, repeat, or calibrated J analysis exists. The P1 paper
+tables will be generated only after the prereg freeze and the powered run; P1 is deferred.
+
 ## Files (planned)
 
 ```

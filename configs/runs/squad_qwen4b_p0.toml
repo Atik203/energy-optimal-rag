@@ -1,0 +1,54 @@
+# P0 golden harness check: 200 questions x 7 depths.
+# Not confirmatory evidence and not part of the P1 sample.
+schema_version = 1
+kind = "run"
+run_id = "golden_squad_qwen4b_p0"
+dataset = "squad"
+dataset_version = "v1.1"
+split = "dev"
+n_questions = 200
+k_grid = [0, 1, 2, 4, 8, 16, 32]
+seed = 20261115
+phase = "P0"
+id_split = "p0_golden"
+grid_id = "golden200_k7"
+
+[reader]
+backend = "ollama"
+model = "qwen3.5:4b"
+quantization = "Q4"
+num_ctx = 4096
+num_predict = 24
+temperature = 0.0
+top_k = 1
+seed = 42
+think = false
+
+[retrieval]
+backend = "bm25"
+top_k = 32
+chunking = "word"
+passage_words = 70
+tokenizer = "lowercase_alnum"
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 20
+warmup_queries = 20
+nonce_hex_chars = 10
+cpu_retrieval_proxy_watts = 20.0
+
+[scoring]
+primary = "normalized_em"
+secondary = ["lenient_span", "token_f1_ge_0.5"]
+
+[output]
+dir = "runs"
+raw_csv = "raw.csv"
+blocks_json = "blocks.json"
+
+[notes]
+purpose = "Golden reproduction of the pilot energy curve; harness check only."
+claim_status = "harness-check-not-evidence"

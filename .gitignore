@@ -86,10 +86,10 @@ data/*.zip
 data/*.gz
 data/*.tar
 data/*.7z
-squad/
-squad*/
-hotpot/
-hotpot*/
+/squad/
+/squad*/
+/hotpot/
+/hotpot*/
 !data/README.md
 
 # =============================================================================

@@ -1,0 +1,8 @@
+{
+  "run_id": "golden_squad_qwen4b_p0",
+  "calibrated": false,
+  "config_sha256": "cb3226ff24c593cd9b4217b018b8a6c189ac842ff06d476883bf47e4155ceb42",
+  "prereg_sha256": "",
+  "git_commit": "7690bff",
+  "seed": 20261115
+}

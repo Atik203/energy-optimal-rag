@@ -10,6 +10,7 @@ n_questions = 500
 k_grid = [0, 1, 2, 4, 8, 10]
 seed = 20261115
 phase = "P2"
+id_split = "hotpot"
 
 [reader]
 backend = "ollama"
