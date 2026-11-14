@@ -597,14 +597,21 @@ def run_block_calibration(
 
     blocks: list[dict[str, Any]] = []
     factors: dict[int, float] = {}
+    first_qids = [str(row.qid) for row in split.questions.head(block_size).itertuples(index=False)]
+    if len(first_qids) < block_size:
+        raise ValueError(f"block needs {block_size} question IDs, only {len(first_qids)} available")
+    valid_rows = {
+        (str(row["question_id"]), int(row["k"])): row
+        for row in rows
+        if row.get("valid", "1") == "1"
+    }
     for depth in k_grid:
-        depth_rows = [
-            row for row in rows if int(row["k"]) == depth and row.get("valid", "1") == "1"
-        ][:block_size]
-        if len(depth_rows) < block_size:
-            raise ValueError(
-                f"k={depth}: need {block_size} valid raw rows, found {len(depth_rows)}"
-            )
+        depth_rows = []
+        for qid in first_qids:
+            row = valid_rows.get((qid, depth))
+            if row is None:
+                raise ValueError(f"k={depth}: no valid raw row for question {qid}")
+            depth_rows.append(row)
         raw_sum_csv = sum(float(row["j_gpu_raw"]) for row in depth_rows)
         if raw_sum_csv <= 0:
             raise ValueError(f"k={depth}: sweep raw energy sum must be positive")
