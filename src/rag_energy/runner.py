@@ -16,8 +16,10 @@ import contextlib
 import csv
 import hashlib
 import json
+import math
 import platform
 import random
+import statistics
 import subprocess
 import sys
 import time
@@ -459,6 +461,261 @@ def run_depth_sweep(
     return raw_path
 
 
-def run_block_calibration(config_path: Path) -> Path:
-    """Run 20-query block calibration and return ``blocks.json``. Implemented in P0."""
-    raise NotImplementedError("run_block_calibration is implemented in P0.")
+def _read_raw_rows(raw_path: Path) -> list[dict[str, str]]:
+    if not raw_path.is_file():
+        raise FileNotFoundError(f"raw CSV not found: {raw_path}")
+    with raw_path.open("r", encoding="utf-8", newline="") as handle:
+        return [dict(row) for row in csv.DictReader(handle)]
+
+
+def _apply_block_factors(raw_path: Path, factors: dict[int, float]) -> None:
+    rows = _read_raw_rows(raw_path)
+    for row in rows:
+        factor = factors[int(row["k"])]
+        calibrated = float(row["j_gpu_raw"]) * factor
+        row["j_gpu_calibrated"] = round(calibrated, 6)
+        row["j_total"] = round(calibrated + float(row["j_retrieval_proxy"]), 6)
+    temp = raw_path.with_name(raw_path.name + ".tmp")
+    with temp.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=RAW_FIELDS, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+        handle.flush()
+    temp.replace(raw_path)
+
+
+def run_block_calibration(
+    config_path: Path,
+    *,
+    root: Path | None = None,
+    processed_dir: Path | None = None,
+    out_root: Path | None = None,
+    reader: Reader | None = None,
+    sampler_factory: Callable[[int], Any] | None = None,
+    idle_power_w: float | None = None,
+    cooldown_s: float = 0.0,
+) -> Path:
+    """Run back-to-back block calibration and write ``blocks.json``."""
+    root = (root or REPO_ROOT).resolve()
+    spec = load_run_spec(config_path, root=root)
+    config = spec.config
+    processed_dir = Path(processed_dir or root / "data" / "processed")
+    out_root = Path(out_root or root / "runs")
+    run_dir = out_root / spec.run_id
+    raw_path = run_dir / str(config.get("output", {}).get("raw_csv", "raw.csv"))
+    rows = _read_raw_rows(raw_path)
+    split_name = str(config.get("id_split", ""))
+    split = load_squad_split(processed_dir, split_name)
+    k_grid = [int(k) for k in config["k_grid"]]
+    block_size = int(config.get("energy", {}).get("block_size", 20))
+    interval_ms = int(config.get("energy", {}).get("sample_interval_ms", 100))
+    nonce_hex_chars = int(config.get("energy", {}).get("nonce_hex_chars", 10))
+    sampler_factory = sampler_factory or NvmlSampler
+    reader = reader or _default_reader(config)
+
+    if idle_power_w is None:
+        idle_seconds = float(config.get("energy", {}).get("idle_baseline_s", 60))
+        idle_stats = _measure_idle(sampler_factory, interval_ms, idle_seconds)
+        idle_power_w = idle_stats.mean_w
+        idle_record = {
+            "mean_w": round(idle_stats.mean_w, 6),
+            "sd_w": round(idle_stats.sd_w, 6),
+            "cv": round(idle_stats.cv, 6),
+            "n": idle_stats.n,
+        }
+    else:
+        idle_record = {"mean_w": float(idle_power_w), "sd_w": None, "cv": None, "n": 0}
+
+    questions = split.questions.set_index("qid")["question"].to_dict()
+    pairs = list(zip(split.corpus["passage_id"], split.corpus["text"], strict=True))
+    index = build_index(pairs)
+    blocks: list[dict[str, Any]] = []
+    factors: dict[int, float] = {}
+    for depth in k_grid:
+        depth_rows = [
+            row for row in rows if int(row["k"]) == depth and row.get("valid", "1") == "1"
+        ][:block_size]
+        if len(depth_rows) < block_size:
+            raise ValueError(
+                f"k={depth}: need {block_size} valid raw rows, found {len(depth_rows)}"
+            )
+        raw_sum = sum(float(row["j_gpu_raw"]) for row in depth_rows)
+        if raw_sum <= 0:
+            raise ValueError(f"k={depth}: raw per-query energy sum must be positive")
+        if cooldown_s > 0:
+            time.sleep(cooldown_s)
+
+        sampler = sampler_factory(interval_ms)
+        sampler.start()
+        started = _utc_now()
+        try:
+            for row in depth_rows:
+                qid = row["question_id"]
+                retrieved = index.search(str(questions[qid]), depth)
+                result = reader.generate(
+                    str(questions[qid]),
+                    [passage.text for passage in retrieved],
+                    make_nonce(nonce_hex_chars),
+                )
+                if result.load_s is not None and result.load_s > 1.0:
+                    raise RuntimeError(f"k={depth}: model reloaded inside the block")
+        finally:
+            samples = sampler.stop()
+        finished = _utc_now()
+        block_energy, average_w, duration = _integrate(samples, idle_power_w)
+        factor = block_energy / raw_sum
+        if not 0.8 <= factor <= 1.4:
+            raise ValueError(
+                f"k={depth}: block factor {factor:.4f} outside [0.8, 1.4]; "
+                "stop and diagnose the sensor window"
+            )
+        factors[depth] = factor
+        blocks.append(
+            {
+                "k": depth,
+                "n_queries": len(depth_rows),
+                "raw_sum_j": round(raw_sum, 6),
+                "block_energy_j": round(block_energy, 6),
+                "block_duration_s": round(duration, 6),
+                "power_mean_w": round(average_w, 3),
+                "factor": round(factor, 6),
+                "started_utc": started,
+                "finished_utc": finished,
+            }
+        )
+
+    _apply_block_factors(raw_path, factors)
+    payload = {
+        "run_id": spec.run_id,
+        "created_utc": _utc_now(),
+        "block_size": block_size,
+        "idle_power_w": round(float(idle_power_w), 6),
+        "idle": idle_record,
+        "depths": blocks,
+    }
+    blocks_path = run_dir / str(config.get("output", {}).get("blocks_json", "blocks.json"))
+    _write_json_atomic(blocks_path, payload)
+    return blocks_path
+
+
+def _repeat_threshold(root: Path) -> float:
+    path = root / "configs" / "analysis" / "prereg.toml"
+    if path.is_file():
+        try:
+            config = load_toml(path)
+        except Exception:
+            config = {}
+        value = config.get("gates", {}).get("k7_max_cv", 0.20)
+        if isinstance(value, (int, float)):
+            return float(value)
+    return 0.20
+
+
+def run_repeat_cv(
+    config_path: Path,
+    *,
+    root: Path | None = None,
+    processed_dir: Path | None = None,
+    out_root: Path | None = None,
+    reader: Reader | None = None,
+    sampler_factory: Callable[[int], Any] | None = None,
+    idle_power_w: float | None = None,
+    cooldown_s: float = 0.0,
+) -> Path:
+    """Run the 3x20 repeat block at k=8 and write ``repeat.json``."""
+    root = (root or REPO_ROOT).resolve()
+    spec = load_run_spec(config_path, root=root)
+    config = spec.config
+    processed_dir = Path(processed_dir or root / "data" / "processed")
+    out_root = Path(out_root or root / "runs")
+    run_dir = out_root / spec.run_id
+    split_name = str(config.get("id_split", ""))
+    split = load_squad_split(processed_dir, split_name)
+    measurement = config.get("measurement", {})
+    n_blocks = int(measurement.get("repeat_blocks", 3))
+    n_queries = int(measurement.get("repeat_queries_per_block", 20))
+    depth = int(measurement.get("repeat_depth", 8))
+    k_grid = [int(k) for k in config["k_grid"]]
+    if depth not in k_grid:
+        raise ValueError(f"repeat depth {depth} is not in k_grid")
+    if n_blocks <= 0 or n_queries <= 0:
+        raise ValueError("repeat block counts must be positive")
+    if n_queries > len(split.questions):
+        raise ValueError(
+            f"repeat block needs {n_queries} questions, only {len(split.questions)} available"
+        )
+    interval_ms = int(config.get("energy", {}).get("sample_interval_ms", 100))
+    nonce_hex_chars = int(config.get("energy", {}).get("nonce_hex_chars", 10))
+    sampler_factory = sampler_factory or NvmlSampler
+    reader = reader or _default_reader(config)
+    if idle_power_w is None:
+        idle_seconds = float(config.get("energy", {}).get("idle_baseline_s", 60))
+        idle_power_w = _measure_idle(sampler_factory, interval_ms, idle_seconds).mean_w
+
+    pairs = list(zip(split.corpus["passage_id"], split.corpus["text"], strict=True))
+    index = build_index(pairs)
+    questions = split.questions.head(n_queries)
+    per_query: dict[str, list[float]] = {
+        str(row.qid): [] for row in questions.itertuples(index=False)
+    }
+    for block in range(n_blocks):
+        for row in questions.itertuples(index=False):
+            qid = str(row.qid)
+            question = str(row.question)
+            retrieved = index.search(question, depth)
+            sampler = sampler_factory(interval_ms)
+            sampler.start()
+            try:
+                result = reader.generate(
+                    question,
+                    [passage.text for passage in retrieved],
+                    make_nonce(nonce_hex_chars),
+                )
+                if result.load_s is not None and result.load_s > 1.0:
+                    raise RuntimeError("model reloaded inside the repeat block")
+            finally:
+                samples = sampler.stop()
+            raw_j, _average, _duration = _integrate(samples, idle_power_w)
+            per_query[qid].append(raw_j)
+        if cooldown_s > 0 and block < n_blocks - 1:
+            time.sleep(cooldown_s)
+
+    records: list[dict[str, Any]] = []
+    cvs: list[float] = []
+    for qid, values in per_query.items():
+        mean = sum(values) / len(values)
+        if len(values) > 1 and mean > 0:
+            variance = sum((value - mean) ** 2 for value in values) / (len(values) - 1)
+            sd = math.sqrt(variance)
+            cv = sd / mean
+        else:
+            sd = 0.0
+            cv = 0.0 if mean > 0 else float("inf")
+        cvs.append(cv)
+        records.append(
+            {
+                "question_id": qid,
+                "mean_j": round(mean, 6),
+                "sd_j": round(sd, 6),
+                "cv": round(cv, 6) if math.isfinite(cv) else None,
+            }
+        )
+    cv_median = statistics.median(cvs)
+    cv_max = max(cvs)
+    threshold = _repeat_threshold(root)
+    payload = {
+        "run_id": spec.run_id,
+        "created_utc": _utc_now(),
+        "k": depth,
+        "n_blocks": n_blocks,
+        "queries_per_block": n_queries,
+        "cv_median": round(cv_median, 6),
+        "cv_max": round(cv_max, 6) if math.isfinite(cv_max) else None,
+        "mde_approx": round(2 * cv_median, 6) if math.isfinite(cv_median) else None,
+        "threshold": threshold,
+        "passed": bool(math.isfinite(cv_max) and cv_max <= threshold),
+        "per_query": records,
+    }
+    repeat_path = run_dir / "repeat.json"
+    _write_json_atomic(repeat_path, payload)
+    return repeat_path
