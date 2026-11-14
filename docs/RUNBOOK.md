@@ -79,7 +79,7 @@ other job is using the GPU.
 ## 4. Run a sweep (P0)
 
 ```powershell
-python scripts\02_run_sweep.py --config configs\runs\squad_qwen4b_p0.toml
+python scripts\02_run_sweep.py --config configs\runs\squad_qwen4b_p0_r3.toml
 ```
 
 Before the run, confirm:
@@ -88,15 +88,15 @@ Before the run, confirm:
 - The nonce is enabled in the config (`nonce_hex_chars = 10`).
 - The idle baseline is 60 s and the block size is 20.
 
-Planned output: `runs\golden_squad_qwen4b_p0\raw.csv` plus `blocks.json`. The run directory is
+Planned output: `runs\golden_squad_qwen4b_p0_r3\raw.csv` plus `blocks.json`. The run directory is
 git-ignored; the registry row is committed.
 
 Register the run before starting it:
 
 ```powershell
-$cfg = (python -c "from pathlib import Path; from rag_energy.config import resolve_run_config; print(resolve_run_config(Path('configs/runs/squad_qwen4b_p0.toml')).config_sha256)").Trim()
+$cfg = (python -c "from pathlib import Path; from rag_energy.config import resolve_run_config; print(resolve_run_config(Path('configs/runs/squad_qwen4b_p0_r3.toml')).config_sha256)").Trim()
 $ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
-$row = "golden_squad_qwen4b_p0,$ts,P0,squad,qwen3.5:4b,bm25,0|1|2|4|8|16|32,200,20261115,nvml,planned,$(git rev-parse --short HEAD),configs/runs/squad_qwen4b_p0.toml,$cfg,,TBD,runs/golden_squad_qwen4b_p0/raw.csv,golden harness check"
+$row = "golden_squad_qwen4b_p0_r3,$ts,P0,squad,qwen3.5:4b,bm25,0|1|2|4|8|16|32,200,20261115,nvml,planned,$(git rev-parse --short HEAD),configs/runs/squad_qwen4b_p0_r3.toml,$cfg,,TBD,runs/golden_squad_qwen4b_p0_r3/raw.csv,clean P0 harness rerun"
 Add-Content -Path runs\registry.csv -Value $row -Encoding utf8NoBOM
 ```
 
@@ -106,7 +106,7 @@ the run, update `status` to `completed` and fill `model_digest` from the run man
 ## 5. Block calibration (P0)
 
 ```powershell
-python scripts\04_run_blocks.py --config configs\runs\squad_qwen4b_p0.toml
+python scripts\04_run_blocks.py --config configs\runs\squad_qwen4b_p0_r3.toml --cooldown 0
 ```
 
 Expected: `runs\<run_id>\blocks.json` with one factor per depth, and rewritten
@@ -116,7 +116,7 @@ factor outside [0.8, 1.4] means the sensor window is unreliable; stop and diagno
 Repeat the noise block at `k = 8`:
 
 ```powershell
-python scripts\04b_repeat_cv.py --config configs\runs\squad_qwen4b_p0.toml --cooldown 120
+python scripts\04b_repeat_cv.py --config configs\runs\squad_qwen4b_p0_r3.toml --cooldown 120
 ```
 
 Expected: `runs\<run_id>\repeat.json` with per-query CV, median/max CV, and the K7 pass/fail.
@@ -134,11 +134,12 @@ move it down. If either sign is wrong, record it as a falsification, not as a nu
 ## 7. Analysis (P0/P1)
 
 ```powershell
-python scripts\05_analyze.py --run-id golden_squad_qwen4b_p0
+python scripts\05_analyze.py --run-id golden_squad_qwen4b_p0   # failed first run
+python scripts\05_analyze.py --run-id golden_squad_qwen4b_p0_r3
 python scripts\05_analyze.py --run-id squad_qwen4b_p1
 ```
 
-P0 writes `analysis\golden_squad_qwen4b_p0\`: `estimates.csv`, `p0_check.json`, and
+P0 writes `analysis\golden_squad_qwen4b_p0_r3\`: `estimates.csv`, `p0_check.json`, and
 `report.md`. P1 adds the planned `bootstrap.json`, `identity.csv`, `noninferiority.json`, and
 `certification.json` outputs under `analysis\squad_qwen4b_p1\`.
 

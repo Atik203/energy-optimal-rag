@@ -29,6 +29,7 @@ def _rows() -> list[dict[str, str]]:
                     "valid": "1",
                     "correct_em": "1" if index < correct else "0",
                     "j_total": "10" if k == 1 else "20",
+                    "j_gpu_raw": "8" if k == 1 else "16",
                     "j_gpu_calibrated": "8" if k == 1 else "16",
                     "j_retrieval_proxy": "2" if k == 1 else "4",
                     "invalid_reason": "",
@@ -40,6 +41,7 @@ def _rows() -> list[dict[str, str]]:
             "valid": "0",
             "correct_em": "0",
             "j_total": "0",
+            "j_gpu_raw": "0",
             "j_gpu_calibrated": "0",
             "j_retrieval_proxy": "0",
             "invalid_reason": "reader_error",
@@ -143,11 +145,17 @@ def test_write_analysis_writes_estimates_check_and_report(tmp_path: Path) -> Non
 
     assert (out / "estimates.csv").is_file()
     assert (out / "p0_check.json").is_file()
+    assert (out / "metadata.json").is_file()
     assert (out / "report.md").is_file()
+    metadata = json.loads((out / "metadata.json").read_text(encoding="utf-8"))
+    assert metadata["run_id"] == "test_run"
+    assert metadata["calibrated"] is False
     estimates = list(csv.DictReader((out / "estimates.csv").open(encoding="utf-8")))
     assert {row["k"] for row in estimates} == {"1", "4"}
     check = json.loads((out / "p0_check.json").read_text(encoding="utf-8"))
     assert "passed" in check
+    assert check["calibrated"] is False
+    assert check["adjudicable"] is False
     assert "P0" in (out / "report.md").read_text(encoding="utf-8")
 
 

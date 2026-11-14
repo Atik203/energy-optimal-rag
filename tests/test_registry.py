@@ -121,4 +121,4 @@ def test_sha256_file_matches_hashlib(tmp_path: Path) -> None:
 
 def test_tracked_registry_header_matches_schema() -> None:
     rows = read_registry(REPO_ROOT / "runs" / "registry.csv")
-    assert all(set(row) == set(REGISTRY_FIELDS) for row in rows)
+    assert all(set(row) == set(REGISTRY_FIELDS) and None not in row.values() for row in rows)

@@ -36,10 +36,13 @@ paired observation, not as a 100 ms precision measurement. Absolute energy depen
 calibration and the repeat CV.
 
 **Integration.** For each query, take the samples between the start and end of the HTTP call,
-apply the trapezoidal rule, and subtract `idle_power_w × duration_s`. Clip at zero. The pilot
-used a 60 s pre-run idle baseline (15.56 W, CV 10.4%) and a 20 s post-run baseline (17.63 W,
-CV 15.9%). Using the post-run baseline lowers every energy by about 4% almost uniformly and
-changes E ratios by under 1%.
+plus the configured `post_query_tail_s` (0.3 s for the P0 `_r3` protocol), apply the
+trapezoidal rule, and subtract `idle_power_w × duration_s`. Clip at zero. The tail captures the
+post-decode power ramp/tail that a window ending at HTTP completion misses; the same tail is
+used in the block windows. Measure idle before warm-up, not after it, and stop if its CV
+exceeds `idle_max_cv` (0.20). The pilot used a 60 s pre-run idle baseline (15.56 W, CV 10.4%)
+and a 20 s post-run baseline (17.63 W, CV 15.9%). Using the post-run baseline lowers every
+energy by about 4% almost uniformly and changes E ratios by under 1%.
 
 ```
 J_gpu_raw(q) = max(0, trapz(power, time) - idle_power_w * duration_s)
@@ -52,9 +55,17 @@ sweep, run 20 back-to-back queries per depth and integrate the block as one wind
 scale factor is:
 
 ```
-factor_k = J_block_k / sum_i J_gpu_raw(q_i, k)
-J_gpu_calibrated(q, k) = factor_k * J_gpu_raw(q, k)
+raw_sum_csv_k = sum_i J_gpu_raw(q_i, k)          # sweep rows
+factor_csv_k = J_block_k / raw_sum_csv_k          # protocol factor; gate [0.8, 1.4]
+factor_block_k = J_block_k / sum_i W_block_i      # same-block window diagnostic
+consistency_k = factor_block_k / factor_csv_k
+J_gpu_calibrated(q, k) = factor_csv_k * J_gpu_raw(q, k)
 ```
+
+The gate is `factor_csv_k`, not the within-block factor. A within-block factor is structurally
+close to one and can hide a cold/warm sweep/block mismatch. `factor_block_k` and
+`consistency_k` are recorded so that mismatch cannot disappear. The block is warmed before
+measurement and its temperature/clock are reported.
 
 Pilot factors:
 
@@ -104,10 +115,12 @@ Controls:
 
 ## 7. Repeatability
 
-Three repetitions of 20 identical queries at `k = 8`, separated by short cooldowns. Compute
-the coefficient of variation per query across repetitions. The pilot's median was **3.80%** and
-maximum **9.24%**. The minimum detectable effect is approximated as `2 × CV`. If the observed
-effect is smaller, report "not measurable" and fire K7.
+Three repetitions of 20 identical queries at `k = 8`, separated by short cooldowns. Apply the
+cooldown at the **start of every block**, including the first, so all three blocks are measured
+at the same thermal state. Compute the coefficient of variation per query across repetitions.
+The pilot's median was **3.80%** and maximum **9.24%**. The minimum detectable effect is
+approximated as `2 × CV`. If the observed effect is smaller, report "not measurable" and fire
+K7.
 
 ## 8. Wall-meter cross-check
 

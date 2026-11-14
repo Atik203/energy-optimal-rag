@@ -305,6 +305,8 @@ def run_depth_sweep(
     warmup_queries = int(config.get("energy", {}).get("warmup_queries", 20))
     nonce_hex_chars = int(config.get("energy", {}).get("nonce_hex_chars", 10))
     proxy_watts = float(config.get("energy", {}).get("cpu_retrieval_proxy_watts", 20.0))
+    tail_s = float(config.get("energy", {}).get("post_query_tail_s", 0.0))
+    idle_max_cv = float(config.get("energy", {}).get("idle_max_cv", 0.20))
     seed = int(config.get("seed", 0))
     idle_stats: IdleStats | None = None
 
@@ -316,6 +318,11 @@ def run_depth_sweep(
         if idle_power_w is None:
             idle_seconds = float(config.get("energy", {}).get("idle_baseline_s", 60))
             idle_stats = _measure_idle(sampler_factory, interval_ms, idle_seconds)
+            if idle_stats.cv > idle_max_cv:
+                raise ValueError(
+                    f"idle CV {idle_stats.cv:.4f} exceeds {idle_max_cv:.2f}; "
+                    "stop and stabilize the baseline"
+                )
             idle_power_w = idle_stats.mean_w
         if idle_power_w < 0:
             raise ValueError("idle_power_w must be non-negative")
@@ -359,6 +366,8 @@ def run_depth_sweep(
                             [passage.text for passage in retrieved],
                             nonce,
                         )
+                        if tail_s > 0:
+                            time.sleep(tail_s)
                     except ReaderError as exc:
                         reader_error = str(exc)
                     finally:
@@ -487,22 +496,17 @@ def _apply_block_factors(raw_path: Path, factors: dict[int, float]) -> None:
     temp.replace(raw_path)
 
 
-def _power_at(samples: Sequence[PowerSample], t_s: float) -> float:
-    """Linearly interpolate power at an exact timestamp."""
+def _last_power_at_or_before(samples: Sequence[PowerSample], t_s: float) -> float:
+    """Causal zero-order hold; never borrow a sample from the next query."""
     if not samples:
         raise ValueError("at least one sample is required")
-    if t_s <= samples[0].t_s:
-        return samples[0].power_w
-    if t_s >= samples[-1].t_s:
-        return samples[-1].power_w
-    for left, right in zip(samples, samples[1:], strict=False):
-        if left.t_s <= t_s <= right.t_s:
-            span = right.t_s - left.t_s
-            if span <= 0:
-                return right.power_w
-            fraction = (t_s - left.t_s) / span
-            return left.power_w + fraction * (right.power_w - left.power_w)
-    return samples[-1].power_w
+    power = samples[0].power_w
+    for sample in samples:
+        if sample.t_s <= t_s:
+            power = sample.power_w
+        else:
+            break
+    return power
 
 
 def _window_energy(
@@ -510,19 +514,22 @@ def _window_energy(
     start_s: float,
     end_s: float,
     idle_power_w: float,
+    *,
+    clip: bool = True,
 ) -> float:
     """Integrate exactly ``[start_s, end_s]`` without leaking into a neighbor."""
     if end_s <= start_s:
         raise ValueError("end_s must be greater than start_s")
-    if not samples:
-        return 0.0
-    points: list[tuple[float, float]] = [(start_s, _power_at(samples, start_s))]
+    if len(samples) < 2:
+        raise ValueError("at least two samples are required for a window")
+    points: list[tuple[float, float]] = [(start_s, _last_power_at_or_before(samples, start_s))]
     points.extend(
         (sample.t_s, sample.power_w) for sample in samples if start_s < sample.t_s < end_s
     )
-    points.append((end_s, _power_at(samples, end_s)))
+    points.append((end_s, _last_power_at_or_before(samples, end_s)))
     gross = trapezoid_joules(points)
-    return idle_subtract(gross, end_s - start_s, idle_power_w)
+    net = gross - float(idle_power_w) * (end_s - start_s)
+    return max(0.0, net) if clip else net
 
 
 def run_block_calibration(
@@ -551,12 +558,19 @@ def run_block_calibration(
     block_size = int(config.get("energy", {}).get("block_size", 20))
     interval_ms = int(config.get("energy", {}).get("sample_interval_ms", 100))
     nonce_hex_chars = int(config.get("energy", {}).get("nonce_hex_chars", 10))
+    tail_s = float(config.get("energy", {}).get("post_query_tail_s", 0.0))
+    idle_max_cv = float(config.get("energy", {}).get("idle_max_cv", 0.20))
     sampler_factory = sampler_factory or NvmlSampler
     reader = reader or _default_reader(config)
 
     if idle_power_w is None:
         idle_seconds = float(config.get("energy", {}).get("idle_baseline_s", 60))
         idle_stats = _measure_idle(sampler_factory, interval_ms, idle_seconds)
+        if idle_stats.cv > idle_max_cv:
+            raise ValueError(
+                f"idle CV {idle_stats.cv:.4f} exceeds {idle_max_cv:.2f}; "
+                "stop and stabilize the baseline"
+            )
         idle_power_w = idle_stats.mean_w
         idle_record = {
             "mean_w": round(idle_stats.mean_w, 6),
@@ -591,6 +605,9 @@ def run_block_calibration(
             raise ValueError(
                 f"k={depth}: need {block_size} valid raw rows, found {len(depth_rows)}"
             )
+        raw_sum_csv = sum(float(row["j_gpu_raw"]) for row in depth_rows)
+        if raw_sum_csv <= 0:
+            raise ValueError(f"k={depth}: sweep raw energy sum must be positive")
         if cooldown_s > 0:
             time.sleep(cooldown_s)
         # A cooldown leaves the first short query at a cold, low-power state;
@@ -618,6 +635,8 @@ def run_block_calibration(
                     [passage.text for passage in retrieved],
                     make_nonce(nonce_hex_chars),
                 )
+                if tail_s > 0:
+                    time.sleep(tail_s)
                 query_finished = time.monotonic()
                 windows.append((query_started, query_finished))
                 if result.load_s is not None and result.load_s > 1.0:
@@ -626,28 +645,38 @@ def run_block_calibration(
             samples = sampler.stop()
         finished = _utc_now()
         block_energy, average_w, duration = _integrate(samples, idle_power_w)
-        per_query = [_window_energy(samples, start, end, idle_power_w) for start, end in windows]
-        raw_sum = sum(per_query)
-        if raw_sum <= 0:
-            raise ValueError(f"k={depth}: raw per-query energy sum must be positive")
-        factor = block_energy / raw_sum
-        if not 0.8 <= factor <= 1.4:
+        per_query = [
+            _window_energy(samples, start, end, idle_power_w, clip=False) for start, end in windows
+        ]
+        raw_sum_block = sum(per_query)
+        if raw_sum_block <= 0:
+            raise ValueError(f"k={depth}: block-window energy sum must be positive")
+        factor_csv = block_energy / raw_sum_csv
+        factor_block = block_energy / raw_sum_block
+        consistency = factor_block / factor_csv if factor_csv > 0 else float("inf")
+        if not 0.8 <= factor_csv <= 1.4:
             raise ValueError(
-                f"k={depth}: block factor {factor:.4f} outside [0.8, 1.4] "
-                f"(raw_sum={raw_sum:.3f} J, block_energy={block_energy:.3f} J, "
-                f"duration={duration:.3f} s, idle={idle_power_w:.3f} W); "
-                "stop and diagnose the sensor window"
+                f"k={depth}: block factor {factor_csv:.4f} outside [0.8, 1.4] "
+                f"(raw_sum_csv={raw_sum_csv:.3f} J, raw_sum_block={raw_sum_block:.3f} J, "
+                f"block_energy={block_energy:.3f} J, duration={duration:.3f} s, "
+                f"idle={idle_power_w:.3f} W, factor_block={factor_block:.4f}, "
+                f"consistency={consistency:.4f}); stop and diagnose the sensor window"
             )
-        factors[depth] = factor
+        factors[depth] = factor_csv
         blocks.append(
             {
                 "k": depth,
                 "n_queries": len(depth_rows),
-                "raw_sum_j": round(raw_sum, 6),
+                "raw_sum_j": round(raw_sum_csv, 6),
+                "raw_sum_csv_j": round(raw_sum_csv, 6),
+                "raw_sum_block_j": round(raw_sum_block, 6),
                 "block_energy_j": round(block_energy, 6),
                 "block_duration_s": round(duration, 6),
                 "power_mean_w": round(average_w, 3),
-                "factor": round(factor, 6),
+                "factor": round(factor_csv, 6),
+                "factor_csv": round(factor_csv, 6),
+                "factor_block": round(factor_block, 6),
+                "consistency": round(consistency, 6),
                 "started_utc": started,
                 "finished_utc": finished,
             }
@@ -715,11 +744,19 @@ def run_repeat_cv(
         )
     interval_ms = int(config.get("energy", {}).get("sample_interval_ms", 100))
     nonce_hex_chars = int(config.get("energy", {}).get("nonce_hex_chars", 10))
+    tail_s = float(config.get("energy", {}).get("post_query_tail_s", 0.0))
+    idle_max_cv = float(config.get("energy", {}).get("idle_max_cv", 0.20))
     sampler_factory = sampler_factory or NvmlSampler
     reader = reader or _default_reader(config)
     if idle_power_w is None:
         idle_seconds = float(config.get("energy", {}).get("idle_baseline_s", 60))
-        idle_power_w = _measure_idle(sampler_factory, interval_ms, idle_seconds).mean_w
+        idle_stats = _measure_idle(sampler_factory, interval_ms, idle_seconds)
+        if idle_stats.cv > idle_max_cv:
+            raise ValueError(
+                f"idle CV {idle_stats.cv:.4f} exceeds {idle_max_cv:.2f}; "
+                "stop and stabilize the baseline"
+            )
+        idle_power_w = idle_stats.mean_w
 
     pairs = list(zip(split.corpus["passage_id"], split.corpus["text"], strict=True))
     index = build_index(pairs)
@@ -727,7 +764,9 @@ def run_repeat_cv(
     per_query: dict[str, list[float]] = {
         str(row.qid): [] for row in questions.itertuples(index=False)
     }
-    for block in range(n_blocks):
+    for _block in range(n_blocks):
+        if cooldown_s > 0:
+            time.sleep(cooldown_s)
         for row in questions.itertuples(index=False):
             qid = str(row.qid)
             question = str(row.question)
@@ -740,14 +779,14 @@ def run_repeat_cv(
                     [passage.text for passage in retrieved],
                     make_nonce(nonce_hex_chars),
                 )
+                if tail_s > 0:
+                    time.sleep(tail_s)
                 if result.load_s is not None and result.load_s > 1.0:
                     raise RuntimeError("model reloaded inside the repeat block")
             finally:
                 samples = sampler.stop()
             raw_j, _average, _duration = _integrate(samples, idle_power_w)
             per_query[qid].append(raw_j)
-        if cooldown_s > 0 and block < n_blocks - 1:
-            time.sleep(cooldown_s)
 
     records: list[dict[str, Any]] = []
     cvs: list[float] = []

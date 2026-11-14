@@ -71,7 +71,7 @@ class ContinuousSampler(FakeSampler):
     def stop(self) -> list[PowerSample]:
         now = time.monotonic()
         count = max(2, int((now - self._started) / 0.01) + 1)
-        return [
+        samples = [
             PowerSample(
                 t_s=self._started + index * 0.01,
                 power_w=self.watts,
@@ -80,13 +80,22 @@ class ContinuousSampler(FakeSampler):
             )
             for index in range(count)
         ]
+        samples.append(
+            PowerSample(
+                t_s=now,
+                power_w=self.watts,
+                temperature_c=60.0,
+                sm_clock_mhz=1500.0,
+            )
+        )
+        return samples
 
 
 class SlowReader(FakeReader):
     """Reader with a realistic-enough duration for window selection."""
 
     def generate(self, question: str, passages: list[str], nonce: str) -> ReaderResult:
-        time.sleep(0.05)
+        time.sleep(0.1)
         return super().generate(question, passages, nonce)
 
 
@@ -157,7 +166,7 @@ passage_words = 70
 sampler = "nvml"
 sample_interval_ms = 10
 idle_baseline_s = 1
-block_size = 1
+block_size = 2
 warmup_queries = 1
 nonce_hex_chars = 10
 cpu_retrieval_proxy_watts = 20.0
@@ -188,7 +197,7 @@ top_k = 2
 sampler = "nvml"
 sample_interval_ms = 10
 idle_baseline_s = 1
-block_size = 1
+block_size = 2
 warmup_queries = 1
 nonce_hex_chars = 10
 cpu_retrieval_proxy_watts = 20.0
@@ -311,3 +320,7 @@ def test_p0_chain_runs_sweep_blocks_repeat_and_analysis(tmp_path: Path) -> None:
     assert repeat_path.is_file()
     assert (analysis_dir / "estimates.csv").is_file()
     assert (analysis_dir / "report.md").is_file()
+
+    blocks = json.loads(blocks_path.read_text(encoding="utf-8"))
+    assert [item["n_queries"] for item in blocks["depths"]] == [2, 2]
+    assert all(0.8 <= item["factor_csv"] <= 1.4 for item in blocks["depths"])

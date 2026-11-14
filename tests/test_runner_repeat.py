@@ -25,18 +25,23 @@ class FakeReader:
         return ReaderResult(text="alpha", latency_s=0.01, load_s=0.0)
 
 
-class FakeSampler:
+class VaryingSampler:
+    calls = 0
+
     def __init__(self, interval_ms: int = 10) -> None:
         self.interval_ms = interval_ms
         self._started = 0.0
+        self._power = 40.0
 
     def start(self) -> None:
+        VaryingSampler.calls += 1
+        self._power = 40.0 if VaryingSampler.calls <= 2 else 50.0
         self._started = time.monotonic()
 
     def stop(self) -> list[PowerSample]:
         return [
-            PowerSample(t_s=self._started, power_w=50.0),
-            PowerSample(t_s=self._started + 0.1, power_w=50.0),
+            PowerSample(t_s=self._started, power_w=self._power),
+            PowerSample(t_s=self._started + 0.1, power_w=self._power),
         ]
 
 
@@ -135,9 +140,10 @@ blocks_json = "blocks.json"
     return run
 
 
-def test_run_repeat_cv_writes_zero_cv(tmp_path: Path) -> None:
+def test_run_repeat_cv_detects_power_drift(tmp_path: Path) -> None:
     processed = _write_processed(tmp_path)
     config_path = _write_config(tmp_path)
+    VaryingSampler.calls = 0
 
     repeat_path = run_repeat_cv(
         config_path,
@@ -145,7 +151,7 @@ def test_run_repeat_cv_writes_zero_cv(tmp_path: Path) -> None:
         processed_dir=processed,
         out_root=tmp_path / "runs",
         reader=FakeReader(),
-        sampler_factory=FakeSampler,
+        sampler_factory=VaryingSampler,
         idle_power_w=15.0,
     )
 
@@ -153,6 +159,8 @@ def test_run_repeat_cv_writes_zero_cv(tmp_path: Path) -> None:
     assert payload["k"] == 8
     assert payload["n_blocks"] == 2
     assert payload["queries_per_block"] == 2
-    assert payload["cv_max"] == pytest.approx(0.0)
-    assert payload["passed"] is True
+    assert payload["cv_max"] > 0
+    assert payload["passed"] is False
     assert len(payload["per_query"]) == 2
+    assert all(item["sd_j"] > 0 for item in payload["per_query"])
+    assert VaryingSampler.calls == 4

@@ -105,6 +105,7 @@ def p0_check(
     j_tolerance: float = 0.10,
     fit_tolerance: float = 0.10,
     min_r2: float = 0.95,
+    calibrated: bool = True,
 ) -> dict[str, Any]:
     """Check the documented J anchors and affine fit; E/A are reported only."""
     by_k = {estimate.k: estimate for estimate in estimates}
@@ -154,6 +155,14 @@ def p0_check(
     )
     return {
         "passed": all(item["passed"] for item in checks),
+        "calibrated": calibrated,
+        "adjudicable": calibrated,
+        "note": (
+            "Block-calibrated energy; the anchor check is adjudicable."
+            if calibrated
+            else "No block calibration was applied; the anchor check is confounded and "
+            "is not adjudicable as a clean energy test."
+        ),
         "checks": checks,
         "fit": asdict(fit),
         "e_anchors": {
@@ -193,11 +202,36 @@ def write_analysis(raw_path: Path, out_dir: Path, run_id: str) -> Path:
         rows = [dict(row) for row in csv.DictReader(handle)]
     estimates = compute_estimates(rows)
     fit = affine_fit([(estimate.k, estimate.mean_j) for estimate in estimates])
-    check = p0_check(estimates, fit)
+    calibrated = any(
+        str(row.get("j_gpu_calibrated", "")) != str(row.get("j_gpu_raw", "")) for row in rows
+    )
+    check = p0_check(estimates, fit, calibrated=calibrated)
     out_dir.mkdir(parents=True, exist_ok=True)
     _write_estimates(out_dir / "estimates.csv", estimates)
     (out_dir / "p0_check.json").write_text(
         json.dumps(check, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
+    metadata: dict[str, Any] = {
+        "run_id": run_id,
+        "calibrated": calibrated,
+        "config_sha256": None,
+        "prereg_sha256": None,
+        "git_commit": None,
+        "seed": None,
+    }
+    manifest_path = raw_path.parent / "manifest.json"
+    if manifest_path.is_file():
+        run_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        metadata.update(
+            {
+                "config_sha256": run_manifest.get("config_sha256"),
+                "prereg_sha256": run_manifest.get("prereg_sha256"),
+                "git_commit": run_manifest.get("git_commit"),
+                "seed": run_manifest.get("seed"),
+            }
+        )
+    (out_dir / "metadata.json").write_text(
+        json.dumps(metadata, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
     lines = [
         f"# P0 sweep analysis - {run_id}",
@@ -215,9 +249,12 @@ def write_analysis(raw_path: Path, out_dir: Path, run_id: str) -> Path:
         [
             "",
             f"Affine fit: `J(k) = {fit.a:.4f} + {fit.b:.4f} k`, R² = {fit.r2:.4f}.",
+            f"Calibration: **{'applied' if calibrated else 'not applied'}**.",
             f"P0 anchor check: **{'PASS' if check['passed'] else 'FAIL'}**.",
-            "",
         ]
     )
+    if not calibrated:
+        lines.append("The anchor check is not adjudicable as a clean energy test.")
+    lines.append("")
     (out_dir / "report.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
     return out_dir

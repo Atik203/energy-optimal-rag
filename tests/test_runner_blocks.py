@@ -44,9 +44,11 @@ class BlockSampler:
     def stop(self) -> list[PowerSample]:
         now = time.monotonic()
         count = max(2, int((now - self._started) / 0.01) + 1)
-        return [
+        samples = [
             PowerSample(t_s=self._started + index * 0.01, power_w=50.0) for index in range(count)
         ]
+        samples.append(PowerSample(t_s=now, power_w=50.0))
+        return samples
 
 
 class SpikeSampler(BlockSampler):
@@ -172,8 +174,8 @@ def _write_raw(tmp_path: Path, per_row_j: float) -> Path:
                     "gold": "alpha",
                     "j_gpu_raw": per_row_j,
                     "j_gpu_calibrated": per_row_j,
-                    "j_retrieval_proxy": 0.0,
-                    "j_total": per_row_j,
+                    "j_retrieval_proxy": 7.0,
+                    "j_total": per_row_j + 7.0,
                     "valid": 1,
                 }
             )
@@ -188,7 +190,7 @@ def _write_raw(tmp_path: Path, per_row_j: float) -> Path:
 def test_run_block_calibration_writes_factors_and_calibrated_values(tmp_path: Path) -> None:
     processed = _write_processed(tmp_path)
     config_path = _write_config(tmp_path)
-    raw = _write_raw(tmp_path, per_row_j=100.0)
+    raw = _write_raw(tmp_path, per_row_j=5.5)
 
     blocks_path = run_block_calibration(
         config_path,
@@ -202,12 +204,21 @@ def test_run_block_calibration_writes_factors_and_calibrated_values(tmp_path: Pa
 
     blocks = json.loads(blocks_path.read_text(encoding="utf-8"))
     assert len(blocks["depths"]) == 2
-    assert all(item["factor"] == pytest.approx(1.0, abs=0.05) for item in blocks["depths"])
-    assert all(item["block_energy_j"] > 0 for item in blocks["depths"])
-    assert all(item["raw_sum_j"] > 0 for item in blocks["depths"])
+    factors = {item["k"]: item["factor_csv"] for item in blocks["depths"]}
+    for item in blocks["depths"]:
+        factor = item["factor_csv"]
+        assert 0.8 <= factor <= 1.4
+        assert item["factor_block"] == pytest.approx(1.0, abs=0.1)
+        assert item["consistency"] == pytest.approx(1.0 / factor, rel=0.1)
+        assert item["block_energy_j"] > 0
+        assert item["raw_sum_csv_j"] == pytest.approx(11.0)
+        assert item["raw_sum_block_j"] > 0
 
     rows = list(csv.DictReader(raw.open(encoding="utf-8", newline="")))
-    assert all(float(row["j_gpu_calibrated"]) == pytest.approx(100.0, rel=0.05) for row in rows)
+    for row in rows:
+        factor = factors[int(row["k"])]
+        assert float(row["j_gpu_calibrated"]) == pytest.approx(5.5 * factor, rel=1e-6)
+        assert float(row["j_total"]) == pytest.approx(5.5 * factor + 7.0, rel=1e-6)
 
 
 def test_window_energy_integrates_exact_interval_without_neighbor_leak() -> None:
@@ -216,6 +227,35 @@ def test_window_energy_integrates_exact_interval_without_neighbor_leak() -> None
     energy = _window_energy(samples, 0.2, 0.4, idle_power_w=0.0)
 
     assert energy == pytest.approx(2.0)
+
+
+def test_window_energy_does_not_borrow_a_spike_after_the_end() -> None:
+    samples = [
+        PowerSample(t_s=0.0, power_w=10.0),
+        PowerSample(t_s=0.5, power_w=10.0),
+        PowerSample(t_s=0.6, power_w=500.0),
+    ]
+
+    energy = _window_energy(samples, 0.1, 0.55, idle_power_w=0.0, clip=False)
+
+    assert energy == pytest.approx(4.5)
+
+
+def test_run_block_calibration_rejects_sweep_block_mismatch(tmp_path: Path) -> None:
+    processed = _write_processed(tmp_path)
+    config_path = _write_config(tmp_path)
+    _write_raw(tmp_path, per_row_j=100.0)
+
+    with pytest.raises(ValueError, match="block factor"):
+        run_block_calibration(
+            config_path,
+            root=tmp_path,
+            processed_dir=processed,
+            out_root=tmp_path / "runs",
+            reader=FakeReader(),
+            sampler_factory=BlockSampler,
+            idle_power_w=0.0,
+        )
 
 
 def test_run_block_calibration_rejects_out_of_range_factor(tmp_path: Path) -> None:

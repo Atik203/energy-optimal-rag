@@ -308,3 +308,25 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   git-ignored; the analysis and this report are tracked. P1 GPU hours are held. The next run
   must demonstrate stable idle before warm-up, a block factor inside the pre-set range, and
   the J anchors before any P1 work.
+
+---
+
+## D-019 - P0 measurement protocol revision for the clean `_r3` rerun
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The post-P0 audits found that the paired-window factor was a gap/tail
+  allocation, so it could hide the sweep/block mismatch. The protocol factor must remain
+  `J_block / sum(j_gpu_raw)` over the sweep rows. The 20-question dry runs showed that a
+  post-query tail was needed to capture the power ramp/tail: 0.1 s still missed at `k=4`
+  (1.476), 0.2 s missed at `k=16` (1.428), and 0.3 s passed all seven depths (0.834–1.380).
+  The first clean-run attempt (`_r2`) was stopped after 409 rows because it started from a
+  tree with uncommitted fixes.
+- **Decision:** The clean `_r3` protocol is: measure idle before warm-up and abort if its CV
+  exceeds 0.20; add `post_query_tail_s = 0.3` to both the sweep and block per-query windows;
+  gate on `factor_csv = J_block / raw_sum_csv` in [0.8, 1.4]; record `factor_block` and
+  `consistency = factor_block / factor_csv`; warm each block before measurement; apply the
+  repeat cooldown at the start of every block. `_r2` is `aborted`; `_r3` is the clean run.
+- **Consequences:** No claim or confirmatory threshold changed; this is a harness measurement
+  amendment before the confirmatory freeze. P0 remains a harness check. P1 stays blocked
+  until `_r3` passes the block-factor and J-anchor checks.

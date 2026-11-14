@@ -12,6 +12,7 @@ analysis/
 └─ <run_id>/
    ├─ estimates.csv        A(k), J(k), E(k), S(k), S_r(k), CIs
    ├─ p0_check.json        P0 J-anchor and affine-fit check
+   ├─ metadata.json        run/config/prereg/git/seed provenance
    ├─ bootstrap.json       P(k* optimal), resample settings, seed
    ├─ identity.csv         elasticities and gap with CI
    ├─ noninferiority.json  5 pp test, 2 pp estimation
@@ -25,7 +26,8 @@ analysis/
 ## Rules
 
 - Analysis code reads only `runs/<run_id>/raw.csv` and the frozen config.
-- Every output records the run ID, config hash, prereg hash, git commit, and analysis seed.
+- `metadata.json` records the run ID, config hash, prereg hash, git commit, analysis seed, and
+  whether block calibration was applied.
 - No hand-edited numbers. If a table is wrong, fix the generator and regenerate.
 - The 5 pp result is primary. The 2 pp result is estimation-only and must be labeled.
 - The oracle is an upper bound and is labeled as such in every output.
