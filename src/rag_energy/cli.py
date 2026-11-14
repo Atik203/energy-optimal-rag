@@ -62,6 +62,50 @@ def _cmd_prepare(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_run(args: argparse.Namespace) -> int:
+    from rag_energy.runner import run_depth_sweep
+
+    path = run_depth_sweep(
+        Path(args.config),
+        root=Path(args.root) if args.root else None,
+        processed_dir=Path(args.processed) if args.processed else None,
+        out_root=Path(args.out) if args.out else None,
+        registry_path=Path(args.registry) if args.registry else None,
+        limit_questions=args.limit,
+        resume=args.resume,
+    )
+    print(f"Raw CSV: {path}")
+    return 0
+
+
+def _cmd_blocks(args: argparse.Namespace) -> int:
+    from rag_energy.runner import run_block_calibration
+
+    path = run_block_calibration(
+        Path(args.config),
+        root=Path(args.root) if args.root else None,
+        processed_dir=Path(args.processed) if args.processed else None,
+        out_root=Path(args.out) if args.out else None,
+        cooldown_s=args.cooldown,
+    )
+    print(f"Blocks: {path}")
+    return 0
+
+
+def _cmd_repeat(args: argparse.Namespace) -> int:
+    from rag_energy.runner import run_repeat_cv
+
+    path = run_repeat_cv(
+        Path(args.config),
+        root=Path(args.root) if args.root else None,
+        processed_dir=Path(args.processed) if args.processed else None,
+        out_root=Path(args.out) if args.out else None,
+        cooldown_s=args.cooldown,
+    )
+    print(f"Repeat: {path}")
+    return 0
+
+
 def _cmd_stub(name: str) -> int:
     print(_STUB_TEXT.format(name=name), file=sys.stderr)
     return 2
@@ -125,13 +169,31 @@ def build_parser() -> argparse.ArgumentParser:
     )
     prepare.set_defaults(func=_cmd_prepare)
 
-    run = subparsers.add_parser("run", help="Run a depth sweep (stub).")
-    run.add_argument("--config", default=None, help="Run config path.")
-    run.set_defaults(func=lambda _args: _cmd_stub("run"))
+    run = subparsers.add_parser("run", help="Run a depth sweep.")
+    run.add_argument("--config", required=True, help="Run config path.")
+    run.add_argument("--root", default=None, help="Repository root.")
+    run.add_argument("--processed", default=None, help="Prepared-data directory.")
+    run.add_argument("--out", default=None, help="Run output root.")
+    run.add_argument("--registry", default=None, help="Registry CSV path.")
+    run.add_argument("--limit", type=int, default=None, help="Limit the question count.")
+    run.add_argument("--resume", action="store_true", help="Resume a partial raw CSV.")
+    run.set_defaults(func=_cmd_run)
 
-    blocks = subparsers.add_parser("blocks", help="Run block energy calibration (stub).")
-    blocks.add_argument("--config", default=None, help="Run config path.")
-    blocks.set_defaults(func=lambda _args: _cmd_stub("blocks"))
+    blocks = subparsers.add_parser("blocks", help="Run block energy calibration.")
+    blocks.add_argument("--config", required=True, help="Run config path.")
+    blocks.add_argument("--root", default=None, help="Repository root.")
+    blocks.add_argument("--processed", default=None, help="Prepared-data directory.")
+    blocks.add_argument("--out", default=None, help="Run output root.")
+    blocks.add_argument("--cooldown", type=float, default=0.0, help="Cooldown seconds.")
+    blocks.set_defaults(func=_cmd_blocks)
+
+    repeat = subparsers.add_parser("repeat", help="Run the 3x20 repeat CV block.")
+    repeat.add_argument("--config", required=True, help="Run config path.")
+    repeat.add_argument("--root", default=None, help="Repository root.")
+    repeat.add_argument("--processed", default=None, help="Prepared-data directory.")
+    repeat.add_argument("--out", default=None, help="Run output root.")
+    repeat.add_argument("--cooldown", type=float, default=0.0, help="Cooldown seconds.")
+    repeat.set_defaults(func=_cmd_repeat)
 
     analyze = subparsers.add_parser("analyze", help="Analyze a completed run (stub).")
     analyze.add_argument("--run-id", default=None, help="Registered run identifier.")

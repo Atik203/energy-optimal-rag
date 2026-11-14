@@ -105,9 +105,17 @@ the run, update `status` to `completed` and fill `model_digest` from the run man
 python scripts\04_run_blocks.py --config configs\runs\squad_qwen4b_p0.toml
 ```
 
-Expected: `runs\<run_id>\blocks.json` with one factor per depth. The pilot factors were
-1.041–1.188. A factor outside [0.8, 1.4] means the sensor window is unreliable; stop and
-diagnose.
+Expected: `runs\<run_id>\blocks.json` with one factor per depth, and rewritten
+`j_gpu_calibrated` / `j_total` columns in `raw.csv`. The pilot factors were 1.041-1.188. A
+factor outside [0.8, 1.4] means the sensor window is unreliable; stop and diagnose.
+
+Repeat the noise block at `k = 8`:
+
+```powershell
+python scripts\04b_repeat_cv.py --config configs\runs\squad_qwen4b_p0.toml --cooldown 120
+```
+
+Expected: `runs\<run_id>\repeat.json` with per-query CV, median/max CV, and the K7 pass/fail.
 
 ## 6. Energy taxes (P2)
 
