@@ -36,18 +36,28 @@ A failure here blocks every experiment. Fix the config or the install first.
 ## 2. Prepare data (P0)
 
 ```powershell
-python scripts\00_prepare_data.py
+python scripts\00_prepare_data.py `
+  --raw data\raw\dev-v1.1.json `
+  --corpus data\raw\train-v1.1.json
 ```
 
-Planned outputs: `data/processed/squad_questions.parquet`,
-`data/processed/squad_corpus.parquet`, and populated checksums in `data/manifest.json`.
-The script is a stub in v0.1.0 and exits non-zero by design. Do not hand-download into the
-repository without recording the source URL, license, and SHA-256.
+Inputs must be downloaded from the official SQuAD source; do not commit them. The `--corpus`
+file is required for the pilot-shaped corpus: dev alone has roughly 2,067 paragraphs, while
+the pilot used 20,958 unique train+dev contexts and 45,651 passages.
 
-Verify the manifest before a run:
+Outputs:
+
+- `data/processed/squad_questions.parquet`
+- `data/processed/squad_corpus.parquet`
+- `data/processed/squad_splits.json`
+- `data/splits/squad_splits.json` (tracked IDs only)
+- populated `squad` checksums and `status = prepared` in `data/manifest.json`
+
+Verify the manifest before a run. A schema-only check is not enough; inspect the status and
+the non-null checksums:
 
 ```powershell
-python -c "from pathlib import Path; from rag_energy.data.manifest import load_manifest, validate_manifest; d=load_manifest(Path('data/manifest.json')); print(validate_manifest(d) or 'manifest OK')"
+python -c "from pathlib import Path; from rag_energy.data.manifest import load_manifest, validate_manifest; d=load_manifest(Path('data/manifest.json')); print(validate_manifest(d) or 'manifest schema OK'); [print(x['id'], x['status'], x['checksums']) for x in d['datasets']]"
 ```
 
 ## 3. GPU and reader check
