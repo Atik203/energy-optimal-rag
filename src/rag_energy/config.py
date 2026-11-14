@@ -124,6 +124,48 @@ def _check_positive_int(value: Any, where: str, errors: list[str]) -> None:
         errors.append(f"{where} must be a positive integer")
 
 
+def _check_reader(data: dict[str, Any], path: Path, errors: list[str]) -> None:
+    """Validate the reader block when a run or grid overrides it."""
+    reader = data.get("reader")
+    if reader is None:
+        return
+    if not isinstance(reader, dict):
+        errors.append(f"{path}: reader must be a table")
+        return
+    backend = reader.get("backend")
+    if backend is not None and backend not in {"ollama", "hf"}:
+        errors.append(f"{path}: reader.backend must be 'ollama' or 'hf'")
+    model = reader.get("model")
+    if model is not None and (not isinstance(model, str) or not model.strip()):
+        errors.append(f"{path}: reader.model must be a non-empty string")
+    num_ctx = reader.get("num_ctx")
+    if num_ctx is not None and (not _is_int(num_ctx) or num_ctx <= 0):
+        errors.append(f"{path}: reader.num_ctx must be a positive integer")
+
+
+def _check_retrieval_depth(data: dict[str, Any], path: Path, errors: list[str]) -> None:
+    """Reject a retrieval cap that cannot reach the deepest requested k."""
+    retrieval = data.get("retrieval")
+    if not isinstance(retrieval, dict):
+        return
+    top_k = retrieval.get("top_k")
+    if top_k is None:
+        return
+    if not _is_int(top_k) or top_k <= 0:
+        errors.append(f"{path}: retrieval.top_k must be a positive integer")
+        return
+    k_grid = data.get("k_grid")
+    if (
+        isinstance(k_grid, list)
+        and k_grid
+        and all(_is_int(value) and value >= 0 for value in k_grid)
+        and top_k < max(k_grid)
+    ):
+        errors.append(
+            f"{path}: retrieval.top_k={top_k} is below max(k_grid)={max(k_grid)}"
+        )
+
+
 def _check_tax_delta(
     path: Path,
     label: str,
@@ -170,6 +212,8 @@ def validate_config(path: Path, root: Path | None = None) -> list[str]:
             _check_depth_grid(data["k_grid"], str(path), errors)
         if "n_questions" in data:
             _check_positive_int(data["n_questions"], f"{path}: n_questions", errors)
+        _check_reader(data, path, errors)
+        _check_retrieval_depth(data, path, errors)
         if category == "run":
             if not isinstance(data.get("run_id"), str) or not data.get("run_id"):
                 errors.append(f"{path}: run_id must be a non-empty string")

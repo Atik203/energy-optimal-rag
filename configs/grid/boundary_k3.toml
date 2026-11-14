@@ -15,6 +15,11 @@ phase = "P2"
 [retrieval]
 top_k = 64
 
+# 70-word passages x 64 is about 4.5k words (roughly 6k tokens). A 4096 context
+# would silently truncate the k=64 endpoint, so the boundary probe uses 8192.
+[reader]
+num_ctx = 8192
+
 [analysis]
 primary_depth = 32
 reference_depth = 64

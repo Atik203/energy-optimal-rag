@@ -74,3 +74,79 @@ def test_policy_split_mismatch_reports_target(tmp_path: Path) -> None:
 def test_category_for_locates_run_and_base(tmp_path: Path) -> None:
     assert category_for(tmp_path / "configs" / "runs" / "x.toml", tmp_path) == "run"
     assert category_for(tmp_path / "configs" / "base.toml", tmp_path) == "base"
+
+
+_RUN_TOML = """\
+schema_version = 1
+kind = "run"
+run_id = "test_run"
+dataset = "squad"
+n_questions = 500
+k_grid = {k_grid}
+seed = 20261115
+
+[reader]
+backend = "{backend}"
+model = "{model}"
+num_ctx = {num_ctx}
+
+[retrieval]
+top_k = {top_k}
+
+[energy]
+sampler = "nvml"
+"""
+
+
+def _write_run_config(
+    tmp_path: Path,
+    *,
+    backend: str = "ollama",
+    model: str = "llama3.2:3b",
+    num_ctx: int = 4096,
+    top_k: int = 32,
+    k_grid: str = "[0, 1, 2, 4, 8, 16, 32]",
+) -> Path:
+    """Write a minimal run config and return its path."""
+    path = tmp_path / "configs" / "runs" / "test.toml"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        _RUN_TOML.format(
+            backend=backend,
+            model=model,
+            num_ctx=num_ctx,
+            top_k=top_k,
+            k_grid=k_grid,
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def test_run_accepts_llama_panel_shape(tmp_path: Path) -> None:
+    path = _write_run_config(tmp_path)
+    assert validate_config(path, root=tmp_path) == []
+
+
+def test_run_rejects_unknown_reader_backend(tmp_path: Path) -> None:
+    path = _write_run_config(tmp_path, backend="vllm")
+    errors = validate_config(path, root=tmp_path)
+    assert any("reader.backend" in error for error in errors), errors
+
+
+def test_run_rejects_empty_reader_model(tmp_path: Path) -> None:
+    path = _write_run_config(tmp_path, model="")
+    errors = validate_config(path, root=tmp_path)
+    assert any("reader.model" in error for error in errors), errors
+
+
+def test_run_rejects_nonpositive_num_ctx(tmp_path: Path) -> None:
+    path = _write_run_config(tmp_path, num_ctx=0)
+    errors = validate_config(path, root=tmp_path)
+    assert any("reader.num_ctx" in error for error in errors), errors
+
+
+def test_run_rejects_top_k_below_max_depth(tmp_path: Path) -> None:
+    path = _write_run_config(tmp_path, top_k=32, k_grid="[32, 48, 64]")
+    errors = validate_config(path, root=tmp_path)
+    assert any("retrieval.top_k=32" in error for error in errors), errors

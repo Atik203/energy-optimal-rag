@@ -1,0 +1,51 @@
+# 4k control for the context-budget probe: same 200 boundary IDs and k=32.
+schema_version = 1
+kind = "run"
+run_id = "squad_qwen4b_ctx4k_p2"
+dataset = "squad"
+dataset_version = "v1.1"
+split = "dev"
+n_questions = 200
+k_grid = [32]
+seed = 20261115
+phase = "P2"
+
+[reader]
+backend = "ollama"
+model = "qwen3.5:4b"
+quantization = "Q4"
+num_ctx = 4096
+num_predict = 24
+temperature = 0.0
+top_k = 1
+seed = 42
+think = false
+
+[retrieval]
+backend = "bm25"
+top_k = 64
+chunking = "word"
+passage_words = 70
+tokenizer = "lowercase_alnum"
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 20
+warmup_queries = 20
+nonce_hex_chars = 10
+cpu_retrieval_proxy_watts = 20.0
+
+[scoring]
+primary = "normalized_em"
+secondary = ["lenient_span", "token_f1_ge_0.5"]
+
+[output]
+dir = "runs"
+raw_csv = "raw.csv"
+blocks_json = "blocks.json"
+
+[notes]
+purpose = "4k control for the context-budget probe; same 200 boundary IDs and k=32."
+claim_status = "diagnostic"
