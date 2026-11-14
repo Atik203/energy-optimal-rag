@@ -18,7 +18,8 @@ import pandas as pd
 from rag_energy.energy.nvml_sampler import PowerSample
 from rag_energy.readers.base import ReaderError, ReaderResult
 from rag_energy.registry import read_registry
-from rag_energy.runner import RAW_FIELDS, run_depth_sweep
+from rag_energy.runner import RAW_FIELDS, run_block_calibration, run_depth_sweep, run_repeat_cv
+from rag_energy.stats.sweep import write_analysis
 
 
 class FakeReader:
@@ -135,6 +136,10 @@ block_size = 1
 warmup_queries = 1
 nonce_hex_chars = 10
 cpu_retrieval_proxy_watts = 20.0
+[measurement]
+repeat_blocks = 2
+repeat_queries_per_block = 2
+repeat_depth = 2
 """,
         encoding="utf-8",
     )
@@ -240,3 +245,44 @@ def test_run_depth_sweep_marks_reader_failure_invalid(tmp_path: Path) -> None:
     assert all(row["valid"] == "0" for row in failed)
     assert all(row["invalid_reason"] == "reader_error" for row in failed)
     assert all(row["prediction"] == "" for row in failed)
+
+
+def test_p0_chain_runs_sweep_blocks_repeat_and_analysis(tmp_path: Path) -> None:
+    processed = _write_processed(tmp_path)
+    config_path = _write_config(tmp_path)
+    runs = tmp_path / "runs"
+
+    raw_path = run_depth_sweep(
+        config_path,
+        root=tmp_path,
+        processed_dir=processed,
+        out_root=runs,
+        registry_path=runs / "registry.csv",
+        reader=FakeReader(),
+        sampler_factory=FakeSampler,
+        idle_power_w=15.0,
+    )
+    blocks_path = run_block_calibration(
+        config_path,
+        root=tmp_path,
+        processed_dir=processed,
+        out_root=runs,
+        reader=FakeReader(),
+        sampler_factory=lambda interval_ms: FakeSampler(interval_ms, watts=35.0),
+        idle_power_w=0.0,
+    )
+    repeat_path = run_repeat_cv(
+        config_path,
+        root=tmp_path,
+        processed_dir=processed,
+        out_root=runs,
+        reader=FakeReader(),
+        sampler_factory=lambda interval_ms: FakeSampler(interval_ms, watts=35.0),
+        idle_power_w=0.0,
+    )
+    analysis_dir = write_analysis(raw_path, tmp_path / "analysis", run_id="test_run")
+
+    assert blocks_path.is_file()
+    assert repeat_path.is_file()
+    assert (analysis_dir / "estimates.csv").is_file()
+    assert (analysis_dir / "report.md").is_file()
