@@ -32,7 +32,7 @@ top_k = 1
 seed = 42
 think = false
 
-[retriever]
+[retrieval]
 backend = "bm25"
 implementation = "rank_bm25.BM25Okapi"
 top_k = 32
@@ -47,6 +47,8 @@ block_size = 20
 warmup_queries = 20
 nonce_hex_chars = 10
 cpu_retrieval_proxy_watts = 20.0
+post_query_tail_s = 0.3
+idle_max_cv = 0.20
 
 [measurement]
 power_mode = "ac"

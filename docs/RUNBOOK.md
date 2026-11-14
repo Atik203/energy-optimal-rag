@@ -23,6 +23,10 @@ C:\ProgramData\anaconda3\python.exe -m pip install -e ".[dev]"
 C:\ProgramData\anaconda3\python.exe -m pytest -q
 ```
 
+The named environment is the clean-room target. On this machine it is not present, so local
+P0/P1 harness work uses the existing Python 3.12 Anaconda base (D-017). The run manifest records
+the exact `sys.executable`; a clean-room rerun still uses `environment.yml`.
+
 ## 1. Smoke test
 
 ```powershell
@@ -36,18 +40,28 @@ A failure here blocks every experiment. Fix the config or the install first.
 ## 2. Prepare data (P0)
 
 ```powershell
-python scripts\00_prepare_data.py
+python scripts\00_prepare_data.py `
+  --raw data\raw\dev-v1.1.json `
+  --corpus data\raw\train-v1.1.json
 ```
 
-Planned outputs: `data/processed/squad_questions.parquet`,
-`data/processed/squad_corpus.parquet`, and populated checksums in `data/manifest.json`.
-The script is a stub in v0.1.0 and exits non-zero by design. Do not hand-download into the
-repository without recording the source URL, license, and SHA-256.
+Inputs must be downloaded from the official SQuAD source; do not commit them. The `--corpus`
+file is required for the pilot-shaped corpus: dev alone has roughly 2,067 paragraphs, while
+the pilot used 20,958 unique train+dev contexts and 45,651 passages.
 
-Verify the manifest before a run:
+Outputs:
+
+- `data/processed/squad_questions.parquet`
+- `data/processed/squad_corpus.parquet`
+- `data/processed/squad_splits.json`
+- `data/splits/squad_splits.json` (tracked IDs only)
+- populated `squad` checksums and `status = prepared` in `data/manifest.json`
+
+Verify the manifest before a run. A schema-only check is not enough; inspect the status and
+the non-null checksums:
 
 ```powershell
-python -c "from pathlib import Path; from rag_energy.data.manifest import load_manifest, validate_manifest; d=load_manifest(Path('data/manifest.json')); print(validate_manifest(d) or 'manifest OK')"
+python -c "from pathlib import Path; from rag_energy.data.manifest import load_manifest, validate_manifest; d=load_manifest(Path('data/manifest.json')); print(validate_manifest(d) or 'manifest schema OK'); [print(x['id'], x['status'], x['checksums']) for x in d['datasets']]"
 ```
 
 ## 3. GPU and reader check
@@ -58,13 +72,14 @@ ollama list
 ollama ps
 ```
 
-Record the driver, GPU name, and model digest in the run registry. Confirm `qwen3.5:4b` is
-present and that no other job is using the GPU.
+Record the driver, GPU name, and model digest in `runs/<run_id>/manifest.json`; the registry
+stores the model digest, not the full environment. Confirm `qwen3.5:4b` is present and that no
+other job is using the GPU.
 
 ## 4. Run a sweep (P0)
 
 ```powershell
-python scripts\02_run_sweep.py --config configs\runs\squad_qwen4b.toml
+python scripts\02_run_sweep.py --config configs\runs\squad_qwen4b_p0_r3.toml
 ```
 
 Before the run, confirm:
@@ -73,27 +88,38 @@ Before the run, confirm:
 - The nonce is enabled in the config (`nonce_hex_chars = 10`).
 - The idle baseline is 60 s and the block size is 20.
 
-Planned output: `runs\squad_qwen4b_p1\raw.csv` plus `blocks.json`. The run directory is
+Planned output: `runs\golden_squad_qwen4b_p0_r3\raw.csv` plus `blocks.json`. The run directory is
 git-ignored; the registry row is committed.
 
-Register the run:
+Register the run before starting it:
 
 ```powershell
-$row = "squad_qwen4b_p1,$((Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')),P1,squad,qwen3.5:4b,bm25,7,1000,20261115,nvml,completed,$(git rev-parse --short HEAD),configs/runs/squad_qwen4b.toml,runs/squad_qwen4b_p1/raw.csv,primary powered run"
-Add-Content runs\registry.csv $row
+$cfg = (python -c "from pathlib import Path; from rag_energy.config import resolve_run_config; print(resolve_run_config(Path('configs/runs/squad_qwen4b_p0_r3.toml')).config_sha256)").Trim()
+$ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+$row = "golden_squad_qwen4b_p0_r3,$ts,P0,squad,qwen3.5:4b,bm25,0|1|2|4|8|16|32,200,20261115,nvml,planned,$(git rev-parse --short HEAD),configs/runs/squad_qwen4b_p0_r3.toml,$cfg,,TBD,runs/golden_squad_qwen4b_p0_r3/raw.csv,clean P0 harness rerun"
+Add-Content -Path runs\registry.csv -Value $row -Encoding utf8NoBOM
 ```
 
-Use the exact column order in `runs/registry.csv`. A malformed row breaks the registry.
+Use the exact column order in `runs/registry.csv`. A malformed row breaks the registry. After
+the run, update `status` to `completed` and fill `model_digest` from the run manifest.
 
 ## 5. Block calibration (P0)
 
 ```powershell
-python scripts\04_run_blocks.py --config configs\runs\squad_qwen4b.toml
+python scripts\04_run_blocks.py --config configs\runs\squad_qwen4b_p0_r3.toml --cooldown 0
 ```
 
-Expected: `runs\<run_id>\blocks.json` with one factor per depth. The pilot factors were
-1.041–1.188. A factor outside [0.8, 1.4] means the sensor window is unreliable; stop and
-diagnose.
+Expected: `runs\<run_id>\blocks.json` with one factor per depth, and rewritten
+`j_gpu_calibrated` / `j_total` columns in `raw.csv`. The pilot factors were 1.041-1.188. A
+factor outside [0.8, 1.4] means the sensor window is unreliable; stop and diagnose.
+
+Repeat the noise block at `k = 8`:
+
+```powershell
+python scripts\04b_repeat_cv.py --config configs\runs\squad_qwen4b_p0_r3.toml --cooldown 120
+```
+
+Expected: `runs\<run_id>\repeat.json` with per-query CV, median/max CV, and the K7 pass/fail.
 
 ## 6. Energy taxes (P2)
 
@@ -105,14 +131,17 @@ python scripts\03_run_taxes.py --config configs\taxes\per_passage_b.toml
 Expected: two raw CSVs and a sign test. Fixed tax should move `k*` up; per-passage tax should
 move it down. If either sign is wrong, record it as a falsification, not as a null result.
 
-## 7. Analysis (P1)
+## 7. Analysis (P0/P1)
 
 ```powershell
+python scripts\05_analyze.py --run-id golden_squad_qwen4b_p0   # failed first run
+python scripts\05_analyze.py --run-id golden_squad_qwen4b_p0_r3
 python scripts\05_analyze.py --run-id squad_qwen4b_p1
 ```
 
-Planned outputs under `analysis\squad_qwen4b_p1\`: `estimates.csv`, `bootstrap.json`,
-`identity.csv`, `noninferiority.json`, `certification.json`, and `report.md`.
+P0 writes `analysis\golden_squad_qwen4b_p0_r3\`: `estimates.csv`, `p0_check.json`, and
+`report.md`. P1 adds the planned `bootstrap.json`, `identity.csv`, `noninferiority.json`, and
+`certification.json` outputs under `analysis\squad_qwen4b_p1\`.
 
 The script must refuse to run if the prereg hash in the registry does not match the frozen
 hash.
@@ -139,12 +168,37 @@ hand; edit the generator.
 
 ## 10. Backup and release
 
+The run CSVs, parquet files, and gold answers are **never committed**. The local run
+directory is the only copy until this step. Create an external backup with the user's
+approval; do not write outside the repository without it.
+
+**Current P0 status (2026-11-15):** external backup deferred by the user (D-020). Treat the
+raw P0 run as local-only and do not delete it.
+
 ```powershell
 $stamp = Get-Date -Format "yyyyMMdd-HHmm"
-Copy-Item -Recurse runs "E:\backup\energy-optimal-rag\runs-$stamp"
-Copy-Item -Recurse artifacts "E:\backup\energy-optimal-rag\artifacts-$stamp"
-Get-FileHash -Algorithm SHA256 runs\*\raw.csv
+$dest = "E:\backup\energy-optimal-rag\$stamp"
+New-Item -ItemType Directory -Force -Path $dest | Out-Null
+Copy-Item -Recurse runs $dest\runs
+Copy-Item -Recurse analysis $dest\analysis
+Copy-Item -Recurse artifacts $dest\artifacts
+Copy-Item -Recurse data\processed $dest\processed
+Copy-Item -Recurse data\splits $dest\splits
+Copy-Item data\manifest.json $dest\manifest.json
+Get-ChildItem $dest\runs -Recurse -Include raw.csv,blocks.json,repeat.json,manifest.json |
+  Get-FileHash -Algorithm SHA256 |
+  Export-Csv $dest\sha256.csv -NoTypeInformation
 ```
+
+Exclude `runs\_dry*` and `runs\_diag*` from the paper archive; they are diagnostics, not
+registered runs. For the journal package keep:
+
+- `runs/<run_id>/raw.csv`, `blocks.json`, `repeat.json`, `manifest.json` (local/USB; never git)
+- `analysis/<run_id>/estimates.csv`, `p0_check.json`, `metadata.json`, `report.md` (tracked)
+- `runs/registry.csv`, `artifacts/ledger.csv`, `artifacts/claims_evidence.csv` (tracked)
+- `paper/tables/` and `paper/figures/`, generated only from the above.
+
+A table or figure without a registered run ID and artifact hash is not ready for the paper.
 
 For a release:
 

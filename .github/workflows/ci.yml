@@ -12,8 +12,9 @@ permissions:
 
 jobs:
   test:
-    name: smoke (Python 3.12)
+    name: test (Python 3.12)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,13 +25,27 @@ jobs:
           python-version: "3.12"
 
       - name: Install package without runtime dependencies
-        run: pip install -e . --no-deps
+        run: python -m pip install -e . --no-deps
 
       - name: Install test runner
-        run: pip install pytest
+        run: python -m pip install pytest
+
+      - name: Smoke test without runtime dependencies
+        run: python -m pytest -q tests/test_smoke.py
+
+      - name: Install test dependencies
+        run: python -m pip install pytest ruff pandas pyarrow rank-bm25 requests
 
       - name: Compile package
         run: python -m compileall -q src
 
-      - name: Run smoke tests
+      - name: Validate configs
+        run: python -m rag_energy.cli validate
+
+      - name: Lint and format
+        run: |
+          ruff check src tests scripts
+          ruff format --check src tests scripts
+
+      - name: Run tests
         run: python -m pytest -q

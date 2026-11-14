@@ -16,7 +16,7 @@ provenance, sampling, and limits; it is not a redistribution of the data.
 | Upstream license | CC BY-SA 4.0 | CC BY-SA 4.0 |
 | Upstream size | 10,570 questions | 7,405 questions |
 | Used here | 1,000 primary; 500 (1.5B); 500 (Llama 3B, same IDs); 200 (boundary/context) | 500 questions |
-| Corpus | 20,958 unique dev contexts → 45,651 70-word passages | 10 paragraphs per question (2 gold, 8 distractors) |
+| Corpus | 20,958 unique train+dev contexts → 45,651 70-word passages | 10 paragraphs per question (2 gold, 8 distractors) |
 | Retriever | BM25 Okapi, top-32 | BM25 Okapi, top-10 |
 | Answer type | Extractive span | Extractive span, multi-hop |
 | Primary metric | Normalized EM | Normalized EM |
@@ -37,7 +37,7 @@ mechanism test and a weakness for external validity.
 (28–30 each). The powered run samples 1,000 with the same stratification and seed `20261115`.
 Question IDs are hashed into the manifest; the raw question text stays in `data/processed/`.
 
-**Corpus construction.** All unique dev contexts (20,958 in the pilot) are truncated to 256
+**Corpus construction.** The pilot corpus used 20,958 unique train+dev contexts; dev alone is about 2,067 paragraphs. Contexts are truncated to 256
 words and chunked into 70-word passages with no overlap, producing 45,651 passages. Mean
 passage length was 53.4 words. Chunking is deterministic; the same text, size, and overlap
 must produce the same passages.

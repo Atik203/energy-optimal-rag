@@ -46,6 +46,24 @@ price of static depth, and the cost of certifying `k*`.
 - The 78.8% oracle figure is labeled "upper bound" wherever it appears.
 - The manuscript is not submitted until the clean-room reproduction matches.
 
+## P0 evidence (harness only)
+
+P0 is not a paper result. Its only paper use is the methods/reproducibility section. The
+preserved map is:
+
+| Object | Path | Git status |
+|---|---|---|
+| Raw per-query sweep | `runs/golden_squad_qwen4b_p0_r3/raw.csv` | ignored; external backup only |
+| Block factors | `runs/golden_squad_qwen4b_p0_r3/blocks.json` | ignored; external backup only |
+| Repeat CV | `runs/golden_squad_qwen4b_p0_r3/repeat.json` | ignored; external backup only |
+| Run manifest | `runs/golden_squad_qwen4b_p0_r3/manifest.json` | ignored; external backup only |
+| Estimates / P0 check | `analysis/golden_squad_qwen4b_p0_r3/` | tracked, small |
+| Registry / ledger | `runs/registry.csv`, `artifacts/ledger.csv` | tracked |
+| Failure evidence | `docs/P0_HARNESS_REPORT.md`, `analysis/p0_calibration_diagnostic/` | tracked |
+
+No P0 row is added to `artifacts/claims_evidence.csv`: P0 is a harness check, not a claim.
+The P1 paper tables will be generated only after the prereg freeze and the powered run.
+
 ## Files (planned)
 
 ```

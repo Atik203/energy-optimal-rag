@@ -59,7 +59,7 @@ generations, on an RTX 3060 Laptop 6 GB with Ollama `qwen3.5:4b` (Q4) and BM25 t
 
 | Phase | Weeks | Goal | Key outputs | Exit gate |
 |---|---|---|---|---|
-| **P0** | 1 | Scaffold and golden reproduction | Repo, CI green, environment lock, data manifest, 200-question golden reproduction of the pilot curve, measurement harness checks | Golden `E(k)` within 10% of pilot at each depth; K7 passes; `validate` clean |
+| **P0** | 1 | Scaffold and golden reproduction | Repo, CI green, environment lock, data manifest, 200-question golden reproduction of the pilot curve, measurement harness checks | Golden `J(k)` anchors and affine fit within 10%; E/A reported; K7 passes; `validate` clean |
 | **P1** | 2–3 | Powered SQuAD rerun | `n = 1,000` × 7 depths, frozen prereg, raw ledger, primary 5 pp non-inferiority analysis | G1 or documented failure; K1–K7 adjudicated; freeze respected |
 | **P2** | 4–6 | External validity and causal test | Qwen2.5-1.5B replication (`n = 500`), Llama 3.2 3B exploratory reader (`n = 500`, 4k), HotpotQA distractor (`n = 500`, `k ≤ 10`), boundary probe (`k ∈ {32,48,64}`, `n = 200`, 8k), 16k context-budget probe (`n = 200`), fixed/per-passage taxes, optional H200 accuracy-only check (not run) | G5 replication; tax signs match Corollary 1; boundary probe resolves; exploratory arms reported without gates |
 | **P3** | 7–10 | Query-conditional policy | Feature set, policy model, 600/200/200 split, matched-accuracy evaluation, oracle gap capture | G4: oracle gain ≥20% and policy captures ≥50% at matched accuracy, or documented negative |
@@ -69,11 +69,34 @@ generations, on an RTX 3060 Laptop 6 GB with Ollama `qwen3.5:4b` (Q4) and BM25 t
 
 ### Phase detail
 
-**P0 — Scaffold and golden reproduction (week 1).** Build the repository, CI, environment
+**P0 - Scaffold and golden reproduction (week 1).** Build the repository, CI, environment
 lock, config schema, CLI validation, and the measurement harness. Re-run a 200-question
-SQuAD subset on the same reader and compare the curve to the pilot. The purpose is to prove
-the harness, not to produce new evidence. If the golden reproduction differs by more than
-10% at any depth, stop and diagnose before P1.
+SQuAD subset on the same reader and compare the energy curve to the pilot. The purpose is to
+prove the harness, not to produce new evidence. The repo has documented pilot J values only at
+`k = 1, 4, 32`; P0 therefore gates on those anchors and the affine fit, and reports E/A
+without a gate. If the anchors or fit differ by more than 10%, stop and diagnose before P1.
+
+**P0 status (2026-11-15): FAIL.** The first golden run collected 1,400 valid rows and the exact
+corpus counts, but block calibration failed (0.732 cold, 1.676 warm) and the idle CV was
+46.4%. The J table is uncalibrated, so its 15-21% shortfall against the calibrated pilot is
+not adjudicable as a clean energy test. P1 is blocked pending a pre-specified
+measurement-protocol fix and a clean `_r3` run. See
+[`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md).
+
+**P0 implementation checklist (2026-11-15):**
+
+| Item | Status |
+|---|---|
+| Config resolver, P0/boundary configs, registry hashes | **DONE** |
+| SQuAD train+dev prep, manifest, tracked ID splits | **DONE** — 10,570 / 20,958 / 45,651; verified |
+| Live Ollama reader + NVML sampler | **DONE** |
+| Depth sweep, block calibration, repeat CV, P0 analysis | **DONE** |
+| P0 golden run #1 | **FAILED** — block factors 0.732 cold / 1.676 warm; idle CV 46.4% |
+| Independent audits (math, tests/CI, data/claims) | **DONE** |
+| Protocol revision: 0.3 s tail, `factor_csv`, idle-CV gate | **DONE** — dry run factors 0.834–1.380 |
+| `_r2` clean-run attempt | **ABORTED** — stopped at 409 rows; uncommitted tree |
+| `_r3` clean golden run | **RUNNING** |
+| P1 powered run | **BLOCKED** until `_r3` passes |
 
 **P1 — Powered SQuAD (weeks 2–3).** Freeze the preregistration before looking at the new
 accuracy data. Run `n = 1,000` at 7 depths. Primary test: 5 pp EM non-inferiority at the
@@ -127,9 +150,9 @@ release. The paper is not submitted until the clean-room reproduction matches.
 |---:|---|---|---|
 | 1 | Repository scaffold, CI, governance files | Public repo, green CI (or documented CI failure) | `pytest -q` passes locally and in CI |
 | 2 | Environment lock, CLI validation, config schema | `environment.yml`, lock template, `rag_energy.cli validate` | All TOML configs parse; `validate` exits 0 |
-| 3 | Data prep: SQuAD dev download, 70-word chunking, BM25 index | `data/manifest.json` populated, processed parquet (git-ignored) | 1,000 questions and ≥45k passages; recall@32 reproducible |
+| 3 | Data prep: SQuAD train+dev corpus, 70-word chunking, BM25 index | `data/manifest.json` populated, processed parquet (git-ignored) | 1,000 dev questions and 45,651 passages; recall@32 reproducible |
 | 4 | Energy harness validation: NVML, idle, block calibration, nonce | Harness test report | Idle CV < 20%; block factors recorded; nonce forces full prefill |
-| 5 | Golden reproduction: 200 questions × 7 depths | `runs/golden_*/raw.csv` | `E(k)` within 10% of pilot at every depth; repeat CV < 20% |
+| 5 | Golden reproduction: 200 questions × 7 depths | `runs/golden_*/raw.csv` | J anchors and affine fit within 10%; E/A reported; repeat CV < 20% |
 | 6 | Freeze preregistration and configs | Signed prereg commit, `configs/analysis/prereg.toml` | Prereg hash recorded; no analysis code reads outcomes before freeze |
 | 7 | Power simulation and sample-size lock | Power table, decision memo | `n = 1,000` justified for 5 pp; 2 pp declared estimation-only |
 | 8 | Run P1 primary sweep (first half) | Raw CSV, registry entry | No sampler errors; thermal log complete |

@@ -6,7 +6,7 @@ kind = "grid"
 grid_id = "boundary_k3"
 k_grid = [32, 48, 64]
 n_questions = 200
-base_run = "squad_qwen4b_p1"
+base_run = "boundary_qwen4b_p2"
 phase = "P2"
 
 # The probe must be able to retrieve all 64 passages, so the k=64 endpoint is

@@ -40,6 +40,9 @@ A rerun of the same ID gets a suffix `_r2`, not an overwrite. Never overwrite a 
 | `status` | `planned`, `running`, `completed`, `aborted`, `invalid` |
 | `git_commit` | short commit at run start |
 | `config_path` | repo-relative config |
+| `config_sha256` | SHA-256 of the effective merged config |
+| `prereg_sha256` | SHA-256 of the frozen prereg and analysis plan; blank before freeze |
+| `model_digest` | reader model digest recorded at run start |
 | `raw_csv` | repo-relative path (git-ignored) |
 | `notes` | free text, no commas outside quotes |
 

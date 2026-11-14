@@ -12,6 +12,7 @@ n_questions = 200
 k_grid = [32, 48, 64]
 seed = 20261115
 phase = "P2"
+id_split = "context"
 
 [reader]
 backend = "ollama"

@@ -216,4 +216,133 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   claim.
 - **Consequences:** The `k=64` boundary endpoint is no longer silently truncated. The context
   probe can separate context-budget effects from depth effects, but it cannot support a
-  “16k-context saturation” or energy claim. H200 results never enter the energy ledger.
+  "16k-context saturation" or energy claim. H200 results never enter the energy ledger.
+
+---
+
+## D-014 - P0 gates on J anchors and the affine fit
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The repository documents pilot `E(k)` only at `k = 1, 4, 32`; `E(0)` is
+  undefined, and a fresh 200-question draw can shift `A(k)` enough to move `E(k)` by roughly
+  10% even when the harness is correct. The original "E(k) within 10% at every depth" is not
+  adjudicable from tracked evidence.
+- **Decision:** The P0 energy gate is `J(1)`, `J(4)`, and `J(32)` within 10% of 17.98, 25.10,
+  and 89.55 J; affine `a` and `b` within 10% of 15.74 J and 2.283 J/passage; and `R2 >= 0.95`.
+  `E(k)` and `A(k)` are reported with intervals but are not gated. If the pilot IDs are
+  recovered, the E anchors become a secondary check.
+- **Consequences:** ROADMAP, proposal, and implementation-plan wording was updated before the
+  golden run. This is a harness check, not a confirmatory gate; it produces no
+  `claims_evidence.csv` supported row. Do not re-threshold after seeing the golden data.
+
+---
+
+## D-015 - Sampling frame and tracked SQuAD ID splits
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The pilot question IDs are not in the repository. The pilot corpus has 20,958
+  unique contexts, which requires the SQuAD train and dev files together; dev alone has about
+  2,067 paragraphs. The early configs did not define whether the replication and boundary
+  samples were nested.
+- **Decision:** Build the retrieval corpus from unique train+dev contexts. Sample 200 P0
+  questions disjoint from 1,000 P1 questions; nest 500 replication questions inside P1; draw
+  200 boundary questions inside P1 and disjoint from replication; reuse those 200 IDs for the
+  4k/16k context probe; draw 150 tax questions inside P1 and disjoint from the other nested
+  arms. Track IDs and per-split SHA-256 in `data/splits/squad_splits.json`, never raw text.
+- **Consequences:** Run manifests identify the split by name, and reruns are reproducible
+  without redistributing data. If the pilot IDs remain unavailable, disclose the expected
+  overlap of roughly 19 of 1,000 questions (1.9%) and run a sensitivity analysis excluding any
+  IDs that are later recovered; do not claim the pilot was excluded.
+
+---
+
+## D-016 - Wall-meter cross-check waived for P0/P1
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** No AC wall meter is available. A basic 0.01 kWh plug meter cannot resolve a
+  30-query subset, and a cheap meter would add more uncertainty than it removes. The wall
+  meter is a secondary whole-system check; NVML `power.draw` is the primary sensor.
+- **Decision:** Waive the wall-meter cross-check for P0/P1. Use NVML with 20-query block
+  calibration and the 3x20 repeat CV. Report "wall meter: not measured (waiver)" in the
+  measurement table. If a meter is borrowed later, use it over a full run and report the
+  system/GPU factor descriptively, never as a per-query correction.
+- **Consequences:** No whole-system factor is reported, but the GPU-energy claim is unchanged
+  and remains conditional on NVML calibration. The waiver is recorded in the run manifest and
+  the P0 report.
+
+---
+
+## D-017 - Local harness uses the existing Python 3.12 Anaconda base
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The named conda environment `energy-optimal-rag` is not present on the local
+  machine. Creating it writes outside the repository and needs explicit approval. The existing
+  Anaconda base is Python 3.12, has the package editable-installed, and passes the suite.
+- **Decision:** Use the existing `C:\ProgramData\anaconda3\python.exe` for local P0/P1
+  harness work. Record the executable and Python version in every run manifest. Keep the named
+  environment as the documented clean-room target; create it only with approval.
+- **Consequences:** Local runs are reproducible from the manifest even though the named
+  environment is absent. A clean-room rerun must still use the documented environment file.
+
+---
+
+## D-018 - P0 golden harness check failed; P1 is blocked
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The first golden run collected 1,400/1,400 valid rows with 1,400 unique nonces
+  and the exact pilot corpus counts, but the J anchors were 15–21% low, the affine intercept
+  was 29.5% low, and the slope was 11.4% low. Block calibration stopped at `k=0` factor 0.732
+  when cold, and at `k=1` factor 1.676 after a block warm-up. The sweep idle CV was 46.4%,
+  measured after warm-up, and the GPU reached 90 °C / 900 MHz. The block factor is bimodal
+  with thermal state, not a stable correction.
+- **Decision:** Mark the run `invalid`, do not start P1, and do not widen the [0.8, 1.4]
+  block-factor range after seeing the outcome. Diagnose and pre-specify a measurement-protocol
+  amendment, then rerun P0 under a new `_r2` run ID. P0 remains a harness check with no
+  confirmatory claim.
+- **Consequences:** The first P0 run is failure evidence, not a result. The raw CSV stays
+  git-ignored; the analysis and this report are tracked. P1 GPU hours are held. The next run
+  must demonstrate stable idle before warm-up, a block factor inside the pre-set range, and
+  the J anchors before any P1 work.
+
+---
+
+## D-019 - P0 measurement protocol revision for the clean `_r3` rerun
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The post-P0 audits found that the paired-window factor was a gap/tail
+  allocation, so it could hide the sweep/block mismatch. The protocol factor must remain
+  `J_block / sum(j_gpu_raw)` over the sweep rows. The 20-question dry runs showed that a
+  post-query tail was needed to capture the power ramp/tail: 0.1 s still missed at `k=4`
+  (1.476), 0.2 s missed at `k=16` (1.428), and 0.3 s passed all seven depths (0.834–1.380).
+  The first clean-run attempt (`_r2`) was stopped after 409 rows because it started from a
+  tree with uncommitted fixes.
+- **Decision:** The clean `_r3` protocol is: measure idle before warm-up and abort if its CV
+  exceeds 0.20; add `post_query_tail_s = 0.3` to both the sweep and block per-query windows;
+  gate on `factor_csv = J_block / raw_sum_csv` in [0.8, 1.4]; record `factor_block` and
+  `consistency = factor_block / factor_csv`; warm each block before measurement; apply the
+  repeat cooldown at the start of every block. `_r2` is `aborted`; `_r3` is the clean run.
+- **Consequences:** No claim or confirmatory threshold changed; this is a harness measurement
+  amendment before the confirmatory freeze. P0 remains a harness check. P1 stays blocked
+  until `_r3` passes the block-factor and J-anchor checks.
+
+---
+
+## D-020 - External P0 backup deferred; raw data is local-only
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** The P0 raw CSV, blocks, repeat, and run manifest are git-ignored by policy and
+  exist only under `E:\PROJECT\energy-optimal-rag\runs\`. The user chose to skip an external
+  backup for now.
+- **Decision:** Keep the run directories intact and mark them local-only. Do not delete or
+  overwrite `runs/golden_squad_qwen4b_p0*` until an external backup exists. Revisit the backup
+  before P1 or before any machine/storage change.
+- **Consequences:** A disk failure would lose the raw P0 evidence. The tracked analysis,
+  registry, and ledger remain, but they cannot reconstruct the raw rows or gold answers.
+  The paper's reproducibility package is incomplete until an external copy is made.

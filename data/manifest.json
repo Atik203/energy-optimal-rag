@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_utc": null,
+  "generated_utc": "2026-11-14T18:26:45Z",
   "project": "energy-optimal-rag",
   "policy": "No raw question or context text is stored in this repository. Only dataset identifiers, versions, licenses, checksums, and derived statistics are tracked. Upstream SQuAD and HotpotQA licenses (CC BY-SA 4.0) remain in force.",
   "datasets": [
@@ -15,21 +15,27 @@
       "n_questions_total": 10570,
       "n_questions_used": 1000,
       "corpus": {
-        "construction": "unique dev contexts truncated to 256 words, chunked into 70-word passages, no overlap",
+        "construction": "unique contexts truncated to 256 words, chunked into 70-word passages, no overlap",
         "n_contexts": 20958,
         "n_passages": 45651,
         "passage_words": 70,
+        "context_word_limit": 256,
         "retrieval_top_k": 32
       },
       "checksums": {
-        "source_sha256": null,
-        "questions_sha256": null,
-        "corpus_sha256": null
+        "source_sha256": "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9",
+        "questions_sha256": "2e90a63a170a0b4d58a377be753ca8575ab41bdb4dabb9034152bb716a55b71e",
+        "corpus_sha256": "43b1f3a099a950a7f18cf709cc7426d18e6a6e9c3485fcd6a85c71cdd3ce43b7",
+        "splits_sha256": "e53de4eb2a1de06759f0683be148e9a2430ee45f34e21b0256b101fccfc337f6",
+        "corpus_sources": {
+          "dev-v1.1.json": "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9",
+          "train-v1.1.json": "3527663986b8295af4f7fcdff1ba1ff3f72d07d61a20f487cb238a6ef92fd955"
+        }
       },
-      "prepared_utc": null,
+      "prepared_utc": "2026-11-14T18:26:45Z",
       "preparation_seed": 20261115,
-      "status": "not_prepared",
-      "notes": "Pilot used 200 stratified questions. Primary run uses 1000; replication 500; boundary probe 200. Pilot recall@32 of the gold context was 88.0%."
+      "status": "verified",
+      "notes": "P0 golden, P1 primary, replication, boundary/context, and tax IDs are tracked in data/splits/squad_splits.json. P0 is disjoint from P1."
     },
     {
       "id": "hotpot",

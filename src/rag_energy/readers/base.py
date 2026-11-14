@@ -11,6 +11,10 @@ from dataclasses import dataclass
 from typing import Protocol
 
 
+class ReaderError(RuntimeError):
+    """A backend request failed before a generation could be scored."""
+
+
 @dataclass(frozen=True)
 class ReaderResult:
     """One generation.
@@ -20,12 +24,18 @@ class ReaderResult:
         latency_s: Wall time of the model call, in seconds.
         prompt_tokens: Prompt tokens if the backend reports them, else ``None``.
         output_tokens: Generated tokens if reported, else ``None``.
+        load_s: Model load time if reported, in seconds.
+        prompt_eval_s: Prompt-evaluation time if reported, in seconds.
+        eval_s: Decode time if reported, in seconds.
     """
 
     text: str
     latency_s: float
     prompt_tokens: int | None = None
     output_tokens: int | None = None
+    load_s: float | None = None
+    prompt_eval_s: float | None = None
+    eval_s: float | None = None
 
 
 class Reader(Protocol):

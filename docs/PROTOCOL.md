@@ -97,21 +97,26 @@ Raw predictions and gold answers stay in the git-ignored run directory. Aggregat
 
 After the main sweep, for each depth in ascending order:
 
-1. Cool to a stable idle temperature.
-2. Run 20 back-to-back queries using the first 20 question IDs at that depth.
+1. Bring the GPU to the sweep's steady thermal state and record temperature and SM clock.
+2. Run 20 back-to-back queries using the first 20 question IDs at that depth, with the same
+   `post_query_tail_s` as the sweep.
 3. Integrate the block as one window and subtract the pre-block idle baseline.
-4. Compute the scale factor `block_total / sum(per_query_raw)`.
-5. Write the factor, block duration, block energy, and pre/post idle power to `blocks.json`.
+4. Compute `factor_csv = block_total / sum(j_gpu_raw)` over the sweep rows; also record
+   `factor_block = block_total / sum(block_windows)` and
+   `consistency = factor_block / factor_csv`.
+5. Write `factor_csv`, `factor_block`, `consistency`, block duration/energy, temperature,
+   clock, and idle power to `blocks.json`. Gate on `factor_csv` in [0.8, 1.4].
 
 The calibrated per-query energy is `j_gpu_raw * factor`. Both raw and calibrated values are
 retained. The analysis reports both; the calibrated value is primary.
 
 ## 6. Repeat and noise block
 
-Three repetitions of 20 identical queries at `k = 8`, separated by short cooldowns. The
-coefficient of variation is computed per query across repetitions (median and maximum). The
-minimum detectable effect is approximated as `2 × CV`; if the observed energy effect is
-smaller, the curve is reported as "not measurable" and K7 fires.
+Three repetitions of 20 identical queries at `k = 8`, with the cooldown at the **start** of
+every block, including the first. The coefficient of variation is computed per query across
+repetitions (median and maximum). The minimum detectable effect is approximated as `2 × CV`;
+if the observed energy effect is smaller, the curve is reported as "not measurable" and K7
+fires.
 
 ## 7. Energy-tax conditions
 
