@@ -311,6 +311,15 @@ def run_depth_sweep(
     try:
         if split.questions.empty:
             raise ValueError(f"split {split_name!r} is empty")
+        # Measure idle before warm-up: warm-up heats the GPU and inflates the
+        # idle CV, which is a pre-run baseline in the protocol.
+        if idle_power_w is None:
+            idle_seconds = float(config.get("energy", {}).get("idle_baseline_s", 60))
+            idle_stats = _measure_idle(sampler_factory, interval_ms, idle_seconds)
+            idle_power_w = idle_stats.mean_w
+        if idle_power_w < 0:
+            raise ValueError("idle_power_w must be non-negative")
+
         first = split.questions.iloc[0]
         for index_number in range(max(0, warmup_queries)):
             depth = k_grid[index_number % len(k_grid)]
@@ -320,13 +329,6 @@ def run_depth_sweep(
                 [passage.text for passage in retrieved],
                 make_nonce(nonce_hex_chars),
             )
-
-        if idle_power_w is None:
-            idle_seconds = float(config.get("energy", {}).get("idle_baseline_s", 60))
-            idle_stats = _measure_idle(sampler_factory, interval_ms, idle_seconds)
-            idle_power_w = idle_stats.mean_w
-        if idle_power_w < 0:
-            raise ValueError("idle_power_w must be non-negative")
 
         with raw_path.open("a" if resume else "w", encoding="utf-8", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=RAW_FIELDS, lineterminator="\n")
@@ -530,6 +532,17 @@ def run_block_calibration(
     questions = split.questions.set_index("qid")["question"].to_dict()
     pairs = list(zip(split.corpus["passage_id"], split.corpus["text"], strict=True))
     index = build_index(pairs)
+    warmup_queries = int(config.get("energy", {}).get("warmup_queries", 20))
+    first_question = str(split.questions.iloc[0]["question"])
+    for index_number in range(max(0, warmup_queries)):
+        warmup_depth = k_grid[index_number % len(k_grid)]
+        retrieved = index.search(first_question, warmup_depth)
+        reader.generate(
+            first_question,
+            [passage.text for passage in retrieved],
+            make_nonce(nonce_hex_chars),
+        )
+
     blocks: list[dict[str, Any]] = []
     factors: dict[int, float] = {}
     for depth in k_grid:
@@ -545,6 +558,16 @@ def run_block_calibration(
             raise ValueError(f"k={depth}: raw per-query energy sum must be positive")
         if cooldown_s > 0:
             time.sleep(cooldown_s)
+        # A cooldown leaves the first short query at a cold, low-power state;
+        # two discarded queries put the block back at the measured steady state.
+        warmup_question = str(questions[depth_rows[0]["question_id"]])
+        for _ in range(2):
+            retrieved = index.search(warmup_question, depth)
+            reader.generate(
+                warmup_question,
+                [passage.text for passage in retrieved],
+                make_nonce(nonce_hex_chars),
+            )
 
         sampler = sampler_factory(interval_ms)
         sampler.start()

@@ -272,9 +272,7 @@ def test_prepare_squad_keeps_question_file_in_corpus(tmp_path: Path) -> None:
                 "data": [
                     {
                         "title": "C",
-                        "paragraphs": [
-                            {"context": "extra corpus context", "qas": []}
-                        ],
+                        "paragraphs": [{"context": "extra corpus context", "qas": []}],
                     }
                 ]
             }
