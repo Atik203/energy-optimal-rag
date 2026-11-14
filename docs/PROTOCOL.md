@@ -1,8 +1,8 @@
 # Experimental Protocol
 
 **Status:** draft for the P1 freeze · v0.1.0 · 2026-11-09
-**Applies to:** SQuAD primary run, 1.5B replication, HotpotQA distractor run, boundary
-probe, and energy-tax conditions.
+**Applies to:** SQuAD primary run, 1.5B replication, exploratory Llama 3B panel, HotpotQA
+distractor run, boundary probe, 16k context-budget probe, and energy-tax conditions.
 
 This protocol is the operational companion to `docs/MEASUREMENT.md` and
 `prereg/PREREGISTRATION.md`. Where they disagree, the preregistration wins for analysis and
@@ -13,9 +13,12 @@ this document wins for execution.
 | Condition | Dataset | n | Depths | Reader | Purpose |
 |---|---|---:|---|---|---|
 | Primary | SQuAD v1.1 dev | 1,000 | 0,1,2,4,8,16,32 | qwen3.5:4b | 5 pp non-inferiority |
-| Replication | SQuAD v1.1 dev | 500 | 0,1,2,4,8,16,32 | Qwen2.5-1.5B-Instruct | Reader generalization |
+| Replication | SQuAD v1.1 dev | 500 | 0,1,2,4,8,16,32 | Qwen2.5-1.5B-Instruct | H7 replication |
+| Exploratory reader | SQuAD v1.1 dev | 500 | 0,1,2,4,8,16,32 | llama3.2:3b Q4 | Reader-family robustness; no gate |
 | Distractor | HotpotQA distractor dev | 500 | 0,1,2,4,8,10 | qwen3.5:4b | Multi-hop/distractor stress |
-| Boundary | SQuAD v1.1 dev | 200 | 32,48,64 | qwen3.5:4b | Resolve K2 |
+| Boundary | SQuAD v1.1 dev | 200 | 32,48,64 | qwen3.5:4b, 8k | Resolve K2 without truncation |
+| Context-budget probe | SQuAD v1.1 dev | 200 | 32,48,64 | qwen3.5:4b, 16k | Truncation/context diagnostic |
+| Context control | SQuAD v1.1 dev | 200 | 32 | qwen3.5:4b, 4k | Paired control for the probe |
 | Fixed tax | SQuAD subset | 150 | full grid | qwen3.5:4b | `k*` increases |
 | Per-passage tax | SQuAD subset | 150 | full grid | qwen3.5:4b | `k*` decreases |
 
@@ -27,14 +30,21 @@ margin is estimation-only.
 
 1. Confirm no other GPU job is running (`nvidia-smi`; no `DONE_*` flags from another run).
 2. Confirm AC power, screen off, batch size 1, and the fixed power mode.
-3. Record GPU model, driver, CUDA runtime, Ollama version, model digest, and Python version.
-4. Record the prereg hash and the config hash in `runs/registry.csv`.
-5. Build the BM25 index once and record its build time and passage count.
-6. Run the 5-query smoke test; a failed smoke test aborts the run.
-7. Measure the 60 s pre-run idle baseline.
-8. Run 20 warm-up queries and discard them.
-9. Check temperature and SM clock; if the GPU is already throttled, cool to the idle
-   temperature before starting.
+3. Record GPU model, driver, CUDA runtime, Ollama version, model digest, Python version, and
+   the hardware class (local RTX 3060 or shared H200).
+4. Record `num_ctx`, `top_k`, and the maximum `k`; confirm `top_k >= max(k_grid)`.
+5. Confirm the model tag, quantization, and context match the run config.
+6. Record the prereg hash and the config hash in `runs/registry.csv`.
+7. Build the BM25 index once and record its build time and passage count.
+8. Run the 5-query smoke test; a failed smoke test aborts the run.
+9. Measure the 60 s pre-run idle baseline.
+10. Run 20 warm-up queries and discard them.
+11. Check temperature and SM clock; if the GPU is already throttled, cool to the idle
+    temperature before starting.
+12. For the 16k probe, confirm `ollama ps` reports 100% GPU and >300 MB headroom; record
+    `prompt_tokens` and reject any row where `prompt_tokens + num_predict > num_ctx`.
+13. For the H200 accuracy check, confirm power telemetry is unavailable and mark energy
+    `not measured`; do not write an energy row.
 
 ## 3. Run order and randomization
 
@@ -135,6 +145,9 @@ imputation, and wrong, slow, and throttled answers stay in.
 - Do not exclude a slow or wrong answer. Wrongness is data.
 - Do not exclude a throttled block. Throttling is recorded and analyzed as a covariate.
 - A run aborted before completion is registered with status `aborted`; it is not deleted.
+- A context row with `prompt_tokens + num_predict > num_ctx` is invalid, not a wrong answer.
+- A 16k row that offloads to CPU is invalid for the local arm; report the hardware limit.
+- H200 rows are accuracy-only. Energy = `not measured`; never `0` and never pooled.
 
 ## 9. Stop rules
 

@@ -50,6 +50,8 @@ generations, on an RTX 3060 Laptop 6 GB with Ollama `qwen3.5:4b` (Q4) and BM25 t
 - No learned-policy gain until a policy is trained and evaluated on held-out questions.
 - No carbon-optimal claim beyond constant-factor reporting.
 - No generalization to frontier readers, dense retrievers, or full NQ from this design.
+- No energy claim from the shared H200/MIG slice; that optional check is accuracy-only.
+- No promotion of the exploratory Llama reader or context probe into H7/G5.
 
 ---
 
@@ -59,7 +61,7 @@ generations, on an RTX 3060 Laptop 6 GB with Ollama `qwen3.5:4b` (Q4) and BM25 t
 |---|---|---|---|---|
 | **P0** | 1 | Scaffold and golden reproduction | Repo, CI green, environment lock, data manifest, 200-question golden reproduction of the pilot curve, measurement harness checks | Golden `E(k)` within 10% of pilot at each depth; K7 passes; `validate` clean |
 | **P1** | 2–3 | Powered SQuAD rerun | `n = 1,000` × 7 depths, frozen prereg, raw ledger, primary 5 pp non-inferiority analysis | G1 or documented failure; K1–K7 adjudicated; freeze respected |
-| **P2** | 4–6 | External validity and causal test | Qwen2.5-1.5B replication (`n = 500`), HotpotQA distractor (`n = 500`, `k ≤ 10`), 16k boundary probe (`k ∈ {32,48,64}`, `n = 200`), fixed/per-passage energy taxes | G5 replication; tax signs match Corollary 1; boundary probe resolves |
+| **P2** | 4–6 | External validity and causal test | Qwen2.5-1.5B replication (`n = 500`), Llama 3.2 3B exploratory reader (`n = 500`, 4k), HotpotQA distractor (`n = 500`, `k ≤ 10`), boundary probe (`k ∈ {32,48,64}`, `n = 200`, 8k), 16k context-budget probe (`n = 200`), fixed/per-passage taxes, optional H200 accuracy-only check (not run) | G5 replication; tax signs match Corollary 1; boundary probe resolves; exploratory arms reported without gates |
 | **P3** | 7–10 | Query-conditional policy | Feature set, policy model, 600/200/200 split, matched-accuracy evaluation, oracle gap capture | G4: oracle gain ≥20% and policy captures ≥50% at matched accuracy, or documented negative |
 | **P4** | 11–14 | Theory validation and sensitivity | Identity tests across datasets/readers, certification-cost curves, margin sensitivity, distractor counterexample check, robustness to scoring rule | Theory report; identity and comparative statics either supported or revised |
 | **P5** | 15–18 | Paper | Manuscript draft, supplement, figures, tables, claims-evidence map | Internal review; every number traces to `runs/<run_id>/raw.csv` |
@@ -79,15 +81,17 @@ pre-specified interior depth (`k = 4` vs `k = 32`), with ≥20% energy savings r
 positive policy claim. The 2 pp margin is estimated and reported with a CI but is not a
 certification target. This phase decides whether the paper has a static policy result.
 
-**P2 — Replication and causal test (weeks 4–6).** Three independent stresses: a weaker
-reader (Qwen2.5-1.5B-Instruct, `n = 500`), a multi-hop/distractor dataset (HotpotQA,
-`n = 500`, `k ∈ {0,1,2,4,8,10}` because the distractor setting supplies 10 paragraphs), and
-a boundary probe (`k ∈ {32,48,64}`, `n = 200`) to test whether the pilot's boundary optimum
-was a grid artifact. The probe also includes a 16k-token context check to test whether the
-boundary is a 4096-context artifact; if the 6 GB card cannot hold 16k, the limit is reported
-rather than dropped. Add the energy-tax manipulation: a fixed dummy GPU computation raising
+**P2 — Replication and causal test (weeks 4–6).** Stress the result with the confirmatory
+Qwen2.5-1.5B reader (`n = 500`) and HotpotQA (`n = 500`, `k ∈ {0,1,2,4,8,10}`), plus an
+exploratory Llama 3.2 3B reader (`n = 500`, same 500 IDs, 4k, Q4; no gate). The boundary probe
+(`k ∈ {32,48,64}`, `n = 200`) uses an 8k context budget so `k=64` is not truncated; a separate
+16k context-budget probe (`n = 200`, Qwen3.5-4B, `k=32/48/64`, with a 4k control) tests
+truncation and recall, not a 16k-token prompt or a new `k*`. If the 6 GB card cannot hold the
+16k allocation with 100% GPU residency, report the hardware limit rather than dropping or
+moving the condition. Add the energy-tax manipulation: a fixed dummy GPU computation raising
 `a` by 10–30% and a per-passage dummy computation raising `b` by 10–30%, with the prediction
-that `k*` increases for the fixed tax and decreases for the per-passage tax.
+that `k*` increases for the fixed tax and decreases for the per-passage tax. The optional H200
+64k check is accuracy-only and is not part of the local energy study.
 
 **P3 — Query-conditional policy (weeks 7–10).** The static population optimum is the wrong
 object if queries are heterogeneous. Build features from BM25 scores (top score, score gap,
@@ -175,11 +179,12 @@ and G5 but without G4; it may not claim adaptivity without G4.
 
 ## 5. Budget
 
-Local-only compute. No rental, no paid API, no cloud inference.
+Local compute for all energy measurements; one optional accuracy-only H200 check. No rental, no
+paid API, no cloud inference.
 
 | Item | Cost | Notes |
 |---|---:|---|
-| GPU compute | **$0** | Local RTX 3060 Laptop 6 GB; 15–20 GPU-hours total across P0–P4 |
+| GPU compute | **$0** | Local RTX 3060 Laptop 6 GB; 15–20 GPU-hours total across P0–P4, including ~1.2–1.7 exploratory |
 | Electricity | **~$2** | 15–20 GPU-h at ~100 W plus host overhead; indicative, not metered billing |
 | Plug-in wall meter | **$25** | Cross-check on a 30-query subset per condition |
 | USB backup drive | **$10** | Cold backup of raw runs, manifest, and checksums |
@@ -187,11 +192,13 @@ Local-only compute. No rental, no paid API, no cloud inference.
 | **Total** | **≤ $47** | Hard cap |
 
 **Storage:** ~5 GB on `E:` for raw data, processed parquet, run CSVs, and figures; model
-weights stay in the existing Ollama store (3.3 GB) and are never copied into the repo. The
-USB drive holds a second copy of `runs/`, `artifacts/`, and the manifest.
+weights stay in the existing Ollama store (3.3 GB, plus ~2 GB if Llama 3B is downloaded) and
+are never copied into the repo. The server has a 200 GB quota; it is not part of the local
+storage budget. The USB drive holds a second copy of `runs/`, `artifacts/`, and the manifest.
 
-**Time:** 15–20 GPU-hours is the compute budget. Human time is the binding constraint:
-3–4 people, 20 weeks, with P5 and P6 staffed for writing and release.
+**Time:** 15–20 GPU-hours is the local compute budget, including the exploratory additions.
+Human time is the binding constraint: 3–4 people, 20 weeks, with P5 and P6 staffed for writing
+and release.
 
 ---
 
@@ -221,7 +228,7 @@ USB drive holds a second copy of `runs/`, `artifacts/`, and the manifest.
 | # | Risk | Why it matters | Mitigation |
 |---|---|---|---|
 | R1 | Strict EM vs lenient scoring | Strict EM drove the 2 pp failure; a string match may decide the green verdict | Pre-register EM primary, report lenient span and F1 ≥0.5 as sensitivity; conclusions must survive both |
-| R2 | Reader strength / SQuAD saturation | A stronger reader could flatten the accuracy curve and move `k*` | 1.5B replication and HotpotQA; report reader-conditional results, no universal claim |
+| R2 | Reader strength / SQuAD saturation | A stronger reader could flatten the accuracy curve and move `k*` | 1.5B replication, exploratory Llama 3B panel, 16k context probe, and HotpotQA; report reader-conditional results, no universal claim |
 | R3 | Single corpus / single retriever | SQuAD closed corpus and BM25 limit external validity | HotpotQA distractor; report recall@k; state the boundary explicitly |
 | R4 | Thermal throttling | Pilot clock fell 39% and temperature rose 16 °C | Randomize `k` within question, log clocks/temperature, block calibration at steady state |
 | R5 | NVML coarse resolution | 100 ms samples are not 100 ms of independent information on this laptop | Block calibration, repeat CV, wall-meter cross-check, report sensor caveat |
@@ -230,7 +237,7 @@ USB drive holds a second copy of `runs/`, `artifacts/`, and the manifest.
 | R8 | Adaptive policy overfitting | 600/200/200 is small; features can leak | Strict split, no test-set tuning, report learning curve and held-out only |
 | R9 | Gate binding defeats the tax test | If accuracy is at ceiling, the gate may not move `k*` | Choose a mid-accuracy condition for taxes; pre-register the gate and report both gated and unconstrained |
 | R10 | Data licensing | SQuAD/HotpotQA are CC BY-SA 4.0; redistribution may violate terms | No raw text in repo; release IDs, prompts, predictions, and checksums only |
-| R11 | Schedule slip | 20 weeks with a small team | P6 buffer; drop the boundary probe or the 1.5B replication before dropping the primary |
+| R11 | Schedule slip | 20 weeks with a small team | P6 buffer; drop the optional H200 check first, then the 16k probe or Llama 3B panel, before dropping the boundary probe or 1.5B replication; never drop the primary |
 
 ---
 
@@ -239,7 +246,8 @@ USB drive holds a second copy of `runs/`, `artifacts/`, and the manifest.
 - A universal `k*` across tasks, readers, or hardware.
 - Frontier or API readers (GPT, Claude, Gemini); no paid API calls.
 - Full DPR/NQ corpus or dense-retriever training.
-- Multi-GPU or datacenter GPU measurements.
+- Multi-GPU or datacenter GPU **energy** measurements. The optional H200 64k check is
+  accuracy-only and makes no energy claim.
 - Carbon-optimal claims beyond constant-factor reporting and the split in Corollary 3.
 - Prompt tuning, fine-tuning, or reranker training as a primary contribution.
 - A production serving system or latency SLO study.

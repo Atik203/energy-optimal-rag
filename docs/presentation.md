@@ -156,7 +156,7 @@ Baseline-এ সবার জন্য একই top-k। আমাদের প
 
 ধন্যবাদ। আমি জায়েদ বিন খালিদ।
 
-Run plan: SQuAD 1,000 × 7 depth; Qwen2.5-1.5B replication 500 × 7; HotpotQA 500 × 6; boundary test 200 × 3; energy-tax test 150 × 2 condition। Policy split-এর target 600 train, 200 validation, 200 test।
+Run plan: SQuAD 1,000 × 7 depth; replication 2 × 500 × 7 — Qwen2.5-1.5B এবং exploratory Llama 3.2 3B; HotpotQA 500 × 6; boundary test 200 × 3; 16k context probe 200 × 3; energy-tax test 150 × 2 condition। Policy split-এর target 600 train, 200 validation, 200 test।
 
 NVML প্রতি 100 মিলিসেকেন্ডে power sample করে, কিন্তু এই laptop-এ sensor reading প্রায় প্রতি এক সেকেন্ডে update হয়। তাই 100 মিলিসেকেন্ড sampling মানে 100 মিলিসেকেন্ডের sensor precision নয়।
 
@@ -200,7 +200,7 @@ H1 থেকে H7 পর্যন্ত আমাদের pass/fail নিয�
 - **H2:** paired one-sided test-এর lower bound −5 pp-এর ওপরে, energy saving অন্তত 20%।
 - **H3–H4:** identity-gap interval-এ 0; selected depth-এ context share 10–70% এবং k-এর সঙ্গে বাড়ে।
 - **H5–H6:** oracle gain অন্তত 20%; policy matched accuracy-তে তার অন্তত অর্ধেক ধরে; fixed ও per-passage cost k* প্রত্যাশিত দিকে সরায়।
-- **H7:** H2-এর দিক Qwen2.5-1.5B বা HotpotQA-তে মেলে কি না।
+- **H7:** H2-এর দিক Qwen2.5-1.5B বা HotpotQA-তে মেলে কি না। Llama 3.2 3B আলাদা exploratory reader panel; এটি H7 বা G5 নয় এবং এর কোনো gate নেই।
 
 কোনো hypothesis সমর্থন না পেলেও সেটি report করব। Null result-ও ফল।
 
@@ -405,6 +405,26 @@ H1 থেকে H7 পর্যন্ত আমাদের pass/fail নিয�
 
 **উত্তর:** না। এটি study workflow ও planned gates-এর overview, paper-এর section-by-section flow নয়। Journal-এর methods overview figure হিসেবে ব্যবহার করা যাবে, তবে actual runs, dataset-specific depth grid, calibration, paired test ও bootstrap দেখিয়ে update করতে হবে। P0 check-এর পরে P1-এর আগে plan freeze হবে। Planned run-কে completed result হিসেবে দেখানো যাবে না।
 
+### ৩৭. কেন Llama 3.2 3B?
+
+**উত্তর:** এটি ভিন্ন family-এর 3B reader, Q4-এ 6 GB GPU-তে 4k context-এ চলে। এটি reader-family robustness দেখার exploratory panel; primary বা H7 replication নয়। Llama-এর quantized version-এর validated context 8k, তাই এটি 16k probe-এ ব্যবহার করছি না।
+
+### ৩৮. Llama কি H7 বা G5 পূরণ করে?
+
+**উত্তর:** না। H7 আগের মতোই Qwen2.5-1.5B অথবা HotpotQA; G5-ও অপরিবর্তিত। Llama আলাদা exploratory arm—কোনো gate নেই, 5 pp certify করে না, এবং ফল দেখার পরে H7/G5-এ যোগ করা যাবে না।
+
+### ৩৯. 16k context probe-এ কী হচ্ছে?
+
+**উত্তর:** এটি Qwen3.5-4B-এর 16k `num_ctx` allocation-এর diagnostic, 200 boundary প্রশ্নে `k=32/48/64` এবং একটি `k=32 @ 4096` control। 70-word passage-এ `k≤64` আসলে প্রায় 6k token, তাই এটি “16k-token prompt” নয়। 100% GPU residency লাগবে; CPU offload হলে hardware limit report করব।
+
+### ৪০. H200 ব্যবহার করা যাবে?
+
+**উত্তর:** শুধু optional accuracy-only 64k check-এর জন্য; H200 MIG slice-এ per-instance power reading নেই, তাই energy বা E(k) claim করা যাবে না। H200-এর ফল RTX 3060-এর সঙ্গে pool করা যাবে না।
+
+### ৪১. অনেক model test করবেন না কেন?
+
+**উত্তর:** প্রতিটি reader-এ 500 × 7 generation লাগে, আর model বাড়ালে selection ও multiple-comparison risk বাড়ে। একটি exploratory Llama panel আর একটি context probe-ই প্রশ্নটির জন্য যথেষ্ট; বেশি model মানে ভালো science নয়।
+
 ---
 
 # References: প্রশ্ন এলে কী বলবেন
@@ -461,6 +481,15 @@ HotpotQA multi-hop প্রশ্ন ও supporting-fact annotation-সহ ত�
 
 ---
 
+# Model notes — প্রশ্ন এলে
+
+- **Qwen3.5-4B:** primary reader, Q4, 4096 context; the 16k probe uses Q4 at 16384.
+- **Qwen2.5-1.5B-Instruct:** confirmatory H7 replication, fp16, 4096 context.
+- **Llama 3.2 3B Instruct:** exploratory reader, Q4_K_M, 4096 context; Llama 3.2 Community License; quantized variant has an 8k validated ceiling.
+- **H200 MIG 1g.18gb:** optional 64k accuracy-only check; no per-instance power telemetry, so no energy claim.
+
+---
+
 # Quick number sheet — প্রশ্নের সময়
 
 | Item | Value |
@@ -470,9 +499,10 @@ HotpotQA multi-hop প্রশ্ন ও supporting-fact annotation-সহ ত�
 | HotpotQA questions | 7,405 |
 | HotpotQA used | 500 |
 | Primary run | 1,000 × 7 |
-| Replication | 500 × 7 |
+| Replication | 2 × 500 × 7 |
 | HotpotQA run | 500 × 6 |
-| Boundary | 200 × 3 |
+| Boundary | 200 × 3 (8k) |
+| Context probe | 200 × 3 (16k) |
 | Taxes | 150 × 2 |
 | Policy split target | 600 / 200 / 200 |
 | Energy span | 3.45× |
@@ -483,7 +513,8 @@ HotpotQA multi-hop প্রশ্ন ও supporting-fact annotation-সহ ত�
 | 5 pp result | pilot signal, not certified |
 | Bootstrap | 10,000 |
 | Alpha | 0.05, one-sided |
-| GPU budget | 15–20 hours |
+| Local GPU budget | 15–20 hours (+~1.2–1.7 exploratory) |
+| H200 | optional 64k accuracy-only; no energy |
 | Cash budget | ≤$47 |
 
 ---

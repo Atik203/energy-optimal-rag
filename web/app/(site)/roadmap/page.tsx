@@ -50,7 +50,7 @@ const outOfScope = [
   "A universal k* across tasks, readers, or hardware.",
   "Frontier or API readers (GPT, Claude, Gemini); no paid API calls.",
   "Full DPR/NQ corpus or dense-retriever training.",
-  "Multi-GPU or datacenter GPU measurements.",
+  "Multi-GPU or datacenter GPU energy measurements. The optional H200 64k check is accuracy-only, with no energy claim.",
   "Carbon-optimal claims beyond constant-factor reporting and the split in Corollary 3.",
   "Prompt tuning, fine-tuning, or reranker training as a primary contribution.",
   "A production serving system or latency SLO study.",
@@ -201,10 +201,10 @@ export default function RoadmapPage() {
           id="budget-heading"
           title={
             <>
-              Local-only compute. <em>A hard $47 cap.</em>
+              Local compute, one optional accuracy-only H200 check. <em>A hard $47 local cap.</em>
             </>
           }
-          description="No rental, no paid API, no cloud inference. The cash cap is mostly instrumentation, not compute."
+          description="No rental, no paid API, no cloud inference. The H200 check is optional, accuracy-only, and outside the local cash cap."
         />
 
         <div className="mt-8 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
@@ -267,7 +267,7 @@ export default function RoadmapPage() {
               {[
                 { icon: Zap, label: "Compute", value: budget.computeHours },
                 { icon: Users, label: "Team", value: budget.team },
-                { icon: HardDrive, label: "Storage", value: "~5 GB" },
+                { icon: HardDrive, label: "Storage", value: "~5 GB local" },
               ].map((item) => {
                 const Icon = item.icon;
                 return (

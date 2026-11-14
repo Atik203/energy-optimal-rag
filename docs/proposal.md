@@ -141,7 +141,7 @@ Savings at `k=4` vs `k=32`: `1-48.27/157.11=69.3%`. For 570 correct answers, `k=
 |---|---|---|
 | Role | Closed-corpus extractive QA | Multi-hop/distractor stress |
 | Upstream | 10,570 questions; 20,958 dev contexts | 7,405 questions; 10 paragraphs each |
-| Used | 1,000 primary; 500 replication; 200 boundary | 500 |
+| Used | 1,000 primary; 500 (1.5B); 500 (Llama 3B, same IDs); 200 boundary/context | 500 |
 | Corpus | 20,958 contexts → 45,651 70-word passages | 2 gold + 8 distractors per question; no pooling |
 | Retriever / depths | BM25 top-32; `0,1,2,4,8,16,32` | BM25 top-10; `0,1,2,4,8,10` |
 | License | CC BY-SA 4.0 | CC BY-SA 4.0 |
@@ -158,9 +158,9 @@ HotpotQA supplies multi-hop evidence and distractor-induced non-monotonicity; it
 
 ## 8. Readers and hardware
 
-Primary reader: Ollama `qwen3.5:4b`, Q4, 3.3 GB, 4096 context, greedy decoding, 24 new tokens. It fits entirely on the 6 GB RTX 3060 Laptop, runs fully on the GPU, and needs no paid API. Replication reader: `Qwen/Qwen2.5-1.5B-Instruct` in fp16, a different family and size, already cached; if the direction survives both, it is less likely to be a one-model artifact. Host: Ryzen 7 5800H, 32 GB RAM, Windows; one GPU, batch 1, no concurrent jobs. Retriever: BM25 Okapi, deterministic and CPU-only.
+Primary reader: Ollama `qwen3.5:4b`, Q4, 3.3 GB, 4096 context, greedy decoding, 24 new tokens. It fits entirely on the 6 GB RTX 3060 Laptop, runs fully on the GPU, and needs no paid API. Confirmatory replication reader: `Qwen/Qwen2.5-1.5B-Instruct` in fp16, a different family and size, already cached; if the direction survives both, it is less likely to be a one-model artifact. Exploratory third reader: Ollama `llama3.2:3b`, Q4_K_M, 4096 context, same 500 SQuAD IDs as the 1.5B arm; it is direction-only and does not change H7 or G5. Host: Ryzen 7 5800H, 32 GB RAM, Windows; one GPU, batch 1, no concurrent jobs. Retriever: BM25 Okapi, deterministic and CPU-only.
 
-**16k boundary caveat.** The pilot's `k*=32` was the grid boundary. One explanation is 4096-token truncation; another is that 32 passages genuinely help. The probe adds `k∈{32,48,64}` and a 16k-token check. If the 6 GB card cannot hold 16k, the limit is reported as a hardware constraint, not dropped; the probe is diagnostic, not powered for accuracy.
+**Boundary and context caveat.** The pilot's `k*=32` was the grid boundary. One explanation is 4096-token truncation; another is that 32 passages genuinely help. The boundary probe adds `k∈{32,48,64}` with an 8k context budget, because 70-word passages at `k=64` can exceed 4096 tokens. A separate 16k context-budget probe on Qwen3.5-4B (`n=200`, `k=32/48/64`, plus a `k=32 @ 4096` control) tests truncation and recall. It is not a 16k-token prompt at `k≤64` and is not a new `k*`. The probe requires 100% GPU residency; if the 6 GB card offloads, the hardware limit is reported. The optional H200 64k check is accuracy-only and makes no energy claim.
 
 ---
 
@@ -179,6 +179,8 @@ Primary sensor: NVML `power.draw` via `pynvml` every 100 ms, with utilization, m
 | CPU proxy | BM25 time ×20 W; sensitivity 10/15/25 W | No `pyRAPL`; upper bound; pilot 3.11 J/query |
 
 Depth order is shuffled within each question, so thermal drift is a within-question nuisance. The Ember carbon factor is recorded as a constant conversion, not a new optimization. The BM25 proxy is the only non-measured term: 3.5% of total at `k=32`, 17.3% at `k=1`. Context share uses the 2.283 J/passage slope; retrieval share uses the CPU proxy; they are never conflated. For a query, `J_k=J_ret+J_pre+J_dec+J_fix`.
+
+The 16k probe records `prompt_tokens` and invalidates any row with `prompt_tokens + num_predict > num_ctx`; it requires `ollama ps` to report 100% GPU and >300 MB headroom. The H200 MIG slice exposes no per-instance power reading, so H200 rows are accuracy-only and never enter the energy ledger.
 
 ---
 
@@ -200,7 +202,9 @@ Primary estimand: `E(k)=ΣJ_k(q_i)/ΣC_k(q_i)`, total joules over total correct 
 
 **Secondary and uncertainty.** 2 pp uses the same procedure but is estimation-only; margin sensitivity runs at 2, 3, 4, 5, 6, 8, 10 pp, and scoring sensitivity at strict EM, lenient span, and F1≥0.5. The conclusion must survive all three or the dependence is reported. Uncertainty uses 10,000 paired bootstrap resamples over questions, with percentile intervals for `E`, `A`, `S`, the identity gap, and `k*`; the non-inferiority test is paired on correctness, and the bootstrap is the uncertainty layer, not a substitute.
 
-**Identity/coverage.** The identity is tested at the selected depth with fitted affine `J` and finite-difference `A'`. The coverage model `A(k)=1-(1-A0)(1-p)^k` is fitted with `R²` and lack-of-fit; the pilot fit was poor (`A0=.324`, `p=.0218`, `R²=.332`), so global unimodality is rejected and the identity remains local. The rerun tests it on SQuAD, 1.5B, and HotpotQA.
+**Identity/coverage.** The identity is tested at the selected depth with fitted affine `J` and finite-difference `A'`. The coverage model `A(k)=1-(1-A0)(1-p)^k` is fitted with `R²` and lack-of-fit; the pilot fit was poor (`A0=.324`, `p=.0218`, `R²=.332`), so global unimodality is rejected and the identity remains local. The rerun tests it on SQuAD, 1.5B, and HotpotQA; Llama 3B is an exploratory extension.
+
+**Exploratory reader and context arms.** The Llama 3.2 3B reader is reported direction-only (sign of `A(4)-A(32)` and affine slope), with a CI, no gate, and no promotion. The context-budget probe reports `k=32` at 4096 versus 16384, plus `k=48/64` at 16384, with truncation and `recall@k`. Neither arm changes H7/G5 or supports a universal `k*`.
 
 **No survival analysis.** There is no survival, time-to-event, or censoring analysis. Every question contributes binary correctness and measured energy at each depth; pairing is handled by the bootstrap. One primary test; everything else is secondary or exploratory, with Holm as the default if a secondary family is promoted. No gate is re-thresholded after the primary outcome.
 
@@ -218,7 +222,7 @@ The pilot's accuracy side was underpowered: at `n=200` the MDE was about 4–5 p
 
 **Why `n=1,000`.** Comfortably powered for 5 pp at 0–2 pp loss, reasonable at 3 pp, and fits the budget. The 95% half-width is about 1.8 pp: enough to estimate a 2 pp difference, not to certify one. That is the preregistered distinction.
 
-**Underpowered/exploratory.** 2 pp certification is underpowered at every size here and is not attempted. The boundary probe (`n=200`) is diagnostic; HotpotQA subgroups are exploratory; the policy test set is 200, so a capture near 50% will have a wide interval; the 1.5B run (`n=500`) is powered for H2's direction, not 2 pp.
+**Underpowered/exploratory.** 2 pp certification is underpowered at every size here and is not attempted. The boundary probe (`n=200`) is diagnostic; HotpotQA subgroups are exploratory; the policy test set is 200, so a capture near 50% will have a wide interval; the 1.5B run (`n=500`) is powered for H2's direction, not 2 pp. The Llama 3B panel and context probe are exploratory/diagnostic and are not powered for 5 pp per arm.
 
 ---
 
@@ -258,13 +262,15 @@ If G1/G2 pass, the paper reports a 5 pp static policy at `k=4` with ≥20% savin
 |---|---|---|---|
 | **P0** | 1 | Scaffold, CI, environment, manifest, golden reproduction | `E(k)` within 10%; K7; `validate` clean |
 | **P1** | 2–3 | Powered SQuAD `n=1,000` × 7 | G1 or documented failure |
-| **P2** | 4–6 | 1.5B, HotpotQA, boundary, taxes | G5; tax signs |
+| **P2** | 4–6 | 1.5B, Llama 3B exploratory, HotpotQA, boundary, 16k probe, taxes | G5; tax signs; exploratory arms reported |
 | **P3** | 7–10 | Policy 600/200/200 | G4 or negative |
 | **P4** | 11–14 | Identity, `N*`, sensitivity | Theory report |
 | **P5** | 15–18 | Paper and figures | Numbers trace to a run |
 | **P6** | 19–20 | Clean-room, release | Reproduction matches |
 
-**Compute/cash.** Local 3060 only; no rental or paid API.
+**Compute/cash.** Local 3060 only for energy; no rental or paid API. The optional H200 64k
+accuracy-only check uses existing university access and no paid API; it is not part of the
+local GPU-hour or cash budget.
 
 | Item | Cost |
 |---|---:|
@@ -275,7 +281,7 @@ If G1/G2 pass, the paper reports a 5 pp static policy at `k=4` with ≥20% savin
 | Contingency | $10 |
 | **Total** | **≤$47** |
 
-**Storage.** `E:\PROJECT\energy-optimal-rag`; raw text and run CSVs git-ignored; under 2 GB plus model weights in the Ollama store; USB holds the second copy. If schedule tightens, drop the boundary probe or 1.5B replication before the primary.
+**Storage.** `E:\PROJECT\energy-optimal-rag`; raw text and run CSVs git-ignored; under 2 GB plus model weights in the Ollama store; USB holds the second copy. The local additions are estimated at 1.2–1.7 GPU-hours, within 15–20 total. If schedule tightens, drop the optional H200 check first, then the 16k probe or Llama 3B panel, before dropping the boundary probe or 1.5B replication; never drop the primary.
 
 ---
 
@@ -284,7 +290,7 @@ If G1/G2 pass, the paper reports a 5 pp static policy at `k=4` with ≥20% savin
 | ID | Risk | Why it matters | Mitigation |
 |---|---|---|---|
 | R1 | Strict EM vs lenient | A string match could decide the green verdict | Pre-register EM; report lenient and F1; require survival across all three |
-| R2 | Reader strength/saturation | A stronger reader could flatten accuracy and move `k*` | 1.5B and HotpotQA; reader-conditional results; no universal claim |
+| R2 | Reader strength/saturation | A stronger reader could flatten accuracy and move `k*` | 1.5B, exploratory Llama 3B, 16k probe, and HotpotQA; reader-conditional results; no universal claim |
 | R3 | Single corpus/retriever | Closed SQuAD and BM25 limit validity | HotpotQA; recall@k; boundary in every claim |
 | R4 | Thermal throttling | Pilot clock fell 39%, temp rose 16 °C | Randomize `k`; log clocks/temp; steady-state blocks; first-50 sensitivity |
 | R5 | Coarse NVML | Per-query joules can look too precise | Blocks; repeat CV; wall meter; sensor caveat in every table |
@@ -293,7 +299,10 @@ If G1/G2 pass, the paper reports a 5 pp static policy at `k=4` with ≥20% savin
 | R8 | Policy overfitting | 600 training questions is small | Strict split; simple model; no test tuning; feature-free baseline |
 | R9 | Binding gate defeats tax test | At ceiling, `k*` may not move | Mid-accuracy tax condition; report gated and unconstrained |
 | R10 | Data licensing | CC BY-SA 4.0 forbids unlicensed redistribution | No raw text; IDs, checksums, prompts, predictions, aggregates |
-| R11 | Schedule/scope slip | 20 weeks, small team; universal or carbon claims overreach | P6 buffer; drop boundary or 1.5B before primary; claim boundary and amendment required |
+| R11 | Schedule/scope slip | 20 weeks, small team; universal or carbon claims overreach | P6 buffer; drop H200, then 16k/Llama, before boundary/1.5B; never drop primary; claim boundary and amendment required |
+| R12 | Model shopping | A third reader can invite winner-selection | Pre-specify the Llama panel; report all readers; H7/G5 unchanged; no post-outcome promotion |
+| R13 | 16k OOM/offload | A CPU-offloaded row is not a valid local measurement | Require 100% GPU; record prompt tokens; report hardware limit |
+| R14 | H200 energy confusion | MIG power telemetry is unavailable | Accuracy-only; no H200 joules; never pool with RTX 3060 |
 
 The two thesis-changing risks are scoring dependence (R1) and a binding gate (R9); both are pre-registered.
 
@@ -301,7 +310,7 @@ The two thesis-changing risks are scoring dependence (R1) and a binding gate (R9
 
 ## 16. Ethics, privacy, licensing, and open science
 
-Both datasets are public Wikipedia-derived corpora; they are not PII-audited, and no private queries, logs, or personal data will be added. Code is MIT; docs and derived artifacts are CC BY 4.0; SQuAD and HotpotQA remain CC BY-SA 4.0. The repo releases IDs, checksums, prompts, predictions, aggregates, never raw text; weights, credentials, and secrets are not committed.
+Both datasets are public Wikipedia-derived corpora; they are not PII-audited, and no private queries, logs, or personal data will be added. Code is MIT; docs and derived artifacts are CC BY 4.0; SQuAD and HotpotQA remain CC BY-SA 4.0. Model weights are not redistributed: Qwen3.5-4B and Qwen2.5-1.5B-Instruct are Apache 2.0, while Llama 3.2 3B Instruct uses the gated Llama 3.2 Community License (not OSI open source). The repo releases IDs, checksums, prompts, predictions, aggregates, never raw text; weights, credentials, and secrets are not committed.
 
 The preregistration is frozen before P1 and tagged `prereg-freeze-v1`. Deviations go into `prereg/amendments.md` and `docs/DECISIONS.md` with date, original text, reason, and whether outcomes were seen; analysis records hashes and refuses on mismatch. The energy ledger and claims-evidence map are tracked and checksummed. A fired gate is reported, not tuned away; the dead 2 pp claim is reported; the 78.8% oracle is an upper bound; no carbon-optimal claim is made from a constant factor.
 
@@ -311,11 +320,11 @@ The preregistration is frozen before P1 and tagged `prereg-freeze-v1`. Deviation
 
 **Approval scope.** P0/P1 means: build the scaffold, prove the harness on a 200-question golden reproduction, freeze the preregistration, and run the powered SQuAD experiment (`n=1,000`, seven depths). P2–P6 are released after the P1 gate review.
 
-**Success/failure.** P1 success is G1: 5 pp non-inferiority at an interior `k` with ≥20% savings, plus G2 support. P3 success is G4: ≥20% oracle gap and ≥50% capture at matched accuracy. P2 success is G5: replication on 1.5B or HotpotQA. Failure is a fired gate, reported and reframed. A null adaptive result does not invalidate the static measurement; a null static result does not invalidate the theory or harness.
+**Success/failure.** P1 success is G1: 5 pp non-inferiority at an interior `k` with ≥20% savings, plus G2 support. P3 success is G4: ≥20% oracle gap and ≥50% capture at matched accuracy. P2 success is G5: replication on 1.5B or HotpotQA. The Llama 3B panel and context probe are exploratory and do not change G5 or H7. Failure is a fired gate, reported and reframed. A null adaptive result does not invalidate the static measurement; a null static result does not invalidate the theory or harness.
 
 **Gate actions.** K1 stops the depth story; K2 extends the grid once, then reframes; K3 raises power once, then drops static certification; K4 reframes to generation; K5 pivots to policy; K6 kills adaptivity; K7 fixes measurement. G1–G2 are static gates, G3 the split, G4 adaptive, G5 external validity; definitions in Appendix B.
 
-**Resources.** Three to four people for 20 weeks; 15–20 GPU-hours on the local 3060; a $47 cap ($2 electricity, $25 wall meter, $10 USB backup, $10 contingency); supervisor sign-off on the frozen prereg; access to the Ollama store and cached 1.5B reader.
+**Resources.** Three to four people for 20 weeks; 15–20 GPU-hours on the local 3060; a $47 local cap ($2 electricity, $25 wall meter, $10 USB backup, $10 contingency); supervisor sign-off on the frozen prereg; access to the Ollama store, the cached 1.5B reader, and the optional university H200 accuracy-only check.
 
 **Decision.** Approve P0/P1 now. The first 10 days produce a working harness, reproducible pilot curve, frozen prereg, power memo, and the first half of the powered run. If the golden reproduction differs by more than 10% at any depth, P1 stops until the harness is fixed.
 
@@ -337,6 +346,8 @@ The preregistration is frozen before P1 and tagged `prereg-freeze-v1`. Deviation
 | **Non-inferiority** | Not worse than reference by more than a pre-set margin. |
 | **Bootstrap** | Resampling questions to estimate uncertainty. |
 | **Elasticity** | Percent change in one quantity per 1% change in another. |
+| **Context budget** | The `num_ctx` allocation, not the number of tokens actually filled. |
+| **Exploratory arm** | A reported analysis with no gate and no certification claim. |
 | **MDE** | Smallest effect distinguishable from noise. |
 | **NVML** | NVIDIA Management Library; GPU power, temperature, clocks. |
 | **BM25** | Classical keyword-ranking retriever. |
@@ -357,7 +368,7 @@ Only works and resources named in the project's source documents. Details are re
 7. Song, Z., et al. *Tail-Aware Adaptive-k: Query-Adaptive Context Selection for Retrieval-Augmented Generation.* ECML PKDD 2026, LNCS 16944, pp. 193–209. DOI 10.1007/978-3-032-37667-1_12.
 8. Taguchi, C., Maekawa, S., Bhutani, N. *Efficient Context Selection for Long-Context QA: No Tuning, No Iteration, Just Adaptive-k.* EMNLP 2025, pp. 20105–20130. DOI 10.18653/v1/2025.emnlp-main.1017.
 9. Gao, Y., Wang, M., Yu, Y. L. *Token Arena: A Continuous Benchmark Unifying Energy and Cognition in AI Inference.* arXiv:2605.00300, 2026.
-**Data and tools.** SQuAD v1.1 dev (CC BY-SA 4.0); HotpotQA distractor dev (CC BY-SA 4.0); BM25 Okapi via `rank_bm25`; NVML via `pynvml`; Ollama `qwen3.5:4b`; Qwen2.5-1.5B-Instruct; Ember *Yearly Electricity Data*. URLs, versions, and SHA-256 are in `data/manifest.json`.
+**Data and tools.** SQuAD v1.1 dev (CC BY-SA 4.0); HotpotQA distractor dev (CC BY-SA 4.0); BM25 Okapi via `rank_bm25`; NVML via `pynvml`; Ollama `qwen3.5:4b`; Qwen2.5-1.5B-Instruct (Apache 2.0); Llama 3.2 3B Instruct (Llama 3.2 Community License); Ember *Yearly Electricity Data*. URLs, versions, and SHA-256 are in `data/manifest.json`.
 
 ---
 
@@ -380,7 +391,7 @@ Pilot: 200 SQuAD v1.1 dev questions, `k∈{0,1,2,4,8,16,32}`, 1,400 generations,
 
 **Established.** The tradeoff is real and steep here; the affine model and context share are stable; the identity is a useful local diagnostic and flags over-retrieval; `k=4` is a promising 5 pp candidate; the harness is repeatable enough for a powered run.
 
-**Not established.** No universal or 2 pp-optimal depth; no powered 5 pp non-inferiority; no learned policy; no second reader, dataset, or 16k context; no causal split test; no global coverage model. The paper must say all of this.
+**Not established.** No universal or 2 pp-optimal depth; no powered 5 pp non-inferiority; no learned policy; no completed Llama 3B or 16k context run; no causal split test; no global coverage model. The paper must say all of this.
 
 ---
 

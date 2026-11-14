@@ -42,6 +42,20 @@ test a universal `k*`, a 2 pp optimum, or a learned-policy gain that has not bee
 The 2 pp margin is **not** a hypothesis. It is an estimation target reported with a confidence
 interval and explicitly not used for certification.
 
+### Exploratory arms (not hypotheses)
+
+These arms are reported, but they do not enter H1–H7, G1–G5, or any certification claim:
+
+| Arm | Dataset | n | Depths | Reader / context | Purpose |
+|---|---|---:|---|---|---|
+| Reader panel | SQuAD v1.1 dev, same 500 IDs as H7 | 500 | 0,1,2,4,8,16,32 | Llama 3.2 3B Instruct, Q4, 4096 | Reader-family robustness; direction only |
+| Context-budget probe | SQuAD v1.1 dev, 200 boundary IDs | 200 | 32,48,64 | Qwen3.5-4B Q4, 16384; 4096 control at `k=32` | Truncation/context-budget diagnostic |
+| H200 64k check | SQuAD v1.1 dev, 200 boundary IDs | 200 | 64 | Qwen3.5-4B, 65536 | Optional accuracy-only; **no energy claim** |
+
+H7 remains Qwen2.5-1.5B-Instruct **or** HotpotQA. The Llama panel does not satisfy H7 or G5.
+The context probe is not a new `k*`; the 16k allocation is a budget, not a 16k-token prompt at
+`k ≤ 64`. The H200 arm is not run in the local study and is never pooled with RTX 3060 energy.
+
 ## 3. Design
 
 | Element | Primary | Replication | Distractor | Boundary |
@@ -92,8 +106,13 @@ policy claim.
 6. **Certification cost** `N*` from the measured sweep energy.
 7. **Margin sensitivity** at 2, 3, 4, 5, 6, 8, 10 pp.
 8. **Scoring sensitivity** under lenient span and F1 ≥ 0.5.
-9. **Reader and dataset replication** (H7).
+9. **Reader and dataset replication** (H7); the Llama 3.2 3B panel is exploratory and does
+   not change H7.
 10. **Policy capture** at matched accuracy (H5).
+11. **Exploratory reader panel:** direction of `A(4) − A(32)` and the sign of the affine slope
+    on Llama 3.2 3B, with a CI; no gate and no certification.
+12. **Context-budget diagnostic:** `k=32` at 4096 versus 16384, plus `k=48/64` at 16384; report
+    truncation, recall@k, and the context-budget effect. No new `k*` and no gate.
 
 ## 6. Sample size and power
 
@@ -104,7 +123,9 @@ non-inferiority test is greater than 0.99 when the true difference is 0 pp, abou
 
 At `n = 200` the MDE is about 5.0 pp, which is why the pilot could not certify a 2 pp margin.
 At `n = 500` the MDE is about 3.1 pp. The 500-question replication is powered for the
-direction of H2, not for a 2 pp claim.
+direction of H2, not for a 2 pp claim. The Llama exploratory panel uses the same n = 500 and is
+direction-only; it is not powered to certify 5 pp on its own. The 200-question context probe is
+diagnostic.
 
 The 2 pp margin is estimation-only at every sample size in this design. The 95% interval
 half-width at `n = 1,000` is about 1.8 pp, so the design can estimate a 2 pp difference but
@@ -143,7 +164,9 @@ accuracy, mean energy, and the ratio estimand; bootstrap over questions with 10,
 resamples; run the one-sided non-inferiority test; fit the affine energy model; compute the
 identity gap by finite differences; report the split; compute `N*`; evaluate the policy on the
 held-out split; run the tax sign tests; and report every sensitivity analysis. The primary
-test is the only confirmatory test; everything else is labeled exploratory or secondary.
+test is the only confirmatory test; everything else is labeled exploratory or secondary. The
+Llama reader panel and context-budget probe are reported in a separate exploratory table with
+no gate, no certification, and no post-outcome promotion.
 
 ## 10. Gates
 
@@ -153,7 +176,8 @@ frozen in `configs/analysis/prereg.toml`.
 
 A gate may not be added, removed, or re-thresholded after the primary outcome is seen. K1–K4
 and K6 firing is a kill/reframe. K5 and K7 are fixable measurement or framing problems before
-they are kills.
+they are kills. The exploratory reader panel, context probe, and optional H200 accuracy check
+have no gate and may not be promoted to confirmatory after outcomes are seen.
 
 ## 11. Deviations
 

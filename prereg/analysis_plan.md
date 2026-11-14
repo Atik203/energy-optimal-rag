@@ -184,4 +184,27 @@ procedure is applied and the promotion is recorded as an amendment.
 6. Replication and distractor.
 7. Policy and oracle.
 8. Tax manipulation.
-9. Limitations and gates.
+9. Exploratory reader panel and context-budget probe.
+10. Limitations and gates.
+
+## 16. Exploratory reader and context-budget analyses
+
+These analyses are reported, but they are not hypotheses, do not enter H1–H7 or G1–G5, and
+cannot be promoted after outcomes are seen.
+
+- **Reader panel.** Llama 3.2 3B Instruct, SQuAD, same 500 IDs as the 1.5B arm, seven depths,
+  4k, Q4. Report the sign of `A(4) − A(32)`, the affine slope and `R²`, and a paired bootstrap
+  interval. Direction-only; no 5 pp certification.
+- **Saturation rule.** If `A(32) ≥ 0.90` or `max |A(k) − A(32)| ≤ 1 pp` for `k ≥ 4`, label the
+  accuracy arm uninformative and report only the energy slope `b`. Do not claim a depth effect
+  from a flat, saturated curve.
+- **Context-budget probe.** Qwen3.5-4B Q4, `n=200`, `k=32/48/64` at `num_ctx=16384`, plus a
+  `k=32 @ 4096` control. Report truncation, `recall@k`, gold-answer-in-context, and the
+  `k=32` context-budget delta. This is not a 16k-token prompt at `k ≤ 64` and not a new `k*`.
+- **Truncation rule.** Invalidate a row when `prompt_tokens + num_predict > num_ctx`.
+- **GPU-residency rule.** Require `ollama ps` to report 100% GPU and >300 MB headroom; CPU
+  offload voids the arm and is reported as a hardware limit.
+- **Cross-hardware rule.** The optional H200 64k check is accuracy-only; report it separately,
+  never pool it with RTX 3060 energy, and never write an H200 energy row.
+- **No selection.** Report all readers and context conditions in one table. Do not choose the
+  favorable reader, device, or context after seeing the result.

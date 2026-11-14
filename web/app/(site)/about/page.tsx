@@ -67,7 +67,7 @@ const siteMap = [
   { href: "/method", label: "Method", note: "Pipeline, measurement, data, scoring, policy, taxes" },
   { href: "/results", label: "Results", note: "Pilot evidence, dead claim, 5 pp signal, oracle" },
   { href: "/roadmap", label: "Roadmap", note: "P0–P6, budget, risks, decisions, stop rules" },
-  { href: "/slide", label: "Slides", note: "15-slide keyboard-driven deck" },
+  { href: "/slide", label: "Slides", note: "12-slide keyboard-driven deck" },
 ];
 
 const bibtex = `@software{rahaman_energy_optimal_rag_2026,
@@ -270,6 +270,7 @@ export default function AboutPage() {
                 "No learned-policy gain from the oracle upper bound.",
                 "No carbon-optimal claim beyond constant-factor reporting.",
                 "No generalization to frontier readers, dense retrievers, or full NQ.",
+                "No energy claim from the optional H200 64k accuracy-only check.",
                 "A change to the claim requires a prereg amendment and a decision-log entry.",
               ].map((item) => (
                 <li key={item} className="flex gap-2 text-xs leading-relaxed text-muted-foreground">

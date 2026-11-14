@@ -334,13 +334,17 @@ export default function MethodPage() {
             </div>
             <dl className="mt-4">
               <DataRow label="Upstream" value={`${datasets.squad.upstreamQuestions.toLocaleString("en-US")} questions · ${datasets.squad.upstreamContexts.toLocaleString("en-US")} contexts`} />
-              <DataRow label="Used here" value={`${datasets.squad.usedPrimary.toLocaleString("en-US")} primary · ${datasets.squad.usedReplication} replication · ${datasets.squad.usedBoundary} boundary`} />
+              <DataRow label="Used here" value={`${datasets.squad.usedPrimary.toLocaleString("en-US")} primary · 2 × ${datasets.squad.usedReplication} replication · ${datasets.squad.usedBoundary} boundary`} />
               <DataRow label="Corpus" value={datasets.squad.corpus} />
               <DataRow label="Retriever" value={datasets.squad.retriever} />
               <DataRow label="Primary metric" value={datasets.squad.primaryMetric} />
               <DataRow label="License" value={datasets.squad.license} />
             </dl>
             <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{datasets.squad.note}</p>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              Exploratory reader: Llama 3.2 3B. The 16k context-budget probe is a separate
+              diagnostic on 200 boundary IDs; it is not a 16k-token prompt.
+            </p>
           </div>
 
           <div className="panel p-5">

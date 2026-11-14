@@ -33,7 +33,7 @@ export const project = {
   version: "0.1.0",
   status: "post-pilot MARGINAL",
   statusDetail: "Public scaffold. No confirmatory results. Preregistration not frozen.",
-  updated: "2026-11-11",
+  updated: "2026-11-14",
   repo: "https://github.com/Atik203/energy-optimal-rag",
   author: "Atikur Rahaman and contributors",
   citationVersion: "0.1.0",
@@ -73,6 +73,8 @@ export const claimBoundary = {
     "A learned-policy gain. The 78.8% oracle is a hindsight upper bound.",
     "Carbon optimality beyond constant-factor reporting.",
     "Generalization to frontier readers, dense retrievers, or full NQ.",
+    "An energy or hardware-generalization claim from the optional H200 64k accuracy-only check.",
+    "A Llama 3B or 16k context result as part of H7 or G5.",
   ],
   mayClaim: [
     "The energy-depth tradeoff is real and steep under the pilot conditions.",
@@ -379,6 +381,36 @@ export const rerun = {
     dataset: "SQuAD v1.1 dev",
     depths: [0, 1, 2, 4, 8, 16, 32],
   },
+  readerPanel: {
+    n: 500,
+    reader: "Llama 3.2 3B Instruct",
+    quantization: "Q4_K_M",
+    context: 4096,
+    dataset: "SQuAD v1.1 dev",
+    depths: [0, 1, 2, 4, 8, 16, 32],
+    sameIdsAs: "Qwen2.5-1.5B replication",
+    status: "exploratory",
+    note: "Direction-only; not part of H7 or G5.",
+  },
+  contextProbe: {
+    n: 200,
+    reader: "Qwen3.5-4B",
+    quantization: "Q4",
+    context: 16384,
+    controlContext: 4096,
+    depths: [32, 48, 64],
+    hardware: "RTX 3060 Laptop 6 GB",
+    status: "planned diagnostic",
+    note: "16k allocation; k<=64 is ~6k tokens, not a 16k prompt. Requires 100% GPU.",
+  },
+  optionalH200: {
+    hardware: "H200 MIG 1g.18gb (18 GB)",
+    reader: "Qwen3.5-4B",
+    context: 65536,
+    mode: "accuracy-only",
+    energyClaim: false,
+    status: "optional, not run",
+  },
   hotpot: {
     n: 500,
     dataset: "HotpotQA distractor dev",
@@ -392,7 +424,7 @@ export const rerun = {
     n: 200,
     depths: [32, 48, 64],
     retriever: "BM25 top-64",
-    contextCheck: "16k-token context check",
+    contextCheck: "8k context budget for k=64; separate 16k probe",
   },
   taxes: {
     n: 150,
@@ -598,10 +630,10 @@ export const phases: Array<{
     id: "P2",
     weeks: "Weeks 4\u20136",
     name: "External validity and causal test",
-    goal: "Stress the result with a second reader, a distractor dataset, a boundary probe, and energy taxes.",
+    goal: "Stress the result with one confirmatory replication reader, one exploratory reader, a distractor dataset, depth/context probes, and energy taxes.",
     outputs:
-      "Qwen2.5-1.5B replication (n = 500), HotpotQA distractor (n = 500, k \u2264 10), 16k boundary probe (n = 200, k \u2208 {32,48,64}), fixed and per-passage taxes.",
-    exit: "G5 replication; tax signs match Corollary 1; boundary probe resolves.",
+      "Qwen2.5-1.5B replication (n = 500) and Llama 3.2 3B exploratory reader (n = 500), HotpotQA distractor (n = 500, k \u2264 10), boundary probe (n = 200, 8k), 16k context-budget probe (n = 200), fixed and per-passage taxes; optional H200 accuracy-only check, not run.",
+    exit: "G5 replication; tax signs match Corollary 1; boundary probe resolves; exploratory arms reported without gates.",
   },
   {
     id: "P3",
@@ -647,14 +679,14 @@ export const phases: Array<{
 
 export const budget = {
   items: [
-    { item: "GPU compute", cost: "$0", note: "Local RTX 3060 Laptop 6 GB." },
+    { item: "GPU compute", cost: "$0", note: "Local RTX 3060 Laptop 6 GB; optional H200 check is accuracy-only." },
     { item: "Electricity", cost: "~$2", note: "15\u201320 GPU-hours at ~100 W plus host overhead; indicative, not metered billing." },
     { item: "Plug-in wall meter", cost: "$25", note: "Cross-check on a 30-query subset per condition." },
     { item: "USB backup drive", cost: "$10", note: "Cold backup of raw runs, manifest, and checksums." },
     { item: "Contingency", cost: "$10", note: "Replacement fan/thermal paste or a spare SSD." },
     { item: "Total", cost: "\u2264 $47", note: "Hard cap. No rental, no paid API, no cloud inference." },
   ],
-  computeHours: "15\u201320 GPU-hours",
+  computeHours: "15\u201320 local GPU-hours (incl. ~1.2\u20131.7 exploratory)",
   storage: "~5 GB on E: for raw data, processed parquet, run CSVs, and figures.",
   team: "3\u20134 people \u00b7 20 weeks",
 } as const;
@@ -700,7 +732,7 @@ export const risks: Array<{
     risk: "Reader strength / SQuAD saturation flattens the accuracy curve",
     likelihood: "Medium",
     impact: "High",
-    mitigation: "1.5B replication; HotpotQA; reader-conditional results; no universal claim.",
+    mitigation: "1.5B and exploratory Llama 3B replication; 16k context probe; HotpotQA; reader-conditional results; no universal claim.",
   },
   {
     id: "R3",
@@ -764,7 +796,7 @@ export const risks: Array<{
     risk: "Schedule slip on a 20-week plan",
     likelihood: "Medium",
     impact: "Medium",
-    mitigation: "P6 buffer; drop the boundary probe or 1.5B replication before dropping the primary.",
+    mitigation: "P6 buffer; drop the optional H200 check first, then the 16k probe or Llama 3B panel, before the boundary/1.5B; never drop the primary.",
   },
   {
     id: "R12",
@@ -786,6 +818,34 @@ export const risks: Array<{
     likelihood: "Low",
     impact: "High",
     mitigation: ".gitignore; secret scan before each push; private reporting; no tokens in configs.",
+  },
+  {
+    id: "R15",
+    risk: "Reader/model shopping creates a false replication",
+    likelihood: "Medium",
+    impact: "High",
+    mitigation: "Pre-specify the exploratory panel; report all readers; no post-outcome promotion; H7/G5 unchanged.",
+  },
+  {
+    id: "R16",
+    risk: "16k context OOM or CPU offload invalidates the probe",
+    likelihood: "Medium",
+    impact: "High",
+    mitigation: "Require 100% GPU and >300 MB headroom; record prompt tokens; reject truncation; report the hardware limit.",
+  },
+  {
+    id: "R17",
+    risk: "Cross-hardware divergence is mistaken for replication",
+    likelihood: "Medium",
+    impact: "High",
+    mitigation: "H200 is accuracy-only; report hardware class; never pool with RTX 3060 energy.",
+  },
+  {
+    id: "R18",
+    risk: "Llama license or model-store growth",
+    likelihood: "Low",
+    impact: "Medium",
+    mitigation: "Use the gated Llama 3.2 Community License; do not redistribute weights; record the digest; keep Q4 under storage limits.",
   },
 ];
 
@@ -880,6 +940,22 @@ export const decisions = [
     title: "Pilot evidence is transcribed, not reproducible in-repo",
     summary:
       "The pilot raw CSVs are not in the repository. Every pilot claim is recorded in docs/PILOT_EVIDENCE.md and indexed in artifacts/claims_evidence.csv with run_id=pilot. A re-run is new evidence, not a reproduction.",
+    status: "accepted",
+  },
+  {
+    id: "D-012",
+    date: "2026-11-14",
+    title: "Third reader is exploratory; H7/G5 stay fixed",
+    summary:
+      "Llama 3.2 3B uses the same 500 SQuAD IDs as the 1.5B replication, 4k Q4, direction-only. It does not satisfy or change H7 or G5; no gate and no post-outcome promotion.",
+    status: "accepted",
+  },
+  {
+    id: "D-013",
+    date: "2026-11-14",
+    title: "Boundary context fix and diagnostic context probe",
+    summary:
+      "The boundary grid uses 8k so k=64 is not truncated. A separate Qwen3.5-4B 16k context-budget probe has a 4k control and is diagnostic, not a new k*. H200 is accuracy-only with no energy claim.",
     status: "accepted",
   },
 ];
@@ -1082,9 +1158,10 @@ export const datasets = {
     "One closed corpus and one multi-hop distractor set; no open-domain NQ or fullwiki run.",
     "BM25 only in the primary condition; no dense retriever.",
     "English only.",
-    "One 4B reader and one 1.5B replication reader; no frontier model.",
-    "SQuAD is saturated for strong readers; the pilot's 4B reader is the binding constraint.",
-    "The energy measurements are from one laptop GPU, not a datacenter.",
+    "One 4B primary reader, one 1.5B confirmatory replication reader, and one exploratory 3B reader; no frontier model.",
+    "SQuAD is saturated for strong readers; the pilot's 4B reader is the binding constraint. The Llama 3B panel is a reader-family check, not a universal depth.",
+    "The 16k context-budget probe is a separate diagnostic on the same laptop GPU; 16k fits at 100% GPU, while 32k offloads to CPU.",
+    "The energy measurements are from one laptop GPU, not a datacenter. The optional H200 64k check is accuracy-only with no power telemetry.",
   ],
 } as const;
 

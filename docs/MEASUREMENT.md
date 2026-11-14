@@ -146,3 +146,18 @@ retrieval-only share uses the CPU proxy. Do not conflate them.
 Every energy table states: sensor, cadence, idle baseline and its CV, block factors, repeat
 CV, CPU proxy watts, wall-meter factor, GPU model, driver, power mode, and the reader/model
 digest. A table missing these is not reproducible.
+
+## 12. Context-budget and shared-hardware caveats
+
+- The 16k context-budget probe sets `num_ctx=16384`; at 70 words/passage and `k ≤ 64`, the
+  actual prompt is roughly 6k tokens. It is not a 16k-token prompt and cannot support a
+  “16k-context saturation” claim.
+- Record `prompt_tokens` and invalidate a row when `prompt_tokens + num_predict > num_ctx`.
+- Require `ollama ps` to report 100% GPU and >300 MB headroom. CPU offload voids the arm; report
+  the hardware limit instead of analyzing the row.
+- Report `recall@k` and gold-answer-in-context at every depth; high-`k` accuracy can rise because
+  the retriever finally reaches the gold context, not because the reader handles a larger window.
+- The optional H200 MIG check is accuracy-only. Per-instance power telemetry is unavailable
+  (`power.draw = N/A`); no H200 joules or `E(k)` may enter the ledger or any energy table.
+- Shared-server results are a separate hardware condition and are never pooled with RTX 3060
+  measurements.

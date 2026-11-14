@@ -387,7 +387,7 @@ function DatasetSlide({ index, total }: SlideProps) {
               `Stanford Question Answering Dataset (SQuAD) v1.1 dev · ${datasets.squad.upstreamQuestions.toLocaleString("en-US")} questions.`,
               `Corpus: ${datasets.squad.corpus}.`,
               "Retriever: BM25 (Best Matching 25) top-32.",
-              `Runs: ${datasets.squad.usedPrimary.toLocaleString("en-US")} primary · ${datasets.squad.usedReplication} replication · ${datasets.squad.usedBoundary} boundary.`,
+              `Runs: ${datasets.squad.usedPrimary.toLocaleString("en-US")} primary · 2 × ${datasets.squad.usedReplication} replication · ${datasets.squad.usedBoundary} boundary.`,
               `Metric: exact match · License: ${datasets.squad.license}.`,
             ]}
             size="2.2cqh"
@@ -572,13 +572,13 @@ function SetupSlide({ index, total }: SlideProps) {
         <SlideCard title="Runs" tone="deep" icon={<Layers size="2.8cqh" />}>
           <SlideBullets
             items={[
-              `SQuAD: ${rerun.primary.n.toLocaleString("en-US")} questions × 7 depths`,
-              `Qwen2.5-1.5B: ${rerun.replication.n} questions × 7 depths`,
-              `HotpotQA: ${rerun.hotpot.n} questions × 6 depths`,
-              `Boundary: ${rerun.boundary.n} × 3 · taxes: ${rerun.taxes.n} × 2`,
-              "Policy split target: 600 train / 200 validation / 200 test.",
+              `SQuAD primary (4B): ${rerun.primary.n.toLocaleString("en-US")} × 7 depths`,
+              `Replication: ${rerun.replication.n} × 7 each — Qwen2.5-1.5B, Llama 3.2 3B`,
+              `HotpotQA: ${rerun.hotpot.n} × 6 depths`,
+              `Boundary: ${rerun.boundary.n} × 3 · 16k probe: ${rerun.contextProbe.n} × 3`,
+              `Taxes: ${rerun.taxes.n} × 2 · policy: 600/200/200`,
             ]}
-            size="2.1cqh"
+            size="2.0cqh"
           />
         </SlideCard>
         <SlideCard title="Measurement" tone="teal" icon={<Gauge size="2.8cqh" />}>
@@ -606,7 +606,7 @@ function SetupSlide({ index, total }: SlideProps) {
         </SlideCard>
       </div>
       <SlideCallout tone="amber">
-        15–20 GPU hours · RTX 3060 6 GB · one job at a time · wall power · screen off.
+        15–20 local GPU hours · RTX 3060 6 GB · optional H200 64k: accuracy-only, no energy claim.
       </SlideCallout>
     </SlideFrame>
   );
@@ -737,8 +737,8 @@ function ExpectedSlide({ index, total }: SlideProps) {
         </SlideCard>
       </div>
       <SlideCallout tone="deep">
-        H7 · replication: test whether H2&apos;s direction appears on Qwen2.5-1.5B or HotpotQA. A null
-        result is still a result.
+        H7 · replication: H2&apos;s direction on Qwen2.5-1.5B or HotpotQA. Exploratory: Llama 3.2
+        3B. A null result is still a result.
       </SlideCallout>
     </SlideFrame>
   );
@@ -775,7 +775,7 @@ function ImpactSlide({ index, total }: SlideProps) {
           <SlideBullets
             items={[
               "Scoring rule: exact match vs lenient.",
-              "Reader strength and one dataset.",
+              "Reader strength, context limits, one dataset.",
               "GPU heat and power-sensor limits.",
               "Cached prompts and policy overfitting.",
               "Budget: 15–20 GPU hours; ≤ $47.",

@@ -21,8 +21,10 @@ silently strengthen a claim, add a "certified" result, or introduce a universal 
 - Python 3.12 at `C:\ProgramData\anaconda3\python.exe`.
 - Conda environment: `energy-optimal-rag` (`conda activate energy-optimal-rag`).
 - GPU: local RTX 3060 Laptop 6 GB. Single GPU, batch size 1, no concurrent jobs.
-- Reader: Ollama `qwen3.5:4b` (Q4, 4096 context). Replication reader:
-  `Qwen2.5-1.5B-Instruct` via Hugging Face.
+- Reader: Ollama `qwen3.5:4b` (Q4, 4096 context). Confirmatory replication:
+  `Qwen2.5-1.5B-Instruct`. Exploratory third reader: Ollama `llama3.2:3b`
+  (Q4_K_M, 4096 context; 8k validated ceiling). The 16k context-budget probe
+  uses Qwen3.5-4B Q4 and is diagnostic, not a new `k*`.
 - OS: Windows. Shell examples use PowerShell; `Makefile` is for POSIX/CI parity.
 - Do not install CUDA toolkits, download model weights, or change the GPU power mode
   without asking.

@@ -64,9 +64,9 @@ const heroMetrics = [
 const rerunCards = [
   {
     index: "01",
-    value: String(rerun.replication.n),
-    title: "Reader replication",
-    detail: `${rerun.replication.reader} on SQuAD, same seven depths.`,
+    value: `2 × ${rerun.replication.n}`,
+    title: "Reader replications",
+    detail: `${rerun.replication.reader} + Llama 3.2 3B (exploratory), same seven depths.`,
     icon: Cpu,
   },
   {
@@ -80,7 +80,7 @@ const rerunCards = [
     index: "03",
     value: String(rerun.boundary.n),
     title: "Boundary probe",
-    detail: `k ∈ {${rerun.boundary.depths.join(",")}}, plus a 16k-token context check.`,
+    detail: `k ∈ {${rerun.boundary.depths.join(",")}} at 8k, plus a separate 16k context-budget probe.`,
     icon: ScanLine,
   },
   {
@@ -156,7 +156,7 @@ export default function HomePage() {
               className="inline-flex items-center gap-2 rounded-[3px] border border-line-strong px-4 py-2.5 text-sm font-semibold transition-colors hover:border-signal hover:text-signal"
             >
               <Presentation className="h-4 w-4" aria-hidden />
-              The 15-slide deck
+              The 12-slide deck
             </Link>
           </div>
 
@@ -496,7 +496,7 @@ export default function HomePage() {
           <div className="instrument-grid pointer-events-none absolute inset-0" aria-hidden="true" />
           <div className="relative grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
             <div>
-              <p className="inst-label">Presentation / 15 slides</p>
+              <p className="inst-label">Presentation / 12 slides</p>
               <h2
                 id="deck-heading"
                 className="display-title mt-4 text-3xl text-[#eef3e5] sm:text-4xl lg:text-5xl"
@@ -534,7 +534,7 @@ export default function HomePage() {
               <div className="absolute inset-0 flex flex-col justify-between rounded-[2px] border border-[rgba(0,0,0,0.1)] bg-[#f7f3e7] p-4 shadow-2xl">
                 <div className="flex items-center justify-between font-mono text-[7px] uppercase tracking-[0.18em] text-[#3f5549]">
                   <span>Energy Observatory</span>
-                  <span>04 / 15</span>
+                  <span>04 / 12</span>
                 </div>
                 <div>
                   <div className="h-1 w-10 bg-[#1d5a3e]" />

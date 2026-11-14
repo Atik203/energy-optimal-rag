@@ -15,7 +15,7 @@ provenance, sampling, and limits; it is not a redistribution of the data.
 | Split | dev | dev |
 | Upstream license | CC BY-SA 4.0 | CC BY-SA 4.0 |
 | Upstream size | 10,570 questions | 7,405 questions |
-| Used here | 1,000 questions (primary); 500 (1.5B); 200 (boundary) | 500 questions |
+| Used here | 1,000 primary; 500 (1.5B); 500 (Llama 3B, same IDs); 200 (boundary/context) | 500 questions |
 | Corpus | 20,958 unique dev contexts → 45,651 70-word passages | 10 paragraphs per question (2 gold, 8 distractors) |
 | Retriever | BM25 Okapi, top-32 | BM25 Okapi, top-10 |
 | Answer type | Extractive span | Extractive span, multi-hop |
@@ -111,23 +111,42 @@ dataset IDs, versions, checksums, sampling seeds, configs, prompts, predictions,
 statistics. It does **not** redistribute raw question or context text. See
 [`../DATA_LICENSE.md`](../DATA_LICENSE.md).
 
-## 7. Limits
+## 7. Reader models
+
+| Model | Role | Context | License |
+|---|---|---|---|
+| Qwen3.5-4B | Primary | 4096 local; 16384 diagnostic | Apache 2.0 |
+| Qwen2.5-1.5B-Instruct | Confirmatory replication (H7) | 4096 | Apache 2.0 |
+| Llama 3.2 3B Instruct | Exploratory reader panel | 4096; 8k validated ceiling | Llama 3.2 Community License |
+
+Model weights are not redistributed. Download them from the official source and record the
+model digest in the git-ignored run manifest. The Llama 3.2 Community License is a custom
+commercial license, not an OSI open-source license; do not describe the model as open-source
+without qualification. Quantized Llama 3.2 lightweight models have a reduced validated context
+of 8k, so Llama is used at 4k and is not the 16k probe vehicle.
+
+## 8. Limits
 
 - One closed corpus and one multi-hop distractor set; no open-domain NQ or fullwiki run.
 - BM25 only in the primary condition; no dense retriever.
 - English only.
-- One 4B reader and one 1.5B replication reader; no frontier model.
+- One 4B primary reader, one 1.5B confirmatory replication reader, and one exploratory 3B
+  reader; no frontier model.
 - SQuAD is saturated for strong readers; the pilot's 4B reader is the binding constraint.
-- The energy measurements are from one laptop GPU, not a datacenter.
+  The Llama 3B panel is a reader-family check, not evidence of a universal depth.
+- The 16k context-budget probe is a separate diagnostic on the same laptop GPU. The local
+  16k Qwen3.5-4B condition fits at 100% GPU; 32k offloads to CPU and is out of scope.
+- The energy measurements are from one laptop GPU, not a datacenter. The optional H200 MIG
+  64k check is accuracy-only and has no power telemetry.
 
-## 8. Manifest fields
+## 9. Manifest fields
 
 `data/manifest.json` records, per dataset: `id`, `name`, `version`, `split`, `source_url`,
 `upstream_license`, `citation`, `n_questions_total`, `n_questions_used`, `corpus`, `checksums`
 (questions and corpus SHA-256), `prepared_utc`, `preparation_seed`, `status`, and `notes`.
 The file is a placeholder until preparation; `null` means "not yet computed", never "zero".
 
-## 9. Maintenance
+## 10. Maintenance
 
 The data card is updated when a dataset version, sampling seed, chunk size, or license
 changes. Any change after the prereg freeze is an amendment. Contact:

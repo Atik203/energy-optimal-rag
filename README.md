@@ -37,7 +37,9 @@ The 2-hour pilot ran 200 SQuAD v1.1 dev questions at seven depths
 
 We do **not** claim a universal `k*`. We do **not** claim a "2pp-optimal" retrieval depth.
 We do **not** claim a "5pp certified" result before the powered rerun. The 5 pp pilot result
-is a signal, not a certification. The proposal reports `P = .537` for the 5 pp selection; if
+is a signal, not a certification. The Llama 3.2 3B reader and the 16k context-budget probe are
+exploratory/diagnostic and do not change H7 or G5. The optional H200 check is accuracy-only and
+cannot support an energy claim. The proposal reports `P = .537` for the 5 pp selection; if
 that is the selection probability, it is below G2's 0.8 stability threshold. In any case, no
 pilot non-inferiority test is reported, so G2 is not claimed. The rerun must report the
 non-inferiority test and the selection probability separately. The 78.8% oracle gain
@@ -67,11 +69,19 @@ be certified at `n = 200`. The rerun is designed around that failure.
 | Primary decision | 5 pp EM **non-inferiority** at an interior `k`, with ≥20% energy savings |
 | Secondary | 2 pp margin, **estimation only** — reported with CI, never used as a certification claim |
 | Reader replication | Qwen2.5-1.5B-Instruct, `n = 500`, same grid |
+| Third reader (exploratory) | Llama 3.2 3B Instruct, Q4, 4k context, `n = 500`, same 500 IDs as the 1.5B arm; no gate |
 | Multi-hop / distractor | HotpotQA distractor, `n = 500`, `k ∈ {0,1,2,4,8,10}` |
-| Boundary probe | `k ∈ {32,48,64}`, `n = 200`, grid-artifact test plus a 16k-token context check |
+| Boundary probe | `k ∈ {32,48,64}`, `n = 200`, 8k context budget for `k=64`; grid-artifact test |
+| Context-budget probe (diagnostic) | Qwen3.5-4B Q4, `n = 200`, `k ∈ {32,48,64}` at 16k allocation plus a `k=32 @ 4k` control; not a 16k-token prompt and not a new `k*` |
+| Optional H200 accuracy check | Qwen3.5-4B at 64k, accuracy-only; **not run; no energy claim** |
 | Causal test | Fixed energy tax `Δa` and per-passage tax `Δb` at 10–30% of `a ≈ 15.74 J`, `b ≈ 2.283 J/passage` |
 | Learned policy | Query features → depth, split 600/200/200, evaluated at matched accuracy against the best static `k` |
 | Certification | `N* = C_cert / (A(k*)[E(k0) − E(k*)])`, reported descriptively per dataset and reader |
+
+The Llama reader, context-budget probe, and optional H200 check are exploratory/diagnostic.
+H7 remains Qwen2.5-1.5B-Instruct **or** HotpotQA; Llama does not satisfy H7 or G5. H200 results
+are accuracy-only and are never pooled with RTX 3060 energy results. The local additions are
+estimated at roughly 1.2–1.7 GPU-hours, within the 15–20 GPU-hour cap.
 
 **Primary analysis population:** The unit is a question. A **valid row** requires a non-empty
 nonce, a completed request, and a power window with no sampler error. A failed or empty

@@ -180,3 +180,40 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   for registered runs. The confirmatory run must produce `runs/<run_id>/raw.csv` before any
   confirmatory claim is made. A re-run is new evidence, not a reproduction of the pilot
   numbers.
+
+---
+
+## D-012 - Third reader is exploratory; H7/G5 stay fixed
+
+- **Date:** 2026-11-14
+- **Status:** accepted
+- **Context:** The proposal has one confirmatory replication reader (Qwen2.5-1.5B) plus
+  HotpotQA. Adding Llama 3.2 3B to H7 or G5 would create winner-selection freedom across three
+  replication arms and would not increase per-reader power at `n = 500`.
+- **Decision:** Add Llama 3.2 3B Instruct as an **exploratory reader panel**, using the same
+  500 SQuAD IDs as the 1.5B replication, 4k context, Q4 via Ollama. H7 remains Qwen2.5-1.5B
+  or HotpotQA. G5 remains unchanged. The panel is direction-only, has no gate, and is reported
+  reader-conditionally.
+- **Consequences:** The reader panel can test family robustness without changing the
+  confirmatory family. It cannot certify 5 pp on its own and must not be promoted after seeing
+  its direction. All readers are reported in one table; no reader selection.
+
+---
+
+## D-013 - Boundary context fix and diagnostic context probe
+
+- **Date:** 2026-11-14
+- **Status:** accepted
+- **Context:** The existing boundary grid allowed `k=64` while inheriting a 4096 context;
+  at 70 words/passage, the `k=64` prompt can exceed 4096 tokens and truncate. A separate
+  16k allocation on Qwen3.5-4B is feasible on the 6 GB card at 100% GPU, while 32k already
+  offloads to CPU. Quantized Llama 3.2 lightweight models have an 8k validated context, so
+  Llama is not the 16k vehicle.
+- **Decision:** Set the boundary grid to `num_ctx=8192`. Add a separate 16k context-budget
+  probe: Qwen3.5-4B Q4, `n=200`, `k=32/48/64`, plus a `k=32 @ 4096` control. Label it
+  diagnostic, not a 16k-token prompt or a new `k*`. Require 100% GPU residency; report CPU
+  offload as a hardware limit. The optional H200 64k check is accuracy-only with no energy
+  claim.
+- **Consequences:** The `k=64` boundary endpoint is no longer silently truncated. The context
+  probe can separate context-budget effects from depth effects, but it cannot support a
+  “16k-context saturation” or energy claim. H200 results never enter the energy ledger.

@@ -18,6 +18,9 @@ measured, including the claim that failed.
 - No universal `k*`, no "2 pp optimal" depth, no "5 pp certified" result, no learned-policy
   gain, no carbon-optimal claim, and no generalization to frontier readers, dense retrievers, or
   full NQ.
+- The Llama 3.2 3B reader panel and 16k context-budget probe are exploratory/diagnostic; H7
+  remains Qwen2.5-1.5B or HotpotQA, and G5 is unchanged.
+- The optional H200 64k check is accuracy-only and cannot support an energy claim.
 - The site does not claim that any confirmatory experiment has been run.
 
 All site facts and the numbers used on the site live in `lib/project-data.ts`, with source

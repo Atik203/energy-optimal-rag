@@ -60,7 +60,9 @@ never committed.
 
 The target is Python 3.12 at `C:\ProgramData\anaconda3\python.exe`, conda environment
 `energy-optimal-rag`, a local RTX 3060 Laptop 6 GB, and Ollama `qwen3.5:4b` (Q4, 3.3 GB, 4096 context).
-The replication reader is `Qwen/Qwen2.5-1.5B-Instruct` in float16.
+The confirmatory replication reader is `Qwen/Qwen2.5-1.5B-Instruct` in float16. The exploratory
+third reader is Ollama `llama3.2:3b` (Q4_K_M, 4096 context); it is not part of H7 and is not a
+gate. The optional H200 1g.18gb 64k check is accuracy-only and is not used for energy.
 
 The pilot harness is reused rather than rewritten: BM25 Okapi over lowercase alphanumeric
 tokens, a fixed prompt, greedy decoding, a unique nonce at the start of every request, NVML
@@ -115,10 +117,14 @@ estimation-only: the 95% half-width at `n = 1,000` is about 1.8 pp, so the desig
 not promote the 2 pp result after seeing the data.
 
 The 1.5B replication uses `n = 500`, seven depths. HotpotQA uses `n = 500`, six depths. The
-boundary probe uses `n = 200` at `k ∈ {32,48,64}` and is diagnostic, not powered for accuracy.
-A 16k-token context check tests whether the pilot boundary was a 4096-context artifact; if
-the card cannot hold 16k, the limit is reported.
-All three fit the 15–20 GPU-hour budget.
+boundary probe uses `n = 200` at `k ∈ {32,48,64}` with an 8k context budget so `k=64` is not
+truncated; it is diagnostic, not powered for accuracy. A separate 16k context-budget probe
+uses Qwen3.5-4B Q4, `n = 200`, `k = 32/48/64`, and a `k=32 @ 4096` control; the 16k allocation
+is not a 16k-token prompt, and the probe is not a new `k*`. The probe requires 100% GPU
+residency; if the 6 GB card offloads to CPU, the hardware limit is reported. The exploratory
+Llama 3.2 3B reader uses the same 500 IDs as the 1.5B replication, seven depths, 4k, Q4, and
+is direction-only with no gate. The local additions are estimated at roughly 1.2–1.7 GPU-hours;
+all local arms fit the 15–20 GPU-hour budget.
 
 ## 6. Estimand and correctness
 
@@ -167,6 +173,12 @@ the 60 s pre-run baseline (15.56 W, CV 10.4%; post-run 17.63 W). Using the post-
 every energy by ~4% almost uniformly and changes E ratios by under 1%. After the sweep, 20
 back-to-back queries per depth are integrated as a block and the per-query integrals are scaled
 to the block total. Pilot factors ranged from 1.041 to 1.188, largest at `k = 2`.
+
+The 16k context-budget probe uses the same integration and block protocol. It records
+`prompt_tokens` and invalidates any row where `prompt_tokens + num_predict > num_ctx`. It also
+requires `ollama ps` to report 100% GPU and >300 MB headroom; CPU offload voids the arm and is
+reported as a hardware limit. The H200 MIG slice exposes no per-instance power reading, so no
+H200 row may be written to the energy ledger.
 
 BM25 retrieval energy is a CPU proxy: measured wall time × 20 W single-thread active-above-idle,
 about 3.11 J/query. It is an upper bound and is labeled as such. Retrieval is 3.5% of total at
@@ -219,7 +231,8 @@ comparative statics. The pilot validated the identity at `k = 2`: gap +0.044, 95
 [−0.050, +0.128], which includes zero. At `k = 32` the gap was +0.700, so the diagnostic flags
 over-retrieval. The coverage model fit poorly (`A_0 = 0.324`, `p = 0.0218`, `R² = 0.332`). Global
 unimodality is rejected; the identity remains a local diagnostic. The rerun tests it at the
-selected interior depth on SQuAD, the 1.5B reader, and HotpotQA, with bootstrap intervals.
+selected interior depth on SQuAD, the 1.5B reader, and HotpotQA, with bootstrap intervals. The
+Llama 3B reader is an exploratory extension, not part of H7.
 
 Theorem 2 is the price of static depth. For easy queries answerable at `k = 0` and hard queries
 answerable only at `k = K`, the oracle costs `a + εbK` and the best static depth costs `a + bK`;
@@ -265,7 +278,8 @@ G1 requires 5 pp non-inferiority at an interior `k` with ≥20% savings. G2 requ
 confidence bound on the accuracy loss ≤5 pp and `P(k* optimal) ≥ 0.8` for the 5 pp selection. G3
 requires the context share at the selected `k` in [0.10, 0.70] and varying with `k`. G4 requires
 oracle gain ≥20% and a learned policy capturing ≥50% at matched accuracy. G5 requires
-replication on the 1.5B reader or HotpotQA.
+replication on the 1.5B reader or HotpotQA. The Llama 3B reader and the context-budget probe
+are exploratory/diagnostic and do not satisfy or change G5.
 
 A fired gate is reported, not tuned away. A gate may not be added, removed, or re-thresholded
 after the primary outcome is seen. The prereg freezes before P1 and is tagged
@@ -278,19 +292,22 @@ scripts, prereg and amendments, paper draft and supplement, reproducibility pack
 environment lock, model digests and checksums, Zenodo DOI, data card, measurement protocol, risk
 log, and the claims-evidence map.
 
-The budget is local-only: 15–20 GPU-hours, ~$2 electricity, $25 wall meter, $10 USB backup,
-$10 contingency, total ≤$47. No rental, no paid API. Storage is ~5 GB on `E:` for raw data,
-processed parquet, run CSVs, and figures; model weights stay in the Ollama store. The USB drive holds a second copy of `runs/`, `artifacts/`, and the
-manifest.
+The local budget is 15–20 GPU-hours, including ~1.2–1.7 exploratory hours; ~$2 electricity,
+$25 wall meter, $10 USB backup, $10 contingency, total ≤$47. No rental, no paid API. The
+optional H200 accuracy-only check is outside the local budget and makes no energy claim. Storage
+is ~5 GB on `E:` for raw data, processed parquet, run CSVs, and figures; model weights stay in
+the Ollama store (3.3 GB plus ~2 GB if Llama 3B is downloaded). The server has a 200 GB quota.
+The USB drive holds a second copy of `runs/`, `artifacts/`, and the manifest.
 
 ## 14. Risks
 
 Main risks: scoring-rule dependence, reader strength/SQuAD saturation, one corpus and retriever,
 thermal throttling, coarse NVML resolution, Ollama prefix caching, energy noise, policy
-overfitting, a binding gate that defeats the tax test, and data licensing. Mitigations are in
-[`RISKS.md`](RISKS.md). The two that can change the thesis are scoring dependence (handled by
-pre-registering EM and requiring survival under lenient/F1) and a binding gate (handled by the
-mid-accuracy tax condition).
+overfitting, a binding gate that defeats the tax test, data licensing, model shopping, 16k
+OOM/CPU offload, and cross-hardware divergence. Mitigations are in [`RISKS.md`](RISKS.md). The
+two that can change the thesis are scoring dependence (handled by pre-registering EM and
+requiring survival under lenient/F1) and a binding gate (handled by the mid-accuracy tax
+condition).
 
 ## 15. First sprint and definition of done
 

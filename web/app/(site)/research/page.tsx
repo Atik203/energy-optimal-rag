@@ -528,12 +528,13 @@ export default function ResearchPage() {
             <div className="max-w-2xl">
               <p className="inst-label">What the design protects</p>
               <h2 id="close-heading" className="display-title mt-3 text-2xl text-[#eef3e5] sm:text-3xl">
-                The claim is indexed by a margin, a reader, a corpus, and one laptop GPU.
+                The claim is indexed by a margin, a reader, a corpus, and one laptop GPU for energy.
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-[#8aa294]">
                 No universal k*. No 2 pp optimum. No 5 pp certification before the rerun. No
-                learned-policy gain from the oracle. No carbon-optimal claim. The results page
-                reports the pilot exactly as measured.
+                learned-policy gain from the oracle. No carbon-optimal claim. The H200 64k check
+                is accuracy-only, with no energy claim. The results page reports the pilot
+                exactly as measured.
               </p>
             </div>
             <Link
