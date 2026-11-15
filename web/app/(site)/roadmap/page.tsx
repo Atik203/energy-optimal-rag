@@ -145,7 +145,7 @@ export default function RoadmapPage() {
           ))}
         </ol>
         <SourceNote>
-          Source: ROADMAP.md §2. P0 is a harness check; P1 started under D-022 with a frozen prereg and decides whether the paper has a static policy result. P6 is the
+          Source: ROADMAP.md §2. P0 is a harness check; P1 completed under D-022 and the 5 pp claim was not supported. P6 is the
           buffer, not a second attempt at P1.
         </SourceNote>
       </section>

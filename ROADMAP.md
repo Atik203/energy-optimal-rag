@@ -60,7 +60,7 @@ generations, on an RTX 3060 Laptop 6 GB with Ollama `qwen3.5:4b` (Q4) and BM25 t
 | Phase | Weeks | Goal | Key outputs | Exit gate |
 |---|---|---|---|---|
 | **P0** | 1 | Scaffold and golden reproduction | Repo, CI green, environment lock, data manifest, 200-question golden reproduction of the pilot curve, measurement harness checks | Block `factor_csv` in [0.8, 1.4], then golden `J(k)` anchors and affine fit within 10%; E/A reported, not gated; `validate` clean. **Result 2026-11-15: FAIL at block calibration (`k=0` 0.7944); K7 not run.** |
-| **P1** | 2–3 | Powered SQuAD rerun | `n = 1,000` × 7 depths, frozen prereg, raw ledger, primary 5 pp non-inferiority analysis | G1 or documented failure; K1–K7 adjudicated; freeze respected |
+| **P1** | 2–3 | Powered SQuAD rerun | `n = 1,000` × 7 depths, frozen prereg, raw ledger, primary 5 pp non-inferiority analysis | G1 or documented failure; K1–K7 adjudicated; freeze respected. **Result 2026-11-15: 5 pp NOT supported (one-sided lower -6.17 pp); savings 58.17%; K3/K5/G1/G2 fail; documented failure.** |
 | **P2** | 4–6 | External validity and causal test | Qwen2.5-1.5B replication (`n = 500`), Llama 3.2 3B exploratory reader (`n = 500`, 4k), HotpotQA distractor (`n = 500`, `k ≤ 10`), boundary probe (`k ∈ {32,48,64}`, `n = 200`, 8k), 16k context-budget probe (`n = 200`), fixed/per-passage taxes, optional H200 accuracy-only check (not run) | G5 replication; tax signs match Corollary 1; boundary probe resolves; exploratory arms reported without gates |
 | **P3** | 7–10 | Query-conditional policy | Feature set, policy model, 600/200/200 split, matched-accuracy evaluation, oracle gap capture | G4: oracle gain ≥20% and policy captures ≥50% at matched accuracy, or documented negative |
 | **P4** | 11–14 | Theory validation and sensitivity | Identity tests across datasets/readers, certification-cost curves, margin sensitivity, distractor counterexample check, robustness to scoring rule | Theory report; identity and comparative statics either supported or revised |
@@ -76,14 +76,20 @@ prove the harness, not to produce new evidence. The repo has documented pilot J 
 `k = 1, 4, 32`; P0 therefore gates on those anchors and the affine fit, and reports E/A
 without a gate. If the anchors or fit differ by more than 10%, stop and diagnose before P1.
 
-**P0 status (2026-11-15): FAIL; P1 started under D-022.** The first golden run failed calibration.
-The clean `_r3` rerun completed 1,400/1,400 valid rows with 0 invalid rows and a 1.12% idle CV,
-but its `k=0` block factor was **0.7944**, below the fixed 0.8 floor. No `blocks.json`, repeat CV,
-or calibrated J analysis exists. The J table is uncalibrated, so the pilot comparison is not
-adjudicable as a clean energy test. See
+**P0 status (2026-11-15): FAIL; P1 started under D-022 and is now complete.** The first golden
+run failed calibration. The clean `_r3` rerun completed 1,400/1,400 valid rows with 0 invalid
+rows and a 1.12% idle CV, but its `k=0` block factor was **0.7944**, below the fixed 0.8 floor.
+No `blocks.json`, repeat CV, or calibrated J analysis exists. The J table is uncalibrated, so the
+pilot comparison is not adjudicable as a clean energy test. See
 [`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). The PI then directed P1 to start as a
-documented reversal, not a gate pass (D-022); the prereg is frozen at `prereg-freeze-v1` and the
-powered sweep is running. No P1 result exists yet.
+documented reversal, not a gate pass (D-022); the prereg was frozen at `prereg-freeze-v1`.
+
+**P1 status (2026-11-15): COMPLETE; 5 pp claim NOT supported.** The sweep collected
+7,000/7,000 rows with 0 invalid; all seven block factors passed and were applied. The primary
+contrast is `A(4) - A(32) = -4.30 pp`, one-sided 95% lower bound **-6.17 pp**, p = 0.2691, so
+5 pp non-inferiority is not established; savings are **58.17%** [56.02, 60.14]. H1/H4 are
+supported, H3 fails, K3/K5 fail, G1/G2 fail, G3 passes. The static 5 pp policy claim is dead.
+See [`docs/P1_RESULTS.md`](docs/P1_RESULTS.md).
 
 **P0 implementation checklist (2026-11-15):**
 
@@ -98,13 +104,16 @@ powered sweep is running. No P1 result exists yet.
 | Protocol revision: 0.3 s tail, `factor_csv`, idle-CV gate | **DONE** — dry run factors 0.834–1.380 |
 | `_r2` clean-run attempt | **ABORTED** — stopped at 409 rows; uncommitted tree |
 | `_r3` clean golden run | **FAILED** - sweep 1,400/1,400, 0 invalid, idle CV 1.12%; block k=0 factor 0.7944 |
-| P1 powered run | **RUNNING** - started 2026-11-15; prereg `prereg-freeze-v1` frozen; results pending |
+| P1 powered run | **COMPLETE** - 7,000/7,000, 0 invalid, calibration 7/7; 5 pp NI **NOT supported** (-4.30 pp, one-sided lower -6.17 pp); savings 58.17%; K3/K5/G1/G2 fail |
 
 **P1 — Powered SQuAD (weeks 2–3).** Freeze the preregistration before looking at the new
 accuracy data. Run `n = 1,000` at 7 depths. Primary test: 5 pp EM non-inferiority at the
 pre-specified interior depth (`k = 4` vs `k = 32`), with ≥20% energy savings required for a
 positive policy claim. The 2 pp margin is estimated and reported with a CI but is not a
 certification target. This phase decides whether the paper has a static policy result.
+**Result 2026-11-15: it does not.** The paired difference was -4.30 pp with a one-sided 95%
+lower bound of -6.17 pp, outside the -5 pp margin; savings were 58.17%. K3 (P=0.724) and K5
+(95% span 4, k=4/8) also fail. See [`docs/P1_RESULTS.md`](docs/P1_RESULTS.md).
 
 **P2 — Replication and causal test (weeks 4–6).** Stress the result with the confirmatory
 Qwen2.5-1.5B reader (`n = 500`) and HotpotQA (`n = 500`, `k ∈ {0,1,2,4,8,10}`), plus an

@@ -21,11 +21,14 @@ energy-calibration and thermal-state failure, not a row-collection failure. See
 [`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). `_r2` was aborted after 409 rows
 because it started from an uncommitted tree.
 
-**P1 status (2026-11-15): running.** The preregistration is frozen at `prereg-freeze-v1`
-(hash `fb9e5bcf…`). The powered SQuAD sweep is `n = 1,000` at seven depths. The primary
-estimand is the calibration-invariant savings ratio `1 − E(4)/E(32)` plus the 5 pp accuracy
-non-inferiority test. Absolute `J`, `E`, `N*`, and `S(k)` are claimed only if all seven block
-factors pass [0.8, 1.4]; otherwise they are reported as uncalibrated. No P1 result exists yet.
+**P1 status (2026-11-15): COMPLETE - 5 pp claim NOT supported.** The preregistration was
+frozen at `prereg-freeze-v1` (hash `fb9e5bcf…`). The powered sweep collected **7,000/7,000
+rows, 0 invalid**, and all seven block factors passed and were applied. The primary result:
+`A(4) - A(32) = -4.30 pp`, one-sided 95% lower bound **-6.17 pp**, p = 0.2691, so the 5 pp
+non-inferiority criterion is **not met**; energy savings are **58.17%** [56.02, 60.14].
+H1 and H4 are supported; H3 fails; K3 and K5 fail; G1 and G2 fail; G3 passes. The static 5 pp
+policy claim is dead, and the 2 pp claim remains dead. See
+[`docs/P1_RESULTS.md`](docs/P1_RESULTS.md).
 
 ---
 

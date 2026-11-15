@@ -2,7 +2,7 @@
 
 **Project:** Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation (G2)
 **Version:** 0.1.0 · 2026-11-09
-**Status:** post-pilot MARGINAL · P0 harness failed (k=0 factor 0.7944); P1 running under D-022
+**Status:** post-pilot MARGINAL · P0 harness failed (k=0 factor 0.7944); P1 complete, 5 pp claim not supported
 **Companion documents:** [`PROTOCOL.md`](PROTOCOL.md), [`MEASUREMENT.md`](MEASUREMENT.md),
 [`DATA_CARD.md`](DATA_CARD.md), [`RISKS.md`](RISKS.md), [`RUNBOOK.md`](RUNBOOK.md),
 [`../prereg/PREREGISTRATION.md`](../prereg/PREREGISTRATION.md)

@@ -132,8 +132,8 @@ export default function HomePage() {
 
           <p className="mt-6 max-w-xl text-[1.02rem] leading-relaxed text-muted-foreground sm:text-lg">
             Retrieval depth in RAG, measured in joules per correct answer. The pilot found a
-            steep energy–depth tradeoff — and killed its own 2 pp claim. The 5 pp signal is
-            being tested in the powered P1 sweep now.
+            steep energy–depth tradeoff — and killed its own 2 pp claim. The powered P1 test
+            has now reported: the 5 pp claim is not supported, with 58.2% savings.
           </p>
 
           <div className="mt-5 flex flex-wrap gap-2">
@@ -147,7 +147,7 @@ export default function HomePage() {
               {p1.label}
             </Chip>
             <Chip tone="dead" dot>
-              No P1 result yet
+              5 pp not supported
             </Chip>
             <Chip tone="neutral">Prereg frozen</Chip>
           </div>

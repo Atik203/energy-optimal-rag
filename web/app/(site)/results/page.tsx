@@ -82,8 +82,7 @@ export default function ResultsPage() {
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               The pilot raw CSVs are not in this repository. Values are transcribed from the
               repository record and are not independently reproducible from this public scaffold.
-              No confirmatory run has been executed. The P0 harness sweep is a harness check, not confirmatory evidence; its clean _r3 run failed block calibration at k=0 (factor 0.7944). P1 then started on PI authority (D-022) with a frozen prereg; its powered sweep is running and no result exists yet. The 2 pp static claim is dead; the 5 pp result
-              is a pilot signal, not certified; the {pilot.oracle.gain}% oracle gain is an upper bound.
+              The P0 harness sweep is a harness check, not confirmatory evidence; its clean _r3 run failed block calibration at k=0 (factor 0.7944). P1 ran under D-022 with a frozen prereg: 7,000/7,000 rows, 0 invalid, calibration 7/7, but the 5 pp non-inferiority claim was not supported (A(4)-A(32) = -4.30 pp; one-sided lower -6.17 pp; savings 58.17%). Both the 2 pp and 5 pp static claims are dead; the {pilot.oracle.gain}% oracle gain is an upper bound.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               <Chip tone="caution" dot>

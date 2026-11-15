@@ -1,0 +1,92 @@
+{
+  "0": {
+    "selected_depth": 0,
+    "reference_depth": 32,
+    "total_sweep_j": 311992.064094,
+    "delta_e_per_correct": -14392.90367641582,
+    "n_star": null,
+    "note": "No positive break-even; the selected depth is not cheaper per correct answer.",
+    "feasible": false,
+    "interval": null
+  },
+  "1": {
+    "selected_depth": 1,
+    "reference_depth": 32,
+    "total_sweep_j": 311992.064094,
+    "delta_e_per_correct": 118.88066400361583,
+    "n_star": 6712.0559465862425,
+    "note": "Break-even calculation, not a deployment guarantee.",
+    "feasible": false,
+    "interval": null
+  },
+  "2": {
+    "selected_depth": 2,
+    "reference_depth": 32,
+    "total_sweep_j": 311992.064094,
+    "delta_e_per_correct": 119.25232787434636,
+    "n_star": 6273.943840221084,
+    "note": "Break-even calculation, not a deployment guarantee.",
+    "feasible": false,
+    "interval": null
+  },
+  "4": {
+    "selected_depth": 4,
+    "reference_depth": 32,
+    "total_sweep_j": 311992.064094,
+    "delta_e_per_correct": 112.02238526640072,
+    "n_star": 6189.0817298515,
+    "note": "Break-even calculation, not a deployment guarantee.",
+    "feasible": true,
+    "interval": {
+      "lower": 5697.140897034105,
+      "upper": 6747.789380933609,
+      "n_inf": 0,
+      "n_missing": 0
+    }
+  },
+  "8": {
+    "selected_depth": 8,
+    "reference_depth": 32,
+    "total_sweep_j": 311992.064094,
+    "delta_e_per_correct": 97.00876278546329,
+    "n_star": 6886.771935419386,
+    "note": "Break-even calculation, not a deployment guarantee.",
+    "feasible": true,
+    "interval": {
+      "lower": 6313.3587463364875,
+      "upper": 7521.599814017401,
+      "n_inf": 0,
+      "n_missing": 0
+    }
+  },
+  "16": {
+    "selected_depth": 16,
+    "reference_depth": 32,
+    "total_sweep_j": 311992.064094,
+    "delta_e_per_correct": 63.32637176713067,
+    "n_star": 10242.68613191331,
+    "note": "Break-even calculation, not a deployment guarantee.",
+    "feasible": true,
+    "interval": {
+      "lower": 9214.713000010639,
+      "upper": 11448.351525559741,
+      "n_inf": 0,
+      "n_missing": 0
+    }
+  },
+  "32": {
+    "selected_depth": 32,
+    "reference_depth": 32,
+    "total_sweep_j": 311992.064094,
+    "delta_e_per_correct": 0.0,
+    "n_star": null,
+    "note": "No positive break-even; the selected depth is not cheaper per correct answer.",
+    "feasible": true,
+    "interval": {
+      "lower": null,
+      "upper": null,
+      "n_inf": 0,
+      "n_missing": 10000
+    }
+  }
+}

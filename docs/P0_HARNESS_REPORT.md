@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-15
 **Run:** `golden_squad_qwen4b_p0` (first run) and `golden_squad_qwen4b_p0_r3` (clean rerun)
-**Status:** **FAIL - P1 started on PI authority (D-022), not because this gate passed.**
+**Status:** **FAIL - P1 was started on PI authority (D-022) and completed negative (5 pp not supported).**
 **Purpose:** harness check only. This run is not confirmatory evidence and produces no
 `claims_evidence.csv` claim.
 
@@ -135,7 +135,7 @@ pre-set range.
 
 ## 4. Decision
 
-- **P0 FAIL. P1 started on 2026-11-15 on PI authority (D-022), not because this gate passed.**
+- **P0 FAIL. P1 was started on 2026-11-15 on PI authority (D-022), not because this gate passed, and completed negative (5 pp not supported).**
 - The registry row is `invalid`; the raw run remains git-ignored.
 - The block-factor range is **not** widened after seeing the outcome.
 - The P0 analysis is uncalibrated and is retained only as failure evidence.
@@ -173,9 +173,10 @@ seven P1 block factors pass.
   0 invalid, pre-warm-up idle 15.573 W (CV 1.12%). Block calibration then **failed at `k=0`**
   with `factor_csv = 0.7944` (raw_sum 446.672 J, block 354.847 J, idle 15.573 W,
   `factor_block=0.9989`, consistency 1.2573). No `blocks.json`, repeat CV, or calibrated
-  J analysis exists. `_r3` is registered `invalid`; P0 is FAIL. P1 started under D-022.
+  J analysis exists. `_r3` is registered `invalid`; P0 is FAIL. P1 completed under D-022
+  with the 5 pp claim not supported.
 
-## 7. Post-P0 handoff (P1 started under D-022)
+## 7. Post-P0 handoff (P1 completed under D-022)
 
 P0 is finished as a documented failure; the remaining work is handoff, not a new run.
 
@@ -190,8 +191,9 @@ P0 is finished as a documented failure; the remaining work is handoff, not a new
    hand-written optimistic value.
 4. Run CI, Vercel production deploy, and verify the live pages.
 5. Merge PR #1 only after the P0 evidence and frontend are consistent. **P1 started on
-   2026-11-15 under D-022**; the prereg is frozen at `prereg-freeze-v1` and the powered sweep
-   is running.
+   2026-11-15 under D-022 and completed negative**: 7,000/7,000 rows, 0 invalid, calibration
+   7/7, but 5 pp non-inferiority was not supported (lower −6.17 pp). See
+   [`P1_RESULTS.md`](P1_RESULTS.md).
 6. Back up `runs/`, `analysis/`, `artifacts/`, `data/processed/`, and `data/splits/` to the
    approved external target; never commit raw/gold data. **Status 2026-11-15:** the user
    deferred the external backup (D-020); the raw P0 run is local-only.

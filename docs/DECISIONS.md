@@ -406,3 +406,24 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   P1 completes; the raw data remain local-only.
 - **Consequences:** The D-018/D-019 P0 findings and the D-021 FAIL remain unchanged. No gate
   threshold changes.
+
+---
+
+## D-024 - P1 complete; the 5 pp static policy claim is not supported
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** P1 collected 7,000/7,000 rows with 0 invalid. All seven block factors passed the
+  fixed [0.8, 1.4] gate (0.8089, 1.2506, 1.2403, 1.3111, 1.2902, 1.2143, 1.0587); the `k=0`
+  factor is only 1.1% above the floor. Idle 15.794 W (CV 1.23%); repeat CV median 2.81%, max
+  18.44%. The pre-registered primary contrast is `A(4) - A(32) = -4.30 pp`, one-sided 95%
+  lower bound **-6.17 pp**, p = 0.2691; savings **58.17%** [56.02, 60.14].
+- **Decision:** Mark P1 complete. Report the 5 pp claim as **not supported**: the point
+  estimate is inside the margin, but the lower bound is outside it, so non-inferiority is not
+  established. The 2 pp claim remains dead. Do not re-threshold the margin or the gates. H1
+  and H4 are supported; H3 fails; K3 (P=0.724) and K5 (95% span 4, k=4/8) fail; G1 and G2
+  fail; G3 passes.
+- **Consequences:** There is no static policy result at either margin. Absolute `J`, `E`, `N*`,
+  and `S(k)` are reportable because calibration passed, with the marginal `k=0` factor
+  disclosed. P3 adaptive policy is the remaining route to a policy result and must be
+  separately preregistered; no adaptive claim exists yet.

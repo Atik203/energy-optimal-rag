@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   frozen at `prereg-freeze-v1` (hash `fb9e5bcf…`). No P1 result exists yet.
 
 ### Changed
+- P1 COMPLETE (2026-11-15): 7,000/7,000 rows, 0 invalid, calibration 7/7. The pre-registered
+  5 pp non-inferiority claim is **not supported**: `A(4)-A(32) = -4.30 pp`, one-sided 95%
+  lower bound `-6.17 pp`, `p = 0.2691`; savings `58.17%` [56.02, 60.14]. H1/H4 supported,
+  H3 fails, K3/K5/G1/G2 fail, G3 passes. The static 5 pp policy claim is dead; the 2 pp claim
+  remains dead. See `docs/P1_RESULTS.md`.
 - One analysis population and failure rule in README, implementation plan, protocol,
   preregistration, analysis plan, and proposal: failed or empty generations after a completed
   request are wrong answers and stay in; rows are invalid only for a protocol violation;

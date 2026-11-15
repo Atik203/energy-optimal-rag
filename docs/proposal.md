@@ -10,8 +10,10 @@
 **Package / environment:** `rag_energy` / `energy-optimal-rag`
 **Status:** Post-pilot, pre-confirmatory. This document requests approval to start P0 and P1.
 **Current status (2026-11-15):** P0 harness failed block calibration at `k=0`
-(`factor_csv = 0.7944`). P1 started on PI authority (D-022); the preregistration is frozen at
-`prereg-freeze-v1` and the powered sweep is running. No confirmatory results exist yet.
+(`factor_csv = 0.7944`). P1 started on PI authority (D-022), completed 7,000/7,000 rows with
+0 invalid and calibration 7/7, but the pre-registered 5 pp non-inferiority claim was **not
+supported** (`A(4)-A(32) = -4.30 pp`, one-sided lower bound `-6.17 pp`; savings `58.17%`).
+No static policy claim exists; the 2 pp claim remains dead. See `docs/P1_RESULTS.md`.
 
 ---
 

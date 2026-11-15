@@ -606,7 +606,7 @@ function SetupSlide({ index, total }: SlideProps) {
         </SlideCard>
       </div>
       <SlideCallout tone="amber">
-        15–20 local GPU hours · RTX 3060 6 GB · optional H200 64k: accuracy-only, no energy claim. P0 harness failed block k=0 0.7944; P1 running under D-022, prereg frozen.
+        15–20 local GPU hours · RTX 3060 6 GB · optional H200 64k: accuracy-only, no energy claim. P0 harness failed block k=0 0.7944; P1 5 pp not supported; savings 58.2%.
       </SlideCallout>
     </SlideFrame>
   );

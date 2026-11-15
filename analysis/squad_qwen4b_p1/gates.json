@@ -1,0 +1,65 @@
+{
+  "K1": {
+    "value": 1.612912572095203,
+    "passed": true
+  },
+  "K2": {
+    "selected_depth": 4,
+    "boundary": false,
+    "fired": false,
+    "passed": true
+  },
+  "K3": {
+    "p_k_optimal": 0.7244,
+    "passed": false
+  },
+  "K4": {
+    "context_share": 0.35464522104240853,
+    "flat": false,
+    "passed": true
+  },
+  "K5": {
+    "span_95": 4,
+    "depths_95": [
+      4,
+      8
+    ],
+    "passed": false
+  },
+  "K6": {
+    "note": "oracle gain is a P3 analysis",
+    "passed": null
+  },
+  "K7": {
+    "repeat_cv_max": 0.184353,
+    "relative_effect": 1.612912572095203,
+    "passed": true,
+    "note": null
+  },
+  "G1": {
+    "non_inferior": false,
+    "savings_pct": 58.16738530915217,
+    "interior": true,
+    "passed": false
+  },
+  "G2": {
+    "upper_bound_on_loss_pp": 6.170223024283287,
+    "p_k_optimal": 0.7244,
+    "passed": false
+  },
+  "G3": {
+    "context_share": 0.35464522104240853,
+    "low": 0.1,
+    "high": 0.7,
+    "increasing": true,
+    "passed": true
+  },
+  "G4": {
+    "note": "policy capture is a P3 analysis",
+    "passed": null
+  },
+  "G5": {
+    "note": "replication is P2",
+    "passed": null
+  }
+}
