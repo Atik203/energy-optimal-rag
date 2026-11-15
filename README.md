@@ -30,6 +30,13 @@ H1 and H4 are supported; H3 fails; K3 and K5 fail; G1 and G2 fail; G3 passes. Th
 policy claim is dead, and the 2 pp claim remains dead. See
 [`docs/P1_RESULTS.md`](docs/P1_RESULTS.md).
 
+**P2 status (2026-11-15): IN PROGRESS - preregistered replication collecting.** The
+confirmatory Qwen2.5-1.5B-Instruct arm (`n = 500`, same SQuAD IDs, seven depths) is running; no
+P2 result exists yet. HotpotQA distractor is prepared on the fixed 10-paragraph frame (A-002):
+500 questions, 5,000 whole paragraphs, per-question BM25 top-10, `k ∈ {0,1,2,4,8,10}`. H7 is a
+direction-only contrast (A-001) on `A(4) - A(reference)`, with 32 for SQuAD and 10 for HotpotQA;
+it is not a 5 pp test and cannot revive the P1 policy claim.
+
 ---
 
 ## Status: what survived the pilot, and what did not

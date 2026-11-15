@@ -56,3 +56,28 @@ _No amendments before A-001. The preregistration was frozen at `prereg-freeze-v1
   distractor). H2, the 5 pp margin, all gates, and both sample sizes are unchanged.
 - **approved_by:** PI session decision, 2026-11-15.
 - **decision_log:** `docs/DECISIONS.md` D-025.
+
+---
+
+### A-002 - HotpotQA sampling frame restricted to complete 10-paragraph questions
+
+- **amendment_id:** A-002
+- **date_utc:** 2026-11-15
+- **prereg_version:** `prereg-freeze-v1`
+- **section:** Section 2, Hypotheses, H7: "The direction of H2 replicates on
+  Qwen2.5-1.5B-Instruct (`n = 500`) or HotpotQA distractor (`n = 500`)."
+- **replacement:** The HotpotQA distractor sample is drawn from the 7,345 dev questions that
+  provide exactly 10 paragraphs. The 60 dev questions with 2-9 paragraphs are excluded before
+  sampling, so `k = 10` means 10 candidate paragraphs for every question and the reference depth
+  is identical across questions. Sampling remains stratified by question type
+  (bridge/comparison) with seed `20261115`.
+- **reason:** HotpotQA dev is not uniform: 60 of 7,405 questions have fewer than 10 paragraphs.
+  Including them would silently change the reference depth for those questions and make the
+  H7 contrast incomparable. The frame restriction is fixed before any HotpotQA outcome is
+  analyzed.
+- **outcome_data_seen:** no. The restriction uses only the upstream paragraph counts, not
+  model answers, accuracy, or energy.
+- **impact:** HotpotQA H7 arm only. `n = 500`, the depth grid, the candidate/reference contrast
+  (`4` vs `10`), the margin, and all gates are unchanged. The Qwen2.5-1.5B arm is unaffected.
+- **approved_by:** PI session decision, 2026-11-15.
+- **decision_log:** `docs/DECISIONS.md` D-026.

@@ -445,3 +445,19 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
 - **Consequences:** The P2 verdict is fixed before any P2 outcome is read. A positive or
   interval-crossing contrast is a failed replication, not a null result to be re-thresholded.
   H2 and the P1 negative decision are unchanged.
+
+---
+
+## D-026 - HotpotQA frame restricted to questions with 10 paragraphs
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** HotpotQA distractor dev has 7,405 questions, but 60 provide only 2-9 paragraphs.
+  Sampling them would make `k = 10` and the H7 reference depth mean different things per
+  question.
+- **Decision:** Record amendment A-002. Sample the 500 HotpotQA questions only from the 7,345
+  questions with exactly 10 paragraphs, stratified by bridge/comparison. The prepared corpus has
+  500 questions and 5,000 whole paragraphs; checksums and split IDs are tracked.
+- **Consequences:** The HotpotQA arm uses a uniform 10-paragraph reference. No change to
+  `n = 500`, the depth grid, the 4-vs-10 contrast, or any gate. The excluded questions are an
+  upstream-data property, not an outcome-based exclusion.
