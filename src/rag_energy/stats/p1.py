@@ -508,6 +508,9 @@ def bootstrap(
         "accuracy_difference": {
             "point": float(paired_c_c.mean() - paired_c_r.mean()),
             "interval": _percentile_interval(difference),
+            "one_sided_lower": float(np.nanpercentile(difference, 5.0))
+            if np.isfinite(difference).any()
+            else None,
         },
         "e_per_correct": {
             str(k): {
@@ -1209,9 +1212,13 @@ def _write_report(
             "",
             "## Primary 5 pp result",
             "",
-            f"- Paired n = {primary.n_pairs}; discordant b = {primary.b}, c = {primary.c}.",
+            f"- Paired n = {primary.n_pairs}; discordant b = {primary.b}, c = {primary.c}; "
+            f"invalid rows at k=4/k=32 = {primary.n_invalid_candidate}/"
+            f"{primary.n_invalid_reference}.",
             f"- Mean difference A(4) - A(32) = {100.0 * primary.mean_diff:.2f} pp "
             f"(one-sided 95% lower bound {100.0 * primary.lower_bound:.2f} pp).",
+            f"- McNemar exact p (no-difference null) = {primary.mcnemar_exact_p:.4g}; "
+            f"continuity-corrected z p = {primary.mcnemar_z_p:.4g}.",
             f"- One-sided p = {primary.p_value:.4g}; non-inferior: {primary.non_inferior}."
             if primary.p_value is not None
             else f"- One-sided p = not defined (zero paired variance); non-inferior: {primary.non_inferior}.",
