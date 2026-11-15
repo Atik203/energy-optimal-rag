@@ -16,9 +16,9 @@ from rag_energy.retrieval.index import RetrievalIndex
 def _gold_ids(corpus: Any) -> dict[str, set[str]]:
     gold: dict[str, set[str]] = {}
     for row in corpus.itertuples(index=False):
-        if bool(getattr(row, "is_gold")):
-            gold.setdefault(str(getattr(row, "qid")), set()).add(
-                str(getattr(row, "passage_id"))
+        if bool(row.is_gold):
+            gold.setdefault(str(row.qid), set()).add(
+                str(row.passage_id)
             )
     return gold
 
@@ -48,7 +48,7 @@ def hotpot_recall(
 
     gold_by_qid = _gold_ids(corpus)
     question_text = {
-        str(getattr(row, "qid")): str(getattr(row, "question"))
+        str(row.qid): str(row.question)
         for row in questions.itertuples(index=False)
     }
     if not question_text:
