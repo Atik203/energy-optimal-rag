@@ -35,8 +35,24 @@ def _corpus() -> pd.DataFrame:
 def _questions() -> pd.DataFrame:
     return pd.DataFrame(
         [
-            {"qid": "h1", "question": "apple", "gold": "x", "type": "bridge", "level": "easy", "n_paragraphs": 4, "n_gold_paragraphs": 2},
-            {"qid": "h2", "question": "zebra", "gold": "y", "type": "comparison", "level": "medium", "n_paragraphs": 4, "n_gold_paragraphs": 2},
+            {
+                "qid": "h1",
+                "question": "apple",
+                "gold": "x",
+                "type": "bridge",
+                "level": "easy",
+                "n_paragraphs": 4,
+                "n_gold_paragraphs": 2,
+            },
+            {
+                "qid": "h2",
+                "question": "zebra",
+                "gold": "y",
+                "type": "comparison",
+                "level": "medium",
+                "n_paragraphs": 4,
+                "n_gold_paragraphs": 2,
+            },
         ]
     )
 

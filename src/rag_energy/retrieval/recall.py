@@ -17,9 +17,7 @@ def _gold_ids(corpus: Any) -> dict[str, set[str]]:
     gold: dict[str, set[str]] = {}
     for row in corpus.itertuples(index=False):
         if bool(row.is_gold):
-            gold.setdefault(str(row.qid), set()).add(
-                str(row.passage_id)
-            )
+            gold.setdefault(str(row.qid), set()).add(str(row.passage_id))
     return gold
 
 
@@ -47,10 +45,7 @@ def hotpot_recall(
         raise ValueError("k_values must be unique")
 
     gold_by_qid = _gold_ids(corpus)
-    question_text = {
-        str(row.qid): str(row.question)
-        for row in questions.itertuples(index=False)
-    }
+    question_text = {str(row.qid): str(row.question) for row in questions.itertuples(index=False)}
     if not question_text:
         raise ValueError("questions must not be empty")
     missing_gold = [qid for qid in question_text if not gold_by_qid.get(qid)]

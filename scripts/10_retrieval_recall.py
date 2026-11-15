@@ -32,7 +32,9 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     args = build_parser().parse_args()
     root = Path(args.root)
-    config = load_toml(root / args.config if not Path(args.config).is_absolute() else Path(args.config))
+    config = load_toml(
+        root / args.config if not Path(args.config).is_absolute() else Path(args.config)
+    )
     dataset = str(config.get("dataset"))
     if dataset != "hotpot":
         raise SystemExit("retrieval recall is only defined for the hotpot dataset")
