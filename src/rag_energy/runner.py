@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import Any
 
 from rag_energy.config import REPO_ROOT, load_toml, resolve_run_config
-from rag_energy.data.loader import SquadSplit, load_squad_split
+from rag_energy.data.loader import SquadSplit, load_prepared_split
 from rag_energy.energy.idle import IdleStats, summarize_idle
 from rag_energy.energy.integrate import idle_subtract, mean_power, trapezoid_joules
 from rag_energy.energy.nonce import make_nonce
@@ -41,7 +41,7 @@ from rag_energy.registry import (
     read_registry,
     update_registry_status,
 )
-from rag_energy.retrieval.bm25 import BM25Index, build_index
+from rag_energy.retrieval.index import RetrievalIndex
 from rag_energy.retrieval.proxy_energy import cpu_retrieval_joules
 from rag_energy.scoring import correctness, token_f1
 
@@ -312,7 +312,12 @@ def run_depth_sweep(
     if not split_name:
         raise ValueError(f"{config_path}: id_split is required")
 
-    split = load_squad_split(processed_dir, split_name, limit=limit_questions)
+    split = load_prepared_split(
+        processed_dir,
+        str(config.get("dataset", "squad")),
+        split_name,
+        limit=limit_questions,
+    )
     k_grid = [int(k) for k in config["k_grid"]]
     run_dir = out_root / spec.run_id
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -324,9 +329,8 @@ def run_depth_sweep(
     rows_written = 0
     started = _utc_now()
 
-    pairs = list(zip(split.corpus["passage_id"], split.corpus["text"], strict=True))
     index_started = time.perf_counter()
-    index: BM25Index = build_index(pairs)
+    index: RetrievalIndex = RetrievalIndex.from_corpus(split.corpus)
     index_build_s = time.perf_counter() - index_started
 
     reader = reader or _default_reader(config)
@@ -380,11 +384,13 @@ def run_depth_sweep(
             raise ValueError("idle_power_w must be non-negative")
 
         first = split.questions.iloc[0]
+        first_qid = str(first["qid"])
+        first_question = str(first["question"])
         for index_number in range(max(0, warmup_queries)):
             depth = k_grid[index_number % len(k_grid)]
-            retrieved = index.search(str(first["question"]), depth)
+            retrieved = index.search(first_qid, first_question, depth)
             reader.generate(
-                str(first["question"]),
+                first_question,
                 [passage.text for passage in retrieved],
                 make_nonce(nonce_hex_chars),
             )
@@ -404,7 +410,7 @@ def run_depth_sweep(
                         continue
                     nonce = make_nonce(nonce_hex_chars)
                     retrieval_started = time.perf_counter()
-                    retrieved = index.search(question, depth)
+                    retrieved = index.search(qid, question, depth)
                     retrieval_s = time.perf_counter() - retrieval_started
                     retrieval_j = cpu_retrieval_joules(retrieval_s, proxy_watts)
 
@@ -605,7 +611,7 @@ def run_block_calibration(
     raw_path = run_dir / str(config.get("output", {}).get("raw_csv", "raw.csv"))
     rows = _read_raw_rows(raw_path)
     split_name = str(config.get("id_split", ""))
-    split = load_squad_split(processed_dir, split_name)
+    split = load_prepared_split(processed_dir, str(config.get("dataset", "squad")), split_name)
     k_grid = [int(k) for k in config["k_grid"]]
     block_size = int(config.get("energy", {}).get("block_size", 20))
     interval_ms = int(config.get("energy", {}).get("sample_interval_ms", 100))
@@ -634,13 +640,13 @@ def run_block_calibration(
         idle_record = {"mean_w": float(idle_power_w), "sd_w": None, "cv": None, "n": 0}
 
     questions = split.questions.set_index("qid")["question"].to_dict()
-    pairs = list(zip(split.corpus["passage_id"], split.corpus["text"], strict=True))
-    index = build_index(pairs)
+    index = RetrievalIndex.from_corpus(split.corpus)
     warmup_queries = int(config.get("energy", {}).get("warmup_queries", 20))
+    first_qid = str(split.questions.iloc[0]["qid"])
     first_question = str(split.questions.iloc[0]["question"])
     for index_number in range(max(0, warmup_queries)):
         warmup_depth = k_grid[index_number % len(k_grid)]
-        retrieved = index.search(first_question, warmup_depth)
+        retrieved = index.search(first_qid, first_question, warmup_depth)
         reader.generate(
             first_question,
             [passage.text for passage in retrieved],
@@ -671,9 +677,10 @@ def run_block_calibration(
             time.sleep(cooldown_s)
         # A cooldown leaves the first short query at a cold, low-power state;
         # two discarded queries put the block back at the measured steady state.
-        warmup_question = str(questions[depth_rows[0]["question_id"]])
+        warmup_qid = str(depth_rows[0]["question_id"])
+        warmup_question = str(questions[warmup_qid])
         for _ in range(2):
-            retrieved = index.search(warmup_question, depth)
+            retrieved = index.search(warmup_qid, warmup_question, depth)
             reader.generate(
                 warmup_question,
                 [passage.text for passage in retrieved],
@@ -687,7 +694,7 @@ def run_block_calibration(
         try:
             for row in depth_rows:
                 qid = row["question_id"]
-                retrieved = index.search(str(questions[qid]), depth)
+                retrieved = index.search(qid, str(questions[qid]), depth)
                 query_started = time.monotonic()
                 result = reader.generate(
                     str(questions[qid]),
@@ -795,7 +802,7 @@ def run_repeat_cv(
     out_root = Path(out_root or root / "runs")
     run_dir = out_root / spec.run_id
     split_name = str(config.get("id_split", ""))
-    split = load_squad_split(processed_dir, split_name)
+    split = load_prepared_split(processed_dir, str(config.get("dataset", "squad")), split_name)
     measurement = config.get("measurement", {})
     n_blocks = int(measurement.get("repeat_blocks", 3))
     n_queries = int(measurement.get("repeat_queries_per_block", 20))
@@ -825,8 +832,7 @@ def run_repeat_cv(
             )
         idle_power_w = idle_stats.mean_w
 
-    pairs = list(zip(split.corpus["passage_id"], split.corpus["text"], strict=True))
-    index = build_index(pairs)
+    index = RetrievalIndex.from_corpus(split.corpus)
     questions = split.questions.head(n_queries)
     per_query: dict[str, list[float]] = {
         str(row.qid): [] for row in questions.itertuples(index=False)
@@ -837,7 +843,7 @@ def run_repeat_cv(
         for row in questions.itertuples(index=False):
             qid = str(row.qid)
             question = str(row.question)
-            retrieved = index.search(question, depth)
+            retrieved = index.search(qid, question, depth)
             sampler = sampler_factory(interval_ms)
             sampler.start()
             try:

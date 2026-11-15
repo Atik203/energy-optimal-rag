@@ -36,7 +36,10 @@ chunked them into 70-word passages. The primary run samples 1,000 questions; the
 replication uses 500; the boundary probe uses 200.
 
 HotpotQA distractor dev supplies 10 paragraphs per question (2 gold, 8 distractors). The run
-uses 500 questions and a depth grid capped at 10.
+uses 500 questions and a depth grid capped at 10. Sixty dev questions provide fewer than 10
+paragraphs and are removed from the sampling frame before sampling, so every prepared question
+has exactly 10 candidate paragraphs. BM25 indexes each question's 10 paragraphs separately;
+paragraphs are never pooled across questions.
 
 ## ID splits
 
@@ -55,12 +58,16 @@ split, never question text:
 The IDs are generated deterministically from seed `20261115`. P0 is disjoint from P1 so the
 harness check does not consume the confirmatory sample.
 
+`splits/hotpot_splits.json` is tracked separately. It contains the 500 HotpotQA distractor
+question IDs and their SHA-256, never question text.
+
 ## Preparation
 
 1. Download from the official source; record the URL in `manifest.json`.
 2. Record the SHA-256 of the downloaded file **before** processing.
-3. Run the preparation script. P0 preparation is complete: `manifest.json` is verified with
-   10,570 questions, 20,958 contexts, and 45,651 passages. P2 HotpotQA preparation remains.
+3. Run the preparation script. Both datasets are prepared and verified: SQuAD has 10,570
+   questions, 20,958 contexts, and 45,651 passages; HotpotQA has 500 questions and 5,000
+   paragraphs from a 7,345-question frame.
 4. Record question count, corpus count, chunk size, seed, and checksums.
 5. Set `status` to `prepared`, then `verified` after a second check.
 

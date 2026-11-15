@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-11-14T18:26:45Z",
+  "generated_utc": "2026-11-15T13:41:02Z",
   "project": "energy-optimal-rag",
   "policy": "No raw question or context text is stored in this repository. Only dataset identifiers, versions, licenses, checksums, and derived statistics are tracked. Upstream SQuAD and HotpotQA licenses (CC BY-SA 4.0) remain in force.",
   "datasets": [
@@ -48,21 +48,23 @@
       "n_questions_total": 7405,
       "n_questions_used": 500,
       "corpus": {
-        "construction": "10 provided paragraphs per question (2 gold, 8 distractors); no cross-question pooling",
-        "n_contexts": null,
+        "construction": "10 provided paragraphs per question (2 gold, 8 distractors), kept whole; no cross-question pooling",
+        "n_contexts": 500,
         "n_passages": 5000,
-        "passage_words": 70,
-        "retrieval_top_k": 10
+        "passage_words": null,
+        "retrieval_top_k": 10,
+        "sampling_frame": "7345 of 7405 dev questions with exactly 10 paragraphs"
       },
       "checksums": {
-        "source_sha256": null,
-        "questions_sha256": null,
-        "corpus_sha256": null
+        "source_sha256": "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6",
+        "questions_sha256": "c6bd0fd756d08f8ece23ea9ea68352ba08fcc7946a6632ee6243492d3118837f",
+        "corpus_sha256": "1f96ac643b43f6ccfe6ac76be14d2229afac2c37829d769b5667bb272d5b4c5e",
+        "splits_sha256": "444a474644eff98c7d3ad566f88303ac7e4783645ecf6916b3c3ee06a094ec98"
       },
-      "prepared_utc": null,
+      "prepared_utc": "2026-11-15T13:41:02Z",
       "preparation_seed": 20261115,
-      "status": "not_prepared",
-      "notes": "Multi-hop/distractor stress condition. BM25 over 10 paragraphs is a weak retriever; report supporting-fact recall separately. The distractor set is constructed, not natural."
+      "status": "verified",
+      "notes": "500 dev questions with exactly 10 provided paragraphs, stratified by question type (bridge/comparison: 402/98). Sixty dev questions with fewer than 10 paragraphs were excluded before sampling (frame 7,345 of 7,405). The split ID list is tracked in data/splits/hotpot_splits.json. BM25 indexes each question's 10 paragraphs separately; no cross-question pooling. Checksums re-verified after preparation."
     }
   ]
 }
