@@ -241,35 +241,61 @@ def test_window_energy_does_not_borrow_a_spike_after_the_end() -> None:
     assert energy == pytest.approx(4.5)
 
 
-def test_run_block_calibration_rejects_sweep_block_mismatch(tmp_path: Path) -> None:
+def test_run_block_calibration_records_out_of_range_factor_without_applying(
+    tmp_path: Path,
+) -> None:
     processed = _write_processed(tmp_path)
     config_path = _write_config(tmp_path)
-    _write_raw(tmp_path, per_row_j=100.0)
+    raw = _write_raw(tmp_path, per_row_j=100.0)
+    before = [
+        (row["question_id"], row["k"], row["j_gpu_calibrated"])
+        for row in csv.DictReader(raw.open(encoding="utf-8", newline=""))
+    ]
 
-    with pytest.raises(ValueError, match="block factor"):
-        run_block_calibration(
-            config_path,
-            root=tmp_path,
-            processed_dir=processed,
-            out_root=tmp_path / "runs",
-            reader=FakeReader(),
-            sampler_factory=BlockSampler,
-            idle_power_w=0.0,
-        )
+    blocks_path = run_block_calibration(
+        config_path,
+        root=tmp_path,
+        processed_dir=processed,
+        out_root=tmp_path / "runs",
+        reader=FakeReader(),
+        sampler_factory=BlockSampler,
+        idle_power_w=0.0,
+    )
+
+    blocks = json.loads(blocks_path.read_text(encoding="utf-8"))
+    assert blocks["all_passed"] is False
+    assert blocks["applied"] is False
+    assert all(item["passed"] is False for item in blocks["depths"])
+    assert all("outside [0.8, 1.4]" in item["fail_reason"] for item in blocks["depths"])
+    after = [
+        (row["question_id"], row["k"], row["j_gpu_calibrated"])
+        for row in csv.DictReader(raw.open(encoding="utf-8", newline=""))
+    ]
+    assert after == before
 
 
-def test_run_block_calibration_rejects_out_of_range_factor(tmp_path: Path) -> None:
+def test_run_block_calibration_records_out_of_range_spike_without_applying(
+    tmp_path: Path,
+) -> None:
     processed = _write_processed(tmp_path)
     config_path = _write_config(tmp_path)
-    _write_raw(tmp_path, per_row_j=0.5)
+    raw = _write_raw(tmp_path, per_row_j=0.5)
 
-    with pytest.raises(ValueError, match="factor"):
-        run_block_calibration(
-            config_path,
-            root=tmp_path,
-            processed_dir=processed,
-            out_root=tmp_path / "runs",
-            reader=FakeReader(),
-            sampler_factory=SpikeSampler,
-            idle_power_w=0.0,
-        )
+    blocks_path = run_block_calibration(
+        config_path,
+        root=tmp_path,
+        processed_dir=processed,
+        out_root=tmp_path / "runs",
+        reader=FakeReader(),
+        sampler_factory=SpikeSampler,
+        idle_power_w=0.0,
+    )
+
+    blocks = json.loads(blocks_path.read_text(encoding="utf-8"))
+    assert blocks["applied"] is False
+    assert any(item["factor_csv"] > 1.4 for item in blocks["depths"])
+    raw_values = [
+        float(row["j_gpu_calibrated"])
+        for row in csv.DictReader(raw.open(encoding="utf-8", newline=""))
+    ]
+    assert raw_values == pytest.approx([0.5] * len(raw_values))

@@ -36,7 +36,11 @@ from rag_energy.energy.integrate import idle_subtract, mean_power, trapezoid_jou
 from rag_energy.energy.nonce import make_nonce
 from rag_energy.energy.nvml_sampler import NvmlSampler, PowerSample
 from rag_energy.readers.base import Reader, ReaderError
-from rag_energy.registry import append_registry_row, update_registry_status
+from rag_energy.registry import (
+    append_registry_row,
+    read_registry,
+    update_registry_status,
+)
 from rag_energy.retrieval.bm25 import BM25Index, build_index
 from rag_energy.retrieval.proxy_energy import cpu_retrieval_joules
 from rag_energy.scoring import correctness, token_f1
@@ -298,7 +302,23 @@ def run_depth_sweep(
     prereg_hash = _prereg_sha256(root)
     git_commit = _git_commit(root)
     registry_row = _registry_row(spec, split, raw_path, root, git_commit, prereg_hash, digest)
-    append_registry_row(registry_path, registry_row)
+    existing_row = None
+    if resume:
+        existing_row = next(
+            (row for row in read_registry(registry_path) if row["run_id"] == spec.run_id),
+            None,
+        )
+        if existing_row is not None and existing_row.get("config_sha256") not in (
+            "",
+            spec.config_sha256,
+        ):
+            raise ValueError(
+                f"{spec.run_id}: config hash changed since the run started "
+                f"({existing_row['config_sha256'][:12]}... != {spec.config_sha256[:12]}...); "
+                "a resumed run must keep the original config"
+            )
+    if existing_row is None:
+        append_registry_row(registry_path, registry_row)
     update_registry_status(registry_path, spec.run_id, "running")
 
     interval_ms = int(config.get("energy", {}).get("sample_interval_ms", 100))
@@ -661,14 +681,7 @@ def run_block_calibration(
         factor_csv = block_energy / raw_sum_csv
         factor_block = block_energy / raw_sum_block
         consistency = factor_block / factor_csv if factor_csv > 0 else float("inf")
-        if not 0.8 <= factor_csv <= 1.4:
-            raise ValueError(
-                f"k={depth}: block factor {factor_csv:.4f} outside [0.8, 1.4] "
-                f"(raw_sum_csv={raw_sum_csv:.3f} J, raw_sum_block={raw_sum_block:.3f} J, "
-                f"block_energy={block_energy:.3f} J, duration={duration:.3f} s, "
-                f"idle={idle_power_w:.3f} W, factor_block={factor_block:.4f}, "
-                f"consistency={consistency:.4f}); stop and diagnose the sensor window"
-            )
+        passed = 0.8 <= factor_csv <= 1.4
         factors[depth] = factor_csv
         blocks.append(
             {
@@ -684,12 +697,18 @@ def run_block_calibration(
                 "factor_csv": round(factor_csv, 6),
                 "factor_block": round(factor_block, 6),
                 "consistency": round(consistency, 6),
+                "passed": passed,
+                "fail_reason": "" if passed else f"factor_csv {factor_csv:.4f} outside [0.8, 1.4]",
                 "started_utc": started,
                 "finished_utc": finished,
             }
         )
 
-    _apply_block_factors(raw_path, factors)
+    all_passed = len(blocks) == len(k_grid) and all(block["passed"] for block in blocks)
+    # All-or-nothing calibration: mixing calibrated and uncalibrated depths would
+    # make the ratio estimand depend on which depths happened to pass.
+    if all_passed:
+        _apply_block_factors(raw_path, factors)
     payload = {
         "run_id": spec.run_id,
         "created_utc": _utc_now(),
@@ -697,6 +716,15 @@ def run_block_calibration(
         "idle_power_w": round(float(idle_power_w), 6),
         "idle": idle_record,
         "depths": blocks,
+        "all_passed": bool(all_passed),
+        "applied": bool(all_passed),
+        "calibration_note": (
+            "All depth factors passed the [0.8, 1.4] gate; j_gpu_calibrated is primary."
+            if all_passed
+            else "At least one depth factor failed the [0.8, 1.4] gate; no factor was "
+            "applied and j_gpu_calibrated equals j_gpu_raw. Primary savings are reported "
+            "as the calibration-invariant ratio; absolute J is not claimed."
+        ),
     }
     blocks_path = run_dir / str(config.get("output", {}).get("blocks_json", "blocks.json"))
     _write_json_atomic(blocks_path, payload)
