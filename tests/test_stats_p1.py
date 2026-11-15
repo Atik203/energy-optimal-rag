@@ -7,6 +7,7 @@ import json
 import math
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from rag_energy.stats.p1 import (
@@ -147,7 +148,7 @@ def test_noninferiority_passes_with_no_discordance() -> None:
     assert result.mean_diff == 0.0
     assert result.se == 0.0
     assert result.lower_bound == 0.0
-    assert result.p_value == 0.0
+    assert result.p_value is None
     assert result.non_inferior is True
 
 
@@ -303,3 +304,65 @@ def test_write_p1_analysis_writes_every_registered_output(tmp_path: Path) -> Non
     assert "supported" in payload["decision"]
     assert (out / "estimates.csv").read_text(encoding="utf-8").count("\n") == 8
     assert load_rows(raw)[0]["question_id"] == "q000"
+
+
+def test_certification_intervals_are_per_candidate(tmp_path: Path) -> None:
+    rows = _dataset(n=40)
+    # Give k=32 a much larger energy so the candidate table cannot share one interval.
+    for row in rows:
+        if int(row["k"]) == 32:
+            row["j_total"] = float(row["j_total"]) * 3.0
+            row["j_gpu_calibrated"] = float(row["j_gpu_calibrated"]) * 3.0
+    payload = bootstrap(rows, resamples=200, seed=3, selected_depth=4)
+
+    lower_4 = payload["n_star"]["4"]["lower"]
+    lower_8 = payload["n_star"]["8"]["lower"]
+    assert lower_4 is not None and lower_8 is not None
+    assert lower_4 != lower_8
+    assert payload["n_star"]["32"]["lower"] is None
+
+
+def test_json_output_is_valid_with_an_infinite_energy_depth(tmp_path: Path) -> None:
+    rows = _dataset(n=20)
+    for row in rows:
+        if int(row["k"]) == 0:
+            row["correct_em"] = 0
+    raw = tmp_path / "raw.csv"
+    with raw.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+    out = write_p1_analysis(raw, tmp_path / "analysis", run_id="synthetic", resamples=50)
+
+    for name in ("bootstrap.json", "certification.json", "gates.json"):
+        text = (out / name).read_text(encoding="utf-8")
+        assert "Infinity" not in text
+        assert "NaN" not in text
+        json.loads(text)
+
+
+def test_empty_depth_is_rejected(tmp_path: Path) -> None:
+    rows = _dataset(n=10)
+    for row in rows:
+        if int(row["k"]) == 0:
+            row["valid"] = 0
+    raw = tmp_path / "raw.csv"
+    with raw.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+    with pytest.raises(ValueError, match="no valid rows"):
+        write_p1_analysis(raw, tmp_path / "analysis", run_id="synthetic", resamples=20)
+
+
+def test_percentile_interval_retains_negative_infinity() -> None:
+    values = np.array([1.0, 2.0, -np.inf, 3.0, 4.0])
+
+    from rag_energy.stats.p1 import _percentile_interval
+
+    interval = _percentile_interval(values)
+
+    assert interval["lower"] == float("-inf")
+    assert interval["n_inf"] == 1

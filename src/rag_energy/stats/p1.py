@@ -78,7 +78,7 @@ class PairedResult:
     sd_diff: float
     se: float
     z: float
-    p_value: float
+    p_value: float | None
     lower_bound: float
     upper_bound: float
     b: int
@@ -219,7 +219,7 @@ def noninferiority(
     z_alpha = float(scipy_stats.norm.ppf(1.0 - alpha))
     if se == 0.0:
         z_stat = math.inf if mean_diff + margin > 0 else -math.inf
-        p_value = 0.0 if mean_diff + margin > 0 else 1.0
+        p_value = None
         lower = mean_diff
         upper = mean_diff
     else:
@@ -249,7 +249,7 @@ def noninferiority(
         sd_diff=sd,
         se=se,
         z=float(z_stat),
-        p_value=float(p_value),
+        p_value=None if p_value is None else float(p_value),
         lower_bound=float(lower),
         upper_bound=float(upper),
         b=b_count,
@@ -263,20 +263,42 @@ def noninferiority(
 def _percentile_interval(values: np.ndarray, confidence: float = 0.95) -> dict[str, Any]:
     """Percentile interval with explicit infinite and missing counts.
 
-    An infinite resample is retained as an infinite upper bound rather than
-    silently dropped. Missing (NaN) resamples are counted separately.
+    A positive infinite tail forces an infinite upper bound and a negative
+    infinite tail forces a negative infinite lower bound; neither is silently
+    dropped. Missing (NaN) resamples are counted separately.
     """
     usable = values[np.isfinite(values)]
-    n_inf = int(np.isinf(values).sum())
+    n_pos_inf = int(np.isposinf(values).sum())
+    n_neg_inf = int(np.isneginf(values).sum())
     n_missing = int(np.isnan(values).sum())
     if usable.size == 0:
-        return {"lower": None, "upper": None, "n_inf": n_inf, "n_missing": n_missing}
+        if n_neg_inf and n_pos_inf:
+            lower, upper = float("-inf"), float("inf")
+        elif n_neg_inf:
+            lower, upper = float("-inf"), float("-inf")
+        elif n_pos_inf:
+            lower, upper = float("inf"), float("inf")
+        else:
+            lower, upper = None, None
+        return {
+            "lower": lower,
+            "upper": upper,
+            "n_inf": n_pos_inf + n_neg_inf,
+            "n_missing": n_missing,
+        }
     alpha = 1.0 - confidence
     lower = float(np.percentile(usable, 100.0 * alpha / 2.0))
     upper = float(np.percentile(usable, 100.0 * (1.0 - alpha / 2.0)))
-    if n_inf > 0:
+    if n_pos_inf:
         upper = float("inf")
-    return {"lower": lower, "upper": upper, "n_inf": n_inf, "n_missing": n_missing}
+    if n_neg_inf:
+        lower = float("-inf")
+    return {
+        "lower": lower,
+        "upper": upper,
+        "n_inf": n_pos_inf + n_neg_inf,
+        "n_missing": n_missing,
+    }
 
 
 def _depth_matrices(
@@ -374,11 +396,14 @@ def bootstrap(
 
         both = np.isfinite(block_j[:, candidate_index]) & np.isfinite(block_j[:, reference_index])
         if both.any():
-            c_c = block_c[both, candidate_index]
-            c_r = block_c[both, reference_index]
+            # The paired contrast resamples the paired population itself, so the
+            # paired n is fixed at n_pairs across resamples.
+            paired_draw = rng.integers(0, n_pairs, size=n_pairs)
+            c_c = paired_c_c[paired_draw]
+            c_r = paired_c_r[paired_draw]
             difference[r] = c_c.mean() - c_r.mean()
-            j_c = block_j[both, candidate_index].sum()
-            j_r = block_j[both, reference_index].sum()
+            j_c = paired_j_c[paired_draw].sum()
+            j_r = paired_j_r[paired_draw].sum()
             denominator_c = c_c.sum()
             denominator_r = c_r.sum()
             with np.errstate(divide="ignore", invalid="ignore"):
@@ -409,18 +434,19 @@ def bootstrap(
                 identity[r] = e_j - e_a
 
         total_energy = sum_j.sum()
-        a_selected = accuracy[r, selected_index]
-        e_selected = e_per_correct[r, selected_index]
-        e_reference = e_per_correct[r, reference_index]
-        delta = e_reference - e_selected
-        if (
-            np.isfinite(total_energy)
-            and np.isfinite(a_selected)
-            and a_selected > 0
-            and np.isfinite(delta)
-            and delta > 0
-        ):
-            n_star[r] = total_energy / (a_selected * delta)
+        accuracy_row = accuracy[r]
+        e_row = e_per_correct[r]
+        delta_vector = e_row[reference_index] - e_row
+        with np.errstate(divide="ignore", invalid="ignore"):
+            n_star[r] = np.where(
+                np.isfinite(total_energy)
+                & np.isfinite(accuracy_row)
+                & (accuracy_row > 0)
+                & np.isfinite(delta_vector)
+                & (delta_vector > 0),
+                total_energy / (accuracy_row * delta_vector),
+                np.nan,
+            )
 
     feasible = accuracy >= (accuracy[:, reference_index : reference_index + 1] - margin)
     masked = np.where(feasible, e_per_correct, np.inf)
@@ -520,8 +546,8 @@ def affine_lack_of_fit(points: Sequence[tuple[int, float]]) -> dict[str, Any]:
     extra-sum-of-squares F test. With seven depths the quadratic has four
     residual degrees of freedom.
     """
-    if len(points) < 3:
-        raise ValueError("at least three points are required for a lack-of-fit test")
+    if len(points) < 4:
+        raise ValueError("at least four points are required for a lack-of-fit test")
     x = np.array([float(k) for k, _ in points])
     y = np.array([float(value) for _, value in points])
     design_linear = np.column_stack([np.ones_like(x), x])
@@ -536,10 +562,10 @@ def affine_lack_of_fit(points: Sequence[tuple[int, float]]) -> dict[str, Any]:
     df_num = 1
     df_den = len(y) - design_quad.shape[1]
     if sse_quad <= 0.0:
-        f_stat = math.inf
-        p_value = 0.0
+        f_stat = math.inf if sse_linear > 0.0 else 0.0
+        p_value = 0.0 if sse_linear > 0.0 else 1.0
     else:
-        f_stat = ((sse_linear - sse_quad) / df_num) / (sse_quad / df_den)
+        f_stat = max(0.0, ((sse_linear - sse_quad) / df_num) / (sse_quad / df_den))
         p_value = float(1.0 - scipy_stats.f.cdf(f_stat, df_num, df_den))
     return {
         "a": float(beta_linear[0]),
@@ -704,6 +730,7 @@ def evaluate_gates(
     p_k_optimal: dict[str, float],
     context_shares: dict[int, float],
     selected_depth: int,
+    repeat: dict[str, Any] | None = None,
     config: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Evaluate K1-K7 and G1-G5 against the frozen thresholds.
@@ -713,6 +740,7 @@ def evaluate_gates(
     """
     thresholds = (config or {}).get("gates", {})
     by_k = {summary.k: summary for summary in summaries}
+    depths = sorted(by_k)
     reference = by_k.get(32)
     baseline = by_k.get(1) or by_k.get(0)
     relative_effect = None
@@ -721,27 +749,94 @@ def evaluate_gates(
     k1 = relative_effect is not None and relative_effect >= float(
         thresholds.get("k1_min_relative_energy_effect", 0.10)
     )
-    k2 = selected_depth in (min(by_k), max(by_k))
+
+    boundary = selected_depth in (depths[0], depths[-1])
     k3 = float(p_k_optimal.get(str(selected_depth), 0.0)) >= float(
         thresholds.get("k3_min_posterior_prob", 0.80)
     )
+
+    share_values = [context_shares.get(k) for k in depths]
+    finite_shares = [value for value in share_values if value is not None]
+    flat = bool(len(finite_shares) >= 2 and max(finite_shares) - min(finite_shares) < 0.05)
     k4_share = context_shares.get(selected_depth)
-    k4 = k4_share is not None and k4_share >= float(thresholds.get("k4_context_share_floor", 0.05))
+    k4 = k4_share is not None and not (
+        k4_share < float(thresholds.get("k4_context_share_floor", 0.05)) and flat
+    )
+
+    probabilities = sorted(
+        (
+            (float(probability), int(depth))
+            for depth, probability in p_k_optimal.items()
+            if depth != "none"
+        ),
+        reverse=True,
+    )
+    chosen: list[int] = []
+    cumulative = 0.0
+    for probability, depth in probabilities:
+        chosen.append(depth)
+        cumulative += probability
+        if cumulative >= 0.95:
+            break
+    span = max(chosen) - min(chosen) if chosen else None
+    k5 = span is not None and span <= 1
+
+    repeat_cv = None
+    if repeat is not None:
+        repeat_cv = repeat.get("cv_max")
+        if repeat_cv is None:
+            repeat_cv = repeat.get("cv_median")
+    k7 = None
+    if repeat_cv is not None and relative_effect is not None:
+        k7 = bool(
+            float(repeat_cv) <= float(thresholds.get("k7_max_cv", 0.20))
+            and 2.0 * float(repeat_cv) < relative_effect
+        )
+
+    interior = not boundary
     g1 = bool(
-        primary.non_inferior and savings_pct >= float(thresholds.get("g1_min_savings_pct", 20.0))
+        primary.non_inferior
+        and savings_pct >= float(thresholds.get("g1_min_savings_pct", 20.0))
+        and interior
+    )
+    increasing = bool(
+        len(finite_shares) >= 2
+        and all(
+            following >= previous - 1e-12
+            for previous, following in zip(finite_shares, finite_shares[1:], strict=False)
+        )
     )
 
     return {
         "K1": {"value": relative_effect, "passed": bool(k1)},
-        "K2": {"selected_depth": selected_depth, "boundary": bool(k2)},
+        "K2": {
+            "selected_depth": selected_depth,
+            "boundary": bool(boundary),
+            "fired": bool(boundary),
+            "passed": bool(not boundary),
+        },
         "K3": {"p_k_optimal": p_k_optimal.get(str(selected_depth)), "passed": bool(k3)},
-        "K4": {"context_share": k4_share, "passed": bool(k4)},
-        "K5": {"note": "computed from the bootstrap span in report.md", "passed": None},
+        "K4": {
+            "context_share": k4_share,
+            "flat": flat,
+            "passed": bool(k4),
+        },
+        "K5": {
+            "span_95": span,
+            "depths_95": chosen,
+            "passed": bool(k5),
+        },
         "K6": {"note": "oracle gain is a P3 analysis", "passed": None},
-        "K7": {"note": "repeat CV is read from repeat.json", "passed": None},
+        "K7": {
+            "repeat_cv_max": repeat_cv,
+            "relative_effect": relative_effect,
+            "passed": k7,
+            "note": None if k7 is not None else "repeat.json is required for K7",
+        },
         "G1": {
             "non_inferior": primary.non_inferior,
             "savings_pct": savings_pct,
+            "interior": interior,
             "passed": g1,
         },
         "G2": {
@@ -757,11 +852,13 @@ def evaluate_gates(
             "context_share": k4_share,
             "low": float(thresholds.get("g3_context_share_low", 0.10)),
             "high": float(thresholds.get("g3_context_share_high", 0.70)),
+            "increasing": increasing,
             "passed": bool(
                 k4_share is not None
                 and float(thresholds.get("g3_context_share_low", 0.10))
                 <= k4_share
                 <= float(thresholds.get("g3_context_share_high", 0.70))
+                and increasing
             ),
         },
         "G4": {"note": "policy capture is a P3 analysis", "passed": None},
@@ -782,6 +879,16 @@ def _load_prereg_config(root: Path | None) -> dict[str, Any]:
             return tomllib.load(handle)
     except Exception:
         return {}
+
+
+def _repeat_status(raw_path: Path) -> dict[str, Any] | None:
+    repeat_path = raw_path.parent / "repeat.json"
+    if not repeat_path.is_file():
+        return None
+    try:
+        return json.loads(repeat_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
 
 
 def _calibration_status(raw_path: Path) -> dict[str, Any]:
@@ -830,6 +937,9 @@ def write_p1_analysis(
     )
     rows = load_rows(raw_path)
     primary_summaries = summarize(rows, correct_key="em")
+    empty_depths = [summary.k for summary in primary_summaries if summary.n_valid == 0]
+    if empty_depths:
+        raise ValueError(f"depths with no valid rows: {empty_depths}")
     by_k = {summary.k: summary for summary in primary_summaries}
     if candidate not in by_k or reference not in by_k:
         raise ValueError("candidate and reference depths must both be present")
@@ -884,19 +994,24 @@ def write_p1_analysis(
     gaps[str(selected_depth)]["upper"] = bootstrap_result["identity_gap"]["upper"]
 
     certification: dict[str, Any] = {}
+    feasible_depths = {summary.k for summary in feasible}
     for summary in primary_summaries:
         point = certification_cost(
             primary_summaries, selected_depth=summary.k, reference_depth=reference
         )
         certification[str(summary.k)] = {
             **point,
-            "interval": bootstrap_result["n_star"][str(summary.k)],
+            "feasible": summary.k in feasible_depths,
+            "interval": (
+                bootstrap_result["n_star"][str(summary.k)] if summary.k in feasible_depths else None
+            ),
         }
     cert = certification[str(selected_depth)]
 
     margins = margin_sensitivity(primary_summaries)
     scoring = scoring_sensitivity(rows)
     calibration = _calibration_status(raw_path)
+    repeat = _repeat_status(raw_path)
     gates = evaluate_gates(
         primary_summaries,
         fit=fit,
@@ -905,6 +1020,7 @@ def write_p1_analysis(
         p_k_optimal=bootstrap_result["p_k_optimal"],
         context_shares=shares,
         selected_depth=selected_depth,
+        repeat=repeat,
         config=config or prereg,
     )
     fit = {
@@ -994,8 +1110,25 @@ def write_p1_analysis(
     return out_dir
 
 
+def _json_safe(value: Any) -> Any:
+    """Convert non-finite floats to explicit strings so the JSON is valid."""
+    if isinstance(value, float):
+        if math.isnan(value):
+            return None
+        if math.isinf(value):
+            return "inf" if value > 0 else "-inf"
+        return value
+    if isinstance(value, dict):
+        return {key: _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    return value
+
+
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8", newline="\n")
+    path.write_text(
+        json.dumps(_json_safe(payload), indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
 
 
 def _write_estimates(
@@ -1079,7 +1212,9 @@ def _write_report(
             f"- Paired n = {primary.n_pairs}; discordant b = {primary.b}, c = {primary.c}.",
             f"- Mean difference A(4) - A(32) = {100.0 * primary.mean_diff:.2f} pp "
             f"(one-sided 95% lower bound {100.0 * primary.lower_bound:.2f} pp).",
-            f"- One-sided p = {primary.p_value:.4g}; non-inferior: {primary.non_inferior}.",
+            f"- One-sided p = {primary.p_value:.4g}; non-inferior: {primary.non_inferior}."
+            if primary.p_value is not None
+            else f"- One-sided p = not defined (zero paired variance); non-inferior: {primary.non_inferior}.",
             f"- Energy savings = {savings:.2f}% (pre-registered floor 20%).",
             f"- Decision: {'SUPPORTED' if primary.non_inferior and savings >= 20.0 else 'NOT SUPPORTED'}.",
             "",
