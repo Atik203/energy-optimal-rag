@@ -2,8 +2,9 @@
 """05 — Analyze a completed sweep.
 
 P1 runs use the confirmatory analysis (non-inferiority, paired bootstrap,
-identity, certification, gates). Other phases use the P0 descriptive analysis.
-A P1 run must be registered `completed`; `--allow-partial` is for development
+identity, certification, gates). P2 runs use the direction-only replication
+analysis (H7). Other phases use the P0 descriptive analysis.
+A P1/P2 run must be registered `completed`; `--allow-partial` is for development
 only and is labeled in the output.
 """
 
@@ -21,6 +22,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from rag_energy.config import load_toml  # noqa: E402
 from rag_energy.runner import _prereg_sha256  # noqa: E402
 from rag_energy.stats.p1 import write_p1_analysis  # noqa: E402
+from rag_energy.stats.p2 import write_p2_analysis  # noqa: E402
 from rag_energy.stats.sweep import write_analysis  # noqa: E402
 
 
@@ -120,6 +122,16 @@ def _check_complete(root: Path, run_id: str, raw: Path) -> None:
         )
 
 
+def _run_config(root: Path, run_id: str) -> dict:
+    """Load the run config recorded in the registry, if it still exists."""
+    row = _registry_row(root, run_id) or {}
+    config_path = str(row.get("config_path", "")).strip()
+    if not config_path:
+        return {}
+    path = root / config_path
+    return load_toml(path) if path.is_file() else {}
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = Path(args.root)
@@ -140,6 +152,23 @@ def main(argv: list[str] | None = None) -> int:
             root=root,
             config=prereg,
             resamples=args.resamples,
+        )
+        print(f"Prereg SHA-256: {prereg_sha}")
+    elif phase == "P2":
+        if not args.allow_partial:
+            _check_complete(root, args.run_id, raw)
+        prereg_sha = _check_prereg_hash(root, args.run_id)
+        prereg_path = root / "configs" / "analysis" / "prereg.toml"
+        prereg = load_toml(prereg_path) if prereg_path.is_file() else {}
+        margin_pp = prereg.get("primary", {}).get("margin_pp")
+        path = write_p2_analysis(
+            raw,
+            out,
+            run_id=args.run_id,
+            root=root,
+            config=_run_config(root, args.run_id),
+            resamples=args.resamples,
+            margin=None if margin_pp is None else float(margin_pp) / 100.0,
         )
         print(f"Prereg SHA-256: {prereg_sha}")
     else:

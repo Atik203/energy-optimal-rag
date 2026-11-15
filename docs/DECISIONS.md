@@ -427,3 +427,21 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   and `S(k)` are reportable because calibration passed, with the marginal `k=0` factor
   disclosed. P3 adaptive policy is the remaining route to a policy result and must be
   separately preregistered; no adaptive claim exists yet.
+
+---
+
+## D-025 - H7 operationalized as a direction-only contrast before P2 analysis
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** H7 says the direction of H2 replicates on Qwen2.5-1.5B-Instruct or
+  HotpotQA distractor, but the frozen text does not define a decision rule, an error rate,
+  or a HotpotQA reference depth. P1 observed `A(4) - A(32) = -4.30 pp`, so "replicates"
+  means the same negative sign.
+- **Decision:** Record amendment A-001 in `prereg/amendments.md`. H7 is supported when the
+  paired mean `A(4) - A(reference)` is negative and its one-sided 95% upper bound is below
+  zero; reference is 32 on SQuAD and 10 on HotpotQA distractor. The 5 pp estimate is
+  secondary and unpowered on these arms. No margin, gate, or sample size changes.
+- **Consequences:** The P2 verdict is fixed before any P2 outcome is read. A positive or
+  interval-crossing contrast is a failed replication, not a null result to be re-thresholded.
+  H2 and the P1 negative decision are unchanged.
