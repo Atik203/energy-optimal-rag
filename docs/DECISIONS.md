@@ -363,3 +363,27 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
 - **Consequences:** P0 ends as a documented harness failure. The public record must say
   "first golden run failed; clean `_r3` sweep complete; block calibration failed at `k=0`
   0.7944; P1 deferred." No confirmatory result exists, and no claims-evidence row is added.
+
+---
+
+## D-022 - P1 starts on PI authority after the P0 calibration failure
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Supersedes:** the "do not start P1" clauses of D-018, D-019, and D-021. Their P0 findings
+  and the FAIL verdict stand unchanged.
+- **Context:** The PI directed P1 to start. P0 failed the `k=0` block gate at 0.7944, and the
+  same 0.3 s protocol measured 0.834 in the dry run; the registry decomposition puts the
+  shortfall in the block-window bookkeeping (`factor_block = 0.9989`, `consistency = 1.2573`),
+  not in a 20% per-query bias. The P1 primary estimand is a ratio of sums,
+  `savings = 1 - E(4)/E(32)`, which is invariant to a depth-invariant factor, and the accuracy
+  test is calibration-free.
+- **Decision:** Start P1 as a documented PI reversal, not a gate pass. Freeze the
+  preregistration first. Run block calibration at all seven depths; apply factors only if every
+  depth passes; if any depth fails, apply none and report uncalibrated absolute energy. Do not
+  claim absolute `J`, `E`, `N*`, or `S(k)` unless all seven pass. The [0.8, 1.4] range is
+  unchanged and P0 stays FAIL.
+- **Consequences:** P1 can produce the 5 pp non-inferiority result and the savings ratio even
+  if the calibration gate fires again. The residual risk is a depth-dependent factor; the
+  report must show every measured factor and its pass/fail. The wall meter remains waived
+  (D-016) and the raw data remain local-only (D-020) until an external backup is made.
