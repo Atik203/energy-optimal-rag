@@ -136,8 +136,24 @@ def _prereg_sha256(root: Path) -> str:
 
 def _default_reader(config: dict[str, Any]) -> Reader:
     reader = config.get("reader", {})
-    if reader.get("backend") != "ollama":
-        raise NotImplementedError("only the Ollama reader is implemented in P0")
+    backend = str(reader.get("backend", "ollama"))
+    if backend == "hf":
+        from rag_energy.readers.hf_reader import HFConfig, HFReader
+
+        return HFReader(
+            HFConfig(
+                model=str(reader.get("model", "Qwen/Qwen2.5-1.5B-Instruct")),
+                device=str(reader.get("device", "cuda")),
+                dtype=str(reader.get("dtype", "float16")),
+                num_ctx=int(reader.get("num_ctx", 4096)),
+                num_predict=int(reader.get("num_predict", 24)),
+                temperature=float(reader.get("temperature", 0.0)),
+                top_k=int(reader.get("top_k", 1)),
+                seed=int(reader.get("seed", 42)),
+            )
+        )
+    if backend != "ollama":
+        raise NotImplementedError(f"unsupported reader backend: {backend!r}")
     from rag_energy.readers.ollama_reader import OllamaConfig, OllamaReader
 
     return OllamaReader(
@@ -157,6 +173,22 @@ def _default_reader(config: dict[str, Any]) -> Reader:
 
 
 def _model_digest(reader: Reader, config: dict[str, Any]) -> str:
+    if str(config.get("reader", {}).get("backend", "ollama")) == "hf":
+        revision = getattr(reader, "revision", None)
+        if revision:
+            return str(revision)
+        model = str(config.get("reader", {}).get("model", ""))
+        try:
+            from huggingface_hub import scan_cache_dir
+
+            for repo in scan_cache_dir().repos:
+                if repo.repo_id == model:
+                    revisions = list(repo.revisions)
+                    if revisions:
+                        return str(revisions[0].commit_hash)
+        except Exception:
+            pass
+        return "unknown"
     host = str(config.get("reader", {}).get("host", "http://127.0.0.1:11434"))
     model = str(config.get("reader", {}).get("model", ""))
     try:
