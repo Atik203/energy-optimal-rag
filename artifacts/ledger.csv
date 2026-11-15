@@ -17,3 +17,11 @@ A-0015,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/fit.json,9f87f745597a12
 A-0016,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/identity.csv,a10d52531850170d1d3e1b2211d54a3576ef9ad91dfe7469c9ee03bd31858944,573,2026-11-15T10:56:58Z,CC-BY-4.0,P1 identity gap by depth
 A-0017,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/report.md,1bb6f15f6ceceaa98484e8ea63f4506490707567d82753cbf5a72202b30d4e9b,2672,2026-11-15T10:56:58Z,CC-BY-4.0,P1 human-readable confirmatory report
 A-0018,squad_qwen4b_p1,document,docs/P1_RESULTS.md,440ab8ffcf7f3bb99ce322af31aedd4dd6e4e5e8555b004b45440663827de7e5,7266,2026-11-15T10:56:58Z,CC-BY-4.0,"P1 result memo: primary negative, calibration and gates"
+A-0019,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/estimates.csv,ebbdc14c733db2a15ae82a5474dcbeb7cbce1802740c4a393308af10cd580198,922,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm depth estimates
+A-0020,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/fit.json,286fbed9d087998978239e0d3f7bf31b1ee5ac86b76f17b17878beff9f825e3b,437,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm affine fit (uncalibrated)
+A-0021,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/direction.json,133eda5114bb622d0b6bb4ab4c23548539573a9e1c9a96d60a14be96beb48d3c,1021,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm H7 direction result (not supported)
+A-0022,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/bootstrap.json,6a1679cc7895e07ac7c40af1236cfdc218d07f26848af88a9b4ddd4c48b25851,4506,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm bootstrap savings (uncalibrated)
+A-0023,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/report.md,0ac66c8b718674c07c569efb39bf02ccdfded6c6f7fa22211cef8b2dc24738cf,1573,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm human-readable report
+A-0024,squad_qwen15b_p2,document,docs/P2_RESULTS.md,951c19f7297e6f41601f6ddf3eadfc3dd025220afa96e56ad14e0a86c192d5ea,3019,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm result memo
+A-0025,squad_qwen15b_p2,analysis,runs/squad_qwen15b_p2/blocks.json,117ddcdb266d46c21bfa493e04a109c8a1febe0a8dc99924e545d41b3bebbc6e,4191,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm block calibration (4 of 7 passed)
+A-0026,squad_qwen15b_p2,analysis,runs/squad_qwen15b_p2/repeat.json,1efbb3a3bcf9ca2aca2f65e96ddc582cbeff5651d5d87728e04281cbcecff589,2937,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm repeat CV (failed)
