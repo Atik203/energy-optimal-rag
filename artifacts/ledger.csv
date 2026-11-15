@@ -25,3 +25,12 @@ A-0023,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/report.md,0ac66c8b718
 A-0024,squad_qwen15b_p2,document,docs/P2_RESULTS.md,951c19f7297e6f41601f6ddf3eadfc3dd025220afa96e56ad14e0a86c192d5ea,3019,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm result memo
 A-0025,squad_qwen15b_p2,analysis,runs/squad_qwen15b_p2/blocks.json,117ddcdb266d46c21bfa493e04a109c8a1febe0a8dc99924e545d41b3bebbc6e,4191,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm block calibration (4 of 7 passed)
 A-0026,squad_qwen15b_p2,analysis,runs/squad_qwen15b_p2/repeat.json,1efbb3a3bcf9ca2aca2f65e96ddc582cbeff5651d5d87728e04281cbcecff589,2937,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm repeat CV (failed)
+A-0027,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2/estimates.csv,058fd09691b14e16d466cf0934d0ad5242c4b7699da8fd50c3cb51317155293a,801,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm depth estimates
+A-0028,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2/fit.json,365e18d8239357ea892e9957248cc0515f31bafd5e8d31238996283ba84ef9e4,422,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm affine fit (uncalibrated)
+A-0029,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2/direction.json,e35d06ece23914c907ce237d008e0080309475e3494886aad33f4a999f3996b7,1024,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm H7 direction result (supported)
+A-0030,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2/bootstrap.json,ae7f536bc72192782055dd8e389566f433e4c3e65f807270ff98045c01e9c83c,3960,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm bootstrap savings (uncalibrated)
+A-0031,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2/report.md,c4868b4c18a58f144b8b27e7ca34413a005588457d980284e0f27881f34c7f5f,1504,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm human-readable report
+A-0032,hotpot_qwen4b_p2,document,docs/P2_RESULTS_HOTPOT.md,840ce053e68f638b0997af17d5f25328fb4272d9503baf30f16373e76e8b9e8a,3122,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm result memo
+A-0033,hotpot_qwen4b_p2,analysis,runs/hotpot_qwen4b_p2/blocks.json,83b08ece74452b3146d24977ab4b63e482cead5550afba0269afb50174ad515a,3600,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm block calibration (k=0 miss)
+A-0034,hotpot_qwen4b_p2,analysis,runs/hotpot_qwen4b_p2/repeat.json,78e7eca344f7bb999a1b6cd609c5f95223d6c35c2b9ea61c767271f3b9856779,2937,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm repeat CV (passed)
+A-0035,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2_retrieval_recall.json,bbb55fda31843656f61f41951eae9d597731dff690f4a089a7feced504c87300,1130,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot supporting-fact recall

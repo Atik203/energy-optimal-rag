@@ -91,14 +91,13 @@ contrast is `A(4) - A(32) = -4.30 pp`, one-sided 95% lower bound **-6.17 pp**, p
 supported, H3 fails, K3/K5 fail, G1/G2 fail, G3 passes. The static 5 pp policy claim is dead.
 See [`docs/P1_RESULTS.md`](docs/P1_RESULTS.md).
 
-**P2 status (2026-11-15): Qwen arm COMPLETE; H7 NOT supported.** The Qwen2.5-1.5B-Instruct
-sweep finished 3,500/3,500 rows, 0 invalid. `A(4) − A(32) = +2.00 pp` (one-sided 95% upper
-bound +4.90 pp), so H7 is not supported and the direction is opposite to P1. Block calibration
-failed on `k = 0, 1, 2` and repeat CV failed (median 3.03%, max 80.15%); the 91.24% savings
-figure is uncalibrated and not certified. HotpotQA distractor is prepared and verified on the
-amended 10-paragraph frame: 500 questions (402 bridge, 98 comparison), 5,000 whole paragraphs,
-per-question BM25 top-10, `k ∈ {0,1,2,4,8,10}`. Its sweep is the next P2 arm. See
-[`docs/P2_RESULTS.md`](docs/P2_RESULTS.md).
+**P2 status (2026-11-15): both confirmatory arms complete.** Qwen2.5-1.5B: H7 **not**
+supported (`+2.00 pp`, upper `+4.90 pp`); calibration and repeat CV failed. HotpotQA: H7
+**supported** (`-10.80 pp`, upper `-8.00 pp`); calibration missed only `k=0`, repeat CV
+passed. G5 is satisfied via HotpotQA. Energy on both arms is uncalibrated/uncertified.
+Boundary probe, 16k probe, and Llama 3B arm remain exploratory/pending. See
+[`docs/P2_RESULTS.md`](docs/P2_RESULTS.md) and
+[`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md).
 
 **P0 implementation checklist (2026-11-15):**
 
