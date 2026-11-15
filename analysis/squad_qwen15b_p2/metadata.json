@@ -1,0 +1,77 @@
+{
+  "run_id": "squad_qwen15b_p2",
+  "candidate_depth": 4,
+  "reference_depth": 32,
+  "margin": 0.05,
+  "seed": 20261115,
+  "resamples": 10000,
+  "n_rows": 3500,
+  "n_valid": 3500,
+  "n_invalid": 0,
+  "calibrated": false,
+  "calibration": {
+    "measured": true,
+    "applied": false,
+    "all_passed": false,
+    "depths": [
+      {
+        "k": 0,
+        "factor_csv": 0.261055,
+        "factor_block": 0.998602,
+        "consistency": 3.825248,
+        "passed": false
+      },
+      {
+        "k": 1,
+        "factor_csv": 0.427477,
+        "factor_block": 1.247251,
+        "consistency": 2.9177,
+        "passed": false
+      },
+      {
+        "k": 2,
+        "factor_csv": 0.536894,
+        "factor_block": 1.287778,
+        "consistency": 2.39857,
+        "passed": false
+      },
+      {
+        "k": 4,
+        "factor_csv": 0.96489,
+        "factor_block": 1.267039,
+        "consistency": 1.313144,
+        "passed": true
+      },
+      {
+        "k": 8,
+        "factor_csv": 1.097903,
+        "factor_block": 1.222939,
+        "consistency": 1.113886,
+        "passed": true
+      },
+      {
+        "k": 16,
+        "factor_csv": 1.196104,
+        "factor_block": 1.175541,
+        "consistency": 0.982809,
+        "passed": true
+      },
+      {
+        "k": 32,
+        "factor_csv": 1.290912,
+        "factor_block": 1.057791,
+        "consistency": 0.819414,
+        "passed": true
+      }
+    ]
+  },
+  "p1_reference": {
+    "run_id": "squad_qwen4b_p1",
+    "mean_diff": -0.043,
+    "lower_bound": -0.061702230242832876,
+    "upper_bound": -0.02429776975716712,
+    "margin": 0.05,
+    "direction": "negative"
+  },
+  "h7_definition": "H7 is supported when the paired mean A(4)-A(32) is negative and its one-sided 95% upper bound is below zero, matching P1's negative direction."
+}

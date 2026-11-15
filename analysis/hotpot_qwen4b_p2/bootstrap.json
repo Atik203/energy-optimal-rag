@@ -1,0 +1,206 @@
+{
+  "resamples": 10000,
+  "seed": 20261115,
+  "correct_key": "em",
+  "margin": 0.05,
+  "candidate": 4,
+  "reference": 10,
+  "selected_depth": 4,
+  "n_pairs": 500,
+  "n_excluded": 0,
+  "excluded_question_ids": [],
+  "savings_pct": {
+    "point": 23.03113383939721,
+    "interval": {
+      "lower": 16.739275128090338,
+      "upper": 28.496904062006628,
+      "n_inf": 0,
+      "n_missing": 0
+    },
+    "one_sided_lower": 17.830628687298027,
+    "n_undefined": 0
+  },
+  "accuracy_difference": {
+    "point": -0.10800000000000004,
+    "interval": {
+      "lower": -0.14200000000000002,
+      "upper": -0.07400000000000001,
+      "n_inf": 0,
+      "n_missing": 0
+    },
+    "one_sided_lower": -0.136
+  },
+  "e_per_correct": {
+    "0": {
+      "point": 2441.322411,
+      "interval": {
+        "lower": 1209.3635937906254,
+        "upper": "inf",
+        "n_inf": 152,
+        "n_missing": 0
+      }
+    },
+    "1": {
+      "point": 110.26327471,
+      "interval": {
+        "lower": 93.43367511000005,
+        "upper": 133.4176959274096,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    },
+    "2": {
+      "point": 88.84427663636363,
+      "interval": {
+        "lower": 78.06717877634257,
+        "upper": 103.03561638497249,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    },
+    "4": {
+      "point": 76.73886349756097,
+      "interval": {
+        "lower": 69.41427113344442,
+        "upper": 86.08576743883312,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    },
+    "8": {
+      "point": 91.47081672540985,
+      "interval": {
+        "lower": 83.51465906676135,
+        "upper": 100.90775535762207,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    },
+    "10": {
+      "point": 99.70117441698842,
+      "interval": {
+        "lower": 91.5282073742947,
+        "upper": 109.24157131647216,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    }
+  },
+  "accuracy": {
+    "0": {
+      "point": 0.008,
+      "interval": {
+        "lower": 0.002,
+        "upper": 0.016,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    },
+    "1": {
+      "point": 0.2,
+      "interval": {
+        "lower": 0.166,
+        "upper": 0.236,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    },
+    "2": {
+      "point": 0.286,
+      "interval": {
+        "lower": 0.246,
+        "upper": 0.326,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    },
+    "4": {
+      "point": 0.41,
+      "interval": {
+        "lower": 0.366,
+        "upper": 0.452,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    },
+    "8": {
+      "point": 0.488,
+      "interval": {
+        "lower": 0.444,
+        "upper": 0.532,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    },
+    "10": {
+      "point": 0.518,
+      "interval": {
+        "lower": 0.476,
+        "upper": 0.56,
+        "n_inf": 0,
+        "n_missing": 0
+      }
+    }
+  },
+  "identity_gap": {
+    "lower": 0.006478282633658848,
+    "upper": 0.14124030679693872,
+    "n_inf": 0,
+    "n_missing": 0
+  },
+  "n_star": {
+    "0": {
+      "lower": null,
+      "upper": null,
+      "n_inf": 0,
+      "n_missing": 10000
+    },
+    "1": {
+      "lower": 32606.134217511153,
+      "upper": 3192100.8288482437,
+      "n_inf": 0,
+      "n_missing": 8802
+    },
+    "2": {
+      "lower": 14396.744648904556,
+      "upper": 246003.69716336482,
+      "n_inf": 0,
+      "n_missing": 425
+    },
+    "4": {
+      "lower": 7814.941910041361,
+      "upper": 15407.495569890654,
+      "n_inf": 0,
+      "n_missing": 0
+    },
+    "8": {
+      "lower": 14945.473454969217,
+      "upper": 63718.26259289118,
+      "n_inf": 0,
+      "n_missing": 8
+    },
+    "10": {
+      "lower": null,
+      "upper": null,
+      "n_inf": 0,
+      "n_missing": 10000
+    }
+  },
+  "p_k_optimal": {
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "4": 0.0002,
+    "8": 0.9379,
+    "10": 0.0619,
+    "none": 0.0
+  },
+  "n_infinite_e_resamples": {
+    "0": 152,
+    "1": 0,
+    "2": 0,
+    "4": 0,
+    "8": 0,
+    "10": 0
+  }
+}
