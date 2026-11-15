@@ -133,6 +133,7 @@ artifacts/*
 !artifacts/ledger.csv
 !artifacts/claims_evidence.csv
 paper/build/
+paper/out*/
 paper/*.aux
 paper/*.log
 paper/*.out
