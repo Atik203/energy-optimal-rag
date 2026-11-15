@@ -76,13 +76,14 @@ prove the harness, not to produce new evidence. The repo has documented pilot J 
 `k = 1, 4, 32`; P0 therefore gates on those anchors and the affine fit, and reports E/A
 without a gate. If the anchors or fit differ by more than 10%, stop and diagnose before P1.
 
-**P0 status (2026-11-15): FAIL; P1 is deferred.** The first golden run failed calibration. The
-clean `_r3` rerun completed 1,400/1,400 valid rows with 0 invalid rows and a 1.12% idle CV, but
-its `k=0` block factor was **0.7944**, below the fixed 0.8 floor. No `blocks.json`, repeat CV,
+**P0 status (2026-11-15): FAIL; P1 started under D-022.** The first golden run failed calibration.
+The clean `_r3` rerun completed 1,400/1,400 valid rows with 0 invalid rows and a 1.12% idle CV,
+but its `k=0` block factor was **0.7944**, below the fixed 0.8 floor. No `blocks.json`, repeat CV,
 or calibrated J analysis exists. The J table is uncalibrated, so the pilot comparison is not
 adjudicable as a clean energy test. See
-[`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). P1 is deferred; no confirmatory run
-has started.
+[`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). The PI then directed P1 to start as a
+documented reversal, not a gate pass (D-022); the prereg is frozen at `prereg-freeze-v1` and the
+powered sweep is running. No P1 result exists yet.
 
 **P0 implementation checklist (2026-11-15):**
 
@@ -97,7 +98,7 @@ has started.
 | Protocol revision: 0.3 s tail, `factor_csv`, idle-CV gate | **DONE** — dry run factors 0.834–1.380 |
 | `_r2` clean-run attempt | **ABORTED** — stopped at 409 rows; uncommitted tree |
 | `_r3` clean golden run | **FAILED** - sweep 1,400/1,400, 0 invalid, idle CV 1.12%; block k=0 factor 0.7944 |
-| P1 powered run | **DEFERRED** - not started |
+| P1 powered run | **RUNNING** - started 2026-11-15; prereg `prereg-freeze-v1` frozen; results pending |
 
 **P1 — Powered SQuAD (weeks 2–3).** Freeze the preregistration before looking at the new
 accuracy data. Run `n = 1,000` at 7 depths. Primary test: 5 pp EM non-inferiority at the

@@ -168,7 +168,7 @@ export default function ResearchPage() {
           { label: "Primary: 5 pp non-inferiority", tone: "signal" },
           { label: "n = 1,000", tone: "data" },
           { label: "2 pp estimation-only", tone: "caution" },
-          { label: "Prereg: draft, not frozen", tone: "caution" },
+          { label: "Prereg: frozen 2026-11-15", tone: "signal" },
         ]}
       />
 
@@ -375,8 +375,8 @@ export default function ResearchPage() {
           </p>
         </div>
         <SourceNote>
-          Source: prereg/PREREGISTRATION.md §2. The preregistration is a draft until
-          prereg-freeze-v1; the hash is TBD until freeze.
+          Source: prereg/PREREGISTRATION.md §2. The preregistration was frozen at
+          prereg-freeze-v1 on 2026-11-15; the hash is fb9e5bcf….
         </SourceNote>
       </section>
 

@@ -12,14 +12,20 @@ answer** — and deciding whether the energy spent finding that depth is worth i
 contains no confirmatory results. The pilot evidence is reported below exactly as measured,
 including the claim that failed.
 
-**P0 harness status (2026-11-15): FAIL - P1 is deferred.** The first golden run failed
-calibration. The clean `_r3` rerun then completed 1,400/1,400 valid rows with 0 invalid rows and
-a 1.12% idle CV, but its `k=0` block factor was **0.7944**, below the fixed 0.8 floor. No
-`blocks.json`, repeat CV, or calibrated J analysis was produced. The J table is uncalibrated,
-so the pilot comparison is not adjudicable as a clean energy test. This is an energy-calibration
-and thermal-state failure, not a row-collection failure. See
+**P0 harness status (2026-11-15): FAIL - P1 started anyway, on PI authority (D-022).** The
+first golden run failed calibration. The clean `_r3` rerun then completed 1,400/1,400 valid rows
+with 0 invalid rows and a 1.12% idle CV, but its `k=0` block factor was **0.7944**, below the
+fixed 0.8 floor. No `blocks.json`, repeat CV, or calibrated J analysis was produced. The J table
+is uncalibrated, so the pilot comparison is not adjudicable as a clean energy test. This is an
+energy-calibration and thermal-state failure, not a row-collection failure. See
 [`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). `_r2` was aborted after 409 rows
-because it started from an uncommitted tree. P1 is deferred; no confirmatory run has started.
+because it started from an uncommitted tree.
+
+**P1 status (2026-11-15): running.** The preregistration is frozen at `prereg-freeze-v1`
+(hash `fb9e5bcf…`). The powered SQuAD sweep is `n = 1,000` at seven depths. The primary
+estimand is the calibration-invariant savings ratio `1 − E(4)/E(32)` plus the 5 pp accuracy
+non-inferiority test. Absolute `J`, `E`, `N*`, and `S(k)` are claimed only if all seven block
+factors pass [0.8, 1.4]; otherwise they are reported as uncalibrated. No P1 result exists yet.
 
 ---
 
@@ -110,8 +116,8 @@ pre-specified interior depth, with a question-level bootstrap (10,000 resamples)
 and the ratio.
 
 Full design, power table, gates, and stop rules: [`ROADMAP.md`](ROADMAP.md) and
-[`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md). Draft analysis intent, frozen at
-P1: [`prereg/PREREGISTRATION.md`](prereg/PREREGISTRATION.md).
+[`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md). Frozen analysis intent and plan
+(2026-11-15): [`prereg/PREREGISTRATION.md`](prereg/PREREGISTRATION.md).
 
 ---
 

@@ -1,6 +1,6 @@
 # Measurement Protocol
 
-**Status:** draft · v0.1.1 · 2026-11-15 (P0 D-019 protocol)
+**Status:** frozen for P1 (`prereg-freeze-v1`, 2026-11-15) · v0.1.1 · 2026-11-15 (P0 D-019 protocol)
 **Scope:** GPU energy is the primary measurement; CPU retrieval is a proxy; the wall meter is
 a cross-check. Absolute joule claims are conditional on the calibration described here.
 
@@ -66,6 +66,15 @@ The gate is `factor_csv_k`, not the within-block factor. A within-block factor i
 close to one and can hide a cold/warm sweep/block mismatch. `factor_block_k` and
 `consistency_k` are recorded so that mismatch cannot disappear. The block is warmed before
 measurement and its temperature/clock are reported.
+
+All seven depths are measured before the gate is evaluated. If every depth passes, the factors
+are applied and the calibrated energy is primary. If any depth fails, **no** factor is applied
+(all-or-nothing), `j_gpu_calibrated = j_gpu_raw`, and the run continues to analysis. The
+calibration failure is reported with every measured factor; absolute `J`, `E`, `N*`, and `S(k)`
+are then labeled uncalibrated and are not claimed. The primary savings ratio
+`1 - E(4)/E(32)` is reported as the calibration-invariant contrast (D-022). Mixing calibrated
+and uncalibrated depths is forbidden because it would make the ratio depend on which depths
+passed.
 
 Pilot factors:
 

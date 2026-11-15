@@ -1,6 +1,7 @@
 # Paper
 
-**Status:** not started. No manuscript exists yet. No confirmatory results exist yet.
+**Status:** not started. No manuscript exists yet. P1 is running; no confirmatory results exist
+yet.
 **Target:** a decision-theory + causal-measurement paper, not a "we measured the curve" paper.
 
 ## Thesis
@@ -64,8 +65,31 @@ preserved map is:
 
 No P0 row is added to `artifacts/claims_evidence.csv`: P0 is a harness check, not a claim.
 **P0 final status: FAIL** - the clean `_r3` sweep was valid, but block calibration failed at
-`k=0` (`factor_csv = 0.7944`). No blocks, repeat, or calibrated J analysis exists. The P1 paper
-tables will be generated only after the prereg freeze and the powered run; P1 is deferred.
+`k=0` (`factor_csv = 0.7944`). No blocks, repeat, or calibrated J analysis exists. P1 started
+on 2026-11-15 under D-022; the preregistration is frozen at `prereg-freeze-v1`, the powered
+sweep is running, and the paper tables will be generated only from its registered analysis.
+Absolute `J`, `E`, `N*`, and `S(k)` are claims only if all seven P1 block factors pass.
+
+## P1 evidence (confirmatory, in progress)
+
+P1 is the first confirmatory run. It is not a paper result until the run is registered
+`completed` and the analysis is written.
+
+| Object | Path | Status |
+|---|---|---|
+| Frozen prereg | `prereg/PREREGISTRATION.md`, `prereg/analysis_plan.md`, tag `prereg-freeze-v1` | tracked; hash `fb9e5bcf…` |
+| Freeze record | `prereg/FREEZE.md`, `configs/analysis/prereg.toml` | tracked; `frozen = true` |
+| Raw per-query sweep | `runs/squad_qwen4b_p1/raw.csv` | ignored; local-only (D-020); 7,000 rows expected |
+| Block factors | `runs/squad_qwen4b_p1/blocks.json` | ignored; all seven depths; `applied` true only if all pass |
+| Repeat CV | `runs/squad_qwen4b_p1/repeat.json` | ignored; K7 input |
+| Run manifest | `runs/squad_qwen4b_p1/manifest.json` | ignored; config and prereg hashes |
+| Analysis | `analysis/squad_qwen4b_p1/` | tracked, small; generated only after completion |
+| Registry | `runs/registry.csv` | tracked; P1 row `running` until completion |
+
+The primary savings `1 - E(4)/E(32)` and the 5 pp accuracy contrast are the calibration-invariant
+result. If any block factor fails, absolute `J`, `E`, `N*`, and `S(k)` are reported as
+uncalibrated and are not claimed. No P1 row is added to `artifacts/claims_evidence.csv` until
+the analysis output exists and every number traces to the raw CSV.
 
 ## Files (planned)
 

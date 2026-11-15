@@ -6,7 +6,7 @@ Generation (G2)**: a measurement instrument for joules per correct answer.
 **Live production:** <https://energy-optimal-rag-web.vercel.app>
 
 **Research status: post-pilot MARGINAL.** This site contains **no confirmatory results**.
-The preregistration is a draft until the P1 freeze. The pilot evidence is reported exactly as
+The preregistration was frozen at `prereg-freeze-v1` on 2026-11-15. The pilot evidence is reported exactly as
 measured, including the claim that failed.
 
 ## Claim boundary

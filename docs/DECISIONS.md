@@ -387,3 +387,22 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   if the calibration gate fires again. The residual risk is a depth-dependent factor; the
   report must show every measured factor and its pass/fail. The wall meter remains waived
   (D-016) and the raw data remain local-only (D-020) until an external backup is made.
+
+---
+
+## D-023 - D-022 supersede scope clarified
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Supersedes:** D-018's "the next run must demonstrate … before any P1 work"; D-019's "P1
+  stays blocked until `_r3` passes …"; D-021's "P1 is deferred by the PI" and its mandated
+  public wording "P1 deferred"; D-020's "revisit the backup before P1" timing condition for
+  this run only.
+- **Context:** D-022 superseded only the literal "do not start P1" clauses. Four further
+  blocking or record clauses remained live and are contradicted by the started P1 run.
+- **Decision:** P1 proceeds without the D-018/D-019 pre-P1 demonstrations, as a documented PI
+  reversal. The public record changes from "P1 deferred" to "P1 started 2026-11-15; prereg
+  frozen at `prereg-freeze-v1`; results pending." The external backup revisit is deferred until
+  P1 completes; the raw data remain local-only.
+- **Consequences:** The D-018/D-019 P0 findings and the D-021 FAIL remain unchanged. No gate
+  threshold changes.

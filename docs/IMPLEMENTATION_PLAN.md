@@ -2,7 +2,7 @@
 
 **Project:** Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation (G2)
 **Version:** 0.1.0 · 2026-11-09
-**Status:** post-pilot MARGINAL · P0 harness failed (k=0 factor 0.7944); P1 deferred
+**Status:** post-pilot MARGINAL · P0 harness failed (k=0 factor 0.7944); P1 running under D-022
 **Companion documents:** [`PROTOCOL.md`](PROTOCOL.md), [`MEASUREMENT.md`](MEASUREMENT.md),
 [`DATA_CARD.md`](DATA_CARD.md), [`RISKS.md`](RISKS.md), [`RUNBOOK.md`](RUNBOOK.md),
 [`../prereg/PREREGISTRATION.md`](../prereg/PREREGISTRATION.md)
@@ -49,9 +49,9 @@ retrieval, energy, statistics), `configs/runs/` (one file per experiment), `conf
 `configs/analysis/prereg.toml` (frozen margins and splits). A run may name a grid with
 `grid_id`; the resolver applies base < run < grid and hashes the effective config. `scripts/`
 is the numbered pipeline.
-`prereg/` holds the preregistration (draft until the P1 freeze), analysis plan, and amendment
-log. `runs/` holds the registry and git-ignored raw runs. `artifacts/` holds the ledger and
-claims-evidence map. `paper/` and `docs/` are the writing surface.
+`prereg/` holds the preregistration (frozen 2026-11-15 at `prereg-freeze-v1`), analysis plan,
+and amendment log. `runs/` holds the registry and git-ignored raw runs. `artifacts/` holds the
+ledger and claims-evidence map. `paper/` and `docs/` are the writing surface.
 
 The tracked data surface is deliberately small: `data/manifest.json`, `data/README.md`,
 `data/splits/*.json` (IDs only), `runs/registry.csv`, `artifacts/ledger.csv`, and
@@ -324,7 +324,9 @@ freeze; power and sample-size lock; two halves of the P1 sweep; gate review. Acc
 are in [`../ROADMAP.md`](../ROADMAP.md) section 3. The golden reproduction must land within 10%
 of the pilot `J(k)` anchors and affine fit; `E(k)` and `A(k)` are reported without a gate.
 Otherwise P1 does not start. **P0 ran on 2026-11-15 and failed block calibration at `k=0`
-(`factor_csv = 0.7944`); no P1 half was started and P1 is deferred (D-021).**
+(`factor_csv = 0.7944`). The PI then started P1 under D-022 as a documented reversal: the
+prereg is frozen at `prereg-freeze-v1`, the powered sweep is running, and absolute `J`, `E`,
+`N*`, and `S(k)` are withheld unless all seven block factors pass.**
 
 A task is done when it has code, a test, a docs update, and a ledger entry where applicable. A
 result is not a result until it traces to `runs/<run_id>/raw.csv` and is mapped in

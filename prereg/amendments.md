@@ -24,4 +24,5 @@ outcome data are seen is not an amendment; it is a new study and must be reporte
 
 ## Log
 
-_No amendments. The preregistration has not been frozen yet._
+_No amendments. The preregistration was frozen at `prereg-freeze-v1` on 2026-11-15 (SHA-256
+`fb9e5bcfe8d93404f64bbf62e04cacc13fdcfbbcbfae02ec3212c6e12affc49f`)._

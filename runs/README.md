@@ -11,7 +11,8 @@ runs/
 ├─ registry.csv         tracked registry, one row per run
 └─ <run_id>/            git-ignored
    ├─ raw.csv           one row per generation
-   ├─ blocks.json       block calibration factors
+   ├─ blocks.json       block calibration factors (all seven depths)
+   ├─ repeat.json       3×20 repeat-CV block at k=8
    ├─ manifest.json     run metadata, hashes, environment
    └─ logs/             sampler and server logs
 ```
@@ -53,6 +54,8 @@ Use the exact column order. A malformed row breaks downstream tooling.
 
 - Register the run **before** it starts; update the status after it ends.
 - A run that aborts stays in the registry with status `aborted`; it is not deleted.
+- A killed run can be resumed with `--resume`; it skips completed `(question, depth)` rows and
+  refuses to resume if the config hash changed.
 - Do not commit `runs/<run_id>/`. Commit the registry row, the config, and the analysis output.
 - The analysis script refuses a run whose config hash or prereg hash does not match.
 - A run without a raw CSV is not a result.

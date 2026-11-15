@@ -33,7 +33,7 @@ export const project = {
   version: "0.1.0",
   status: "post-pilot MARGINAL",
   statusDetail:
-    "Public scaffold. P0 harness failed block calibration on the clean _r3 run; P1 deferred. No confirmatory results. Preregistration not frozen.",
+    "Public scaffold. P0 harness failed block calibration on the clean _r3 run; P1 started on PI authority (D-022) with a frozen prereg. No confirmatory results yet.",
   updated: "2026-11-15",
   repo: "https://github.com/Atik203/energy-optimal-rag",
   author: "Atikur Rahaman and contributors",
@@ -52,6 +52,16 @@ export const p0 = {
   label: "P0 failed",
   note: "Harness check only; the clean sweep was valid but k=0 block factor was 0.7944.",
   backup: "local-only; external backup deferred (D-020)",
+};
+
+export type P1Status = "running" | "pass" | "fail" | "deferred";
+
+export const p1 = {
+  runId: "squad_qwen4b_p1",
+  status: "running" as P1Status,
+  label: "P1 running",
+  note: "Prereg frozen at prereg-freeze-v1; the 7,000-query powered sweep is in progress.",
+  preregHash: "fb9e5bcf",
 };
 
 /* Course and team — EEE 4261 Green Computing, Section C. Sadman Ifaz is
@@ -634,11 +644,11 @@ export const phases: Array<{
   {
     id: "P1",
     weeks: "Weeks 2\u20133",
-    status: "deferred",
+    status: "running",
     name: "Powered SQuAD rerun",
     goal: "Decide whether the paper has a static policy result.",
     outputs:
-      "n = 1,000 \u00d7 7 depths, frozen prereg, raw ledger, primary 5 pp non-inferiority analysis.",
+      "n = 1,000 \u00d7 7 depths; prereg frozen at prereg-freeze-v1; raw ledger; primary 5 pp non-inferiority analysis.",
     exit: "G1 or a documented failure; K1\u2013K7 adjudicated; freeze respected.",
   },
   {
@@ -1010,7 +1020,7 @@ export const decisions = [
     date: "2026-11-15",
     title: "P0 golden harness check failed; P1 is blocked",
     summary:
-      "The first run collected 1,400 valid rows but block factors were 0.732 cold / 1.676 warm and idle CV was 46.4%. The J table is uncalibrated and not adjudicable; do not widen [0.8, 1.4]. Superseded by D-021: P1 is deferred.",
+      "The first run collected 1,400 valid rows but block factors were 0.732 cold / 1.676 warm and idle CV was 46.4%. The J table is uncalibrated and not adjudicable; do not widen [0.8, 1.4]. Superseded by D-022: P1 started under PI authority, not because this gate passed.",
     status: "accepted",
   },
   {
@@ -1034,7 +1044,15 @@ export const decisions = [
     date: "2026-11-15",
     title: "P0 _r3 failed block calibration; P1 is deferred",
     summary:
-      "The clean _r3 sweep had 1,400/1,400 valid rows and idle CV 1.12%, but k=0 factor_csv was 0.7944, below the fixed 0.8 floor. No blocks, repeat, or calibrated J analysis exists; P1 is deferred.",
+      "The clean _r3 sweep had 1,400/1,400 valid rows and idle CV 1.12%, but k=0 factor_csv was 0.7944, below the fixed 0.8 floor. No blocks, repeat, or calibrated J analysis exists. Superseded by D-022: P1 started under PI authority.",
+    status: "accepted",
+  },
+  {
+    id: "D-022",
+    date: "2026-11-15",
+    title: "P1 starts on PI authority after the P0 calibration failure",
+    summary:
+      "P0 stays FAIL and [0.8, 1.4] is unchanged. The prereg was frozen at prereg-freeze-v1, and the primary savings 1 - E(4)/E(32) is reported as a calibration-invariant ratio. All seven block factors are measured; factors are applied only if every depth passes. Absolute J, E, N*, and S(k) are withheld otherwise.",
     status: "accepted",
   },
 ];

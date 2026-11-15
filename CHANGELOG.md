@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   chunking/splits/manifest, and BM25.
 - `docs/DECISIONS.md` entries D-009–D-011, pilot claim rows in `artifacts/claims_evidence.csv`
   (`run_id=pilot`), and ledger row `A-0001` for `docs/PILOT_EVIDENCE.md`.
+- P1 confirmatory analysis (`src/rag_energy/stats/p1.py`): paired non-inferiority, paired
+  question bootstrap, identity and `N*` intervals, margin/scoring sensitivity, gates, and a
+  prereg-hash refusal in `scripts/05_analyze.py`.
+- P1 started on 2026-11-15 under D-022 after the P0 calibration failure; the preregistration is
+  frozen at `prereg-freeze-v1` (hash `fb9e5bcf…`). No P1 result exists yet.
 
 ### Changed
 - One analysis population and failure rule in README, implementation plan, protocol,
@@ -38,16 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   analysis config validates the policy split against `n_questions = 1000`; Hugging Face
   replication dependencies are an optional `hf` extra.
 - `prereg/PREREGISTRATION.md` and `prereg/analysis_plan.md` status lines record the 2026-11-11
-  pre-freeze revision.
-
-### Changed
+  pre-freeze revision, then froze at `prereg-freeze-v1` on 2026-11-15.
 - P0 harness FAILED (2026-11-15): the first run had block factors 0.732 cold / 1.676 warm and
   46.4% idle CV; the clean `_r3` sweep was valid (1,400/1,400, 0 invalid, idle CV 1.12%) but
   the `k=0` `factor_csv` was 0.7944, below 0.8. No `blocks.json`, repeat CV, or calibrated
-  analysis exists; `_r3` is registered `invalid`; P1 is deferred (D-021).
+  analysis exists; `_r3` is registered `invalid`. P1 started under D-022, not because the gate
+  passed.
 
 ### Planned
-- P1 powered SQuAD run (`n = 1,000`, 7 depths, 5 pp non-inferiority primary).
 - P2 1.5B replication, HotpotQA distractor, boundary probe, energy taxes.
 - P3 query-conditional policy with a 600/200/200 split.
 

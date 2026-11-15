@@ -1,6 +1,6 @@
 # Experimental Protocol
 
-**Status:** draft for the P1 freeze · revised 2026-11-15 for the P0 D-019 protocol · v0.1.1
+**Status:** frozen for P1 (`prereg-freeze-v1`, 2026-11-15) · revised 2026-11-15 for the P0 D-019 protocol · v0.1.1
 **Applies to:** SQuAD primary run, 1.5B replication, exploratory Llama 3B panel, HotpotQA
 distractor run, boundary probe, 16k context-budget probe, and energy-tax conditions.
 

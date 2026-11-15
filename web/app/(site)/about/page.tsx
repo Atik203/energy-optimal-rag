@@ -35,11 +35,12 @@ const statusRows = [
   ["Release", "public scaffold v0.1.0"],
   ["Last updated", project.updated],
   ["Confirmatory data", "none"],
-  ["Preregistration", "DRAFT, not frozen · hash TBD"],
-  ["Freeze tag", "prereg-freeze-v1 (pending)"],
-  ["External registry", "none; a frozen git tag and SHA-256 will be the record"],
+  ["Preregistration", "FROZEN 2026-11-15 · hash fb9e5bcf…"],
+  ["Freeze tag", "prereg-freeze-v1 (annotated; f73744c)"],
+  ["External registry", "none; the frozen git tag and SHA-256 are the record"],
   ["Pilot raw data", "not in this repository; run CSVs are git-ignored"],
-  ["P0 harness", "FAIL - clean _r3 block k=0 factor 0.7944; P1 deferred"],
+  ["P0 harness", "FAIL - clean _r3 block k=0 factor 0.7944"],
+  ["P1 powered sweep", "RUNNING - prereg frozen at prereg-freeze-v1; no result yet"],
   ["Raw P0 run", "local-only; external backup deferred (D-020)"],
   ["Exploratory arms", "Llama 3.2 3B reader; 16k context-budget probe; no gate"],
   ["H200 check", "optional 64k accuracy-only; no energy claim; not run"],
@@ -95,12 +96,12 @@ export default function AboutPage() {
             A public scaffold, <em>with the failures left in.</em>
           </>
         }
-        lede="This site describes a research project that has run a pilot, killed its own headline, and not yet collected confirmatory data. It is intentionally specific about what is not known."
+        lede="This site describes a research project that has run a pilot, killed its own headline, and is now collecting confirmatory data. It is intentionally specific about what is not known."
         meta={[
           { label: "Post-pilot MARGINAL", tone: "caution" },
           { label: "v0.1.0", tone: "neutral" },
-          { label: "Prereg not frozen", tone: "caution" },
-          { label: "No confirmatory results", tone: "dead" },
+          { label: "Prereg frozen 2026-11-15", tone: "signal" },
+          { label: "P1 running", tone: "caution" },
         ]}
       />
 
