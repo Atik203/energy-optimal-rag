@@ -96,10 +96,11 @@ Qwen2.5-1.5B H7 **not** supported (`+2.00 pp`, upper `+4.90 pp`); HotpotQA H7
 **supported** (`-10.80 pp`, upper `-8.00 pp`); G5 satisfied via HotpotQA. Exploratory
 arms run: boundary probe (no cliff at k=32), 16k context probe (no accuracy gain),
 Llama 3B (peak at k=4). Energy uncalibrated on all arms except the boundary probe.
-Tax arms deferred (runner unimplemented). See
+Tax arms run (fixed and per-passage); no clean k* shift identifiable. See
 [`docs/P2_RESULTS.md`](docs/P2_RESULTS.md),
-[`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md), and
-[`docs/P2_RESULTS_LLAMA.md`](docs/P2_RESULTS_LLAMA.md).
+[`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md),
+[`docs/P2_RESULTS_LLAMA.md`](docs/P2_RESULTS_LLAMA.md), and
+[`docs/P2_RESULTS_TAXES.md`](docs/P2_RESULTS_TAXES.md).
 
 **P0 implementation checklist (2026-11-15):**
 

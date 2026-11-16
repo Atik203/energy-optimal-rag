@@ -36,11 +36,13 @@ HotpotQA `A(4)−A(10)=−10.80 pp` (upper −8.00 pp), **H7 supported**. G5 is
 **supported via HotpotQA**. Exploratory arms run: boundary probe (no cliff at
 k=32; accuracy 0.475→0.505 from k=32 to 64), 16k context probe (no accuracy
 gain at k=32 vs 4k; J 87.90 vs 83.14), Llama 3B (peak at k=4, 0.476). Energy
-is uncalibrated on every arm except the boundary probe (all-pass). Tax arms
-deferred (runner unimplemented).
+is uncalibrated on every arm except the boundary probe (all-pass). Tax arms run:
+fixed tax and per-passage tax (accuracy rises to k=32 on both; no clean k* shift;
+energy uncalibrated).
 See [`docs/P2_RESULTS.md`](docs/P2_RESULTS.md),
-[`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md), and
-[`docs/P2_RESULTS_LLAMA.md`](docs/P2_RESULTS_LLAMA.md).
+[`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md),
+[`docs/P2_RESULTS_LLAMA.md`](docs/P2_RESULTS_LLAMA.md), and
+[`docs/P2_RESULTS_TAXES.md`](docs/P2_RESULTS_TAXES.md).
 
 ---
 
