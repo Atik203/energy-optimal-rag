@@ -34,3 +34,7 @@ A-0032,hotpot_qwen4b_p2,document,docs/P2_RESULTS_HOTPOT.md,840ce053e68f638b0997a
 A-0033,hotpot_qwen4b_p2,analysis,runs/hotpot_qwen4b_p2/blocks.json,83b08ece74452b3146d24977ab4b63e482cead5550afba0269afb50174ad515a,3600,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm block calibration (k=0 miss)
 A-0034,hotpot_qwen4b_p2,analysis,runs/hotpot_qwen4b_p2/repeat.json,78e7eca344f7bb999a1b6cd609c5f95223d6c35c2b9ea61c767271f3b9856779,2937,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm repeat CV (passed)
 A-0035,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2_retrieval_recall.json,bbb55fda31843656f61f41951eae9d597731dff690f4a089a7feced504c87300,1130,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot supporting-fact recall
+A-0036,squad_llama3b_p2,analysis,analysis/squad_llama3b_p2/report.md,1107cabac17f32ba4dd1a1af6ef74dd21fc495c12f76c045f34f8e8eac09b21f,604,2026-11-16T06:51:10Z,CC-BY-4.0,Llama 3B exploratory report
+A-0037,squad_llama3b_p2,analysis,runs/squad_llama3b_p2/blocks.json,0011690dc9d44e78d5d3e3886197565ef2be27023feeca0594054f6263680174,4218,2026-11-16T06:51:10Z,CC-BY-4.0,Llama 3B block calibration (3 of 7 passed)
+A-0038,squad_llama3b_p2,analysis,runs/squad_llama3b_p2/repeat.json,22f2c7d608da4693abc99a166368b89774ddd322ff575974a27f03c99808fbda,2932,2026-11-16T06:51:10Z,CC-BY-4.0,Llama 3B repeat CV (passed)
+A-0039,squad_llama3b_p2,document,docs/P2_RESULTS_LLAMA.md,a2551a8d7aca1b9f83ef6629e8ca555feea8bcea5e8d8ea1bdf163775fcb68ec,1118,2026-11-16T06:51:10Z,CC-BY-4.0,Llama 3B exploratory memo

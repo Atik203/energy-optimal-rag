@@ -30,15 +30,17 @@ H1 and H4 are supported; H3 fails; K3 and K5 fail; G1 and G2 fail; G3 passes. Th
 policy claim is dead, and the 2 pp claim remains dead. See
 [`docs/P1_RESULTS.md`](docs/P1_RESULTS.md).
 
-**P2 status (2026-11-15): both confirmatory arms complete.** Qwen2.5-1.5B:
-`A(4) − A(32) = +2.00 pp` (upper +4.90 pp), **H7 not supported**; calibration
-and repeat CV failed. HotpotQA: `A(4) − A(10) = −10.80 pp` (upper −8.00 pp),
-**H7 supported**; calibration missed only `k = 0`, repeat CV passed (median 1.32%,
-max 6.77%). G5 (replication on the 1.5B reader or HotpotQA) is **supported via
-HotpotQA**. Energy on both arms is uncalibrated and uncertified. Boundary probe,
-16k probe, and Llama 3B arm are exploratory and pending.
-See [`docs/P2_RESULTS.md`](docs/P2_RESULTS.md) and
-[`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md).
+**P2 status (2026-11-16): P2 experimental program complete.** Confirmatory arms:
+Qwen2.5-1.5B `A(4)−A(32)=+2.00 pp` (upper +4.90 pp), **H7 not supported**;
+HotpotQA `A(4)−A(10)=−10.80 pp` (upper −8.00 pp), **H7 supported**. G5 is
+**supported via HotpotQA**. Exploratory arms run: boundary probe (no cliff at
+k=32; accuracy 0.475→0.505 from k=32 to 64), 16k context probe (no accuracy
+gain at k=32 vs 4k; J 87.90 vs 83.14), Llama 3B (peak at k=4, 0.476). Energy
+is uncalibrated on every arm except the boundary probe (all-pass). Tax arms
+deferred (runner unimplemented).
+See [`docs/P2_RESULTS.md`](docs/P2_RESULTS.md),
+[`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md), and
+[`docs/P2_RESULTS_LLAMA.md`](docs/P2_RESULTS_LLAMA.md).
 
 ---
 

@@ -91,13 +91,15 @@ contrast is `A(4) - A(32) = -4.30 pp`, one-sided 95% lower bound **-6.17 pp**, p
 supported, H3 fails, K3/K5 fail, G1/G2 fail, G3 passes. The static 5 pp policy claim is dead.
 See [`docs/P1_RESULTS.md`](docs/P1_RESULTS.md).
 
-**P2 status (2026-11-15): both confirmatory arms complete.** Qwen2.5-1.5B: H7 **not**
-supported (`+2.00 pp`, upper `+4.90 pp`); calibration and repeat CV failed. HotpotQA: H7
-**supported** (`-10.80 pp`, upper `-8.00 pp`); calibration missed only `k=0`, repeat CV
-passed. G5 is satisfied via HotpotQA. Energy on both arms is uncalibrated/uncertified.
-Boundary probe, 16k probe, and Llama 3B arm remain exploratory/pending. See
-[`docs/P2_RESULTS.md`](docs/P2_RESULTS.md) and
-[`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md).
+**P2 status (2026-11-16): P2 experimental program complete.** Confirmatory arms:
+Qwen2.5-1.5B H7 **not** supported (`+2.00 pp`, upper `+4.90 pp`); HotpotQA H7
+**supported** (`-10.80 pp`, upper `-8.00 pp`); G5 satisfied via HotpotQA. Exploratory
+arms run: boundary probe (no cliff at k=32), 16k context probe (no accuracy gain),
+Llama 3B (peak at k=4). Energy uncalibrated on all arms except the boundary probe.
+Tax arms deferred (runner unimplemented). See
+[`docs/P2_RESULTS.md`](docs/P2_RESULTS.md),
+[`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md), and
+[`docs/P2_RESULTS_LLAMA.md`](docs/P2_RESULTS_LLAMA.md).
 
 **P0 implementation checklist (2026-11-15):**
 
