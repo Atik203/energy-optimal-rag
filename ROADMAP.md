@@ -183,8 +183,7 @@ A fresh `git archive` plus copied raw data reproduced the P1/P2/P3/P4 analysis
 outputs (420 tests pass; all configs valid). The raw/processed/analysis archive is
 at `G:\energy-optimal-rag-backup\2026-11-18\` with checksums in
 `docs/BACKUP.md` (D-027). The public package is archived at
-**DOI `10.5281/zenodo.24351059`**; the final `v0.2.0` tag is applied after this
-metadata update.
+**DOI `10.5281/zenodo.24352803`** and tagged `v0.2.1`.
 
 ---
 
