@@ -50,12 +50,8 @@ def _examples(
         question = questions[qid]
         hits = index.search(qid, question, max(k_grid))
         scores = [hit.score for hit in hits]
-        correct = {
-            k: int(rows[(qid, k)]["correct_em"]) for k in k_grid if (qid, k) in rows
-        }
-        energy = {
-            k: float(rows[(qid, k)]["j_gpu_calibrated"]) for k in k_grid if (qid, k) in rows
-        }
+        correct = {k: int(rows[(qid, k)]["correct_em"]) for k in k_grid if (qid, k) in rows}
+        energy = {k: float(rows[(qid, k)]["j_gpu_calibrated"]) for k in k_grid if (qid, k) in rows}
         if len(correct) != len(k_grid):
             raise ValueError(f"{qid}: incomplete depth grid")
         examples.append(
@@ -141,9 +137,7 @@ def main() -> int:
     policy_saving = 100.0 * (
         1.0 - float(test_policy["energy_per_correct"]) / float(test_static["energy_per_correct"])
     )
-    captured = (
-        100.0 * policy_saving / oracle_gain if oracle_gain > 0 else float("nan")
-    )
+    captured = 100.0 * policy_saving / oracle_gain if oracle_gain > 0 else float("nan")
 
     payload = {
         "run_id": args.run_id,
@@ -176,8 +170,7 @@ def main() -> int:
         "# Query-conditional depth policy",
         "",
         f"Split: {len(train)} train / {len(validation)} validation / {len(test)} test.",
-        f"Best static depth on validation: k={static_depth} "
-        f"(accuracy {static_val_acc:.4f}).",
+        f"Best static depth on validation: k={static_depth} (accuracy {static_val_acc:.4f}).",
         f"Policy confidence threshold: {threshold:.2f}.",
         "",
         "| Split | Method | Accuracy | J/correct | Saving vs static |",

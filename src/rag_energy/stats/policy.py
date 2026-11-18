@@ -149,7 +149,9 @@ def evaluate_policy(
     for example in test:
         depth = _predict(policy, example, threshold)
         depths.append(static_depth if depth is None else depth)
-    total_j = sum(policy_energy(example, depth) for example, depth in zip(test, depths, strict=True))
+    total_j = sum(
+        policy_energy(example, depth) for example, depth in zip(test, depths, strict=True)
+    )
     total_correct = sum(
         policy_correct(example, depth) for example, depth in zip(test, depths, strict=True)
     )
@@ -170,7 +172,9 @@ def oracle_evaluation(test: Sequence[PolicyExample]) -> dict[str, float]:
     if not test:
         raise ValueError("test must not be empty")
     depths = [cheapest_correct_depth(example) for example in test]
-    total_j = sum(policy_energy(example, depth) for example, depth in zip(test, depths, strict=True))
+    total_j = sum(
+        policy_energy(example, depth) for example, depth in zip(test, depths, strict=True)
+    )
     total_correct = sum(
         policy_correct(example, depth) for example, depth in zip(test, depths, strict=True)
     )

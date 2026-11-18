@@ -70,9 +70,7 @@ def _arm_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "n_depths": len(depths),
         "depths": depths,
         "accuracy": {depth: by_k[depth].accuracy for depth in depths},
-        "e_per_correct": {
-            depth: by_k[depth].e_per_correct for depth in depths
-        },
+        "e_per_correct": {depth: by_k[depth].e_per_correct for depth in depths},
         "affine": fit,
         "coverage": {"a0": a0, "p": p, "r_squared": coverage_r2},
         "monotone": monotone,

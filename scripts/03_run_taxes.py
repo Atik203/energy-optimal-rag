@@ -17,9 +17,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-import tomllib as _tomllib  # noqa: E402
 
 from rag_energy.runner import (  # noqa: E402
+    _default_reader,
+    load_run_spec,
     run_block_calibration,
     run_depth_sweep,
     run_repeat_cv,
@@ -31,7 +32,9 @@ from rag_energy.tax import TaxedReader, _calibrate_dummy  # noqa: E402
 def _make_run_config(tax_config: dict, tax_id: str, root: Path) -> Path:
     template = (root / "configs" / "runs" / "squad_qwen4b.toml").read_text(encoding="utf-8")
     template = template.replace('run_id = "squad_qwen4b_p1"', f'run_id = "{tax_id}"')
-    template = template.replace("n_questions = 1000", f"n_questions = {int(tax_config['n_questions'])}")
+    template = template.replace(
+        "n_questions = 1000", f"n_questions = {int(tax_config['n_questions'])}"
+    )
     template = template.replace(
         "k_grid = [0, 1, 2, 4, 8, 16, 32]",
         "k_grid = " + str(tax_config["k_grid"]).replace(" ", ""),
@@ -39,7 +42,7 @@ def _make_run_config(tax_config: dict, tax_id: str, root: Path) -> Path:
     template = template.replace('id_split = "p1_primary"', 'id_split = "replication"')
     template = template.replace('phase = "P1"', 'phase = "P2"')
     # Remove grid reference; tax runs do not use a named grid.
-    template = template.replace('grid_id = "primary_k7"\n', '')
+    template = template.replace('grid_id = "primary_k7"\n', "")
     template = template.replace(
         'purpose = "Powered SQuAD rerun (n=1000, 7 depths). Primary 5pp non-inferiority."',
         f'purpose = "Energy tax arm: {tax_id}."',
@@ -73,16 +76,6 @@ def main() -> int:
     print(f"Calibrated: iters={iters}, measured={measured:.4f} J (target {target:.4f} J)")
 
     run_config_path = _make_run_config(tax_config, tax_id, root)
-
-    base_reader = None
-    from rag_energy.runner import _default_reader
-
-    import tomllib as _t
-
-    merged = _t.loads(run_config_path.read_text(encoding="utf-8"))
-    # Merge base.toml manually by using resolve? Simpler: use load_run_spec via runner.
-    from rag_energy.runner import load_run_spec
-
     spec = load_run_spec(run_config_path, root=root)
     base_reader = _default_reader(spec.config)
     taxed_reader = TaxedReader(base_reader, tax_kind, dummy_fn)
@@ -120,10 +113,8 @@ def main() -> int:
     )
     print(f"Repeat: {repeat_path}")
 
-    out_dir = (out_root or root / "runs") / tax_id
     analysis_dir = root / "analysis" / tax_id
     analysis_dir.mkdir(parents=True, exist_ok=True)
-    from rag_energy.stats.sweep import write_analysis
 
     write_analysis(raw_path, analysis_dir, tax_id)
     print(f"Analysis: {analysis_dir}")
@@ -132,4 +123,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-PY
