@@ -806,6 +806,14 @@ conditions, so the policy claim fails on the accuracy side.
 The 2~pp secondary contrast has the same point estimate, the same lower bound, and $p=0.9785$;
 it is estimation-only and is not a certification target.
 
+An exploratory inference layer agrees with the confirmatory verdict. The restricted-MLE score
+test gives $p=0.2703$ and an exact unconditional sensitivity gives $p=0.4182$; TOST fails at
+$\pm5$~pp ($p=0.2691$) and $\pm2$~pp ($p=0.9785$); the BCa
+interval is $[-6.60,-2.20]$~pp for the mean difference and $[55.99,60.10]$\% for savings. The
+joint question bootstrap puts $\Pr(\text{NI and savings}\ge20\%)$ at 0.154. At the observed
+discordance, realized power at $d=-4.3$~pp is 0.152; 80\% power needs about 16{,}300 pairs and
+50\% power about 7{,}130. These are sensitivity quantities; they do not change the verdict.
+
 \begin{table}[pos=htbp]
   \centering
   \caption{Primary 5~pp result for $k=4$ against $k=32$ on the paired population

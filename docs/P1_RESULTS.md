@@ -65,6 +65,13 @@ depth reduction, while leaving the 5 pp bound unresolved.
 The 2 pp secondary contrast has the same point estimate (−4.30 pp), lower bound −6.17 pp, and
 p = 0.9785; it is estimation-only and is not a certification target.
 
+Exploratory inference (`analysis/inference/p1.json`): restricted-MLE score p = 0.2703; exact
+unconditional p = 0.4182; TOST p = 0.2691 at ±5 pp and 0.9785 at ±2 pp; BCa interval
+[−6.60, −2.20] pp; savings BCa
+[55.99, 60.10]%; joint P(NI and savings ≥20%) = 0.154; realized power at d = −4.3 pp is 0.152,
+with 80% power requiring about 16,300 pairs. These are sensitivity quantities; the
+confirmatory verdict is unchanged.
+
 ## 2b. Margin frontier
 
 `analysis/squad_qwen4b_p1/margin_frontier.json` reports the selected depth,
