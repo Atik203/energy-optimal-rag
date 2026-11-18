@@ -145,9 +145,7 @@ def main() -> int:
     )
     captured = 100.0 * policy_saving / oracle_gain if oracle_gain > 0 else float("nan")
     captured_matched = (
-        100.0 * policy_saving / matched_oracle_gain
-        if matched_oracle_gain > 0
-        else float("nan")
+        100.0 * policy_saving / matched_oracle_gain if matched_oracle_gain > 0 else float("nan")
     )
 
     payload = {
