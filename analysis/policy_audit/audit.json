@@ -1,0 +1,55 @@
+{
+  "run_id": "squad_qwen4b_p1",
+  "n": 1000,
+  "correct_at_1_rate": 0.391,
+  "oof_auc_correct_at_1": 0.7327680697466392,
+  "learning_curve": [
+    {
+      "n_train": 50,
+      "val_auc": 0.7068673377853085
+    },
+    {
+      "n_train": 100,
+      "val_auc": 0.7174324728396292
+    },
+    {
+      "n_train": 200,
+      "val_auc": 0.6946077942788796
+    },
+    {
+      "n_train": 400,
+      "val_auc": 0.7266022126980962
+    },
+    {
+      "n_train": 608,
+      "val_auc": 0.723811422306389
+    }
+  ],
+  "splits": {
+    "train": 608,
+    "validation": 206,
+    "test": 186
+  },
+  "answer_presence_oracle": {
+    "accuracy": 0.4032258064516129,
+    "energy_per_correct": 51.419114773333334,
+    "coverage_k1": 0.5698924731182796
+  },
+  "static_k1": {
+    "n": 186.0,
+    "accuracy": 0.41935483870967744,
+    "total_j": 4646.804884,
+    "energy_per_correct": 59.574421589743594,
+    "depth": 1.0
+  },
+  "matched_oracle": {
+    "n": 186.0,
+    "accuracy": 0.41935483870967744,
+    "total_j": 3316.044821,
+    "energy_per_correct": 42.51339514102564,
+    "mean_depth": NaN,
+    "allow_abstention": true
+  },
+  "capture_pct": 47.80079815785696,
+  "note": "Exploratory; confirmatory G4 remains analysis/policy."
+}

@@ -64,3 +64,8 @@ A-0062,measurement,analysis,analysis/measurement/probe_qwen15b.json,3a5af060eda9
 A-0063,measurement,analysis,analysis/measurement/replay_qwen15b.json,5b2a7a2dfe35fb40a9dd6a09f7a246fc84903f70352d3bca7c251fb5e3d83b22,473,2026-11-18T18:28:39Z,CC-BY-4.0,Replay total within 2% of constant-depth blocks
 A-0064,measurement,analysis,analysis/calibration_bias.json,8cfa49db57495fd27368b5045bbbf0987a3d35bef4f1596fb73c984457152170,6956,2026-11-18T18:28:39Z,CC-BY-4.0,k=0 energy by previous depth and cap ratios
 A-0065,measurement,document,docs/MEASUREMENT_VALIDITY.md,585e6b818159955c3ee8e4f0cd9c444f567ab906f6c64b8a681a127d08a80694,2966,2026-11-18T18:28:39Z,CC-BY-4.0,Measurement validity memo
+A-0066,policy,analysis,analysis/policy_audit/audit.json,fc91634109d619e4ca61db7c4684d9d2268d4bb96a8acf23fb85d1f4cf41218d,1260,2026-11-18T19:07:54Z,CC-BY-4.0,P3 predictability and answer-presence oracle audit
+A-0067,policy,analysis,analysis/policy_audit/report.md,493dc72aac99c4890fabd0ad3a7877ebf1e546a9b162f6367487d301040c08f0,406,2026-11-18T19:07:54Z,CC-BY-4.0,P3 audit report
+A-0068,recall_precision,analysis,analysis/recall_precision.json,ee018f624e68d681d9f134e29a50b87a81e6649c913ea503f60425f49113ceb8,3665,2026-11-18T19:07:54Z,CC-BY-4.0,Recall x precision decomposition
+A-0069,recall_precision,document,docs/RECALL_PRECISION.md,7f57c055cc38a3c498a18b3980e07ea49a43b9856a52e4c6186f3ea63df69e95,1492,2026-11-18T19:07:54Z,CC-BY-4.0,Recall x precision memo
+A-0070,measurement,analysis,analysis/measurement/probe_qwen4b_p1.json,1be383a79c875a4a7922a15562b9f389329b3d7d239f074a51a69ad0f8bcabd6,158973,2026-11-18T19:07:54Z,CC-BY-4.0,P1 Ollama power probe

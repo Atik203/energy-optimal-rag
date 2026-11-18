@@ -18,7 +18,7 @@ Affine descriptive fit: `J(k) = -8.3172 + 11.0245 k`, R2 = 0.8507; quadratic lac
 
 - Paired n = 500; discordant b = 44, c = 34; invalid at k=4/k=32 = 0/0.
 - Mean difference A(4) - A(32) = 2.00 pp (one-sided 95% upper bound 4.90 pp).
-- Directional one-sided p (null: contrast >= 0) = 0.128692.
+- Directional one-sided p (null: contrast >= 0) = 0.871308.
 - Point estimate matches P1's negative direction: False.
 - **H7 supported (whole directional interval negative): False.**
 

@@ -24,7 +24,7 @@
   "one_sided_lower_5pp": -0.13597462778268535,
   "one_sided_upper_5pp": -0.08002537221731465,
   "one_sided_upper_zero": -0.08002537221731465,
-  "p_direction": 0.9999999998924751,
+  "p_direction": 1.0752482405832164e-10,
   "p_5pp": 0.999675527281835,
   "non_inferior_5pp": false,
   "point_direction_matches": true,

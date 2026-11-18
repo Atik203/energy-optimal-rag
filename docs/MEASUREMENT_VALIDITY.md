@@ -21,7 +21,8 @@ idle was 15.48 W (CV 0.14%). The power signal did **not** return to idle within
 
 The pre-query floor is 5–64 W above the pre-run idle and depends on the previous
 depth. A 0.3 s tail therefore measures the neighbour's power level, not the
-current query alone.
+current query alone. A second probe on the P1 Ollama reader shows the same
+pattern: pre-query 4.5–55.6 W and residual 6.9–16.0 W after 3 s.
 
 ## Replay discriminator
 

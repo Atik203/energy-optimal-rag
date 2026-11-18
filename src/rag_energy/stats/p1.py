@@ -663,13 +663,21 @@ def certification_cost(
             "note": "No positive break-even; the selected depth is not cheaper per correct answer.",
         }
     n_star = total_energy / (selected.accuracy * delta)
+    delta_j = reference.mean_j - selected.mean_j
+    n_star_exact = total_energy / delta_j if delta_j > 0 else None
     return {
         "selected_depth": selected_depth,
         "reference_depth": reference_depth,
         "total_sweep_j": float(total_energy),
         "delta_e_per_correct": float(delta),
+        "delta_j_per_query": float(delta_j),
         "n_star": float(n_star),
-        "note": "Break-even calculation, not a deployment guarantee.",
+        "n_star_exact": float(n_star_exact) if n_star_exact is not None else None,
+        "note": (
+            "n_star is the per-correct-answer break-even used in the paper; "
+            "n_star_exact is the per-query-energy break-even. Both are descriptive, "
+            "not deployment guarantees."
+        ),
     }
 
 

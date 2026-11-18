@@ -10,7 +10,7 @@ revision `989aa798…`). Completed 3,500/3,500 rows, 0 invalid, 0 duplicate
 P1 observed a negative contrast `A(4) − A(32) = −4.30 pp`. On this arm:
 
 - `A(4) = 0.3600`, `A(32) = 0.3400`, mean difference **+2.00 pp**.
-- Paired `n = 500`; discordant `b = 44`, `c = 34`; `p_direction = 0.1287`.
+- Paired `n = 500`; discordant `b = 44`, `c = 34`; `p_direction = 0.8713`.
 - One-sided 95% upper bound on the contrast: **+4.90 pp**.
 - Point direction matches P1's negative direction: **False**.
 - **H7 supported: False.** The whole directional interval is not negative.

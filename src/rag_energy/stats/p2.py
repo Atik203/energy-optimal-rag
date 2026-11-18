@@ -74,7 +74,8 @@ def _directional_test(
         n_invalid_reference=n_invalid_reference,
     )
     if result.se > 0:
-        p_direction = float(1.0 - scipy_stats.norm.cdf(result.mean_diff / result.se))
+        # Null is contrast >= 0; a negative mean gives a small one-sided p.
+        p_direction = float(scipy_stats.norm.cdf(result.mean_diff / result.se))
     else:
         p_direction = 0.0 if result.mean_diff < 0 else 1.0
     # ``upper_bound`` is the one-sided 95% upper bound on the contrast; below

@@ -23,7 +23,17 @@ FEATURE_NAMES: tuple[str, ...] = (
     "entropy",
     "n_positive",
     "question_words",
+    "wh_what",
+    "wh_who",
+    "wh_when",
+    "wh_where",
+    "wh_which",
+    "wh_why",
+    "wh_how",
+    "wh_other",
 )
+
+WH_TYPES: tuple[str, ...] = ("what", "who", "when", "where", "which", "why", "how")
 
 
 @dataclass(frozen=True)
@@ -36,6 +46,7 @@ class PolicyExample:
     best_depth: int
     correct_by_depth: dict[int, int]
     energy_by_depth: dict[int, float]
+    wh_type: str = ""
 
 
 def featurize(example: PolicyExample, query_length: int | None = None) -> dict[str, float]:
@@ -44,6 +55,12 @@ def featurize(example: PolicyExample, query_length: int | None = None) -> dict[s
     features["question_words"] = float(
         query_length if query_length is not None else len(example.question.split())
     )
+    wh = example.wh_type.strip().lower()
+    if wh not in WH_TYPES:
+        wh = "other"
+    for name in WH_TYPES:
+        features[f"wh_{name}"] = 1.0 if wh == name else 0.0
+    features["wh_other"] = 1.0 if wh == "other" else 0.0
     return features
 
 
@@ -88,6 +105,8 @@ def train_policy(
     to choose that threshold, never the model parameters.
     """
     from sklearn.linear_model import LogisticRegression
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
 
     if not train:
         raise ValueError("train must not be empty")
@@ -97,9 +116,12 @@ def train_policy(
         x = [_feature_vector(example) for example in train]
         y = [int(example.correct_by_depth[depth]) for example in train]
         if len(set(y)) < 2:
-            models[depth] = None
+            models[depth] = float(sum(y) / len(y))
             continue
-        model = LogisticRegression(max_iter=1000, random_state=seed)
+        model = make_pipeline(
+            StandardScaler(),
+            LogisticRegression(max_iter=2000, random_state=seed),
+        )
         model.fit(x, y)
         models[depth] = model
     return DepthPolicy(models=models, depths=depths)
@@ -108,8 +130,9 @@ def train_policy(
 def _predict_correct(policy: DepthPolicy, example: PolicyExample, depth: int) -> float:
     model = policy.models.get(depth)
     if model is None:
-        values = [int(e.correct_by_depth[depth]) for e in [example]]
-        return float(values[0])
+        return 0.0
+    if isinstance(model, float):
+        return model
     return float(model.predict_proba([_feature_vector(example)])[0, 1])
 
 
@@ -187,24 +210,45 @@ def oracle_evaluation(test: Sequence[PolicyExample]) -> dict[str, float]:
     }
 
 
-def matched_oracle_evaluation(test: Sequence[PolicyExample], static_depth: int) -> dict[str, float]:
+def matched_oracle_evaluation(
+    test: Sequence[PolicyExample], static_depth: int, *, allow_abstention: bool = True
+) -> dict[str, float]:
     """Hindsight oracle constrained to the static depth's accuracy.
 
-    Start every question at its cheapest depth, then pay the smallest extra
-    energy needed to make exactly ``C`` questions correct, where ``C`` is the
-    number correct at ``static_depth``. This is a matched-accuracy upper bound.
+    Start every question at its cheapest allowed depth, then pay the smallest
+    extra energy needed to make exactly ``C`` questions correct, where ``C`` is
+    the number correct at ``static_depth``. With ``allow_abstention=False``, the
+    cheapest allowed depth is ``k >= 1``.
     """
     if not test:
         raise ValueError("test must not be empty")
     target_correct = sum(int(example.correct_by_depth[static_depth]) for example in test)
-    base_j = sum(min(example.energy_by_depth.values()) for example in test)
+    allowed = {
+        depth
+        for example in test
+        for depth in example.energy_by_depth
+        if allow_abstention or depth >= 1
+    }
+    if not allowed:
+        raise ValueError("no allowed depths")
+    base_by_example = [
+        min(
+            (
+                example.energy_by_depth[depth]
+                for depth in allowed
+                if depth in example.energy_by_depth
+            ),
+            default=float("inf"),
+        )
+        for example in test
+    ]
+    base_j = sum(base_by_example)
     extras: list[float] = []
-    for example in test:
-        cheapest = min(example.energy_by_depth.values())
+    for example, base in zip(test, base_by_example, strict=True):
         correct_costs = [
-            example.energy_by_depth[depth] - cheapest
+            example.energy_by_depth[depth] - base
             for depth, correct in example.correct_by_depth.items()
-            if correct
+            if correct and depth in allowed
         ]
         if correct_costs:
             extras.append(min(correct_costs))
@@ -218,6 +262,7 @@ def matched_oracle_evaluation(test: Sequence[PolicyExample], static_depth: int) 
         "total_j": total_j,
         "energy_per_correct": total_j / target_correct if target_correct else float("inf"),
         "mean_depth": float("nan"),
+        "allow_abstention": allow_abstention,
     }
 
 

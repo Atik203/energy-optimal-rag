@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from rag_energy.data.loader import load_prepared_split  # noqa: E402
+from rag_energy.data.splits import assign_split  # noqa: E402
 from rag_energy.retrieval.index import RetrievalIndex  # noqa: E402
 from rag_energy.stats.policy import (  # noqa: E402
     PolicyExample,
@@ -42,6 +43,7 @@ def _load_rows(path: Path) -> dict[tuple[str, int], dict[str, str]]:
 def _examples(
     qids: list[str],
     questions: dict[str, str],
+    wh_types: dict[str, str],
     rows: dict[tuple[str, int], dict[str, str]],
     index: RetrievalIndex,
     k_grid: list[int],
@@ -63,6 +65,7 @@ def _examples(
                 best_depth=0,
                 correct_by_depth=correct,
                 energy_by_depth=energy,
+                wh_type=wh_types.get(qid, ""),
             )
         )
     return examples
@@ -89,6 +92,7 @@ def main() -> int:
 
     split = load_prepared_split(root / "data" / "processed", "squad", "p1_primary")
     questions = {str(row.qid): str(row.question) for row in split.questions.itertuples(index=False)}
+    wh_types = {str(row.qid): str(row.wh_type) for row in split.questions.itertuples(index=False)}
     rows = _load_rows(raw_path)
     k_grid = sorted({int(row["k"]) for row in rows.values()})
     index = RetrievalIndex.from_corpus(split.corpus)
@@ -96,18 +100,13 @@ def main() -> int:
     qids = list(split.ids)
     if len(qids) != 1000:
         raise SystemExit(f"expected 1,000 P1 questions, found {len(qids)}")
-    import random
+    train_ids = [qid for qid in qids if assign_split(qid, 20261115) == "train"]
+    val_ids = [qid for qid in qids if assign_split(qid, 20261115) == "validation"]
+    test_ids = [qid for qid in qids if assign_split(qid, 20261115) == "test"]
 
-    rng = random.Random(20261115)
-    shuffled = qids[:]
-    rng.shuffle(shuffled)
-    train_ids = shuffled[:600]
-    val_ids = shuffled[600:800]
-    test_ids = shuffled[800:1000]
-
-    train = _examples(train_ids, questions, rows, index, k_grid)
-    validation = _examples(val_ids, questions, rows, index, k_grid)
-    test = _examples(test_ids, questions, rows, index, k_grid)
+    train = _examples(train_ids, questions, wh_types, rows, index, k_grid)
+    validation = _examples(val_ids, questions, wh_types, rows, index, k_grid)
+    test = _examples(test_ids, questions, wh_types, rows, index, k_grid)
 
     # Best static depth on validation by ratio of sums.
     static_rows = []
@@ -132,6 +131,9 @@ def main() -> int:
     test_static = static_evaluation(test, static_depth)
     test_oracle = oracle_evaluation(test)
     test_matched_oracle = matched_oracle_evaluation(test, static_depth)
+    test_matched_oracle_no_abstain = matched_oracle_evaluation(
+        test, static_depth, allow_abstention=False
+    )
     oracle_gain = oracle_gain_pct(
         float(test_static["energy_per_correct"]),
         float(test_oracle["energy_per_correct"]),
@@ -139,6 +141,10 @@ def main() -> int:
     matched_oracle_gain = oracle_gain_pct(
         float(test_static["energy_per_correct"]),
         float(test_matched_oracle["energy_per_correct"]),
+    )
+    matched_oracle_gain_no_abstain = oracle_gain_pct(
+        float(test_static["energy_per_correct"]),
+        float(test_matched_oracle_no_abstain["energy_per_correct"]),
     )
     policy_saving = 100.0 * (
         1.0 - float(test_policy["energy_per_correct"]) / float(test_static["energy_per_correct"])
@@ -166,8 +172,10 @@ def main() -> int:
             "policy": test_policy,
             "oracle": test_oracle,
             "matched_oracle": test_matched_oracle,
+            "matched_oracle_no_abstention": test_matched_oracle_no_abstain,
             "oracle_gain_pct": oracle_gain,
             "matched_oracle_gain_pct": matched_oracle_gain,
+            "matched_oracle_gain_no_abstention_pct": matched_oracle_gain_no_abstain,
             "policy_saving_pct": policy_saving,
             "oracle_gap_captured_pct": captured,
             "matched_oracle_gap_captured_pct": captured_matched,

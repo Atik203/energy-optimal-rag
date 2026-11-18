@@ -50,14 +50,14 @@ See [`docs/P2_RESULTS.md`](docs/P2_RESULTS.md),
 [`docs/P2_RESULTS_LLAMA.md`](docs/P2_RESULTS_LLAMA.md), and
 [`docs/P2_RESULTS_TAXES.md`](docs/P2_RESULTS_TAXES.md).
 
-**P3 status (2026-11-18): COMPLETE - adaptive claim NOT supported.** A
-BM25-feature, per-depth logistic policy was trained on 600 P1 questions, tuned
-on 200, and evaluated once on 200. Static `k=1` is the validation energy
-minimum (accuracy 0.400). On test, the policy reaches 0.380 accuracy at 66.38
-J/correct versus static 0.385 at 65.71 J/correct (saving −1.02%). The hindsight
-oracle gains 41.28%, but the policy captures −2.48% of that gap, so G4 fails.
-The oracle is unconstrained (accuracy 0.605 vs 0.385), so its gain is not a
-matched-accuracy quantity. No adaptive claim is made. See
+**P3 status (2026-11-19): COMPLETE - adaptive claim NOT supported.** A
+BM25-feature, per-depth logistic policy was trained on a hashed 608/206/186
+split of P1 (question type included). Static `k=1` is the validation energy
+minimum. On test, the policy reaches 0.4194 accuracy at 59.99 J/correct versus
+static 0.4194 at 59.57 J/correct (saving −0.71%). The matched-accuracy oracle
+gains 28.64%, but the policy captures −2.46% of that gap, so G4 fails. Without
+abstention the matched gap falls to 7.21%, so most of the oracle advantage is an
+abstention gain. No adaptive claim is made. See
 [`docs/P3_RESULTS.md`](docs/P3_RESULTS.md).
 
 **P4 status (2026-11-18): COMPLETE - theory is local, coverage model rejected.**
@@ -66,7 +66,11 @@ Across P1, Qwen2.5-1.5B, HotpotQA, and Llama 3B, the coverage model fits poorly
 distractor counterexample is present. Identity gaps are positive at `k ≥ 4` on
 P1, Qwen, and Llama (up to +0.70), and HotpotQA is negative at `k=2` then
 positive. The identity remains a local diagnostic; no global `k*` is claimed.
-See [`docs/P4_RESULTS.md`](docs/P4_RESULTS.md).
+A recall × precision decomposition resolves the plateau: recall rises while
+conditional reader precision falls, and the two-stage model fits with RMSE
+0.015–0.024 versus 0.062–0.149 for the one-stage coverage model.
+See [`docs/P4_RESULTS.md`](docs/P4_RESULTS.md) and
+[`docs/RECALL_PRECISION.md`](docs/RECALL_PRECISION.md).
 
 **P5/P6 status (2026-11-18): paper and reproducibility checks.** The paper and
 supplement include P1–P4; tables are regenerated from registered runs and the

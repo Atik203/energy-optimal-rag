@@ -127,6 +127,7 @@ The identity is reported as a diagnostic, not as proof of optimality.
 ## 6. Certification cost
 
 `N* = 6,189` queries (95% CI [5,697, 6,748]) at `k=4`, with `C_cert = 311,992 J` for the
+sweep; the exact per-query-energy break-even is 5,316 queries.
 sweep. This is a break-even calculation, not a deployment guarantee.
 
 ## 7. Sensitivity

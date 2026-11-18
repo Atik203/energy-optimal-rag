@@ -14,7 +14,7 @@ P1 observed `A(4) − A(32) = −4.30 pp` on SQuAD. On HotpotQA the contrast is
 
 - `A(4) = 0.4100`, `A(10) = 0.5180`, mean difference **−10.80 pp**.
 - Paired `n = 500`; discordant `b = 12`, `c = 66`;
-  `p_direction ≈ 1.0` (null: contrast ≥ 0).
+  `p_direction ≈ 1.1e-10` (null: contrast ≥ 0).
 - One-sided 95% upper bound: **−8.00 pp**.
 - Point direction matches P1: **True**.
 - **H7 supported: True** (whole directional interval negative).

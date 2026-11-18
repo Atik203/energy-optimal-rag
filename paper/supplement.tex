@@ -673,8 +673,10 @@ reported as such. The P0 failure and the fixed $[0.8,1.4]$ range are unchanged.
 A continuous NVML probe on Qwen2.5-1.5B measured the power signal for 3~s after
 each query. The signal did not return to the pre-run idle: the residual after
 2--3~s was 5.0~W at $k=0$, 10.3~W at $k=8$, and 14.6~W at $k=32$, and the
-pre-query floor was 5--64~W above idle depending on the preceding depth. The
-per-query window therefore measures the neighbour's power level at short depths.
+pre-query floor was 5--64~W above idle depending on the preceding depth. A
+second probe on the P1 Ollama reader shows the same pattern (pre-query
+4.5--55.6~W; residual 6.9--16.0~W after 3~s). The per-query window therefore
+measures the neighbour's power level at short depths.
 
 \begin{table}[pos=htbp]
   \centering
@@ -925,12 +927,12 @@ supported; H2 and H3 are not; H5--H7 are outside P1 scope.
     K3 & $P(k^{*}\text{ optimal})=0.7244$ & Fail \\
     K4 & $S(4)=0.355$, not flat & Pass \\
     K5 & 95\% set $\{4,8\}$, reported span 4 & Fail \\
-    K6 & Oracle gain 41.28\%, above the 15\% kill floor & Pass \\
+    K6 & Oracle gain 36.80\%, above the 15\% kill floor & Pass \\
     K7 & Max CV 18.44\%; MDE 5.62\% below the 161\% effect & Pass \\
     G1 & Non-inferior false; savings 58.17\% & Fail \\
     G2 & Upper bound on loss 6.17~pp; $P=0.7244$ & Fail \\
     G3 & $S(4)=0.355$ in $[0.10,0.70]$ and increasing & Pass \\
-    G4 & Matched oracle 30.56\%; policy capture $-3.35\%$ & Fail \\
+    G4 & Matched oracle 28.64\%; policy capture $-2.46\%$ & Fail \\
     G5 & HotpotQA direction $-10.80$~pp & Pass \\
     \bottomrule
   \end{tabularx}
@@ -1047,8 +1049,9 @@ The policy uses BM25 score features (top, second, gap, mean, standard deviation,
 softmax entropy, positive count) and question length. Features are available
 before generation. A per-depth logistic model predicts correctness; the policy
 picks the cheapest depth whose predicted correctness clears a threshold tuned on
-validation. The split is 600 train / 200 validation / 200 test from the P1
-questions, with no test-set tuning.
+validation. The split is deterministic SHA-256 assignment of
+\texttt{seed:question\_id}, realized as 608 train / 206 validation / 186 test
+from the P1 questions, with no test-set tuning.
 
 \begin{table}[pos=htbp]
   \centering
@@ -1061,19 +1064,54 @@ questions, with no test-set tuning.
     \toprule
     \textbf{Method} & \textbf{Accuracy} & \textbf{J/correct} & \textbf{Saving vs static} \\
     \midrule
-    Static $k=1$ & 0.385 & 65.71 & — \\
-    Learned policy & 0.380 & 66.38 & $-1.02\%$ \\
-    Hindsight oracle (unconstrained) & 0.605 & 38.58 & $41.28\%$ \\
-    Hindsight oracle (matched accuracy) & 0.385 & 45.63 & $30.56\%$ \\
+    Static $k=1$ & 0.4194 & 59.57 & — \\
+    Learned policy & 0.4194 & 59.99 & $-0.71\%$ \\
+    Hindsight oracle (unconstrained) & 0.6667 & 37.65 & $36.80\%$ \\
+    Hindsight oracle (matched accuracy) & 0.4194 & 42.51 & $28.64\%$ \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-The matched-accuracy oracle gain is 30.56\% (41.28\% unconstrained), above the
-20\% G4 floor, but the policy captures $-3.35\%$ of the matched gap
-($-2.48\%$ unconstrained), below the 50\% capture floor. G4 is therefore not
-supported. The negative result is specific to this BM25-only policy class; it
-does not prove that no query-conditional policy can work.
+The matched-accuracy oracle gain is 28.64\% (36.80\% unconstrained), above the
+20\% G4 floor, but the policy captures $-2.46\%$ of the matched gap
+($-1.92\%$ unconstrained), below the 50\% capture floor. Without abstention the
+matched gap falls to 7.21\%, so most of the oracle advantage is an abstention
+gain rather than depth routing. G4 is therefore not supported. A predictability audit gives an out-of-fold AUC
+of 0.733 for correctness at $k=1$, with a learning curve flat from 50 to 608
+training questions (0.707, 0.717, 0.695, 0.727, 0.724). An answer-presence
+oracle (retrieve at $k=1$ when the gold string is in the top-1 passage, else
+$k=0$) reaches 47.8\% capture on the same test split, below the 50\% threshold.
+The negative result is specific to this BM25-only policy class; it does not
+prove that no query-conditional policy can work.
+
+\section{Recall $\times$ precision decomposition}\label{sec:s9b}
+
+Accuracy is $A(k)=R(k)Q(k)$, with $R$ the fraction of questions whose answer
+evidence is in the top-$k$ passages and $Q$ the conditional reader precision.
+Table~\ref{tab:s9brq} reports both and compares the two-stage model
+$A=R(q_0-\gamma k)$ with the one-stage coverage model. The one-stage model fits
+recall, not accuracy; the two-stage RMSE is 0.015--0.024 versus 0.062--0.149.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Recall $\times$ precision decomposition and model RMSE.}
+  \label{tab:s9brq}
+  \footnotesize
+  \begin{tabular}{@{}lrrrrrr@{}}
+    \toprule
+    Arm & $R(1)$ & $R(\max)$ & $Q(1)$ & $Q(\max)$ & 2-stage & 1-stage \\
+    \midrule
+    P1 Qwen4B & 0.590 & 0.892 & 0.663 & 0.553 & 0.017 & 0.137 \\
+    Qwen1.5B & 0.622 & 0.900 & 0.508 & 0.378 & 0.015 & 0.109 \\
+    Llama 3B & 0.622 & 0.900 & 0.669 & 0.473 & 0.021 & 0.149 \\
+    HotpotQA & 0.740 & 1.000 & 0.270 & 0.518 & 0.024 & 0.062 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The decomposition explains the SQuAD plateau (precision decline), the Llama peak
+at $k=4$ (steeper precision decline), and the P3 failure (BM25 features predict
+$R$, not $Q$). It is descriptive and changes no gate.
 
 \section{P4 theory validation}\label{sec:s10}
 

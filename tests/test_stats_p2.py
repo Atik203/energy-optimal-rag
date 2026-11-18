@@ -98,6 +98,7 @@ def test_direction_is_supported_when_the_whole_interval_is_negative() -> None:
     assert result["one_sided_upper_zero"] < 0.0
     assert result["h7_supported"] is True
     assert result["point_direction_matches"] is True
+    assert result["p_direction"] < 0.01
 
 
 def test_direction_is_not_supported_when_the_interval_crosses_zero() -> None:

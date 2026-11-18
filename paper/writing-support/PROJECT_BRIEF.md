@@ -118,7 +118,7 @@ pointer. Status labels: `logs` (measured), `code only`, `author`, `missing`.
 | Boundary probe | 200 | 32,48,64 | qwen3.5:4b, 8k | **COMPLETE, no cliff** | analysis/boundary_qwen4b_p2 |
 | Context-budget probe | 200 | 32,48,64 | qwen3.5:4b, 16k, plus 4k control | **COMPLETE, no accuracy gain** | analysis/squad_qwen4b_ctx16k_p2 |
 | Energy taxes | 150 each | 0–32 | qwen3.5:4b | **COMPLETE, inconclusive** | docs/P2_RESULTS_TAXES.md |
-| P3 policy | 600/200/200 | 0–32 | qwen3.5:4b (P1 rows) | **COMPLETE, G4 NOT SUPPORTED** | docs/P3_RESULTS.md |
+| P3 policy | 608/206/186 | 0-32 | qwen3.5:4b (P1 rows) | **COMPLETE, G4 NOT SUPPORTED** | docs/P3_RESULTS.md |
 | P4 theory validation | 4 arms | all | mixed | **COMPLETE, coverage model rejected** | docs/P4_RESULTS.md |
 | H200 64k accuracy check | 200 | 64 | Qwen3.5-4B | Not run; accuracy only | prereg §2; MEASUREMENT §12 |
 
@@ -168,8 +168,8 @@ gap; `N*`. No multiplicity correction for the single primary test. [prereg/analy
 | 16k probe | A 0.475/0.485/0.500 at k=32/48/64; 4k control A(32)=0.475 | analysis/squad_qwen4b_ctx16k_p2/report.md | diagnostic |
 | Llama 3B | peak A(4)=0.476; A(32)=0.426 | analysis/squad_llama3b_p2/report.md; C-036 | exploratory |
 | Tax arms | fixed A→0.5867 at k=32; per-passage A→0.5733 at k=32 | analysis/fixed_a/report.md; analysis/per_passage_b/report.md; C-037–C-038 | inconclusive |
-| P3 policy | test 0.380 at 66.38 J/correct vs static k=1 0.385 at 65.71 | analysis/policy/policy.json; C-039 | **G4 not supported** |
-| P3 oracle | 41.28% gain, policy capture −2.48%; oracle accuracy 0.605 vs static 0.385 | analysis/policy/policy.json; C-040 | unconstrained oracle |
+| P3 policy | test 0.4194 at 59.99 J/correct vs static k=1 0.4194 at 59.57 | analysis/policy/policy.json; C-039 | **G4 not supported** |
+| P3 oracle | matched gain 28.64%, policy capture -2.46%; no-abstention gap 7.21% | analysis/policy/policy.json; C-040 | abstention-dominated |
 | P4 coverage fit | R² 0.273 (P1), 0.151 (Qwen), 0.879 (HotpotQA), 0.097 (Llama) | analysis/p4/p4.json | model rejected on 3/4 arms |
 | P4 monotonicity | P1/HotpotQA monotone; Qwen/Llama non-monotone | analysis/p4/p4.json | distractor counterexample present |
 | P4 identity | P1 +0.065/+0.200/+0.386/+0.566/+0.703 at k=2/4/8/16/32 | analysis/p4/identity.csv | local diagnostic |
@@ -186,7 +186,7 @@ gap; `N*`. No multiplicity correction for the single primary test. [prereg/analy
 | The coverage model describes `A(k)` generally. | **Rejected** on 3/4 arms (R² 0.097–0.879) | analysis/p4/p4.json; docs/P4_RESULTS.md | No model-based claim |
 | Greedy search is safe because `A(k)` is monotone. | **Rejected** on Qwen and Llama (non-monotone) | analysis/p4/p4.json | Global search or monotonicity check required |
 | Absolute `J`, `E`, `N*`, `S(k)` for P1. | **Claimable**: all seven block factors passed | runs/squad_qwen4b_p1/blocks.json; prereg §4.1 | Calibrated, with the `k=0` 0.8089 caveat |
-| A query-conditional policy captures ≥50% of a ≥20% oracle gap. | **Not supported (P3)**: oracle gain 41.28%, policy capture −2.48% | docs/P3_RESULTS.md; analysis/policy/policy.json; C-039–C-040 | No adaptive claim |
+| A query-conditional policy captures ≥50% of a ≥20% oracle gap. | **Not supported (P3)**: matched oracle 28.64%, policy capture -2.46% | docs/P3_RESULTS.md; analysis/policy/policy.json; C-039–C-040 | No adaptive claim |
 | H7 direction replicates on Qwen2.5-1.5B or HotpotQA. | **Mixed**: Qwen not supported (+2.00 pp), HotpotQA supported (−10.80 pp) | docs/P2_RESULTS.md; docs/P2_RESULTS_HOTPOT.md; C-030, C-033 | G5 satisfied via HotpotQA; Qwen arm does not replicate |
 | Llama 3B / 16k context probe change H7 or G5. | No | prereg §2; D-012–D-013 | Prohibited post-outcome |
 | H200 energy result. | No energy claim possible | prereg §2; MEASUREMENT §12 | Prohibited |

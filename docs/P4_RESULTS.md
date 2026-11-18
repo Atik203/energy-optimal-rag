@@ -65,6 +65,15 @@ curves are descriptive break-evens, not deployment guarantees. On arms where
 calibration failed (Qwen, HotpotQA, Llama), the energy side is uncalibrated, so
 `N*` inherits that limitation.
 
+## Recall × precision decomposition
+
+A separate decomposition (`docs/RECALL_PRECISION.md`) shows `A(k)=R(k)Q(k)`.
+Recall rises with depth while conditional reader precision falls on SQuAD and
+Llama; the two-stage model RMSE is 0.015–0.024 versus 0.062–0.149 for the
+one-stage coverage model. The one-stage model fits recall, not accuracy. This
+explains the plateau and the Llama peak, and it explains why the P3 BM25 policy
+fails: its features predict recall, not conditional reader precision.
+
 ## Conclusion
 
 - The coverage model is not a general description of the accuracy curve.
