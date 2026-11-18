@@ -377,7 +377,8 @@
       "prereg/PREREGISTRATION.md": "1ac8ce25fe6592f8c9675670c651caa0340bed5c651fcddc2f8452e0d5df7c4e",
       "prereg/analysis_plan.md": "7122cdfca410828f77fdbbc32c288df20230fa4e7554a3a7e43a7c4b69860b29"
     },
-    "git_commit": "903ff51a71affe21276cda4f08ca92931e4f30a1"
+    "git_commit": "18fde945b6cf54987d8d947d9ce97db1c8e7abea",
+    "git_commit_note": "HEAD of the generating checkout. When this artifact is committed in the same change as the analysis code, the recorded commit is the parent of the artifact commit and the statistics are reproducible from it."
   },
   "software": {
     "python": "3.12.13",

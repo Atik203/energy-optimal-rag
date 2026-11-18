@@ -60,6 +60,11 @@ def build_provenance(root: Path, raw_path: Path) -> dict[str, Any]:
         "raw_csv_sha256": _sha256(raw_path),
         "prereg_sha256": {name: _sha256(root / name) for name in PREREG_FILES},
         "git_commit": _git_commit(root),
+        "git_commit_note": (
+            "HEAD of the generating checkout. When this artifact is committed in the "
+            "same change as the analysis code, the recorded commit is the parent of the "
+            "artifact commit and the statistics are reproducible from it."
+        ),
     }
 
 
