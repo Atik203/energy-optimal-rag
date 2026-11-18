@@ -56,3 +56,7 @@ A-0054,p4,analysis,analysis/p4/scoring.csv,281d86f597f550d17c0c692f9f5791dbcb39d
 A-0055,p4,document,docs/P4_RESULTS.md,aa2d481de0ea68fcbbf6218971e2ad295d0cb5ad2c9674b3ce48bbf90cd579ed,3265,2026-11-18T17:03:16Z,CC-BY-4.0,P4 result memo
 A-0056,policy,analysis,analysis/policy/policy.json,8c8c939ec917a3fa02e897194363c21348f4a4ba516a4b5dbe1767f963576fcd,2306,2026-11-18T17:43:03Z,CC-BY-4.0,P3 policy with matched-accuracy oracle
 A-0057,policy,analysis,analysis/policy/report.md,bd860b568b60834f1241319640c7705fa3a020bb2f25c8042e54879c0410141e,745,2026-11-18T17:43:03Z,CC-BY-4.0,P3 report with matched-accuracy oracle
+A-0058,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/margin_frontier.json,32ca0f2424237b5a16fc416189522d0b62cac261d6a52f559ff7885eede30763,3304,2026-11-18T18:08:02Z,CC-BY-4.0,Margin-indexed certification frontier
+A-0059,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/report.md,194b72cea1bb4d2eb687803b936067035c515b2d3eae259dd095913eadc9b93a,632,2026-11-18T18:08:02Z,CC-BY-4.0,Margin-frontier report
+A-0060,squad_qwen4b_p1,figure,paper/figures/p1_frontier.png,b04bc9e724329b8b3e459f14c90268c6d19670e8b993d62278a709deb8c79840,455757,2026-11-18T18:08:02Z,CC-BY-4.0,Margin-frontier figure (650 dpi)
+A-0061,squad_qwen4b_p1,analysis,artifacts/release/squad_qwen4b_p1_per_query.csv.gz,31edc21fd6ad16f821eb3c0bc887ce1f4cca773e8be01ebc134bb01443545e57,253329,2026-11-18T18:08:02Z,CC-BY-4.0,Sanitized per-query table

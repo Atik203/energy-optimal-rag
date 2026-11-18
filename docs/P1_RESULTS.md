@@ -59,6 +59,15 @@ depth reduction, while leaving the 5 pp bound unresolved.
 The 2 pp secondary contrast has the same point estimate (−4.30 pp), lower bound −6.17 pp, and
 p = 0.9785; it is estimation-only and is not a certification target.
 
+## 2b. Margin frontier
+
+`analysis/squad_qwen4b_p1/margin_frontier.json` reports the selected depth,
+saving, one-sided bound, and derived required `n` at each margin. Only the 5 pp
+row is confirmatory; the rest are exploratory. At the observed effect, the 5 pp
+margin needs about 7,100 pairs, the 6 pp margin about 1,200, and the 3 pp margin
+about 18,500; only the 10 pp margin clears at `n = 1,000`. These are derived
+extrapolations at the observed discordance, not new tests.
+
 ## 3. Descriptive curve (calibrated)
 
 | k | n | A(k) | J(k) J/query | E(k) J/correct | S(k) |

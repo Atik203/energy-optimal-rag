@@ -868,6 +868,17 @@ diagnostic; it does not establish a global optimum on any arm. Margin and
 scoring sensitivity are reported in the supplement: the selected depth depends
 on the scoring rule on every arm.
 
+\begin{figure}[pos=htbp]
+  \centering
+  \IfFileExists{figures/p1_frontier.png}%
+    {\includegraphics[width=0.98\linewidth]{figures/p1_frontier.png}}%
+    {\missingfigure{figures/p1_frontier.png}{Margin-frontier figure generated from the registered analysis.}}
+  \caption{Margin-indexed certification frontier. Left: selected depth and energy saving at each margin. Right: derived sample size needed for the observed effect to clear that margin. The 5 pp row is confirmatory; the other rows are exploratory. At the observed effect, no margin below 10 pp is certifiable at $n=1{,}000$.}
+  \label{fig:frontier}
+\end{figure}
+
+The frontier makes the budget explicit. At the observed effect, the 5 pp margin needs about 7{,}100 pairs, the 6 pp margin about 1{,}200, and the 3 pp margin about 18{,}500; only the 10 pp margin clears at $n=1{,}000$. These are derived extrapolations at the observed discordance, not new tests, and the 5 pp row is the only confirmatory one. The practical lesson is that the binding uncertainty is the effect size, not the nominal sample size: a design planned at a near-zero difference cannot resolve a margin that the data show is several percentage points wide.
+
 \subsection{Evidence Status}\label{sec:status}
 
 P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of 7{,}000 rows, all seven block factors in range, an idle CV of 1.23\%, and a repeat CV below the 20\% threshold. The descriptive energy model is supported: the per-query curve is affine with $b>0$, $R^{2}=0.9714$, and a lack-of-fit $p$ of 0.2813, and the context share rises from 0.209 to 0.807. The policy claim fails: the accuracy lower bound is outside the 5 pp margin, the selection probability is 0.7244, and the identity gap at $k=4$ excludes zero. The 2 pp margin remains dead, and the 5 pp margin is now also unsupported. P2 is complete. Its 1.5B-reader arm does not support H7 ($+2.00$ pp, upper $+4.90$ pp), while the HotpotQA arm does ($-10.80$ pp, upper $-8.00$ pp) and satisfies G5. Energy on both P2 arms is uncalibrated because at least one block factor failed, so the P2 energy contrasts are not certified. P3 is complete and negative: on a 600/200/200 split, the BM25-feature logistic policy reaches 0.380 accuracy at 66.38 J/correct versus static $k=1$ at 0.385 and 65.71 J/correct, capturing $-2.48\%$ of a $41.28\%$ oracle gap, so G4 is not supported. P4 shows the theory is local: the coverage model is rejected on three of four arms, Qwen and Llama are non-monotone, and positive identity gaps at $k\ge4$ flag over-retrieval without certifying a global optimum.
