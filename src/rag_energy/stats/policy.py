@@ -187,6 +187,40 @@ def oracle_evaluation(test: Sequence[PolicyExample]) -> dict[str, float]:
     }
 
 
+def matched_oracle_evaluation(test: Sequence[PolicyExample], static_depth: int) -> dict[str, float]:
+    """Hindsight oracle constrained to the static depth's accuracy.
+
+    Start every question at its cheapest depth, then pay the smallest extra
+    energy needed to make exactly ``C`` questions correct, where ``C`` is the
+    number correct at ``static_depth``. This is a matched-accuracy upper bound.
+    """
+    if not test:
+        raise ValueError("test must not be empty")
+    target_correct = sum(int(example.correct_by_depth[static_depth]) for example in test)
+    base_j = sum(min(example.energy_by_depth.values()) for example in test)
+    extras: list[float] = []
+    for example in test:
+        cheapest = min(example.energy_by_depth.values())
+        correct_costs = [
+            example.energy_by_depth[depth] - cheapest
+            for depth, correct in example.correct_by_depth.items()
+            if correct
+        ]
+        if correct_costs:
+            extras.append(min(correct_costs))
+    if len(extras) < target_correct:
+        raise ValueError("not enough questions with a correct depth for matched oracle")
+    extras.sort()
+    total_j = base_j + sum(extras[:target_correct])
+    return {
+        "n": float(len(test)),
+        "accuracy": target_correct / len(test),
+        "total_j": total_j,
+        "energy_per_correct": total_j / target_correct if target_correct else float("inf"),
+        "mean_depth": float("nan"),
+    }
+
+
 def static_evaluation(test: Sequence[PolicyExample], depth: int) -> dict[str, float]:
     """Evaluate one fixed depth on the same examples."""
     total_j = sum(policy_energy(example, depth) for example in test)

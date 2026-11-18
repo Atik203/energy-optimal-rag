@@ -20,23 +20,26 @@ The best static depth on validation by energy per correct answer is `k = 1`
 |---|---:|---:|---:|
 | Static `k = 1` | 0.385 | 65.71 | — |
 | Learned policy | 0.380 | 66.38 | −1.02% |
-| Hindsight oracle | 0.605 | 38.58 | 41.28% |
+| Hindsight oracle (unconstrained) | 0.605 | 38.58 | 41.28% |
+| Hindsight oracle (matched accuracy) | 0.385 | 45.63 | 30.56% |
 
 The tuned confidence threshold is 0.05, so the policy almost always falls back
-to the static depth. It captures **−2.48%** of the oracle gap.
+to the static depth. It captures **−2.48%** of the unconstrained oracle gap and
+**−3.35%** of the matched-accuracy gap.
 
 ## G4 adjudication
 
 G4 requires an oracle gain of at least 20% and a policy capture of at least 50%
-at matched accuracy. The oracle gain condition is met (41.28%), but the policy
-capture condition fails (−2.48%), so **G4 is not supported** and no adaptive
-claim is made.
+at matched accuracy. The oracle gain condition is met (30.56% matched; 41.28%
+unconstrained), but the policy capture condition fails (−3.35% matched; −2.48%
+unconstrained), so **G4 is not supported** and no adaptive claim is made.
 
 ## Caveats
 
-- The oracle is an unconstrained hindsight selector: its accuracy (0.605) is
-  higher than the static accuracy (0.385), so the 41.28% gain is not a
-  matched-accuracy quantity. A matched-accuracy oracle would be smaller.
+- The unconstrained oracle accuracy (0.605) is higher than the static accuracy
+  (0.385), so its 41.28% gain is not a matched-accuracy quantity. The
+  matched-accuracy oracle holds accuracy at 0.385 and still gives a 30.56% gap,
+  which the policy also fails to capture.
 - The negative result is for this feature set and policy class (BM25-only
   logistic models). It does not prove that no query-conditional policy can work.
 - The test split was evaluated once; the threshold was tuned on validation only.

@@ -42,3 +42,4 @@ C-040,P3 oracle gain is 41.28% but the policy captures -2.48%; oracle accuracy 0
 C-041,"The coverage model does not describe A(k) generally: R2 is 0.273 (P1), 0.151 (Qwen), 0.879 (HotpotQA), 0.097 (Llama).",rejected,fit,p4,analysis/p4/p4.json,coverage_r2,0.097-0.879,,,mixed,Model rejected on 3/4 arms.
 C-042,"The Qwen and Llama accuracy curves are non-monotone, so the distractor counterexample is present.",supported,measurement,p4,analysis/p4/p4.json,monotone,False for Qwen/Llama,,,mixed,Greedy search is unsafe.
 C-043,The identity gap is +0.200 at k=4 and +0.703 at k=32 on P1; it remains a local diagnostic.,supported,fit,p4,analysis/p4/identity.csv,identity_gap_k4,0.200,,,1000,No global optimum claimed.
+C-044,P3 matched-accuracy oracle gain is 30.56% and policy capture is -3.35%.,rejected,measurement,policy,analysis/policy/policy.json,matched_oracle_gap_captured_pct,-0.0335,,,200,G4 not supported under a matched-accuracy oracle.

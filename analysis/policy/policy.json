@@ -85,8 +85,17 @@
       "energy_per_correct": 38.581726396694215,
       "mean_depth": 2.41
     },
+    "matched_oracle": {
+      "n": 200.0,
+      "accuracy": 0.385,
+      "total_j": 3513.3921,
+      "energy_per_correct": 45.62846883116883,
+      "mean_depth": NaN
+    },
     "oracle_gain_pct": 41.282281505175575,
+    "matched_oracle_gain_pct": 30.55780965757917,
     "policy_saving_pct": -1.022302829429056,
-    "oracle_gap_captured_pct": -2.47637192557027
+    "oracle_gap_captured_pct": -2.47637192557027,
+    "matched_oracle_gap_captured_pct": -3.345471553375871
   }
 }

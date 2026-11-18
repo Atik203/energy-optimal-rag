@@ -23,6 +23,7 @@ from rag_energy.retrieval.index import RetrievalIndex  # noqa: E402
 from rag_energy.stats.policy import (  # noqa: E402
     PolicyExample,
     evaluate_policy,
+    matched_oracle_evaluation,
     oracle_evaluation,
     oracle_gain_pct,
     static_evaluation,
@@ -130,14 +131,24 @@ def main() -> int:
     test_policy = evaluate_policy(policy, test, static_depth, threshold)
     test_static = static_evaluation(test, static_depth)
     test_oracle = oracle_evaluation(test)
+    test_matched_oracle = matched_oracle_evaluation(test, static_depth)
     oracle_gain = oracle_gain_pct(
         float(test_static["energy_per_correct"]),
         float(test_oracle["energy_per_correct"]),
+    )
+    matched_oracle_gain = oracle_gain_pct(
+        float(test_static["energy_per_correct"]),
+        float(test_matched_oracle["energy_per_correct"]),
     )
     policy_saving = 100.0 * (
         1.0 - float(test_policy["energy_per_correct"]) / float(test_static["energy_per_correct"])
     )
     captured = 100.0 * policy_saving / oracle_gain if oracle_gain > 0 else float("nan")
+    captured_matched = (
+        100.0 * policy_saving / matched_oracle_gain
+        if matched_oracle_gain > 0
+        else float("nan")
+    )
 
     payload = {
         "run_id": args.run_id,
@@ -156,9 +167,12 @@ def main() -> int:
             "static": test_static,
             "policy": test_policy,
             "oracle": test_oracle,
+            "matched_oracle": test_matched_oracle,
             "oracle_gain_pct": oracle_gain,
+            "matched_oracle_gain_pct": matched_oracle_gain,
             "policy_saving_pct": policy_saving,
             "oracle_gap_captured_pct": captured,
+            "matched_oracle_gap_captured_pct": captured_matched,
         },
     }
 
@@ -179,10 +193,13 @@ def main() -> int:
         f"{test_static['energy_per_correct']:.2f} | — |",
         f"| test | policy | {test_policy['accuracy']:.4f} | "
         f"{test_policy['energy_per_correct']:.2f} | {policy_saving:.2f}% |",
-        f"| test | oracle | {test_oracle['accuracy']:.4f} | "
+        f"| test | oracle (unconstrained) | {test_oracle['accuracy']:.4f} | "
         f"{test_oracle['energy_per_correct']:.2f} | {oracle_gain:.2f}% |",
+        f"| test | oracle (matched accuracy) | {test_matched_oracle['accuracy']:.4f} | "
+        f"{test_matched_oracle['energy_per_correct']:.2f} | {matched_oracle_gain:.2f}% |",
         "",
-        f"Oracle gap captured by the policy: {captured:.2f}%.",
+        f"Oracle gap captured by the policy (unconstrained oracle): {captured:.2f}%.",
+        f"Oracle gap captured by the policy (matched oracle): {captured_matched:.2f}%.",
         "",
         "G4 requires an oracle gain of at least 20% and a policy capture of at least "
         "50% at matched accuracy. The test split is used once.",

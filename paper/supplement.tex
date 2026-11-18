@@ -856,7 +856,7 @@ supported; H2 and H3 are not; H5--H7 are outside P1 scope.
     G1 & Non-inferior false; savings 58.17\% & Fail \\
     G2 & Upper bound on loss 6.17~pp; $P=0.7244$ & Fail \\
     G3 & $S(4)=0.355$ in $[0.10,0.70]$ and increasing & Pass \\
-    G4 & Oracle 41.28\%; policy capture $-2.48\%$ & Fail \\
+    G4 & Matched oracle 30.56\%; policy capture $-3.35\%$ & Fail \\
     G5 & HotpotQA direction $-10.80$~pp & Pass \\
     \bottomrule
   \end{tabularx}
@@ -989,13 +989,15 @@ questions, with no test-set tuning.
     \midrule
     Static $k=1$ & 0.385 & 65.71 & — \\
     Learned policy & 0.380 & 66.38 & $-1.02\%$ \\
-    Hindsight oracle & 0.605 & 38.58 & $41.28\%$ \\
+    Hindsight oracle (unconstrained) & 0.605 & 38.58 & $41.28\%$ \\
+    Hindsight oracle (matched accuracy) & 0.385 & 45.63 & $30.56\%$ \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-The oracle gain is 41.28\%, above the 20\% G4 floor, but the policy captures
-$-2.48\%$ of that gap, below the 50\% capture floor. G4 is therefore not
+The matched-accuracy oracle gain is 30.56\% (41.28\% unconstrained), above the
+20\% G4 floor, but the policy captures $-3.35\%$ of the matched gap
+($-2.48\%$ unconstrained), below the 50\% capture floor. G4 is therefore not
 supported. The negative result is specific to this BM25-only policy class; it
 does not prove that no query-conditional policy can work.
 
