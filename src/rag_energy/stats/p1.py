@@ -715,12 +715,20 @@ def scoring_sensitivity(
     rows: Sequence[dict[str, Any]],
     *,
     margins: Sequence[float] = (0.02, 0.03, 0.04, 0.05, 0.06, 0.08, 0.10),
+    reference_depth: int | None = None,
 ) -> dict[str, Any]:
     """Repeat selection and savings under EM, lenient span, and F1 >= 0.5."""
     results: dict[str, Any] = {}
     for key in CORRECT_KEYS:
         summaries = summarize(rows, correct_key=key)
-        results[key] = margin_sensitivity(summaries, margins=margins)
+        reference = (
+            reference_depth
+            if reference_depth is not None
+            else max(summary.k for summary in summaries)
+        )
+        results[key] = margin_sensitivity(
+            summaries, margins=margins, reference_depth=reference
+        )
     return results
 
 
