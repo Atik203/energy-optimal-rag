@@ -695,6 +695,15 @@ The consequence for the rest of the manuscript is a reporting rule, not a repair
 
 The P2 calibration failures motivated a direct probe of the per-query window. With a continuous sampler and a 3~s quiet window after each query, the power signal did not return to the pre-run idle: the residual was 5.0~W at $k=0$, 10.3~W at $k=8$, and 14.6~W at $k=32$ after 2--3~s, and the pre-query floor was 5--64~W above idle depending on the preceding depth. A query's measured energy must not depend on which query preceded it. In the P1 and P2 sweeps, the $k=0$ energy varies with the previous row's depth by 24\% (P1), 48\% (Qwen1.5B), 22\% (HotpotQA), and 82\% (Llama); the full table is in the supplement.
 
+\begin{figure}[pos=htbp]
+  \centering
+  \IfFileExists{figures/measurement_validity.png}%
+    {\includegraphics[width=0.98\linewidth]{figures/measurement_validity.png}}%
+    {\missingfigure{figures/measurement_validity.png}{Measurement-validity figure generated from the probe.}}
+  \caption{Left: the post-query power floor does not return to the pre-run idle within 3~s. Right: $k=0$ energy depends on the preceding row's depth. Both are diagnostics of the per-query estimator, not of the reader.}
+  \label{fig:validity}
+\end{figure}
+
 The replay discriminator is decisive. Replaying the sweep's exact 20-question depth permutation as one continuous block gives 7{,}336.9~J, within 2.0\% of the 7{,}195.7~J sum of the seven constant-depth blocks. The sweep's per-query sum is much larger at short depths (e.g.\ 19.7~J/query vs.\ 5.1~J/query at $k=0$ on Qwen1.5B). The gap is a window-estimator bias, not extra work.
 
 Table~\ref{tab:bounded} reports savings from the sweep means and the block means. The qualitative saving is robust: every arm is above the 20\% floor under both estimators. The point value is not. P1's calibrated 58.17\% is conservative relative to both, while HotpotQA's 23.03\% becomes 23.0--31.4\%. We therefore report P2 energy as an uncalibrated range, keep every calibration gate unchanged, and treat P1's absolute $J$ as provisional because its $k=0$ factor is 1.1\% above the floor and the same bias is present. The accuracy contrast and the qualitative saving are unaffected.
