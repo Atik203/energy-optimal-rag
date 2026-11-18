@@ -1,115 +1,4 @@
-\documentclass[a4paper,fleqn]{cas-sc}
-
-% Preamble follows the project reference format (paper/FORMAT.md):
-% Elsevier CAS single-column class, numeric citations, booktabs tables.
-\usepackage[utf8]{inputenc}
-\usepackage[numbers]{natbib}
-\usepackage{tabularx}
-\usepackage[english]{babel}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{booktabs}
-\usepackage{float}
-\usepackage{array}
-\usepackage{lineno}
-\usepackage{silence}
-\WarningFilter{hyperref}{Ignoring empty anchor}
-\setlength{\emergencystretch}{2em}
-
-% Float placement: the supplement is table-heavy, so allow up to three
-% floats per page and keep text pages from breaking early.
-\setcounter{topnumber}{3}
-\setcounter{bottomnumber}{2}
-\setcounter{totalnumber}{5}
-\renewcommand{\topfraction}{0.95}
-\renewcommand{\bottomfraction}{0.95}
-\renewcommand{\textfraction}{0.05}
-\renewcommand{\floatpagefraction}{0.7}
-\AtBeginDocument{%
-  \setlength{\textfloatsep}{10pt plus 2pt minus 2pt}%
-  \setlength{\floatsep}{8pt plus 2pt minus 2pt}%
-  \setlength{\intextsep}{8pt plus 2pt minus 2pt}%
-  \setlength{\abovecaptionskip}{6pt}%
-  \setlength{\belowcaptionskip}{2pt}%
-}
-
-% Table styling, as in the reference manuscript.
-\renewcommand{\arraystretch}{1.08}
-\setlength{\tabcolsep}{5pt}
-
-% Supplement numbering: S1, S2, ... and matching table and equation numbers.
-\renewcommand{\thesection}{S\arabic{section}}
-\renewcommand{\thetable}{S\arabic{table}}
-\renewcommand{\theequation}{S\arabic{equation}}
-% Keep hyperref anchors unique and consistent with the S numbering.
-\renewcommand{\theHsection}{S\arabic{section}}
-\renewcommand{\theHtable}{S\arabic{table}}
-\renewcommand{\theHequation}{S\arabic{equation}}
-
-% The class prints an empty ORCID footnote when no iD is declared.
-\RenewDocumentCommand \printorcid { } { }
-
-% Preprint footer, as in the reference manuscript: "Rahaman: Preprint" rather
-% than the class's "submitted to Elsevier" wording.
-\ExplSyntaxOn
-\cs_set:Npn \__first_footerline:
-  {
-    \group_begin:
-    \small
-    \sffamily
-    \ifnum\theblind>0\relax
-    \else
-    \__short_authors: :~
-    \fi
-    \rmfamily \itshape Preprint
-    \group_end:
-  }
-\ExplSyntaxOff
-
-% The class draws email and URL icons from a thumbnails/ folder. The no-logo
-% mode keeps the front matter self-contained if an email is added later.
-\ExplSyntaxOn
-\bool_gset_true:N \g_stm_nologo_bool
-\ExplSyntaxOff
-
-\begin{document}
-
-\shorttitle{Supplementary Material: Energy-Optimal Retrieval Depth}
-\shortauthors{Rahaman}
-
-\title[mode=title]{Supplementary Material for ``Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation''}
-
-\author[1]{Md. Atikur Rahaman}
-\affiliation[1]{organization={Department of Computer Science and Engineering, United International University},
-  city={Dhaka},
-  citysep={},
-  postcode={1212},
-  country={Bangladesh}}
-
-\begin{abstract}
-This supplement documents the measurement protocol, the estimands and estimators, the
-pre-specified gate thresholds, the exclusion and validity rules, the P0 harness failure, the P1
-confirmatory results, and the reproducibility package of the study. P0 failed block calibration
-at $k=0$ ($\texttt{factor\_csv}=0.7944$ against a pre-specified $[0.8,1.4]$ range) and supports
-no energy claim. P1 completed 7{,}000/7{,}000 valid rows, and all seven block factors passed, so
-its energy values are calibrated. The primary 5~pp non-inferiority claim is not supported:
-$A(4)-A(32)=-4.30$~pp with a one-sided 95\% lower bound of $-6.17$~pp, and savings of 58.17\%
-[56.02, 60.14]\%. H1 and H4 are supported and H3 is not. No universal $k^{*}$, 2~pp optimum, or
-adaptive-policy gain is claimed.
-\end{abstract}
-
-\begin{keywords}
-Retrieval depth \sep Energy measurement \sep NVML \sep Non-inferiority \sep Preregistration \sep Reproducibility
-\end{keywords}
-
-\begingroup
-\hfuzz=120pt
-\maketitle
-\endgroup
-
-\linenumbers
-
+% Supplement body, included by main.tex with S numbering.
 \section{Measurement protocol}\label{sec:s1}
 
 Energy is measured on one local laptop GPU, an RTX 3060 Laptop with 6~GB of memory, with batch
@@ -157,7 +46,7 @@ f^{\mathrm{csv}}_k=\frac{J^{\mathrm{block}}_k}{\sum_{i\in S_k} j^{\mathrm{raw}}_
 f^{\mathrm{blk}}_k=\frac{J^{\mathrm{block}}_k}{\sum_{i\in B_k} \tilde{j}_{i,k}},
 \qquad
 c_k=\frac{f^{\mathrm{blk}}_k}{f^{\mathrm{csv}}_k},
-\label{eq:factor}
+\label{s:eq:factor}
 \end{equation}
 where $\tilde{j}_{i,k}$ is the block row's own windowed integral. The gate is on
 $f^{\mathrm{csv}}_k\in[0.8,1.4]$ at every depth. The within-block factor $f^{\mathrm{blk}}_k$ and
@@ -247,7 +136,7 @@ The context-side share and the retrieval-only share are
 S(k)=\frac{J_{\mathrm{ret}}(k)+J_{\mathrm{pre}}(k)}{J(k)},
 \qquad
 S_r(k)=\frac{J_{\mathrm{ret}}(k)}{J(k)},
-\label{eq:shares}
+\label{s:eq:shares}
 \end{equation}
 where $J_{\mathrm{ret}}$ is the CPU retrieval proxy and $J_{\mathrm{pre}}$ is the prefill
 component, estimated from the fitted per-passage slope $b$ times $k$. The two shares are not
@@ -269,7 +158,7 @@ interior optimum.
 The energy model is fitted by ordinary least squares over the seven depth means,
 \begin{equation}
 J(k)=a+bk,
-\label{eq:affine}
+\label{s:eq:affine}
 \end{equation}
 with $a$ in joules per query and $b$ in joules per retrieved passage. H1 requires $b>0$ and
 $R^2\ge0.95$, and requires that a lack-of-fit check (residual pattern plus a quadratic-term
@@ -282,7 +171,7 @@ The identity compares the depth elasticity of energy with that of accuracy:
 \varepsilon_A(k)=\frac{k\,A'(k)}{A(k)},
 \qquad
 \Delta(k)=\varepsilon_J(k)-\varepsilon_A(k).
-\label{eq:identity}
+\label{s:eq:identity}
 \end{equation}
 $\varepsilon_A$ uses a central finite difference at interior depths and a one-sided difference
 at the grid edges, labeled as such. $\Delta(k)$ is reported with a bootstrap interval at the
@@ -320,7 +209,7 @@ one-sided lower bound on $\mathbb{E}[d]$ must exceed $-5$~pp. The decision rule 
 point-estimate saving of at least 20\%, with
 \begin{equation}
 \mathrm{savings}=1-\frac{E(4)}{E(32)}.
-\label{eq:savings}
+\label{s:eq:savings}
 \end{equation}
 The savings ratio is invariant to any depth-invariant multiplicative calibration factor, which
 is why it remains reportable when block calibration fails (Section~\ref{sec:s5}). The accuracy
@@ -330,7 +219,7 @@ The certification cost is a break-even calculation,
 \begin{equation}
 N^{*}=\frac{C_{\mathrm{cert}}}{A(k^{*})\left[E(k_0)-E(k^{*})\right]},
 \qquad k_0=32,
-\label{eq:nstar}
+\label{s:eq:nstar}
 \end{equation}
 where $C_{\mathrm{cert}}$ is the measured energy of the sweep in joules and $N^{*}$ is a count of
 deployment queries: the number needed to break even. $N^{*}$ is reported descriptively with a
@@ -469,7 +358,7 @@ The numeric keys behind Table~\ref{tab:ggates} are
 The unit is a question. A row is \emph{valid} when it carries a non-empty nonce, its request
 completed, and its power window recorded no sampler error. A failed or empty generation after a
 completed request is a \emph{wrong answer} ($C_{ik}=0$) and is retained, not invalidated. A row
-is invalid only for a protocol violation. Table~\ref{tab:validity} lists the conditions and their
+is invalid only for a protocol violation. Table~\ref{s:tab:validity} lists the conditions and their
 treatment.
 
 \begin{table}[pos=htbp]
@@ -477,7 +366,7 @@ treatment.
   \caption{Validity rules. The row-level reason codes are the ones written by
   \texttt{src/rag\_energy/runner.py}; the remaining rules are fixed in
   \texttt{prereg/PREREGISTRATION.md} \S8 and \texttt{docs/PROTOCOL.md} \S8.}
-  \label{tab:validity}
+  \label{s:tab:validity}
   \small
   \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X}
     \toprule
@@ -576,7 +465,7 @@ with a post-sweep block did not.
   \centering
   \caption{Block-calibration attempts. $f^{\mathrm{csv}}$ is the protocol factor
   $J^{\mathrm{block}}/\sum j^{\mathrm{raw}}$ over the sweep rows; $f^{\mathrm{blk}}$ and $c$ are
-  defined in Eq.~\ref{eq:factor}. Values are from \texttt{docs/P0\_HARNESS\_REPORT.md} \S3 and
+  defined in Eq.~\ref{s:eq:factor}. Values are from \texttt{docs/P0\_HARNESS\_REPORT.md} \S3 and
   \S6 and from \texttt{docs/DECISIONS.md} D-021.}
   \label{tab:factors}
   \small
@@ -597,7 +486,7 @@ with a post-sweep block did not.
 
 \subsection{Window-bookkeeping decomposition}
 
-The \texttt{\_r3} record separates the two ratios in Eq.~\ref{eq:factor}. The block's own
+The \texttt{\_r3} record separates the two ratios in Eq.~\ref{s:eq:factor}. The block's own
 per-query accounting is consistent: $f^{\mathrm{blk}}=0.9989$, so the integrated block window
 agrees with the sum of the 20 block-row windows. The sweep-to-block ratio is $f^{\mathrm{csv}}=
 0.7944$: the 20 sweep rows carry 446.672~J of windowed energy, while the block window for the
@@ -768,7 +657,7 @@ was not widened, and the factor is reported as measured.
   \centering
   \caption{Block calibration at the seven depths. $f^{\mathrm{csv}}_k$ is the gated protocol
   factor, $f^{\mathrm{blk}}_k$ the within-block factor, and $c_k$ their ratio
-  (Eq.~\ref{eq:factor}). All seven depths passed, so the factors were applied. Values are from
+  (Eq.~\ref{s:eq:factor}). All seven depths passed, so the factors were applied. Values are from
   \texttt{runs/squad\_qwen4b\_p1/blocks.json}.}
   \label{tab:p1factors}
   \small
@@ -864,7 +753,7 @@ discordance, realized power at $d=-4.3$~pp is 0.152; 80\% power needs about 16{,
 
 \subsection{Descriptive curve, energy model, and identity}
 
-Table~\ref{tab:p1curve} reports the calibrated curve. Equation~\ref{eq:affine} fits as
+Table~\ref{tab:p1curve} reports the calibrated curve. Equation~\ref{s:eq:affine} fits as
 $J(k)=24.0759+2.2772k$ with $R^2=0.9714$; the quadratic lack-of-fit test gives $F=1.549$ and
 $p=0.2813$, so H1 is supported. The identity gap at the selected depth is
 $\Delta(4)=+0.2004$ with a 95\% interval of [0.1677, 0.2320], which excludes zero; H3 is not
@@ -936,7 +825,7 @@ rule-dependent.
 
 \subsection{Gate and hypothesis adjudication}
 
-Table~\ref{tab:p1gates} reports the gate values. K1, K2, K4, and K7 pass; K3 and K5 fail; K6 is
+Table~\ref{s:tab:p1gates} reports the gate values. K1, K2, K4, and K7 pass; K3 and K5 fail; K6 is
 a P3 analysis. G1 and G2 fail; G3 passes; G4 and G5 are P3 and P2 analyses. H1 and H4 are
 supported; H2 and H3 are not; H5--H7 are outside P1 scope.
 
@@ -945,7 +834,7 @@ supported; H2 and H3 are not; H5--H7 are outside P1 scope.
   \caption{P1 gate adjudication. Values are from
   \texttt{analysis/squad\_qwen4b\_p1/gates.json}; thresholds are those in
   Table~\ref{tab:kgates} and Table~\ref{tab:ggates}.}
-  \label{tab:p1gates}
+  \label{s:tab:p1gates}
   \small
   \setlength{\tabcolsep}{4pt}
   \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.9cm}>{\raggedright\arraybackslash}p{8.6cm}>{\raggedright\arraybackslash}X}
@@ -1313,4 +1202,3 @@ literature references belong to the main manuscript and are resolved from its bi
   \end{tabularx}
 \end{table}
 
-\end{document}
