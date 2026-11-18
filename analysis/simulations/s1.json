@@ -1,0 +1,2787 @@
+{
+  "study": "S1_ratio_estimator",
+  "seed": 20261115,
+  "reps": 2000,
+  "bootstrap_reps": 400,
+  "bootstrap_resamples": 300,
+  "note": "Monte Carlo simulation; not an empirical result.",
+  "design": {
+    "accuracies": [
+      0.1,
+      0.3,
+      0.5,
+      0.8
+    ],
+    "sample_sizes": [
+      200,
+      500,
+      1000,
+      2000
+    ],
+    "noises": [
+      "lognormal",
+      "gamma"
+    ],
+    "energy_a": 15.74,
+    "energy_b": 2.283,
+    "energy_k": 4,
+    "cv": 0.35,
+    "rho": 0.5,
+    "mean_j": 24.872,
+    "estimand": "E[J]/A, with C ~ Bernoulli(A) and J correlated with C"
+  },
+  "cells": [
+    {
+      "accuracy": 0.1,
+      "n": 200,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 248.72,
+      "true_e_conditional": 33.38915000389945,
+      "true_mean_of_ratios": 3.3389150003899455,
+      "ratio_of_sums": {
+        "mean": 260.78540329381394,
+        "bias": 12.065403293813944,
+        "relative_bias": 0.04850998429484538,
+        "rmse": 61.34374908943497,
+        "sd": 60.16054555375841,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 56.47726368470288,
+        "se_ratio": 0.9387757900937881,
+        "delta_se_max_abs_diff": 2.842170943040401e-14,
+        "coverage": {
+          "delta": 0.947,
+          "percentile": 0.9375,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 221.3868055347791,
+            "median": 201.0159870557382,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 259.8072916766529,
+            "median": 228.17973889951315,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 241.22150576628985,
+            "median": 216.42076723733618,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 3.3352525711134304,
+        "bias": -245.38474742888656,
+        "relative_bias": -0.9865903322164947,
+        "rmse": 245.38585534542557,
+        "sd": 0.7375668580537528,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.0036624292765150557,
+        "relative_bias_vs_own_target": -0.0010968920371100576,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.942,
+        "mean_width": {
+          "mean": 2.9074798687305687,
+          "median": 2.9073064060092477,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 0.9999999992944921
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9375,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 259.8072916766529,
+            "median": 228.17973889951315,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 241.22150576628985,
+            "median": 216.42076723733618,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.1,
+      "n": 200,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 248.72,
+      "true_e_conditional": 32.977163596244324,
+      "true_mean_of_ratios": 3.2977163596244328,
+      "ratio_of_sums": {
+        "mean": 259.7917590984077,
+        "bias": 11.071759098407682,
+        "relative_bias": 0.0445149529527488,
+        "rmse": 60.1044029735514,
+        "sd": 59.0906190346897,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 56.205704413954,
+        "se_ratio": 0.951178128307607,
+        "delta_se_max_abs_diff": 2.1316282072803006e-14,
+        "coverage": {
+          "delta": 0.945,
+          "percentile": 0.935,
+          "bca": 0.9275
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 220.32231275410757,
+            "median": 202.55635034361887,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 247.8469078789786,
+            "median": 220.0664865302591,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 230.43153138929847,
+            "median": 208.63911234322475,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 3.3050249534862486,
+        "bias": -245.41497504651375,
+        "relative_bias": -0.9867118649345197,
+        "rmse": 245.4160499889774,
+        "sd": 0.7265528547938825,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.007308593861815815,
+        "relative_bias_vs_own_target": 0.0022162590910784607,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.942,
+        "mean_width": {
+          "mean": 2.8458097163473495,
+          "median": 2.8505858663207055,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 0.9999999992944921
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.935,
+          "bca": 0.9275
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 247.8469078789786,
+            "median": 220.0664865302591,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 230.43153138929847,
+            "median": 208.63911234322475,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.1,
+      "n": 500,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 248.72,
+      "true_e_conditional": 33.38915000389945,
+      "true_mean_of_ratios": 3.3389150003899455,
+      "ratio_of_sums": {
+        "mean": 253.29643380672127,
+        "bias": 4.576433806721269,
+        "relative_bias": 0.018399942934710797,
+        "rmse": 34.526780083940956,
+        "sd": 34.23069772749273,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 33.570814585807604,
+        "se_ratio": 0.9807224746939606,
+        "delta_se_max_abs_diff": 7.105427357601002e-15,
+        "coverage": {
+          "delta": 0.9475,
+          "percentile": 0.9425,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 131.59517503970966,
+            "median": 126.98010247866532,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 138.58616990471248,
+            "median": 134.08664078496506,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 135.19375445476578,
+            "median": 131.1356858531666,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 3.3406227013408754,
+        "bias": -245.37937729865914,
+        "relative_bias": -0.986568741149321,
+        "rmse": 245.3798355601485,
+        "sd": 0.4743506636398317,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.001707700950929869,
+        "relative_bias_vs_own_target": 0.0005114538557376962,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9435,
+        "mean_width": {
+          "mean": 1.8488703366872317,
+          "median": 1.8516125728860062,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9425,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 138.58616990471248,
+            "median": 134.08664078496506,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 135.19375445476578,
+            "median": 131.1356858531666,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.1,
+      "n": 500,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 248.72,
+      "true_e_conditional": 32.977163596244324,
+      "true_mean_of_ratios": 3.2977163596244328,
+      "ratio_of_sums": {
+        "mean": 252.54860859481286,
+        "bias": 3.828608594812863,
+        "relative_bias": 0.015393247808028558,
+        "rmse": 35.082519879728714,
+        "sd": 34.88170471753475,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 33.47265289323143,
+        "se_ratio": 0.959604846273611,
+        "delta_se_max_abs_diff": 1.0658141036401503e-14,
+        "coverage": {
+          "delta": 0.9465,
+          "percentile": 0.945,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 131.21038827548804,
+            "median": 126.74984571531608,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 137.05448869761562,
+            "median": 132.36887242221147,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 133.1144472720516,
+            "median": 129.52285199803288,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 3.3084275861861343,
+        "bias": -245.41157241381387,
+        "relative_bias": -0.9866981843591744,
+        "rmse": 245.41202553604734,
+        "sd": 0.4717142589645333,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.010711226561701537,
+        "relative_bias_vs_own_target": 0.0032480739377238033,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9345,
+        "mean_width": {
+          "mean": 1.8071127860170588,
+          "median": 1.809169035508608,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.945,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 137.05448869761562,
+            "median": 132.36887242221147,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 133.1144472720516,
+            "median": 129.52285199803288,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.1,
+      "n": 1000,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 248.72,
+      "true_e_conditional": 33.38915000389945,
+      "true_mean_of_ratios": 3.3389150003899455,
+      "ratio_of_sums": {
+        "mean": 250.95936198186027,
+        "bias": 2.23936198186027,
+        "relative_bias": 0.009003546083388027,
+        "rmse": 23.539637167995,
+        "sd": 23.438738514404392,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 23.279951075245545,
+        "se_ratio": 0.993225427253209,
+        "delta_se_max_abs_diff": 7.105427357601002e-15,
+        "coverage": {
+          "delta": 0.9495,
+          "percentile": 0.93,
+          "bca": 0.9375
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 91.25573133867154,
+            "median": 89.78904003320785,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 92.00950163110882,
+            "median": 90.36789183669576,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 91.18201612978841,
+            "median": 89.64949222658888,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 3.3418737703586827,
+        "bias": -245.3781262296413,
+        "relative_bias": -0.986563711119497,
+        "rmse": 245.37835249137007,
+        "sd": 0.33330910090141075,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.0029587699687372293,
+        "relative_bias_vs_own_target": 0.0008861471371363692,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9485,
+        "mean_width": {
+          "mean": 1.3097122884575456,
+          "median": 1.3101145388209585,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.93,
+          "bca": 0.9375
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 92.00950163110882,
+            "median": 90.36789183669576,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 91.18201612978841,
+            "median": 89.64949222658888,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.1,
+      "n": 1000,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 248.72,
+      "true_e_conditional": 32.977163596244324,
+      "true_mean_of_ratios": 3.2977163596244328,
+      "ratio_of_sums": {
+        "mean": 251.94331286688004,
+        "bias": 3.223312866880036,
+        "relative_bias": 0.012959604643293808,
+        "rmse": 24.315274017084977,
+        "sd": 24.106708016106644,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 23.470495949945757,
+        "se_ratio": 0.9736085049134121,
+        "delta_se_max_abs_diff": 3.552713678800501e-15,
+        "coverage": {
+          "delta": 0.9545,
+          "percentile": 0.9525,
+          "bca": 0.955
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 92.00265352237379,
+            "median": 90.31694285230586,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 92.09608065495557,
+            "median": 90.71135368048816,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 90.85122199957856,
+            "median": 89.62113425430674,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 3.284580437935966,
+        "bias": -245.43541956206403,
+        "relative_bias": -0.9867940638551947,
+        "rmse": 245.43564200302862,
+        "sd": 0.3305214889275748,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.013135921688466556,
+        "relative_bias_vs_own_target": -0.0039833388490581306,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9445,
+        "mean_width": {
+          "mean": 1.2756583771250858,
+          "median": 1.276901973486026,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9525,
+          "bca": 0.955
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 92.09608065495557,
+            "median": 90.71135368048816,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 90.85122199957856,
+            "median": 89.62113425430674,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.1,
+      "n": 2000,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 248.72,
+      "true_e_conditional": 33.38915000389945,
+      "true_mean_of_ratios": 3.3389150003899455,
+      "ratio_of_sums": {
+        "mean": 249.66204638603134,
+        "bias": 0.9420463860313362,
+        "relative_bias": 0.0037875779431945007,
+        "rmse": 16.169965889042764,
+        "sd": 16.146538353770342,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 16.294062341639044,
+        "se_ratio": 1.009136570615723,
+        "delta_se_max_abs_diff": 7.105427357601002e-15,
+        "coverage": {
+          "delta": 0.955,
+          "percentile": 0.955,
+          "bca": 0.955
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 63.871550702925816,
+            "median": 63.31698788347853,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 63.38103851981811,
+            "median": 63.142194558638636,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 63.065906951399995,
+            "median": 62.68116091896921,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 3.3409552519082775,
+        "bias": -245.37904474809173,
+        "relative_bias": -0.9865674041013659,
+        "rmse": 245.37915445205115,
+        "sd": 0.2320884531495655,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.0020402515183319814,
+        "relative_bias_vs_own_target": 0.0006110522484381016,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.951,
+        "mean_width": {
+          "mean": 0.9264309871094183,
+          "median": 0.9265805702755006,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.955,
+          "bca": 0.955
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 63.38103851981811,
+            "median": 63.142194558638636,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 63.065906951399995,
+            "median": 62.68116091896921,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.1,
+      "n": 2000,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 248.72,
+      "true_e_conditional": 32.977163596244324,
+      "true_mean_of_ratios": 3.2977163596244328,
+      "ratio_of_sums": {
+        "mean": 250.27528349520867,
+        "bias": 1.5552834952086698,
+        "relative_bias": 0.00625315010939478,
+        "rmse": 16.382356733939865,
+        "sd": 16.31244167144326,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 16.38157010289382,
+        "se_ratio": 1.0042377734028363,
+        "delta_se_max_abs_diff": 3.552713678800501e-15,
+        "coverage": {
+          "delta": 0.953,
+          "percentile": 0.9375,
+          "bca": 0.94
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 64.21457482377998,
+            "median": 63.62614922736391,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 64.13031452527134,
+            "median": 63.670982779193565,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 63.70121943224227,
+            "median": 63.06348981653228,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 3.292443369055057,
+        "bias": -245.42755663094493,
+        "relative_bias": -0.9867624502691579,
+        "rmse": 245.42766208144673,
+        "sd": 0.22756718245814228,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.00527299056937558,
+        "relative_bias_vs_own_target": -0.0015989824455297013,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9525,
+        "mean_width": {
+          "mean": 0.9041333959046103,
+          "median": 0.9053577809314675,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9375,
+          "bca": 0.94
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 64.13031452527134,
+            "median": 63.670982779193565,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 63.70121943224227,
+            "median": 63.06348981653228,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.3,
+      "n": 200,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 82.90666666666667,
+      "true_e_conditional": 30.1278121076378,
+      "true_mean_of_ratios": 9.03834363229134,
+      "ratio_of_sums": {
+        "mean": 83.8965867835334,
+        "bias": 0.9899201168667275,
+        "relative_bias": 0.011940175098907135,
+        "rmse": 8.934429858711713,
+        "sd": 8.881640435802243,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 8.630825189948432,
+        "se_ratio": 0.9717602567153287,
+        "delta_se_max_abs_diff": 3.552713678800501e-15,
+        "coverage": {
+          "delta": 0.9435,
+          "percentile": 0.925,
+          "bca": 0.9325
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 33.832213058319994,
+            "median": 33.01116263830113,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 34.685034246541655,
+            "median": 33.51840820627597,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 34.25456507495002,
+            "median": 33.17645560914455,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 9.027060185314777,
+        "bias": -73.87960648135189,
+        "relative_bias": -0.8911178009169173,
+        "rmse": 73.88734576568544,
+        "sd": 1.0696646903664984,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.011283446976563027,
+        "relative_bias_vs_own_target": -0.0012483976528896948,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.943,
+        "mean_width": {
+          "mean": 4.098015940757996,
+          "median": 4.096565213703824,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.925,
+          "bca": 0.9325
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 34.685034246541655,
+            "median": 33.51840820627597,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 34.25456507495002,
+            "median": 33.17645560914455,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.3,
+      "n": 200,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 82.90666666666667,
+      "true_e_conditional": 29.998267666412342,
+      "true_mean_of_ratios": 8.999480299923702,
+      "ratio_of_sums": {
+        "mean": 83.70162782370674,
+        "bias": 0.7949611570400776,
+        "relative_bias": 0.009588627658090354,
+        "rmse": 8.864446569264596,
+        "sd": 8.830936669423807,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 8.600897915419326,
+        "se_ratio": 0.9739508092271836,
+        "delta_se_max_abs_diff": 4.440892098500626e-15,
+        "coverage": {
+          "delta": 0.9445,
+          "percentile": 0.925,
+          "bca": 0.925
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 33.71490029785501,
+            "median": 33.0173789390317,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 34.36555314175951,
+            "median": 33.653435769451455,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 33.90121035405925,
+            "median": 33.21316459201722,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 9.003660564864724,
+        "bias": -73.90300610180194,
+        "relative_bias": -0.8914000414337641,
+        "rmse": 73.91036751251306,
+        "sd": 1.0433883655726923,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.004180264941021861,
+        "relative_bias_vs_own_target": 0.00046450070467483564,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9445,
+        "mean_width": {
+          "mean": 4.037075512461192,
+          "median": 4.040737274680563,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.925,
+          "bca": 0.925
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 34.36555314175951,
+            "median": 33.653435769451455,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 33.90121035405925,
+            "median": 33.21316459201722,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.3,
+      "n": 500,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 82.90666666666667,
+      "true_e_conditional": 30.1278121076378,
+      "true_mean_of_ratios": 9.03834363229134,
+      "ratio_of_sums": {
+        "mean": 83.39456047547566,
+        "bias": 0.487893808808991,
+        "relative_bias": 0.0058848561692946815,
+        "rmse": 5.351730708815067,
+        "sd": 5.330777598615704,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 5.3711356595716495,
+        "se_ratio": 1.0075707643414773,
+        "delta_se_max_abs_diff": 2.6645352591003757e-15,
+        "coverage": {
+          "delta": 0.951,
+          "percentile": 0.9275,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 21.054464897678443,
+            "median": 20.87744864790166,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 21.169317657529902,
+            "median": 20.983200503202276,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 21.0856876571351,
+            "median": 21.104657721951426,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 9.015524440773515,
+        "bias": -73.89114222589315,
+        "relative_bias": -0.8912569422550637,
+        "rmse": 73.89413421860762,
+        "sd": 0.6651268053991,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.022819191517825743,
+        "relative_bias_vs_own_target": -0.002524709443033289,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.948,
+        "mean_width": {
+          "mean": 2.5930518611520283,
+          "median": 2.5923527647617384,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9275,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 21.169317657529902,
+            "median": 20.983200503202276,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 21.0856876571351,
+            "median": 21.104657721951426,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.3,
+      "n": 500,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 82.90666666666667,
+      "true_e_conditional": 29.998267666412342,
+      "true_mean_of_ratios": 8.999480299923702,
+      "ratio_of_sums": {
+        "mean": 82.94676380390997,
+        "bias": 0.04009713724330766,
+        "relative_bias": 0.0004836418934139714,
+        "rmse": 5.44756131810488,
+        "sd": 5.448776111628628,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 5.322443224035126,
+        "se_ratio": 0.9768144469500435,
+        "delta_se_max_abs_diff": 2.6645352591003757e-15,
+        "coverage": {
+          "delta": 0.9425,
+          "percentile": 0.94,
+          "bca": 0.9475
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 20.863594057736194,
+            "median": 20.72762176560782,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 21.023446467678124,
+            "median": 20.86295390095571,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 20.985960418843774,
+            "median": 20.777295314203478,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 9.034407030924653,
+        "bias": -73.87225963574201,
+        "relative_bias": -0.8910291850563928,
+        "rmse": 73.87528704900726,
+        "sd": 0.6689668460094482,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.034926731000950895,
+        "relative_bias_vs_own_target": 0.0038809719935991196,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9375,
+        "mean_width": {
+          "mean": 2.5591578425195376,
+          "median": 2.5596773545319813,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.94,
+          "bca": 0.9475
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 21.023446467678124,
+            "median": 20.86295390095571,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 20.985960418843774,
+            "median": 20.777295314203478,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.3,
+      "n": 1000,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 82.90666666666667,
+      "true_e_conditional": 30.1278121076378,
+      "true_mean_of_ratios": 9.03834363229134,
+      "ratio_of_sums": {
+        "mean": 83.16265877562479,
+        "bias": 0.2559921089581252,
+        "relative_bias": 0.0030877144052523947,
+        "rmse": 3.8153204474310933,
+        "sd": 3.807674795779201,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 3.773314309262135,
+        "se_ratio": 0.9909759923417949,
+        "delta_se_max_abs_diff": 1.3322676295501878e-15,
+        "coverage": {
+          "delta": 0.9475,
+          "percentile": 0.95,
+          "bca": 0.955
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 14.791120297006833,
+            "median": 14.710289885516673,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 14.688014635725335,
+            "median": 14.577693918289995,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 14.65088042914535,
+            "median": 14.529190204042635,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 9.023974573339514,
+        "bias": -73.88269209332715,
+        "relative_bias": -0.8911550188162651,
+        "rmse": 73.88414578500527,
+        "sd": 0.46358912839458977,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.01436905895182683,
+        "relative_bias_vs_own_target": -0.001589788963155861,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.952,
+        "mean_width": {
+          "mean": 1.8345838171302997,
+          "median": 1.834989947208019,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.95,
+          "bca": 0.955
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 14.688014635725335,
+            "median": 14.577693918289995,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 14.65088042914535,
+            "median": 14.529190204042635,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.3,
+      "n": 1000,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 82.90666666666667,
+      "true_e_conditional": 29.998267666412342,
+      "true_mean_of_ratios": 8.999480299923702,
+      "ratio_of_sums": {
+        "mean": 83.14919715756778,
+        "bias": 0.24253049090111745,
+        "relative_bias": 0.0029253436503029603,
+        "rmse": 3.7945374958979685,
+        "sd": 3.78772586156391,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 3.7733373276043602,
+        "se_ratio": 0.9962012736704211,
+        "delta_se_max_abs_diff": 1.7763568394002505e-15,
+        "coverage": {
+          "delta": 0.95,
+          "percentile": 0.94,
+          "bca": 0.9225
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 14.791210527250323,
+            "median": 14.746991696103848,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 14.59203638446936,
+            "median": 14.515775743357288,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 14.546223893464507,
+            "median": 14.452697665376832,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 8.996078507964553,
+        "bias": -73.91058815870211,
+        "relative_bias": -0.8914914943555257,
+        "rmse": 73.91206496070353,
+        "sd": 0.4673478329672492,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.0034017919591491363,
+        "relative_bias_vs_own_target": -0.00037799871167871514,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.953,
+        "mean_width": {
+          "mean": 1.8083638619888212,
+          "median": 1.8084071835587672,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.94,
+          "bca": 0.9225
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 14.59203638446936,
+            "median": 14.515775743357288,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 14.546223893464507,
+            "median": 14.452697665376832,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.3,
+      "n": 2000,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 82.90666666666667,
+      "true_e_conditional": 30.1278121076378,
+      "true_mean_of_ratios": 9.03834363229134,
+      "ratio_of_sums": {
+        "mean": 82.96454290817525,
+        "bias": 0.057876241508580506,
+        "relative_bias": 0.0006980891143685329,
+        "rmse": 2.60271405215724,
+        "sd": 2.602721240719806,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 2.654311930185847,
+        "se_ratio": 1.019821826732306,
+        "delta_se_max_abs_diff": 1.7763568394002505e-15,
+        "coverage": {
+          "delta": 0.953,
+          "percentile": 0.94,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 10.40471157379851,
+            "median": 10.397565630804294,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 10.270227186742705,
+            "median": 10.237633547812734,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 10.259486809853374,
+            "median": 10.19370377136223,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 9.037516164898884,
+        "bias": -73.86915050176778,
+        "relative_bias": -0.8909916834404283,
+        "rmse": 73.86988814005348,
+        "sd": 0.3302006775236625,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.0008274673924564269,
+        "relative_bias_vs_own_target": -9.155077812046551e-05,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.955,
+        "mean_width": {
+          "mean": 1.2981341390330878,
+          "median": 1.2981785329955962,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.94,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 10.270227186742705,
+            "median": 10.237633547812734,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 10.259486809853374,
+            "median": 10.19370377136223,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.3,
+      "n": 2000,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 82.90666666666667,
+      "true_e_conditional": 29.998267666412342,
+      "true_mean_of_ratios": 8.999480299923702,
+      "ratio_of_sums": {
+        "mean": 82.96792755362637,
+        "bias": 0.06126088695970111,
+        "relative_bias": 0.0007389138825953013,
+        "rmse": 2.648692194376835,
+        "sd": 2.6486459006131984,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 2.6553760688985775,
+        "se_ratio": 1.0025409845399949,
+        "delta_se_max_abs_diff": 8.881784197001252e-16,
+        "coverage": {
+          "delta": 0.952,
+          "percentile": 0.9475,
+          "bca": 0.9475
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 10.408882920901524,
+            "median": 10.383960222978175,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 10.336878846543307,
+            "median": 10.341392225562053,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 10.307867153721224,
+            "median": 10.351688484201219,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 9.005235889231876,
+        "bias": -73.9014307774348,
+        "relative_bias": -0.8913810402553248,
+        "rmse": 73.90212001236767,
+        "sd": 0.3192527706593674,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.005755589308174436,
+        "relative_bias_vs_own_target": 0.0006395468534136612,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9545,
+        "mean_width": {
+          "mean": 1.2792845491102947,
+          "median": 1.2794176893610238,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9475,
+          "bca": 0.9475
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 10.336878846543307,
+            "median": 10.341392225562053,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 10.307867153721224,
+            "median": 10.351688484201219,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.5,
+      "n": 200,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 49.744,
+      "true_e_conditional": 28.32722735348252,
+      "true_mean_of_ratios": 14.16361367674126,
+      "ratio_of_sums": {
+        "mean": 49.992313566587605,
+        "bias": 0.24831356658760484,
+        "relative_bias": 0.00499182949878588,
+        "rmse": 3.280765152049909,
+        "sd": 3.272172659336585,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 3.2984755104167798,
+        "se_ratio": 1.0080383444941832,
+        "delta_se_max_abs_diff": 1.3322676295501878e-15,
+        "coverage": {
+          "delta": 0.955,
+          "percentile": 0.93,
+          "bca": 0.935
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 12.929786408608521,
+            "median": 12.748510025117334,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 12.838977659096544,
+            "median": 12.504324261918619,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 12.85059215439162,
+            "median": 12.580501039157621,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 14.149956243053028,
+        "bias": -35.594043756946974,
+        "relative_bias": -0.7155444627884162,
+        "rmse": 35.61142481709942,
+        "sd": 1.1127648697259238,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.013657433688232246,
+        "relative_bias_vs_own_target": -0.0009642619461345351,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9495,
+        "mean_width": {
+          "mean": 4.329138315333183,
+          "median": 4.322118222036922,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.93,
+          "bca": 0.935
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 12.838977659096544,
+            "median": 12.504324261918619,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 12.85059215439162,
+            "median": 12.580501039157621,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.5,
+      "n": 200,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 49.744,
+      "true_e_conditional": 28.295194824212633,
+      "true_mean_of_ratios": 14.147597412106316,
+      "ratio_of_sums": {
+        "mean": 49.93294863395237,
+        "bias": 0.18894863395237138,
+        "relative_bias": 0.00379842059248093,
+        "rmse": 3.2533017874793813,
+        "sd": 3.248622432354684,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 3.276713762692077,
+        "se_ratio": 1.0086471514995454,
+        "delta_se_max_abs_diff": 2.6645352591003757e-15,
+        "coverage": {
+          "delta": 0.947,
+          "percentile": 0.9425,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 12.844481925046392,
+            "median": 12.691717474066117,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 12.855144335072534,
+            "median": 12.719135568134739,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 12.831002134355789,
+            "median": 12.714079781975126,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 14.163071697083524,
+        "bias": -35.580928302916476,
+        "relative_bias": -0.7152808037736507,
+        "rmse": 35.59656633548752,
+        "sd": 1.0552880156047881,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.015474284977207375,
+        "relative_bias_vs_own_target": 0.0010937747609333153,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.956,
+        "mean_width": {
+          "mean": 4.2815317597826485,
+          "median": 4.2814568859798605,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9425,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 12.855144335072534,
+            "median": 12.719135568134739,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 12.831002134355789,
+            "median": 12.714079781975126,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.5,
+      "n": 500,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 49.744,
+      "true_e_conditional": 28.32722735348252,
+      "true_mean_of_ratios": 14.16361367674126,
+      "ratio_of_sums": {
+        "mean": 49.87766000335146,
+        "bias": 0.13366000335145856,
+        "relative_bias": 0.0026869572883455,
+        "rmse": 2.0602934823935546,
+        "sd": 2.0564675456910786,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 2.068941367348166,
+        "se_ratio": 1.006065654516758,
+        "delta_se_max_abs_diff": 8.881784197001252e-16,
+        "coverage": {
+          "delta": 0.9505,
+          "percentile": 0.94,
+          "bca": 0.94
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 8.110101132254918,
+            "median": 8.075650049127631,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 8.090155743829154,
+            "median": 8.029776198738489,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 8.078061374550211,
+            "median": 8.037331825950755,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 14.145446166735036,
+        "bias": -35.598553833264965,
+        "relative_bias": -0.7156351285233388,
+        "rmse": 35.60535457076753,
+        "sd": 0.6960469315196937,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.018167510006223964,
+        "relative_bias_vs_own_target": -0.0012826888971179502,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9525,
+        "mean_width": {
+          "mean": 2.741781392514587,
+          "median": 2.7422165648408585,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.94,
+          "bca": 0.94
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 8.090155743829154,
+            "median": 8.029776198738489,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 8.078061374550211,
+            "median": 8.037331825950755,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.5,
+      "n": 500,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 49.744,
+      "true_e_conditional": 28.295194824212633,
+      "true_mean_of_ratios": 14.147597412106316,
+      "ratio_of_sums": {
+        "mean": 49.78134105303188,
+        "bias": 0.03734105303188073,
+        "relative_bias": 0.0007506644626865699,
+        "rmse": 2.046310094347227,
+        "sd": 2.046481050567289,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 2.052035578271242,
+        "se_ratio": 1.0027141847721548,
+        "delta_se_max_abs_diff": 1.3322676295501878e-15,
+        "coverage": {
+          "delta": 0.955,
+          "percentile": 0.9525,
+          "bca": 0.9625
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 8.043831656812914,
+            "median": 8.009119038580145,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 7.97840232833682,
+            "median": 7.880975319754523,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 7.988017163279669,
+            "median": 7.924149199020299,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 14.192651252876498,
+        "bias": -35.5513487471235,
+        "relative_bias": -0.714686168123261,
+        "rmse": 35.55809107137986,
+        "sd": 0.6925913241701387,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.04505384077018171,
+        "relative_bias_vs_own_target": 0.003184557734985337,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9525,
+        "mean_width": {
+          "mean": 2.709235552315735,
+          "median": 2.710018581721825,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9525,
+          "bca": 0.9625
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 7.97840232833682,
+            "median": 7.880975319754523,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 7.988017163279669,
+            "median": 7.924149199020299,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.5,
+      "n": 1000,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 49.744,
+      "true_e_conditional": 28.32722735348252,
+      "true_mean_of_ratios": 14.16361367674126,
+      "ratio_of_sums": {
+        "mean": 49.85699130553473,
+        "bias": 0.11299130553472736,
+        "relative_bias": 0.0022714559652365586,
+        "rmse": 1.4822327403181605,
+        "sd": 1.4782893935593922,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 1.4600766561487424,
+        "se_ratio": 0.9876798565355343,
+        "delta_se_max_abs_diff": 4.440892098500626e-16,
+        "coverage": {
+          "delta": 0.9505,
+          "percentile": 0.92,
+          "bca": 0.915
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 5.723395321438415,
+            "median": 5.70250220456802,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 5.687455346847778,
+            "median": 5.630244394758115,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 5.681191926736971,
+            "median": 5.616812552525747,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 14.15245588933409,
+        "bias": -35.59154411066591,
+        "relative_bias": -0.7154942125817366,
+        "rmse": 35.59506946437165,
+        "sd": 0.5010823622246641,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.01115778740716955,
+        "relative_bias_vs_own_target": -0.0007877782931549652,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9495,
+        "mean_width": {
+          "mean": 1.9395644473838884,
+          "median": 1.9396906433658643,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.92,
+          "bca": 0.915
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 5.687455346847778,
+            "median": 5.630244394758115,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 5.681191926736971,
+            "median": 5.616812552525747,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.5,
+      "n": 1000,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 49.744,
+      "true_e_conditional": 28.295194824212633,
+      "true_mean_of_ratios": 14.147597412106316,
+      "ratio_of_sums": {
+        "mean": 49.77257927098443,
+        "bias": 0.02857927098443014,
+        "relative_bias": 0.0005745269979179426,
+        "rmse": 1.4236142322740497,
+        "sd": 1.4236833020990194,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 1.4512880434968947,
+        "se_ratio": 1.0193896643707039,
+        "delta_se_max_abs_diff": 4.440892098500626e-16,
+        "coverage": {
+          "delta": 0.9565,
+          "percentile": 0.965,
+          "bca": 0.97
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 5.688944592895027,
+            "median": 5.672274599418579,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 5.642904423854514,
+            "median": 5.600465776282924,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 5.63470542899106,
+            "median": 5.585627545220685,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 14.147966515939668,
+        "bias": -35.59603348406033,
+        "relative_bias": -0.7155844621272983,
+        "rmse": 35.59923206336647,
+        "sd": 0.47732339339937846,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.0003691038333517582,
+        "relative_bias_vs_own_target": 2.6089506408763824e-05,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9485,
+        "mean_width": {
+          "mean": 1.913224222721981,
+          "median": 1.9135364371188466,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.965,
+          "bca": 0.97
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 5.642904423854514,
+            "median": 5.600465776282924,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 5.63470542899106,
+            "median": 5.585627545220685,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.5,
+      "n": 2000,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 49.744,
+      "true_e_conditional": 28.32722735348252,
+      "true_mean_of_ratios": 14.16361367674126,
+      "ratio_of_sums": {
+        "mean": 49.776942937973224,
+        "bias": 0.03294293797322467,
+        "relative_bias": 0.0006622494767856359,
+        "rmse": 1.0312695229097502,
+        "sd": 1.0310010054586878,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 1.0287782715285534,
+        "se_ratio": 0.9978441011033297,
+        "delta_se_max_abs_diff": 4.440892098500626e-16,
+        "coverage": {
+          "delta": 0.9525,
+          "percentile": 0.9425,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 4.032736720546667,
+            "median": 4.0306412427952125,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 3.9548678214614355,
+            "median": 3.9664159295060024,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 3.953729104182423,
+            "median": 3.9417822887124565,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 14.158934930239669,
+        "bias": -35.58506506976033,
+        "relative_bias": -0.7153639648954715,
+        "rmse": 35.58675884164659,
+        "sd": 0.34728826499645354,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.004678746501591391,
+        "relative_bias_vs_own_target": -0.0003303356479762352,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9485,
+        "mean_width": {
+          "mean": 1.3708900851613282,
+          "median": 1.3707877460477462,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9425,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 3.9548678214614355,
+            "median": 3.9664159295060024,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 3.953729104182423,
+            "median": 3.9417822887124565,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.5,
+      "n": 2000,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 49.744,
+      "true_e_conditional": 28.295194824212633,
+      "true_mean_of_ratios": 14.147597412106316,
+      "ratio_of_sums": {
+        "mean": 49.74183844181022,
+        "bias": -0.002161558189776258,
+        "relative_bias": -4.345364646542816e-05,
+        "rmse": 0.9888821960336123,
+        "sd": 0.9891271463033601,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 1.0243975602924424,
+        "se_ratio": 1.0356581195055636,
+        "delta_se_max_abs_diff": 4.440892098500626e-16,
+        "coverage": {
+          "delta": 0.9595,
+          "percentile": 0.965,
+          "bca": 0.965
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 4.0155646480477705,
+            "median": 4.007076802053035,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 3.9598222004044215,
+            "median": 3.9605041365600187,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 3.959591029591553,
+            "median": 3.959272579933206,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 14.148927772404914,
+        "bias": -35.59507222759508,
+        "relative_bias": -0.7155651380587625,
+        "rmse": 35.59672893401106,
+        "sd": 0.34351552396813945,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.001330360298597455,
+        "relative_bias_vs_own_target": 9.40343621496499e-05,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9475,
+        "mean_width": {
+          "mean": 1.3525160939364436,
+          "median": 1.3523615183932467,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.965,
+          "bca": 0.965
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 3.9598222004044215,
+            "median": 3.9605041365600187,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 3.959591029591553,
+            "median": 3.959272579933206,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.8,
+      "n": 200,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 31.09,
+      "true_e_conditional": 26.28140842512129,
+      "true_mean_of_ratios": 21.025126740097033,
+      "ratio_of_sums": {
+        "mean": 31.0756056171601,
+        "bias": -0.014394382839899578,
+        "relative_bias": -0.0004629907635863486,
+        "rmse": 1.1636820826448946,
+        "sd": 1.163884059631177,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 1.13682153767909,
+        "se_ratio": 0.9767480946850815,
+        "delta_se_max_abs_diff": 1.3322676295501878e-15,
+        "coverage": {
+          "delta": 0.9415,
+          "percentile": 0.9375,
+          "bca": 0.93
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 4.45625854140092,
+            "median": 4.423226422488655,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 4.4318855891039,
+            "median": 4.399743512454167,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 4.446802147932328,
+            "median": 4.423355625843177,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 21.018164221238088,
+        "bias": -10.071835778761912,
+        "relative_bias": -0.3239574068434195,
+        "rmse": 10.11391556663109,
+        "sd": 0.9218660711408141,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.006962518858944833,
+        "relative_bias_vs_own_target": -0.00033115228959198654,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9505,
+        "mean_width": {
+          "mean": 3.66190578129204,
+          "median": 3.6638604334847287,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9375,
+          "bca": 0.93
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 4.4318855891039,
+            "median": 4.399743512454167,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 4.446802147932328,
+            "median": 4.423355625843177,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.8,
+      "n": 200,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 31.09,
+      "true_e_conditional": 26.300404189938337,
+      "true_mean_of_ratios": 21.040323351950672,
+      "ratio_of_sums": {
+        "mean": 31.109458166730484,
+        "bias": 0.01945816673048384,
+        "relative_bias": 0.0006258657681081968,
+        "rmse": 1.1212121987138692,
+        "sd": 1.1213237078208675,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 1.1210602196808463,
+        "se_ratio": 0.9997650204502202,
+        "delta_se_max_abs_diff": 1.7763568394002505e-15,
+        "coverage": {
+          "delta": 0.952,
+          "percentile": 0.955,
+          "bca": 0.955
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 4.39447531015004,
+            "median": 4.3783664296936,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 4.360310381426203,
+            "median": 4.3631179413688095,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 4.361300863547057,
+            "median": 4.345215446242312,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 21.019218187855774,
+        "bias": -10.070781812144226,
+        "relative_bias": -0.3239235063410816,
+        "rmse": 10.111760567864449,
+        "sd": 0.9096533452957608,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.021105164094898043,
+        "relative_bias_vs_own_target": -0.0010030817369991302,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.95,
+        "mean_width": {
+          "mean": 3.605512701284427,
+          "median": 3.6069039743259346,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.955,
+          "bca": 0.955
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 4.360310381426203,
+            "median": 4.3631179413688095,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 4.361300863547057,
+            "median": 4.345215446242312,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.8,
+      "n": 500,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 31.09,
+      "true_e_conditional": 26.28140842512129,
+      "true_mean_of_ratios": 21.025126740097033,
+      "ratio_of_sums": {
+        "mean": 31.090834835797025,
+        "bias": 0.0008348357970255904,
+        "relative_bias": 2.6852228916873284e-05,
+        "rmse": 0.7215978198307998,
+        "sd": 0.7217778039208964,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 0.719057431210724,
+        "se_ratio": 0.9962310108521008,
+        "delta_se_max_abs_diff": 6.661338147750939e-16,
+        "coverage": {
+          "delta": 0.9525,
+          "percentile": 0.92,
+          "bca": 0.925
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 2.8186533359778125,
+            "median": 2.806931525404007,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 2.7819937032512563,
+            "median": 2.75792723669721,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 2.786420153318365,
+            "median": 2.7683463400106945,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 21.047824795007738,
+        "bias": -10.042175204992262,
+        "relative_bias": -0.32300338388524485,
+        "rmse": 10.05964477664679,
+        "sd": 0.5927443441184633,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.022698054910705423,
+        "relative_bias_vs_own_target": 0.0010795680421473012,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.95,
+        "mean_width": {
+          "mean": 2.3213874244481643,
+          "median": 2.3211397268536516,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.92,
+          "bca": 0.925
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 2.7819937032512563,
+            "median": 2.75792723669721,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 2.786420153318365,
+            "median": 2.7683463400106945,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.8,
+      "n": 500,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 31.09,
+      "true_e_conditional": 26.300404189938337,
+      "true_mean_of_ratios": 21.040323351950672,
+      "ratio_of_sums": {
+        "mean": 31.12582561028174,
+        "bias": 0.035825610281740694,
+        "relative_bias": 0.0011523194043660564,
+        "rmse": 0.6951207768919666,
+        "sd": 0.6943705749544068,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 0.7078672116509892,
+        "se_ratio": 1.019437224420791,
+        "delta_se_max_abs_diff": 4.440892098500626e-16,
+        "coverage": {
+          "delta": 0.953,
+          "percentile": 0.9625,
+          "bca": 0.965
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 2.7747884813454613,
+            "median": 2.770668487588372,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 2.738275221556089,
+            "median": 2.7256246238869206,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 2.7376085831960175,
+            "median": 2.7210180095480485,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 21.02559438263035,
+        "bias": -10.064405617369651,
+        "relative_bias": -0.323718418056277,
+        "rmse": 10.081450663507647,
+        "sd": 0.586138916308711,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.014728969320323415,
+        "relative_bias_vs_own_target": -0.0007000353119077838,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9515,
+        "mean_width": {
+          "mean": 2.28455875183422,
+          "median": 2.2845637751873866,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9625,
+          "bca": 0.965
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 2.738275221556089,
+            "median": 2.7256246238869206,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 2.7376085831960175,
+            "median": 2.7210180095480485,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.8,
+      "n": 1000,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 31.09,
+      "true_e_conditional": 26.28140842512129,
+      "true_mean_of_ratios": 21.025126740097033,
+      "ratio_of_sums": {
+        "mean": 31.099732165100757,
+        "bias": 0.009732165100757584,
+        "relative_bias": 0.00031303200710059776,
+        "rmse": 0.5037605122358512,
+        "sd": 0.5037924593238912,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 0.5084036147141973,
+        "se_ratio": 1.0091528868782482,
+        "delta_se_max_abs_diff": 4.996003610813204e-16,
+        "coverage": {
+          "delta": 0.9515,
+          "percentile": 0.9425,
+          "bca": 0.95
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 1.992905548899609,
+            "median": 1.991129489722093,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 1.9591332090412246,
+            "median": 1.9495792106263163,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 1.9647279293651376,
+            "median": 1.952940621763375,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 21.029888170160266,
+        "bias": -10.060111829839734,
+        "relative_bias": -0.3235803097407441,
+        "rmse": 10.06942104846033,
+        "sd": 0.4329941850380117,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.004761430063233263,
+        "relative_bias_vs_own_target": 0.00022646379839188967,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.938,
+        "mean_width": {
+          "mean": 1.6427749023039189,
+          "median": 1.6432862138886897,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9425,
+          "bca": 0.95
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 1.9591332090412246,
+            "median": 1.9495792106263163,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 1.9647279293651376,
+            "median": 1.952940621763375,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.8,
+      "n": 1000,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 31.09,
+      "true_e_conditional": 26.300404189938337,
+      "true_mean_of_ratios": 21.040323351950672,
+      "ratio_of_sums": {
+        "mean": 31.1099629646894,
+        "bias": 0.01996296468940173,
+        "relative_bias": 0.0006421024345256266,
+        "rmse": 0.5128480442782433,
+        "sd": 0.5125875237904267,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 0.4996106145836351,
+        "se_ratio": 0.974683525047915,
+        "delta_se_max_abs_diff": 5.551115123125783e-16,
+        "coverage": {
+          "delta": 0.944,
+          "percentile": 0.9125,
+          "bca": 0.9275
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 1.9584376217556934,
+            "median": 1.9530055764269463,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 1.9403613551296173,
+            "median": 1.9283441349834316,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 1.9409096759514974,
+            "median": 1.9306270936107754,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 21.04826912993949,
+        "bias": -10.041730870060508,
+        "relative_bias": -0.3229890919929401,
+        "rmse": 10.050271326239251,
+        "sd": 0.4143437035276714,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.007945777988819458,
+        "relative_bias_vs_own_target": 0.0003776452412782333,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.952,
+        "mean_width": {
+          "mean": 1.6153992772423271,
+          "median": 1.6144207603260021,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.9125,
+          "bca": 0.9275
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 1.9403613551296173,
+            "median": 1.9283441349834316,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 1.9409096759514974,
+            "median": 1.9306270936107754,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.8,
+      "n": 2000,
+      "noise": "lognormal",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 31.09,
+      "true_e_conditional": 26.28140842512129,
+      "true_mean_of_ratios": 21.025126740097033,
+      "ratio_of_sums": {
+        "mean": 31.097559911866572,
+        "bias": 0.007559911866572122,
+        "relative_bias": 0.0002431621700409174,
+        "rmse": 0.3659598068485017,
+        "sd": 0.36597321781688064,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 0.3592845194637628,
+        "se_ratio": 0.9817235305003531,
+        "delta_se_max_abs_diff": 3.3306690738754696e-16,
+        "coverage": {
+          "delta": 0.9495,
+          "percentile": 0.93,
+          "bca": 0.9225
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 1.40836943670351,
+            "median": 1.4077102445254646,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 1.391108869170539,
+            "median": 1.3855430224267948,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 1.391209770882338,
+            "median": 1.3821703065049924,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 21.033268369277685,
+        "bias": -10.056731630722314,
+        "relative_bias": -0.32347158670705417,
+        "rmse": 10.061151307042428,
+        "sd": 0.2982599710587562,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": 0.008141629180652643,
+        "relative_bias_vs_own_target": 0.000387233298581061,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.95,
+        "mean_width": {
+          "mean": 1.1615891918979915,
+          "median": 1.161680396313745,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.93,
+          "bca": 0.9225
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 1.391108869170539,
+            "median": 1.3855430224267948,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 1.391209770882338,
+            "median": 1.3821703065049924,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    },
+    {
+      "accuracy": 0.8,
+      "n": 2000,
+      "noise": "gamma",
+      "reps": 2000,
+      "mean_j": 24.872,
+      "true_e_ratio": 31.09,
+      "true_e_conditional": 26.300404189938337,
+      "true_mean_of_ratios": 21.040323351950672,
+      "ratio_of_sums": {
+        "mean": 31.097395346541674,
+        "bias": 0.007395346541674286,
+        "relative_bias": 0.00023786897850351513,
+        "rmse": 0.35383285155706995,
+        "sd": 0.35384403130444475,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "mean_delta_se": 0.3532468824780021,
+        "se_ratio": 0.998312395367413,
+        "delta_se_max_abs_diff": 3.885780586188048e-16,
+        "coverage": {
+          "delta": 0.954,
+          "percentile": 0.935,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "delta": {
+            "mean": 1.3847023346158744,
+            "median": 1.3834187406723437,
+            "n_infinite": 0
+          },
+          "percentile": {
+            "mean": 1.3723375321434603,
+            "median": 1.367520977757291,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 1.3731696968835712,
+            "median": 1.3697172695267152,
+            "n_infinite": 0
+          }
+        }
+      },
+      "mean_of_ratios": {
+        "mean": 21.039149956257642,
+        "bias": -10.050850043742358,
+        "relative_bias": -0.3232824073252608,
+        "rmse": 10.05508042572881,
+        "sd": 0.29171615525469363,
+        "n_finite": 2000,
+        "n_infinite": 0,
+        "bias_vs_own_target": -0.0011733956930299883,
+        "relative_bias_vs_own_target": -5.576890019236332e-05,
+        "coverage_vs_ratio_target": 0.0,
+        "coverage_vs_own_target": 0.9515,
+        "mean_width": {
+          "mean": 1.1422026061695891,
+          "median": 1.1421447437958108,
+          "n_infinite": 0
+        },
+        "undefined_rate": 1.0,
+        "analytic_undefined_rate": 1.0
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 300,
+        "coverage": {
+          "percentile": 0.935,
+          "bca": 0.945
+        },
+        "mean_width": {
+          "percentile": {
+            "mean": 1.3723375321434603,
+            "median": 1.367520977757291,
+            "n_infinite": 0
+          },
+          "bca": {
+            "mean": 1.3731696968835712,
+            "median": 1.3697172695267152,
+            "n_infinite": 0
+          }
+        },
+        "bca_fallbacks": 0,
+        "infinite_resamples": 0
+      }
+    }
+  ]
+}

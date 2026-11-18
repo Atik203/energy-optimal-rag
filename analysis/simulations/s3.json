@@ -1,0 +1,804 @@
+{
+  "study": "S3_selection_and_certification",
+  "seed": 20261117,
+  "reps": 1000,
+  "bootstrap_reps": 400,
+  "bootstrap_resamples": 200,
+  "margin": 0.05,
+  "note": "Monte Carlo simulation; not an empirical result.",
+  "design": {
+    "depths": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "accuracies": [
+      0.3,
+      0.4,
+      0.42,
+      0.46,
+      0.475,
+      0.49,
+      0.5
+    ],
+    "gaps": [
+      {
+        "gap": 0.02,
+        "accuracy": [
+          0.3,
+          0.4,
+          0.42,
+          0.46,
+          0.475,
+          0.49,
+          0.5
+        ],
+        "mean_j": [
+          15.74,
+          15.961371986222732,
+          16.182743972445465,
+          16.625487944890928,
+          17.510975889781857,
+          19.281951779563716,
+          22.82390355912743
+        ],
+        "e_per_correct": [
+          52.46666666666667,
+          39.903429965556825,
+          38.530342791536825,
+          36.14236509758897,
+          36.86521239954075,
+          39.35092199910962,
+          45.64780711825486
+        ],
+        "feasible": [
+          false,
+          false,
+          false,
+          true,
+          true,
+          true,
+          true
+        ],
+        "best_depth": 4,
+        "second_depth": 8,
+        "second_gap": 0.020000000000000018,
+        "energy_slope": 0.22137198622273216
+      },
+      {
+        "gap": 0.1,
+        "accuracy": [
+          0.3,
+          0.4,
+          0.42,
+          0.46,
+          0.475,
+          0.49,
+          0.5
+        ],
+        "mean_j": [
+          15.74,
+          16.358710691823898,
+          16.977421383647798,
+          18.214842767295593,
+          20.68968553459119,
+          25.63937106918238,
+          35.53874213836476
+        ],
+        "e_per_correct": [
+          52.46666666666667,
+          40.89677672955974,
+          40.42243186582809,
+          39.597484276729546,
+          43.55723270440251,
+          52.32524707996404,
+          71.07748427672952
+        ],
+        "feasible": [
+          false,
+          false,
+          false,
+          true,
+          true,
+          true,
+          true
+        ],
+        "best_depth": 4,
+        "second_depth": 8,
+        "second_gap": 0.10000000000000031,
+        "energy_slope": 0.6187106918238987
+      },
+      {
+        "gap": 0.25,
+        "accuracy": [
+          0.3,
+          0.4,
+          0.42,
+          0.46,
+          0.475,
+          0.49,
+          0.5
+        ],
+        "mean_j": [
+          15.74,
+          17.353199233716474,
+          18.96639846743295,
+          22.1927969348659,
+          28.645593869731798,
+          41.5511877394636,
+          67.36237547892719
+        ],
+        "e_per_correct": [
+          52.46666666666667,
+          43.38299808429118,
+          45.15809158912607,
+          48.245210727969344,
+          60.30651340996168,
+          84.79834232543593,
+          134.72475095785438
+        ],
+        "feasible": [
+          false,
+          false,
+          false,
+          true,
+          true,
+          true,
+          true
+        ],
+        "best_depth": 4,
+        "second_depth": 8,
+        "second_gap": 0.25,
+        "energy_slope": 1.613199233716475
+      }
+    ],
+    "cv": 0.35,
+    "rho_correct": 0.3,
+    "rho_energy": 0.5
+  },
+  "cells": [
+    {
+      "gap": 0.02,
+      "n": 200,
+      "reps": 1000,
+      "true_best_depth": 4,
+      "true_best_e": 36.14236509758897,
+      "true_second_depth": 8,
+      "true_second_gap": 0.020000000000000018,
+      "energy_slope": 0.22137198622273216,
+      "selection_rate": 0.374,
+      "selection_counts": {
+        "0": 0,
+        "1": 32,
+        "2": 91,
+        "4": 374,
+        "8": 274,
+        "16": 143,
+        "32": 86,
+        "none": 0
+      },
+      "mean_selected_depth": 3.663,
+      "winner_curse": {
+        "mean_e_bias": -2.4119786163952415,
+        "relative_e_bias": -0.06287269981032478,
+        "mean_accuracy_bias": 0.034245000000000005,
+        "mean_regret": 1.8120118573537334,
+        "relative_regret": 0.050135397959183675
+      },
+      "n_star": {
+        "defined_rate": 0.914,
+        "relative_bias": -0.2006724735109731,
+        "rmse": 3988.997250275307,
+        "relative_bias_vs_oracle": -0.07921940924278396,
+        "exact_relative_bias": 0.031291274039076604,
+        "exact_rmse": 971.1746242926755,
+        "corr_exact_approx": 0.45105087765108465,
+        "mean_ratio_exact_to_approx": 1.0341198865701404,
+        "mean_estimate": 5227.815905739489,
+        "mean_true": 6571.071314188059,
+        "mean_exact_estimate": 4785.3410066896195,
+        "mean_true_exact": 4635.021447874701,
+        "mean_oracle": 5677.591337411147
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 200,
+        "p_true_mean": 0.2957,
+        "p_true_sd": 0.2526754285253141,
+        "p_true_q05": 0.009750000000000014,
+        "p_true_q95": 0.7852499999999998,
+        "p_max_mean": 0.54375,
+        "map_selection_rate": 0.3575,
+        "k3_pass_rate": 0.0475,
+        "brier": 0.09614874999999999,
+        "p_k_optimal_mean": {
+          "0": 0.000125,
+          "1": 0.0621625,
+          "2": 0.1101125000000001,
+          "4": 0.2956999999999999,
+          "8": 0.25582499999999997,
+          "16": 0.1484624999999999,
+          "32": 0.1276124999999999,
+          "none": 0.0
+        }
+      },
+      "engine_check": {
+        "resamples": 80,
+        "max_abs_difference": 0.03749999999999998,
+        "note": "Different RNG streams; the difference is Monte Carlo error, not a bias check."
+      }
+    },
+    {
+      "gap": 0.02,
+      "n": 500,
+      "reps": 1000,
+      "true_best_depth": 4,
+      "true_best_e": 36.14236509758897,
+      "true_second_depth": 8,
+      "true_second_gap": 0.020000000000000018,
+      "energy_slope": 0.22137198622273216,
+      "selection_rate": 0.425,
+      "selection_counts": {
+        "0": 0,
+        "1": 12,
+        "2": 42,
+        "4": 425,
+        "8": 366,
+        "16": 112,
+        "32": 43,
+        "none": 0
+      },
+      "mean_selected_depth": 3.653,
+      "winner_curse": {
+        "mean_e_bias": -1.2096163783453109,
+        "relative_e_bias": -0.0320512896149144,
+        "mean_accuracy_bias": 0.017562000000000005,
+        "mean_regret": 1.178082333934722,
+        "relative_regret": 0.03259560714285715
+      },
+      "n_star": {
+        "defined_rate": 0.957,
+        "relative_bias": -0.1080609776227815,
+        "rmse": 4954.117763141131,
+        "relative_bias_vs_oracle": -0.018137262388043123,
+        "exact_relative_bias": 0.013898271883842774,
+        "exact_rmse": 1137.5863461832505,
+        "corr_exact_approx": 0.6096654324051289,
+        "mean_ratio_exact_to_approx": 0.8840966762089322,
+        "mean_estimate": 13936.538433981106,
+        "mean_true": 15597.078750602883,
+        "mean_exact_estimate": 11626.9307317425,
+        "mean_true_exact": 11488.393618140972,
+        "mean_oracle": 14193.978343527871
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 200,
+        "p_true_mean": 0.3720375,
+        "p_true_sd": 0.2584119345416032,
+        "p_true_q05": 0.035,
+        "p_true_q95": 0.83,
+        "p_max_mean": 0.5756875,
+        "map_selection_rate": 0.455,
+        "k3_pass_rate": 0.0775,
+        "brier": 0.10089668750000001,
+        "p_k_optimal_mean": {
+          "0": 0.0,
+          "1": 0.021912499999999998,
+          "2": 0.06731250000000003,
+          "4": 0.37203749999999985,
+          "8": 0.324025,
+          "16": 0.13213749999999996,
+          "32": 0.08257500000000001,
+          "none": 0.0
+        }
+      },
+      "engine_check": {
+        "resamples": 80,
+        "max_abs_difference": 0.0375,
+        "note": "Different RNG streams; the difference is Monte Carlo error, not a bias check."
+      }
+    },
+    {
+      "gap": 0.02,
+      "n": 1000,
+      "reps": 1000,
+      "true_best_depth": 4,
+      "true_best_e": 36.14236509758897,
+      "true_second_depth": 8,
+      "true_second_gap": 0.020000000000000018,
+      "energy_slope": 0.22137198622273216,
+      "selection_rate": 0.513,
+      "selection_counts": {
+        "0": 0,
+        "1": 1,
+        "2": 17,
+        "4": 513,
+        "8": 393,
+        "16": 62,
+        "32": 14,
+        "none": 0
+      },
+      "mean_selected_depth": 3.54,
+      "winner_curse": {
+        "mean_e_bias": -0.6616695582381232,
+        "relative_e_bias": -0.017849937533478424,
+        "mean_accuracy_bias": 0.009633999999999997,
+        "mean_regret": 0.660442391515734,
+        "relative_regret": 0.018273358418367358
+      },
+      "n_star": {
+        "defined_rate": 0.986,
+        "relative_bias": -0.0602797614894668,
+        "rmse": 6595.189547582142,
+        "relative_bias_vs_oracle": -0.004184379579323107,
+        "exact_relative_bias": 0.008039195304324624,
+        "exact_rmse": 1531.5839088306486,
+        "corr_exact_approx": 0.6550888193646645,
+        "mean_ratio_exact_to_approx": 0.8199873811768987,
+        "mean_estimate": 28269.17070079572,
+        "mean_true": 29929.553868974224,
+        "mean_exact_estimate": 22432.384555864606,
+        "mean_true_exact": 22275.22989173425,
+        "mean_oracle": 28387.956687055743
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 200,
+        "p_true_mean": 0.4332875,
+        "p_true_sd": 0.26650552119199056,
+        "p_true_q05": 0.035,
+        "p_true_q95": 0.9,
+        "p_max_mean": 0.6178374999999999,
+        "map_selection_rate": 0.505,
+        "k3_pass_rate": 0.14,
+        "brier": 0.1103606875,
+        "p_k_optimal_mean": {
+          "0": 0.0,
+          "1": 0.00988749999999999,
+          "2": 0.0381,
+          "4": 0.43328750000000044,
+          "8": 0.36363749999999995,
+          "16": 0.11103750000000001,
+          "32": 0.04405000000000004,
+          "none": 0.0
+        }
+      },
+      "engine_check": {
+        "resamples": 80,
+        "max_abs_difference": 0.037500000000000006,
+        "note": "Different RNG streams; the difference is Monte Carlo error, not a bias check."
+      }
+    },
+    {
+      "gap": 0.1,
+      "n": 200,
+      "reps": 1000,
+      "true_best_depth": 4,
+      "true_best_e": 39.597484276729546,
+      "true_second_depth": 8,
+      "true_second_gap": 0.10000000000000031,
+      "energy_slope": 0.6187106918238987,
+      "selection_rate": 0.375,
+      "selection_counts": {
+        "0": 0,
+        "1": 81,
+        "2": 162,
+        "4": 375,
+        "8": 196,
+        "16": 92,
+        "32": 94,
+        "none": 0
+      },
+      "mean_selected_depth": 3.338,
+      "winner_curse": {
+        "mean_e_bias": -2.6571361881282356,
+        "relative_e_bias": -0.05870725512319216,
+        "mean_accuracy_bias": 0.03312500000000001,
+        "mean_regret": 5.145069067834682,
+        "relative_regret": 0.12993424107142862
+      },
+      "n_star": {
+        "defined_rate": 0.906,
+        "relative_bias": -0.13085701716939183,
+        "rmse": 504.93827730171864,
+        "relative_bias_vs_oracle": -0.018083270661583495,
+        "exact_relative_bias": 0.010644119096095243,
+        "exact_rmse": 146.16097085953925,
+        "corr_exact_approx": 0.8414593969504781,
+        "mean_ratio_exact_to_approx": 0.9610154872143203,
+        "mean_estimate": 2022.837068540689,
+        "mean_true": 2311.2860676362448,
+        "mean_exact_estimate": 1896.9863889637475,
+        "mean_true_exact": 1879.8081036815504,
+        "mean_oracle": 2060.0902378999194
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 200,
+        "p_true_mean": 0.3102625,
+        "p_true_sd": 0.2518796378703213,
+        "p_true_q05": 0.014750000000000013,
+        "p_true_q95": 0.8302499999999997,
+        "p_max_mean": 0.5362125,
+        "map_selection_rate": 0.3575,
+        "k3_pass_rate": 0.0625,
+        "brier": 0.1008725625,
+        "p_k_optimal_mean": {
+          "0": 0.0008250000000000004,
+          "1": 0.11868749999999999,
+          "2": 0.1865750000000001,
+          "4": 0.3102625000000002,
+          "8": 0.17296249999999994,
+          "16": 0.08652500000000002,
+          "32": 0.1241625,
+          "none": 0.0
+        }
+      },
+      "engine_check": {
+        "resamples": 80,
+        "max_abs_difference": 0.10000000000000003,
+        "note": "Different RNG streams; the difference is Monte Carlo error, not a bias check."
+      }
+    },
+    {
+      "gap": 0.1,
+      "n": 500,
+      "reps": 1000,
+      "true_best_depth": 4,
+      "true_best_e": 39.597484276729546,
+      "true_second_depth": 8,
+      "true_second_gap": 0.10000000000000031,
+      "energy_slope": 0.6187106918238987,
+      "selection_rate": 0.511,
+      "selection_counts": {
+        "0": 0,
+        "1": 33,
+        "2": 99,
+        "4": 511,
+        "8": 216,
+        "16": 100,
+        "32": 41,
+        "none": 0
+      },
+      "mean_selected_depth": 3.374,
+      "winner_curse": {
+        "mean_e_bias": -1.2049785839941494,
+        "relative_e_bias": -0.0273904819674456,
+        "mean_accuracy_bias": 0.014783999999999999,
+        "mean_regret": 3.543308402964961,
+        "relative_regret": 0.0894831696428572
+      },
+      "n_star": {
+        "defined_rate": 0.959,
+        "relative_bias": -0.05243156127902635,
+        "rmse": 867.1600697254088,
+        "relative_bias_vs_oracle": 0.0555573007982604,
+        "exact_relative_bias": 0.0019476439239040847,
+        "exact_rmse": 221.00862104709555,
+        "corr_exact_approx": 0.9116691598693886,
+        "mean_ratio_exact_to_approx": 0.8899761371820125,
+        "mean_estimate": 5436.358227296213,
+        "mean_true": 5686.204592882458,
+        "mean_exact_estimate": 4760.917380674598,
+        "mean_true_exact": 4759.32093242289,
+        "mean_oracle": 5150.225594749796
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 200,
+        "p_true_mean": 0.3936125,
+        "p_true_sd": 0.24342149124460924,
+        "p_true_q05": 0.045,
+        "p_true_q95": 0.8502499999999997,
+        "p_max_mean": 0.53405,
+        "map_selection_rate": 0.535,
+        "k3_pass_rate": 0.0675,
+        "brier": 0.13568668750000001,
+        "p_k_optimal_mean": {
+          "0": 6.25e-05,
+          "1": 0.07322499999999994,
+          "2": 0.14639999999999997,
+          "4": 0.3936124999999999,
+          "8": 0.20886249999999998,
+          "16": 0.09312500000000005,
+          "32": 0.08471250000000001,
+          "none": 0.0
+        }
+      },
+      "engine_check": {
+        "resamples": 80,
+        "max_abs_difference": 0.05,
+        "note": "Different RNG streams; the difference is Monte Carlo error, not a bias check."
+      }
+    },
+    {
+      "gap": 0.1,
+      "n": 1000,
+      "reps": 1000,
+      "true_best_depth": 4,
+      "true_best_e": 39.597484276729546,
+      "true_second_depth": 8,
+      "true_second_gap": 0.10000000000000031,
+      "energy_slope": 0.6187106918238987,
+      "selection_rate": 0.628,
+      "selection_counts": {
+        "0": 0,
+        "1": 4,
+        "2": 60,
+        "4": 628,
+        "8": 241,
+        "16": 60,
+        "32": 7,
+        "none": 0
+      },
+      "mean_selected_depth": 3.314,
+      "winner_curse": {
+        "mean_e_bias": -0.5734863674800464,
+        "relative_e_bias": -0.013770088676433104,
+        "mean_accuracy_bias": 0.007615999999999994,
+        "mean_regret": 1.993019164420487,
+        "relative_regret": 0.05033196428571435
+      },
+      "n_star": {
+        "defined_rate": 0.993,
+        "relative_bias": -0.025422196038962692,
+        "rmse": 1139.0321203515314,
+        "relative_bias_vs_oracle": 0.04720638783893783,
+        "exact_relative_bias": 0.0024136588521793735,
+        "exact_rmse": 290.1445853175549,
+        "corr_exact_approx": 0.9209074104134521,
+        "mean_ratio_exact_to_approx": 0.8710293007607466,
+        "mean_estimate": 10786.698283267162,
+        "mean_true": 11014.207445735117,
+        "mean_exact_estimate": 9327.484942676432,
+        "mean_true_exact": 9310.415001786705,
+        "mean_oracle": 10300.451189499592
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 200,
+        "p_true_mean": 0.5061875,
+        "p_true_sd": 0.2537671605491596,
+        "p_true_q05": 0.09,
+        "p_true_q95": 0.91,
+        "p_max_mean": 0.6081500000000001,
+        "map_selection_rate": 0.6575,
+        "k3_pass_rate": 0.155,
+        "brier": 0.12143756249999998,
+        "p_k_optimal_mean": {
+          "0": 0.0,
+          "1": 0.028775000000000016,
+          "2": 0.10305000000000002,
+          "4": 0.5061874999999999,
+          "8": 0.22667500000000002,
+          "16": 0.096225,
+          "32": 0.039087500000000046,
+          "none": 0.0
+        }
+      },
+      "engine_check": {
+        "resamples": 80,
+        "max_abs_difference": 0.09999999999999998,
+        "note": "Different RNG streams; the difference is Monte Carlo error, not a bias check."
+      }
+    },
+    {
+      "gap": 0.25,
+      "n": 200,
+      "reps": 1000,
+      "true_best_depth": 4,
+      "true_best_e": 48.245210727969344,
+      "true_second_depth": 8,
+      "true_second_gap": 0.25,
+      "energy_slope": 1.613199233716475,
+      "selection_rate": 0.32,
+      "selection_counts": {
+        "0": 1,
+        "1": 146,
+        "2": 184,
+        "4": 320,
+        "8": 155,
+        "16": 100,
+        "32": 94,
+        "none": 0
+      },
+      "mean_selected_depth": 3.158,
+      "winner_curse": {
+        "mean_e_bias": -3.4120104502862936,
+        "relative_e_bias": -0.05598878433774746,
+        "mean_accuracy_bias": 0.03214,
+        "mean_regret": 12.380200345479189,
+        "relative_regret": 0.2566099340986395
+      },
+      "n_star": {
+        "defined_rate": 0.906,
+        "relative_bias": -0.09231465096898182,
+        "rmse": 186.2364918416592,
+        "relative_bias_vs_oracle": 0.02370092132151308,
+        "exact_relative_bias": 0.007545646222952453,
+        "exact_rmse": 51.8288092966166,
+        "corr_exact_approx": 0.9277413644524285,
+        "mean_ratio_exact_to_approx": 0.9487996823546379,
+        "mean_estimate": 1090.1381241014751,
+        "mean_true": 1189.719024358578,
+        "mean_exact_estimate": 1022.9232548157187,
+        "mean_true_exact": 1014.7755654195626,
+        "mean_oracle": 1064.89903583773
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 200,
+        "p_true_mean": 0.2670375,
+        "p_true_sd": 0.21206890187296207,
+        "p_true_q05": 0.015,
+        "p_true_q95": 0.68,
+        "p_max_mean": 0.5115375,
+        "map_selection_rate": 0.33,
+        "k3_pass_rate": 0.0175,
+        "brier": 0.11674481249999999,
+        "p_k_optimal_mean": {
+          "0": 0.004612499999999996,
+          "1": 0.1959375000000003,
+          "2": 0.206,
+          "4": 0.2670374999999999,
+          "8": 0.11816249999999996,
+          "16": 0.08288750000000004,
+          "32": 0.12536250000000015,
+          "none": 0.0
+        }
+      },
+      "engine_check": {
+        "resamples": 80,
+        "max_abs_difference": 0.125,
+        "note": "Different RNG streams; the difference is Monte Carlo error, not a bias check."
+      }
+    },
+    {
+      "gap": 0.25,
+      "n": 500,
+      "reps": 1000,
+      "true_best_depth": 4,
+      "true_best_e": 48.245210727969344,
+      "true_second_depth": 8,
+      "true_second_gap": 0.25,
+      "energy_slope": 1.613199233716475,
+      "selection_rate": 0.44,
+      "selection_counts": {
+        "0": 0,
+        "1": 50,
+        "2": 161,
+        "4": 440,
+        "8": 220,
+        "16": 85,
+        "32": 44,
+        "none": 0
+      },
+      "mean_selected_depth": 3.261,
+      "winner_curse": {
+        "mean_e_bias": -1.595980386949811,
+        "relative_e_bias": -0.027290630100133058,
+        "mean_accuracy_bias": 0.015067999999999998,
+        "mean_regret": 8.82546573240024,
+        "relative_regret": 0.18292936437074833
+      },
+      "n_star": {
+        "defined_rate": 0.956,
+        "relative_bias": -0.04098159397692627,
+        "rmse": 302.0078266788564,
+        "relative_bias_vs_oracle": 0.060399456526069,
+        "exact_relative_bias": 0.0030162928838390777,
+        "exact_rmse": 73.16182418808994,
+        "corr_exact_approx": 0.9512113598711046,
+        "mean_ratio_exact_to_approx": 0.911633738762848,
+        "mean_estimate": 2823.0458971436587,
+        "mean_true": 2925.396789033237,
+        "mean_exact_estimate": 2558.4098106759398,
+        "mean_true_exact": 2552.7108176560964,
+        "mean_oracle": 2662.247589594323
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 200,
+        "p_true_mean": 0.3227875,
+        "p_true_sd": 0.2184108527414288,
+        "p_true_q05": 0.03,
+        "p_true_q95": 0.7052499999999997,
+        "p_max_mean": 0.5113,
+        "map_selection_rate": 0.4075,
+        "k3_pass_rate": 0.015,
+        "brier": 0.1319258125,
+        "p_k_optimal_mean": {
+          "0": 0.0001875,
+          "1": 0.11895000000000003,
+          "2": 0.19312500000000007,
+          "4": 0.32278750000000017,
+          "8": 0.19520000000000023,
+          "16": 0.09109999999999996,
+          "32": 0.07864999999999994,
+          "none": 0.0
+        }
+      },
+      "engine_check": {
+        "resamples": 80,
+        "max_abs_difference": 0.04999999999999999,
+        "note": "Different RNG streams; the difference is Monte Carlo error, not a bias check."
+      }
+    },
+    {
+      "gap": 0.25,
+      "n": 1000,
+      "reps": 1000,
+      "true_best_depth": 4,
+      "true_best_e": 48.245210727969344,
+      "true_second_depth": 8,
+      "true_second_gap": 0.25,
+      "energy_slope": 1.613199233716475,
+      "selection_rate": 0.615,
+      "selection_counts": {
+        "0": 0,
+        "1": 12,
+        "2": 72,
+        "4": 615,
+        "8": 230,
+        "16": 62,
+        "32": 9,
+        "none": 0
+      },
+      "mean_selected_depth": 3.285,
+      "winner_curse": {
+        "mean_e_bias": -0.7565590571705278,
+        "relative_e_bias": -0.01407276199229524,
+        "mean_accuracy_bias": 0.007648999999999993,
+        "mean_regret": 5.538090508249277,
+        "relative_regret": 0.11479047193877553
+      },
+      "n_star": {
+        "defined_rate": 0.991,
+        "relative_bias": -0.020034051641391926,
+        "rmse": 429.0262641281556,
+        "relative_bias_vs_oracle": 0.05618833600866538,
+        "exact_relative_bias": -7.372158065316468e-05,
+        "exact_rmse": 105.4454962391437,
+        "corr_exact_approx": 0.9537021826716425,
+        "mean_ratio_exact_to_approx": 0.9030396998293315,
+        "mean_estimate": 5623.66970339342,
+        "mean_true": 5715.955776850696,
+        "mean_exact_estimate": 5058.419482357822,
+        "mean_true_exact": 5062.462136618776,
+        "mean_oracle": 5324.495179188646
+      },
+      "bootstrap": {
+        "reps": 400,
+        "resamples": 200,
+        "p_true_mean": 0.44858750000000003,
+        "p_true_sd": 0.2309128498032551,
+        "p_true_q05": 0.065,
+        "p_true_q95": 0.8102499999999998,
+        "p_max_mean": 0.56525,
+        "map_selection_rate": 0.6225,
+        "k3_pass_rate": 0.0575,
+        "brier": 0.1445181875,
+        "p_k_optimal_mean": {
+          "0": 0.0,
+          "1": 0.052237500000000034,
+          "2": 0.14497500000000005,
+          "4": 0.4485875000000005,
+          "8": 0.2217125,
+          "16": 0.0915375,
+          "32": 0.040950000000000035,
+          "none": 0.0
+        }
+      },
+      "engine_check": {
+        "resamples": 80,
+        "max_abs_difference": 0.025000000000000022,
+        "note": "Different RNG streams; the difference is Monte Carlo error, not a bias check."
+      }
+    }
+  ]
+}

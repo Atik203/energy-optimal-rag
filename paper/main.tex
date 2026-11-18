@@ -1129,6 +1129,45 @@ Accuracy decomposes as $A(k)=R(k)Q(k)$, where $R(k)$ is the fraction of question
 
 The decomposition explains three results. The SQuAD plateau is a precision decline, not a retrieval ceiling. The Llama peak at $k=4$ is a steeper precision decline. The P3 policy fails because BM25 features predict $R$, not $Q$; the missing signal is reader-side. The model is descriptive and is not used for any decision.
 
+\subsection{Simulation Evidence}\label{sec:simulations}
+
+The estimators were exercised on synthetic data because the empirical arms cannot isolate estimator bias from reader behavior. The simulations are Monte Carlo checks, not new evidence about RAG.
+
+\textbf{Ratio estimator.} With paired $(J,C)$ and $J$ from lognormal or gamma noise, the ratio of sums has relative bias 4.9\% at $A=0.1,n=200$, 1.8\% at $n=500$, 0.9\% at $n=1{,}000$, and 0.4\% at $n=2{,}000$; the delta, percentile, and BCa intervals cover at 91--97\%. The mean of per-question ratios is not an estimator of $E[J]/A$: its relative bias is $-98.7$\% at $A=0.1$, $-89.1$\% at $A=0.3$, $-71.6$\% at $A=0.5$, and $-32.4$\% at $A=0.8$. This is the formal reason the paper uses a ratio of sums.
+
+\textbf{NI test.} At the 5 pp margin and 12\% discordance, the one-sided z test rejects at 4.8--6.5\% under the null (nominal 5\%), and its power at $d=-2$ pp is 33.9\%, 62.2\%, 86.5\%, and 98.9\% for $n=200,500,1{,}000,2{,}000$. The score test is close; the exact conditional test is conservative. The empirical P1 result sits in the low-power region: at $d=-4.3$ pp and $n=1{,}000$, realized power is 0.152.
+
+\textbf{Selection and certification.} With a 2--25\% true gap between the best and second-best depth, the selection rate for the true depth is 32--63\% and the mean bootstrap $P(k^{*})$ is 27--51\%, so the 0.8 gate is stringent. Winner's curse is negative: the selected depth looks cheaper than it is by 0.6--3.4 J/correct. The frozen per-correct-answer $N^{*}$ is biased low by 20\% at $n=200$ and 2\% at $n=1{,}000$; the exact per-query-energy variant is nearly unbiased. These are descriptive properties of the estimator, not deployment guarantees.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Simulation summary. S1: ratio-of-sums versus mean-of-ratios (relative bias). S2: type-I at the 5 pp margin and power at $d=-2$ pp. S3: selection rate, $P(k^{*})$, and $N^{*}$ bias.}
+  \label{tab:simulations}
+  \footnotesize
+  \begin{tabular}{@{}lrrrr@{}}
+    \toprule
+    \textbf{Study} & \textbf{Setting} & \textbf{Low} & \textbf{Mid} & \textbf{High} \\
+    \midrule
+    S1 ratio-of-sums relative bias & $A=0.1$, $n=200\to2{,}000$ & 4.9\% & 1.8\% & 0.4\% \\
+    S1 mean-of-ratios relative bias & $A=0.1/0.5/0.8$ & $-98.7$\% & $-71.6$\% & $-32.4$\% \\
+    S2 type-I (z) & $n=200\to2{,}000$ & 6.5\% & 5.6\% & 4.8\% \\
+    S2 power at $d=-2$ pp & $n=200\to2{,}000$ & 33.9\% & 86.5\% & 98.9\% \\
+    S3 selection rate & gap 2--25\%, $n=200\to1{,}000$ & 32.0\% & 44.0\% & 62.8\% \\
+    S3 mean $P(k^{*})$ & same & 26.7\% & 37.2\% & 51.3\% \\
+    S3 $N^{*}$ bias & $n=200/1{,}000$ & $-20.1$\% & $-6.0$\% & $-2.0$\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[pos=htbp]
+  \centering
+  \IfFileExists{figures/sim_ratio.png}%
+    {\includegraphics[width=0.85\linewidth]{figures/sim_ratio.png}}%
+    {\missingfigure{figures/sim_ratio.png}{Ratio-estimator simulation figure.}}
+  \caption{Ratio-estimator simulation. The ratio of sums tracks the target while the mean of per-question ratios is badly biased, especially at low accuracy.}
+  \label{fig:simratio}
+\end{figure}
+
 \subsection{Evidence Status}\label{sec:status}
 
 P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of 7{,}000 rows, all seven block factors in range, an idle CV of 1.23\%, and a repeat CV below the 20\% threshold. The descriptive energy model is supported: the per-query curve is affine with $b>0$, $R^{2}=0.9714$, and a lack-of-fit $p$ of 0.2813, and the context share rises from 0.209 to 0.807. The policy claim fails: the accuracy lower bound is outside the 5 pp margin, the selection probability is 0.7244, and the identity gap at $k=4$ excludes zero. The 2 pp margin remains dead, and the 5 pp margin is now also unsupported. P2 is complete. Its 1.5B-reader arm does not support H7 ($+2.00$ pp, upper $+4.90$ pp), while the HotpotQA arm does ($-10.80$ pp, upper $-8.00$ pp) and satisfies G5. Energy on both P2 arms is uncalibrated because at least one block factor failed, so the P2 energy contrasts are not certified. P3 is complete and negative: on a hashed 608/206/186 split, the BM25-feature logistic policy reaches 0.4194 accuracy at 59.99 J/correct versus static $k=1$ at 0.4194 and 59.57 J/correct, capturing $-2.46\%$ of a $28.64\%$ matched oracle gap, so G4 is not supported. P4 shows the theory is local: the coverage model is rejected on three of four arms, Qwen and Llama are non-monotone, and positive identity gaps at $k\ge4$ flag over-retrieval without certifying a global optimum.

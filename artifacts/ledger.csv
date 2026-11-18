@@ -70,3 +70,8 @@ A-0068,recall_precision,analysis,analysis/recall_precision.json,ee018f624e68d681
 A-0069,recall_precision,document,docs/RECALL_PRECISION.md,7f57c055cc38a3c498a18b3980e07ea49a43b9856a52e4c6186f3ea63df69e95,1492,2026-11-18T19:07:54Z,CC-BY-4.0,Recall x precision memo
 A-0070,measurement,analysis,analysis/measurement/probe_qwen4b_p1.json,1be383a79c875a4a7922a15562b9f389329b3d7d239f074a51a69ad0f8bcabd6,158973,2026-11-18T19:07:54Z,CC-BY-4.0,P1 Ollama power probe
 A-0071,squad_qwen4b_p1,analysis,analysis/identity_continuous.json,Continuous-optimum identity diagnostic,437a4cb913f30b9791bec94892f56b1e14ee599a69af4d5a485a89220e9a9f73,464,2026-11-18T19:09:51Z,CC-BY-4.0,Exploratory; H3 unchanged
+A-0072,simulations,analysis,analysis/simulations/s1.json,40ebb582098c2763dc3b9b09c8e0da7b590603ff61e21188516405acae9adaea,79651,2026-11-18T19:29:57Z,CC-BY-4.0,Ratio estimator simulation
+A-0073,simulations,analysis,analysis/simulations/s2.json,fecad839c2e4a3f47e67a6b7cd67f82e6f73a3e71aad4ce5741490feaa21e226,20880,2026-11-18T19:29:57Z,CC-BY-4.0,NI test and power simulation
+A-0074,simulations,analysis,analysis/simulations/s3.json,7713453b5da3f12915151917cbf66e23d93ff99f2231a7ea309fafed4a5b03d7,23418,2026-11-18T19:29:57Z,CC-BY-4.0,Selection and N* simulation
+A-0075,simulations,analysis,analysis/simulations/report.md,3551ac6408db9fb2a0d222291c524bba59a968d5fd3910360e591825d231f74e,8792,2026-11-18T19:29:57Z,CC-BY-4.0,Simulation report
+A-0076,simulations,figure,paper/figures/sim_ratio.png,49955375b8fdf1fc496811e51a48f7f2ce562f91e17ecc33f73750143b33dcea,732679,2026-11-18T19:29:57Z,CC-BY-4.0,Ratio estimator figure

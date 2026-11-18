@@ -1,0 +1,749 @@
+{
+  "study": "S2_noninferiority_power",
+  "seed": 20261116,
+  "reps": 2000,
+  "margin": 0.05,
+  "alpha": 0.05,
+  "note": "Monte Carlo simulation; not an empirical result.",
+  "design": {
+    "sample_sizes": [
+      200,
+      500,
+      1000,
+      2000
+    ],
+    "differences_pp": [
+      -8.0,
+      -5.0,
+      -2.0,
+      0.0,
+      2.0
+    ],
+    "reference_accuracy": 0.5,
+    "discordance": 0.12,
+    "null": "H0: d <= -margin; one-sided alpha",
+    "type_i_cell": "d = -margin"
+  },
+  "cells": [
+    {
+      "n": 200,
+      "true_difference": -0.08,
+      "true_difference_pp": -8.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.002,
+        "score": 0.002,
+        "exact_conditional": 0.0035
+      },
+      "mean_difference": -0.079885,
+      "mean_difference_pp": -7.9885,
+      "empirical_sd": 0.02400155854119068,
+      "empirical_sd_pp": 2.4001558541190677,
+      "mean_se": 0.02376855692016339,
+      "mean_se_pp": 2.376855692016339,
+      "mean_lower_bound_pp": -11.898079705753325,
+      "coverage": {
+        "lower_one_sided": 0.938,
+        "wald_two_sided": 0.942,
+        "score_two_sided": 0.9325
+      },
+      "mean_width_pp": {
+        "wald": 9.317103105602103,
+        "score": 8.957625
+      },
+      "mcnemar_reject_rate": 0.9,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.4,
+        "p10": 0.019999999999999997,
+        "p01": 0.1,
+        "p00": 0.48
+      }
+    },
+    {
+      "n": 200,
+      "true_difference": -0.05,
+      "true_difference_pp": -5.0,
+      "reps": 2000,
+      "is_margin_cell": true,
+      "rejection": {
+        "z": 0.0645,
+        "score": 0.066,
+        "exact_conditional": 0.0615
+      },
+      "mean_difference": -0.048907500000000007,
+      "mean_difference_pp": -4.890750000000001,
+      "empirical_sd": 0.023857462836951213,
+      "empirical_sd_pp": 2.3857462836951213,
+      "mean_se": 0.02402420403927719,
+      "mean_se_pp": 2.402420403927719,
+      "mean_lower_bound_pp": -8.84237991486273,
+      "coverage": {
+        "lower_one_sided": 0.9355,
+        "wald_two_sided": 0.9515,
+        "score_two_sided": 0.938
+      },
+      "mean_width_pp": {
+        "wald": 9.417314934844999,
+        "score": 9.053749999999999
+      },
+      "mcnemar_reject_rate": 0.4395,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.41500000000000004,
+        "p10": 0.034999999999999996,
+        "p01": 0.08499999999999999,
+        "p00": 0.46499999999999997
+      }
+    },
+    {
+      "n": 200,
+      "true_difference": -0.02,
+      "true_difference_pp": -2.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.3385,
+        "score": 0.351,
+        "exact_conditional": 0.314
+      },
+      "mean_difference": -0.020527500000000004,
+      "mean_difference_pp": -2.0527500000000005,
+      "empirical_sd": 0.024048355566498227,
+      "empirical_sd_pp": 2.4048355566498225,
+      "mean_se": 0.024315289563873205,
+      "mean_se_pp": 2.4315289563873206,
+      "mean_lower_bound_pp": -6.052259222951211,
+      "coverage": {
+        "lower_one_sided": 0.9495,
+        "wald_two_sided": 0.9475,
+        "score_two_sided": 0.9425
+      },
+      "mean_width_pp": {
+        "wald": 9.531418363770824,
+        "score": 9.171625
+      },
+      "mcnemar_reject_rate": 0.0875,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.43,
+        "p10": 0.049999999999999996,
+        "p01": 0.06999999999999999,
+        "p00": 0.45
+      }
+    },
+    {
+      "n": 200,
+      "true_difference": 0.0,
+      "true_difference_pp": 0.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.651,
+        "score": 0.6615,
+        "exact_conditional": 0.624
+      },
+      "mean_difference": 0.0005124999999999999,
+      "mean_difference_pp": 0.05124999999999999,
+      "empirical_sd": 0.02414262365378801,
+      "empirical_sd_pp": 2.414262365378801,
+      "mean_se": 0.024413129524185166,
+      "mean_se_pp": 2.4413129524185164,
+      "mean_lower_bound_pp": -3.9643524643092043,
+      "coverage": {
+        "lower_one_sided": 0.9535,
+        "wald_two_sided": 0.9585,
+        "score_two_sided": 0.9585
+      },
+      "mean_width_pp": {
+        "wald": 9.56977092346288,
+        "score": 9.208
+      },
+      "mcnemar_reject_rate": 0.021,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.44,
+        "p10": 0.06,
+        "p01": 0.06,
+        "p00": 0.44
+      }
+    },
+    {
+      "n": 200,
+      "true_difference": 0.02,
+      "true_difference_pp": 2.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.8915,
+        "score": 0.8985,
+        "exact_conditional": 0.8685
+      },
+      "mean_difference": 0.020255000000000002,
+      "mean_difference_pp": 2.0255,
+      "empirical_sd": 0.02450837214407714,
+      "empirical_sd_pp": 2.4508372144077137,
+      "mean_se": 0.024348933510263293,
+      "mean_se_pp": 2.4348933510263295,
+      "mean_lower_bound_pp": -1.979543159675682,
+      "coverage": {
+        "lower_one_sided": 0.9525,
+        "wald_two_sided": 0.9405,
+        "score_two_sided": 0.9375
+      },
+      "mean_width_pp": {
+        "wald": 9.544606548415299,
+        "score": 9.179124999999999
+      },
+      "mcnemar_reject_rate": 0.0855,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.45,
+        "p10": 0.06999999999999999,
+        "p01": 0.049999999999999996,
+        "p00": 0.43000000000000005
+      }
+    },
+    {
+      "n": 500,
+      "true_difference": -0.08,
+      "true_difference_pp": -8.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.0,
+        "score": 0.0,
+        "exact_conditional": 0.0
+      },
+      "mean_difference": -0.079854,
+      "mean_difference_pp": -7.985399999999999,
+      "empirical_sd": 0.01480811683375307,
+      "empirical_sd_pp": 1.4808116833753069,
+      "mean_se": 0.01506994339493055,
+      "mean_se_pp": 1.5069943394930552,
+      "mean_lower_bound_pp": -10.464185105110491,
+      "coverage": {
+        "lower_one_sided": 0.9425,
+        "wald_two_sided": 0.951,
+        "score_two_sided": 0.9375
+      },
+      "mean_width_pp": {
+        "wald": 5.90730926062423,
+        "score": 5.6282499999999995
+      },
+      "mcnemar_reject_rate": 1.0,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.4,
+        "p10": 0.019999999999999997,
+        "p01": 0.1,
+        "p00": 0.48
+      }
+    },
+    {
+      "n": 500,
+      "true_difference": -0.05,
+      "true_difference_pp": -5.0,
+      "reps": 2000,
+      "is_margin_cell": true,
+      "rejection": {
+        "z": 0.0565,
+        "score": 0.0565,
+        "exact_conditional": 0.0595
+      },
+      "mean_difference": -0.04988200000000002,
+      "mean_difference_pp": -4.988200000000002,
+      "empirical_sd": 0.015523097605814369,
+      "empirical_sd_pp": 1.5523097605814369,
+      "mean_se": 0.015293395805783315,
+      "mean_se_pp": 1.5293395805783314,
+      "mean_lower_bound_pp": -7.5037397559547125,
+      "coverage": {
+        "lower_one_sided": 0.9435,
+        "wald_two_sided": 0.9465,
+        "score_two_sided": 0.937
+      },
+      "mean_width_pp": {
+        "wald": 5.9949009961302435,
+        "score": 5.7197499999999994
+      },
+      "mcnemar_reject_rate": 0.887,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.41500000000000004,
+        "p10": 0.034999999999999996,
+        "p01": 0.08499999999999999,
+        "p00": 0.46499999999999997
+      }
+    },
+    {
+      "n": 500,
+      "true_difference": -0.02,
+      "true_difference_pp": -2.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.6215,
+        "score": 0.6225,
+        "exact_conditional": 0.6165
+      },
+      "mean_difference": -0.020376000000000002,
+      "mean_difference_pp": -2.0376000000000003,
+      "empirical_sd": 0.01537897527276184,
+      "empirical_sd_pp": 1.5378975272761841,
+      "mean_se": 0.015428125381856558,
+      "mean_se_pp": 1.5428125381856557,
+      "mean_lower_bound_pp": -4.575300799140883,
+      "coverage": {
+        "lower_one_sided": 0.9585,
+        "wald_two_sided": 0.9535,
+        "score_two_sided": 0.942
+      },
+      "mean_width_pp": {
+        "wald": 6.0477140194814245,
+        "score": 5.765000000000001
+      },
+      "mcnemar_reject_rate": 0.2155,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.43,
+        "p10": 0.049999999999999996,
+        "p01": 0.06999999999999999,
+        "p00": 0.45
+      }
+    },
+    {
+      "n": 500,
+      "true_difference": 0.0,
+      "true_difference_pp": 0.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.9405,
+        "score": 0.941,
+        "exact_conditional": 0.938
+      },
+      "mean_difference": 0.00045099999999999985,
+      "mean_difference_pp": 0.04509999999999999,
+      "empirical_sd": 0.015910788025355435,
+      "empirical_sd_pp": 1.5910788025355436,
+      "mean_se": 0.01544401605772774,
+      "mean_se_pp": 1.544401605772774,
+      "mean_lower_bound_pp": -2.495214582725025,
+      "coverage": {
+        "lower_one_sided": 0.9395,
+        "wald_two_sided": 0.945,
+        "score_two_sided": 0.945
+      },
+      "mean_width_pp": {
+        "wald": 6.053943049960928,
+        "score": 5.772375
+      },
+      "mcnemar_reject_rate": 0.0405,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.44,
+        "p10": 0.06,
+        "p01": 0.06,
+        "p00": 0.44
+      }
+    },
+    {
+      "n": 500,
+      "true_difference": 0.02,
+      "true_difference_pp": 2.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.997,
+        "score": 0.997,
+        "exact_conditional": 0.9965
+      },
+      "mean_difference": 0.019587000000000004,
+      "mean_difference_pp": 1.9587000000000003,
+      "empirical_sd": 0.015516823673305506,
+      "empirical_sd_pp": 1.5516823673305506,
+      "mean_se": 0.015446710832265755,
+      "mean_se_pp": 1.5446710832265755,
+      "mean_lower_bound_pp": -0.5820578336922919,
+      "coverage": {
+        "lower_one_sided": 0.954,
+        "wald_two_sided": 0.948,
+        "score_two_sided": 0.9415
+      },
+      "mean_width_pp": {
+        "wald": 6.054999382169121,
+        "score": 5.778625
+      },
+      "mcnemar_reject_rate": 0.205,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.45,
+        "p10": 0.06999999999999999,
+        "p01": 0.049999999999999996,
+        "p00": 0.43000000000000005
+      }
+    },
+    {
+      "n": 1000,
+      "true_difference": -0.08,
+      "true_difference_pp": -8.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.0,
+        "score": 0.0,
+        "exact_conditional": 0.0005
+      },
+      "mean_difference": -0.07992300000000001,
+      "mean_difference_pp": -7.992300000000001,
+      "empirical_sd": 0.010469091266006232,
+      "empirical_sd_pp": 1.0469091266006232,
+      "mean_se": 0.010642881893531565,
+      "mean_se_pp": 1.0642881893531564,
+      "mean_lower_bound_pp": -9.742898288379156,
+      "coverage": {
+        "lower_one_sided": 0.9545,
+        "wald_two_sided": 0.958,
+        "score_two_sided": 0.9435
+      },
+      "mean_width_pp": {
+        "wald": 4.1719330406070645,
+        "score": 3.9130000000000007
+      },
+      "mcnemar_reject_rate": 1.0,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.4,
+        "p10": 0.019999999999999997,
+        "p01": 0.1,
+        "p00": 0.48
+      }
+    },
+    {
+      "n": 1000,
+      "true_difference": -0.05,
+      "true_difference_pp": -5.0,
+      "reps": 2000,
+      "is_margin_cell": true,
+      "rejection": {
+        "z": 0.056,
+        "score": 0.058,
+        "exact_conditional": 0.06
+      },
+      "mean_difference": -0.05009300000000001,
+      "mean_difference_pp": -5.009300000000001,
+      "empirical_sd": 0.010965056645253449,
+      "empirical_sd_pp": 1.0965056645253448,
+      "mean_se": 0.010809941032184661,
+      "mean_se_pp": 1.0809941032184662,
+      "mean_lower_bound_pp": -6.787377071392048,
+      "coverage": {
+        "lower_one_sided": 0.944,
+        "wald_two_sided": 0.946,
+        "score_two_sided": 0.9245
+      },
+      "mean_width_pp": {
+        "wald": 4.237419019616733,
+        "score": 3.9738749999999996
+      },
+      "mcnemar_reject_rate": 0.994,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.41500000000000004,
+        "p10": 0.034999999999999996,
+        "p01": 0.08499999999999999,
+        "p00": 0.46499999999999997
+      }
+    },
+    {
+      "n": 1000,
+      "true_difference": -0.02,
+      "true_difference_pp": -2.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.865,
+        "score": 0.868,
+        "exact_conditional": 0.8695
+      },
+      "mean_difference": -0.019960500000000003,
+      "mean_difference_pp": -1.9960500000000003,
+      "empirical_sd": 0.010835942440521136,
+      "empirical_sd_pp": 1.0835942440521136,
+      "mean_se": 0.01093693965362816,
+      "mean_se_pp": 1.093693965362816,
+      "mean_lower_bound_pp": -3.7950164857019657,
+      "coverage": {
+        "lower_one_sided": 0.9525,
+        "wald_two_sided": 0.9515,
+        "score_two_sided": 0.933
+      },
+      "mean_width_pp": {
+        "wald": 4.287201564439833,
+        "score": 4.0246249999999995
+      },
+      "mcnemar_reject_rate": 0.4045,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.43,
+        "p10": 0.049999999999999996,
+        "p01": 0.06999999999999999,
+        "p00": 0.45
+      }
+    },
+    {
+      "n": 1000,
+      "true_difference": 0.0,
+      "true_difference_pp": 0.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.999,
+        "score": 1.0,
+        "exact_conditional": 1.0
+      },
+      "mean_difference": 2.7755575615628914e-20,
+      "mean_difference_pp": 2.7755575615628915e-18,
+      "empirical_sd": 0.010769075470682087,
+      "empirical_sd_pp": 1.0769075470682086,
+      "mean_se": 0.010946156370933179,
+      "mean_se_pp": 1.0946156370933178,
+      "mean_lower_bound_pp": -1.80048250079074,
+      "coverage": {
+        "lower_one_sided": 0.9515,
+        "wald_two_sided": 0.9495,
+        "score_two_sided": 0.9495
+      },
+      "mean_width_pp": {
+        "wald": 4.290814451234538,
+        "score": 4.031500000000001
+      },
+      "mcnemar_reject_rate": 0.04,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.44,
+        "p10": 0.06,
+        "p01": 0.06,
+        "p00": 0.44
+      }
+    },
+    {
+      "n": 1000,
+      "true_difference": 0.02,
+      "true_difference_pp": 2.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 1.0,
+        "score": 1.0,
+        "exact_conditional": 1.0
+      },
+      "mean_difference": 0.020014500000000005,
+      "mean_difference_pp": 2.0014500000000006,
+      "empirical_sd": 0.010704839398294195,
+      "empirical_sd_pp": 1.0704839398294195,
+      "mean_se": 0.010933860927741715,
+      "mean_se_pp": 1.0933860927741714,
+      "mean_lower_bound_pp": 0.2029899196421053,
+      "coverage": {
+        "lower_one_sided": 0.9555,
+        "wald_two_sided": 0.9535,
+        "score_two_sided": 0.9385
+      },
+      "mean_width_pp": {
+        "wald": 4.285994726068693,
+        "score": 4.0276250000000005
+      },
+      "mcnemar_reject_rate": 0.4145,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.45,
+        "p10": 0.06999999999999999,
+        "p01": 0.049999999999999996,
+        "p00": 0.43000000000000005
+      }
+    },
+    {
+      "n": 2000,
+      "true_difference": -0.08,
+      "true_difference_pp": -8.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.0,
+        "score": 0.0,
+        "exact_conditional": 0.0
+      },
+      "mean_difference": -0.0802565,
+      "mean_difference_pp": -8.025649999999999,
+      "empirical_sd": 0.007696302637445046,
+      "empirical_sd_pp": 0.7696302637445046,
+      "mean_se": 0.0075407298387099786,
+      "mean_se_pp": 0.7540729838709979,
+      "mean_lower_bound_pp": -9.26598968250633,
+      "coverage": {
+        "lower_one_sided": 0.9465,
+        "wald_two_sided": 0.945,
+        "score_two_sided": 0.919
+      },
+      "mean_width_pp": {
+        "wald": 2.9559117802036177,
+        "score": 2.7032499999999993
+      },
+      "mcnemar_reject_rate": 1.0,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.4,
+        "p10": 0.019999999999999997,
+        "p01": 0.1,
+        "p00": 0.48
+      }
+    },
+    {
+      "n": 2000,
+      "true_difference": -0.05,
+      "true_difference_pp": -5.0,
+      "reps": 2000,
+      "is_margin_cell": true,
+      "rejection": {
+        "z": 0.0475,
+        "score": 0.048,
+        "exact_conditional": 0.06
+      },
+      "mean_difference": -0.050079,
+      "mean_difference_pp": -5.0079,
+      "empirical_sd": 0.007604204163519036,
+      "empirical_sd_pp": 0.7604204163519036,
+      "mean_se": 0.007658904601363174,
+      "mean_se_pp": 0.7658904601363173,
+      "mean_lower_bound_pp": -6.2676777012027545,
+      "coverage": {
+        "lower_one_sided": 0.9525,
+        "wald_two_sided": 0.9545,
+        "score_two_sided": 0.927
+      },
+      "mean_width_pp": {
+        "wald": 3.002235435939984,
+        "score": 2.751
+      },
+      "mcnemar_reject_rate": 1.0,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.41500000000000004,
+        "p10": 0.034999999999999996,
+        "p01": 0.08499999999999999,
+        "p00": 0.46499999999999997
+      }
+    },
+    {
+      "n": 2000,
+      "true_difference": -0.02,
+      "true_difference_pp": -2.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 0.9885,
+        "score": 0.989,
+        "exact_conditional": 0.991
+      },
+      "mean_difference": -0.020064500000000002,
+      "mean_difference_pp": -2.00645,
+      "empirical_sd": 0.007547040390731301,
+      "empirical_sd_pp": 0.7547040390731301,
+      "mean_se": 0.007724159574918031,
+      "mean_se_pp": 0.7724159574918031,
+      "mean_lower_bound_pp": -3.276961189195586,
+      "coverage": {
+        "lower_one_sided": 0.951,
+        "wald_two_sided": 0.9475,
+        "score_two_sided": 0.928
+      },
+      "mean_width_pp": {
+        "wald": 3.027814915535911,
+        "score": 2.778
+      },
+      "mcnemar_reject_rate": 0.723,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.43,
+        "p10": 0.049999999999999996,
+        "p01": 0.06999999999999999,
+        "p00": 0.45
+      }
+    },
+    {
+      "n": 2000,
+      "true_difference": 0.0,
+      "true_difference_pp": 0.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 1.0,
+        "score": 1.0,
+        "exact_conditional": 1.0
+      },
+      "mean_difference": 0.0001845,
+      "mean_difference_pp": 0.01845,
+      "empirical_sd": 0.007780294097148196,
+      "empirical_sd_pp": 0.7780294097148196,
+      "mean_se": 0.007747634601581363,
+      "mean_se_pp": 0.7747634601581362,
+      "mean_lower_bound_pp": -1.2559224874705825,
+      "coverage": {
+        "lower_one_sided": 0.9455,
+        "wald_two_sided": 0.951,
+        "score_two_sided": 0.9515
+      },
+      "mean_width_pp": {
+        "wald": 3.0370169568951604,
+        "score": 2.784250000000001
+      },
+      "mcnemar_reject_rate": 0.0455,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.44,
+        "p10": 0.06,
+        "p01": 0.06,
+        "p00": 0.44
+      }
+    },
+    {
+      "n": 2000,
+      "true_difference": 0.02,
+      "true_difference_pp": 2.0,
+      "reps": 2000,
+      "is_margin_cell": false,
+      "rejection": {
+        "z": 1.0,
+        "score": 1.0,
+        "exact_conditional": 1.0
+      },
+      "mean_difference": 0.019993250000000004,
+      "mean_difference_pp": 1.9993250000000005,
+      "empirical_sd": 0.007738250428704713,
+      "empirical_sd_pp": 0.7738250428704713,
+      "mean_se": 0.007735275448148728,
+      "mean_se_pp": 0.7735275448148728,
+      "mean_lower_bound_pp": 0.7269854123643891,
+      "coverage": {
+        "lower_one_sided": 0.9575,
+        "wald_two_sided": 0.9515,
+        "score_two_sided": 0.9305
+      },
+      "mean_width_pp": {
+        "wald": 3.032172257773687,
+        "score": 2.780500000000001
+      },
+      "mcnemar_reject_rate": 0.706,
+      "discordant_probability": 0.12,
+      "table_probabilities": {
+        "p11": 0.45,
+        "p10": 0.06999999999999999,
+        "p01": 0.049999999999999996,
+        "p00": 0.43000000000000005
+      }
+    }
+  ]
+}
