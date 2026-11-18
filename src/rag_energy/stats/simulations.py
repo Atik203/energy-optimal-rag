@@ -621,7 +621,6 @@ def _simulate_power_cell(
     n00 = counts[:, 3]
 
     z_reject = 0
-    p_values: list[float] = []
     lower_bounds: list[float] = []
     standard_errors: list[float] = []
     mean_differences: list[float] = []
@@ -650,8 +649,6 @@ def _simulate_power_cell(
             alpha=alpha,
         )
         z_reject += int(result.non_inferior)
-        if result.p_value is not None:
-            p_values.append(float(result.p_value))
         lower_bounds.append(float(result.lower_bound))
         standard_errors.append(float(result.se))
         mean_differences.append(float(result.mean_diff))
@@ -675,6 +672,13 @@ def _simulate_power_cell(
     wald_lower = mean_difference - Z_975 * standard_error
     wald_upper = mean_difference + Z_975 * standard_error
     score_lower, score_upper = _score_interval(b, c, n)
+
+    score_finite = np.isfinite(score_upper) & np.isfinite(score_lower)
+    score_width = (
+        float(100.0 * np.mean(score_upper[score_finite] - score_lower[score_finite]))
+        if score_finite.any()
+        else None
+    )
 
     return {
         "n": int(n),
@@ -701,14 +705,7 @@ def _simulate_power_cell(
         },
         "mean_width_pp": {
             "wald": float(100.0 * np.mean(wald_upper - wald_lower)),
-            "score": float(
-                100.0
-                * np.mean(
-                    score_upper[np.isfinite(score_upper)] - score_lower[np.isfinite(score_lower)]
-                )
-            )
-            if np.isfinite(score_upper).any()
-            else None,
+            "score": score_width,
         },
         "mcnemar_reject_rate": mcnemar_reject / reps,
         "discordant_probability": float(discordance),
@@ -1515,6 +1512,8 @@ def render_report(
             "  Cross-depth dependence in real runs may differ from the simulation.",
             "- Monte Carlo error is not zero. At 2,000 replicates, a coverage near 0.95 has a",
             "  standard error of about 0.5 pp; at 400 bootstrap replicates it is about 1 pp.",
+            "- Reproduce with `python scripts/19_simulations.py --figures`; `--quick` runs a",
+            "  small smoke grid without changing the defaults.",
             "- These studies say nothing about the P1-P4 empirical outcomes and must not be",
             "  cited as evidence for or against any claim in the paper.",
             "",

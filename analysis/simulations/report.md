@@ -38,8 +38,8 @@ The estimand is `E[J]/A`. `mean-of-ratios` is the all-query mean of `J_i/C_i`
 | lognormal | 0.50 | 1000 | 0.2% | 1.48 | 95.0% | 92.0% | 91.5% |
 | gamma | 0.50 | 1000 | 0.1% | 1.42 | 95.7% | 96.5% | 97.0% |
 | lognormal | 0.50 | 2000 | 0.1% | 1.03 | 95.2% | 94.2% | 94.5% |
-| gamma | 0.50 | 2000 | -0.0% | 0.99 | 96.0% | 96.5% | 96.5% |
-| lognormal | 0.80 | 200 | -0.0% | 1.16 | 94.2% | 93.8% | 93.0% |
+| gamma | 0.50 | 2000 | 0.0% | 0.99 | 96.0% | 96.5% | 96.5% |
+| lognormal | 0.80 | 200 | 0.0% | 1.16 | 94.2% | 93.8% | 93.0% |
 | gamma | 0.80 | 200 | 0.1% | 1.12 | 95.2% | 95.5% | 95.5% |
 | lognormal | 0.80 | 500 | 0.0% | 0.72 | 95.2% | 92.0% | 92.5% |
 | gamma | 0.80 | 500 | 0.1% | 0.70 | 95.3% | 96.2% | 96.5% |
@@ -147,7 +147,7 @@ true depth.
 | 10.0% | 1000 | 62.8% | 50.6% | 15.5% | -0.57 | -2.5% | 0.2% |
 | 25.0% | 200 | 32.0% | 26.7% | 1.8% | -3.41 | -9.2% | 0.8% |
 | 25.0% | 500 | 44.0% | 32.3% | 1.5% | -1.60 | -4.1% | 0.3% |
-| 25.0% | 1000 | 61.5% | 44.9% | 5.8% | -0.76 | -2.0% | -0.0% |
+| 25.0% | 1000 | 61.5% | 44.9% | 5.8% | -0.76 | -2.0% | 0.0% |
 
 Winner's curse is `E_hat(k_hat) - E_true(k_hat)` in J/correct; a negative value
 means the selected depth looks cheaper than it is. `N*` is the frozen
@@ -155,8 +155,8 @@ certification-cost break-even; it is descriptive and not a deployment guarantee.
 The exact column is the frozen per-query-energy variant.
 
 **Key patterns (simulation).** Selection accuracy ranges from
-32.0% to 62.8%; the mean bootstrap `P(k*)` ranges from 26.7% to 50.6%, and the K3 pass rate is at most 15.5%. The winner's curse ranges from -3.41 to -0.57 J/correct. The accuracy-weighted `N*` is biased low by -20.1% to -2.0%; the
-per-query-energy variant stays within [-0.0%, 3.1%]. The 5 pp gate is the binding constraint: at fixed n the selection rate is
+32.0% to 62.8%; the mean bootstrap `P(k*)` ranges from 26.7% to 50.6%, and the K3 pass rate is at most 15.5%. The winner's curse ranges from -3.41 to -0.57 J/correct. The accuracy-weighted `N*` relative bias ranges from -20.1% to -2.0% (negative is
+optimistic); the per-query-energy variant stays within [0.0%, 3.1%]. The 5 pp gate is the binding constraint: at fixed n the selection rate is
 similar across E gaps, because a noisy `A(32)` can make `k=4` infeasible or
 make a shallower depth feasible. The gate, not the E gap, dominates reliability.
 
@@ -174,5 +174,7 @@ make a shallower depth feasible. The gate, not the E gap, dominates reliability.
   Cross-depth dependence in real runs may differ from the simulation.
 - Monte Carlo error is not zero. At 2,000 replicates, a coverage near 0.95 has a
   standard error of about 0.5 pp; at 400 bootstrap replicates it is about 1 pp.
+- Reproduce with `python scripts/19_simulations.py --figures`; `--quick` runs a
+  small smoke grid without changing the defaults.
 - These studies say nothing about the P1-P4 empirical outcomes and must not be
   cited as evidence for or against any claim in the paper.
