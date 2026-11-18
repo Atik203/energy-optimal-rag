@@ -34,7 +34,6 @@ def main() -> int:
     fit = affine_lack_of_fit([(s.k, s.mean_j) for s in summaries])
     a, b = float(fit["a"]), float(fit["b"])
 
-    import numpy as np
     from scipy.interpolate import PchipInterpolator
     from scipy.optimize import minimize_scalar
 
