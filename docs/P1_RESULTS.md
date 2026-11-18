@@ -39,6 +39,8 @@ Paired population: questions valid at both `k=4` and `k=32`, `n = 1,000`.
 | Mean difference `A(4) − A(32)` | **−4.30 pp** |
 | One-sided 95% lower bound (analytic) | **−6.17 pp** |
 | One-sided p (null `d ≤ −5 pp`) | 0.2691 |
+| Two-sided 95% interval | **[−6.53, −2.07] pp** |
+| Exact McNemar p (null `d = 0`) | **0.000216** |
 | Discordant pairs `b / c` | 44 / 87 |
 | Invalid rows at `k=4` / `k=32` | 0 / 0 |
 | Energy savings `1 − E(4)/E(32)` | **58.17%** |
@@ -49,6 +51,10 @@ The point estimate is inside the 5 pp margin, but the one-sided lower bound is o
 The correct statement is: *non-inferiority is not established at 5 pp*; the data are also
 compatible with a true loss larger than 5 pp. This is a precision failure at `n = 1,000`, not
 proof that the true loss exceeds 5 pp. The 20% savings floor is met with a wide margin.
+
+The same contrast is clearly nonzero: the two-sided 95% interval excludes zero and the exact
+McNemar test gives p = 0.000216. The data therefore support a measurable accuracy cost from
+depth reduction, while leaving the 5 pp bound unresolved.
 
 The 2 pp secondary contrast has the same point estimate (−4.30 pp), lower bound −6.17 pp, and
 p = 0.9785; it is estimation-only and is not a certification target.
