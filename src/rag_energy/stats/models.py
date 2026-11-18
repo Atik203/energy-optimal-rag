@@ -54,7 +54,33 @@ def coverage_accuracy(a0: float, p: float, k: int) -> float:
 def coverage_fit(xs: list[float], ys: list[float]) -> tuple[float, float, float]:
     """Fit the coverage model and return ``(a0, p, r_squared)``.
 
-    Implemented in P4 with a constrained grid/least-squares search. The affine
-    energy fit is the only model required for P1.
+    Deterministic bounded grid search over ``a0 in [0, 0.95]`` and
+    ``p in (0, 1]``. The model is a stylized description, not a gate; a poor
+    fit is reported as a failure of the model, not of the data.
     """
-    raise NotImplementedError("coverage_fit is implemented in P4.")
+    if len(xs) != len(ys):
+        raise ValueError("xs and ys must have the same length")
+    if not xs:
+        raise ValueError("at least one point is required")
+    if any(k < 0 for k in xs):
+        raise ValueError("depths must be non-negative")
+
+    mean_y = sum(ys) / len(ys)
+    ss_tot = sum((y - mean_y) ** 2 for y in ys)
+
+    best: tuple[float, float, float] | None = None
+    for a0_i in range(96):  # 0.00 .. 0.95
+        a0 = a0_i / 100.0
+        for p_i in range(1, 1001):  # 0.001 .. 1.000
+            p = p_i / 1000.0
+            ss_res = sum(
+                (y - coverage_accuracy(a0, p, int(k))) ** 2
+                for k, y in zip(xs, ys, strict=True)
+            )
+            if best is None or ss_res < best[2]:
+                best = (a0, p, ss_res)
+    if best is None:  # pragma: no cover - loops are non-empty
+        raise RuntimeError("coverage_fit grid search produced no candidate")
+    a0, p, ss_res = best
+    r_squared = 1.0 - ss_res / ss_tot if ss_tot > 0 else 1.0
+    return a0, p, r_squared
