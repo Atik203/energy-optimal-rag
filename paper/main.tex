@@ -390,6 +390,42 @@ The identity has a structural implication that does not depend on a fitted accur
 \end{equation}
 $N^{*}$ is a property of the decision, not of the reader. A small saving requires a large $N^{*}$ to justify the measurement, which is why a 2 pp margin is expensive even when the point estimate looks favourable. The pilot reported $N^{*}=876$ and P1 reports $N^{*}=6{,}189$ questions under the per-correct-answer formula; the exact per-query-energy break-even is 5{,}316. Both are descriptive break-evens, not deployment guarantees.
 
+\subsection{Baseline Families}\label{sec:baselines}
+
+Several baselines are computable from the same rows, and each answers a different question. The paper's primary comparator is the constrained static depth of Equation~\eqref{eq:optimum}; the others are reported only where they clarify what the primary comparator does and does not capture.
+
+\textbf{No retrieval.} At $k=0$ the reader sees the question only. Its accuracy $A(0)$ and energy $J(0)$ isolate the fixed per-query cost. It is not a policy candidate because its accuracy is near zero, but it is the lower bound of the depth lever.
+
+\textbf{Always maximum.} At $k=K$ the reader sees the retriever's ceiling. It is the reference depth for the primary contrast and the accuracy-maximal static choice in most runs, but it is also the most expensive. The ratio $J(K)/J(0)$ measures how much of the request cost is retrieval.
+
+\textbf{Energy-minimal static.} The depth $k_{J}=\arg\min_{k}J(k)$ is the cheapest query, not the cheapest correct answer. It is the baseline that a naive energy-only policy would choose, and it usually has low accuracy.
+
+\textbf{Accuracy-maximal static.} The depth $k_{A}=\arg\max_{k}A(k)$ is the best accuracy on the grid. It is the baseline that an accuracy-only policy would choose, and its energy can be much higher than the constrained optimum. The gap between $k_{A}$ and $k^{*}_{\delta}$ is the cost of ignoring energy.
+
+\textbf{Per-question oracle.} For question $q$, the oracle chooses
+\begin{equation}\label{eq:oracle}
+  k_{q}^{\mathrm{oracle}}=\arg\min_{k\in\mathcal{K}:\,C_{qk}=1}J_{qk},
+\end{equation}
+with an arbitrary tie-break if several depths answer correctly. It is a hindsight object: it uses $C_{qk}$, which is unavailable before generation. Its energy per correct answer is a lower bound on what any policy can achieve at that accuracy, not a deployable result.
+
+\textbf{Matched-accuracy oracle.} Because the oracle's accuracy can exceed the static accuracy, the matched oracle holds the number correct at the static depth's count $C_{0}=\sum_{q}C_{q,k_{0}}$. It starts every question at its cheapest depth and pays the smallest extra energy needed to make exactly $C_{0}$ questions correct:
+\begin{equation}\label{eq:matched-oracle}
+  \min_{\{k_{q}\}}\sum_{q}J_{qk_{q}}
+  \quad\text{s.t.}\quad
+  \sum_{q}C_{qk_{q}}=C_{0}.
+\end{equation}
+This is the quantity used in the P3 gate. The unconstrained oracle of Equation~\eqref{eq:oracle} is reported alongside it but is not a matched-accuracy comparison.
+
+\textbf{Bayes policy.} A deployable policy observes a pre-generation feature vector $x_{q}$ and chooses
+\begin{equation}\label{eq:bayes-policy}
+  k_{q}^{\mathrm{Bayes}}=\arg\min_{k\in\mathcal{K}}\frac{J(k)}{p_{k}(x_{q})},
+\end{equation}
+where $p_{k}(x_{q})=\Pr(C_{qk}=1\mid x_{q})$ is a calibrated correctness model. This is the plug-in rule used as an upper bound on a feature-based policy; it is not the same as the hindsight oracle, because $p_{k}$ is estimated.
+
+\textbf{Dense retriever and reranker.} A different retriever changes $R_{k}(q)$ and therefore the whole curve; it is not a depth baseline on the same retriever. A reranker changes the ordering within a fixed $k$, which can improve $A(k)$ without changing $J(k)$ much. Neither is run here; they are external-validity limits, not comparators for the depth decision.
+
+\textbf{Early exit and routing.} Token-level early exit and model routing change the action set, not only $k$. They can be cheaper than depth reduction, but they answer a different decision problem and are not directly comparable without a joint cost model. The paper's contribution is the depth lever in isolation.
+
 \begin{table}[pos=htbp]
   \centering
   \caption{Retrieval-depth grid and the quantities reported at each depth. Panel A gives the role of each depth in the decision. Panel B defines the estimands; energy is in joules, accuracy is a proportion in $[0,1]$, and depths are integers.}
@@ -574,6 +610,57 @@ Repeatability is the coefficient of variation of per-query energy across the thr
   \mathrm{CV}=\frac{s}{m},
 \end{equation}
 where $s$ is the sample standard deviation and $m$ the mean over the three repetitions for a given query; the median and maximum over queries are reported. The implied minimum detectable effect is $2\,\mathrm{CV}$. The block diagnostics are \texttt{factor\_csv}, \texttt{factor\_block}, and \texttt{consistency} from Equation~\eqref{eq:factor}; the gate is on \texttt{factor\_csv} only. Calibration status is reported once per run, not per depth, because the all-or-nothing rule is a property of the run.
+
+\subsection{Statistical Analysis}\label{sec:stats}
+
+The unit of analysis is the question, and every contrast is paired. Let $C_{qk}\in\{0,1\}$ and let $n$ be the number of questions with valid rows at both depths. Define the discordant counts
+\begin{equation}\label{eq:discordant}
+  b=\sum_{q}\mathbf{1}\{C_{qk}=1,C_{qK}=0\},
+  \qquad
+  c=\sum_{q}\mathbf{1}\{C_{qk}=0,C_{qK}=1\},
+\end{equation}
+so the paired mean difference is $\hat d=(b-c)/n$. For paired binary outcomes,
+\begin{equation}\label{eq:paired-se}
+  \widehat{\mathrm{Var}}(\hat d)=\frac{p_{b}+p_{c}-(p_{b}-p_{c})^{2}}{n},
+  \qquad
+  \widehat{\mathrm{SE}}(\hat d)=\sqrt{\widehat{\mathrm{Var}}(\hat d)},
+\end{equation}
+with $p_{b}=b/n$ and $p_{c}=c/n$. The two-sided interval is $\hat d\pm z_{1-\alpha/2}\widehat{\mathrm{SE}}$, and the one-sided lower bound is $\hat d-z_{1-\alpha}\widehat{\mathrm{SE}}$.
+
+\textbf{Non-inferiority.} For margin $\delta>0$, the null is $H_{0}:d\le-\delta$ and the alternative is $H_{1}:d>-\delta$. The test statistic and one-sided p-value are
+\begin{equation}\label{eq:ni-test}
+  z_{\mathrm{NI}}=\frac{\hat d+\delta}{\widehat{\mathrm{SE}}(\hat d)},
+  \qquad
+  p_{\mathrm{NI}}=1-\Phi(z_{\mathrm{NI}}),
+\end{equation}
+and non-inferiority is established at level $\alpha$ when $p_{\mathrm{NI}}\le\alpha$, equivalently when the one-sided lower bound exceeds $-\delta$. A non-significant difference is not non-inferiority: the null is a loss of at least $\delta$, not a loss of zero.
+
+\textbf{McNemar and TOST.} The exact McNemar test against $d=0$ uses $b\sim\mathrm{Binomial}(b+c,1/2)$ and is reported as a secondary diagnostic. Equivalence at $\pm\delta$ uses two one-sided tests,
+\begin{equation}\label{eq:tost}
+  p_{\mathrm{TOST}}=\max\left\{1-\Phi\left(\frac{\hat d+\delta}{\widehat{\mathrm{SE}}}\right),\,
+  \Phi\left(\frac{\hat d-\delta}{\widehat{\mathrm{SE}}}\right)\right\},
+\end{equation}
+and is reported only as a sensitivity; the preregistered decision is the one-sided non-inferiority test.
+
+\textbf{Bootstrap.} The primary interval is a paired percentile bootstrap over questions: resample $n$ question indices with replacement, recompute $\hat d$, $E(k)$, the savings, and the selected depth on each resample, and take the $2.5$ and $97.5$ percentiles. A bias-corrected and accelerated (BCa) interval is reported as a sensitivity. The bootstrap is joint: one question-level resample feeds all statistics, so the reported joint probability $\Pr(\text{NI and savings}\ge20\%)$ is not a product of marginal probabilities.
+
+\textbf{Selection probability.} On each bootstrap resample, recompute $k^{*}_{\delta}$ from Equation~\eqref{eq:optimum}. The selection probability is
+\begin{equation}\label{eq:selection}
+  \Pr(k^{*}_{\delta}=k)=\frac{1}{B}\sum_{b=1}^{B}\mathbf{1}\{k^{*(b)}_{\delta}=k\},
+\end{equation}
+with $B=10{,}000$. It is a stability measure, not a posterior probability. A point estimate is reported with $P(k^{*}_{\delta}=k)$ and with the 95\% span of selected depths; an interval that covers two depths is reported as unstable even if the modal depth is clear.
+
+\textbf{Power, MDE, and required n.} For a one-sided level-$\alpha$ test with power $1-\beta$, the minimum detectable effect at the observed variance is
+\begin{equation}\label{eq:mde}
+  \mathrm{MDE}=(z_{1-\alpha}+z_{1-\beta})\,\widehat{\mathrm{SE}},
+\end{equation}
+and the required number of pairs to detect a true difference $d$ is
+\begin{equation}\label{eq:required-n}
+  n_{\mathrm{req}}=\frac{(z_{1-\alpha}+z_{1-\beta})^{2}\,\widehat{\mathrm{Var}}(\hat d)}{(d+\delta)^{2}}
+\end{equation}
+for the non-inferiority test. At the observed effect, the same formula with $d=\hat d$ gives the sample size needed for the interval to clear the margin; this is the margin frontier of Section~\ref{sec:p1}. The realized power is computed at the observed discordance, not the planning assumption.
+
+\textbf{Multiplicity.} Exactly one confirmatory test is declared, so the family-wise error rate is the single-test error rate. The 2 pp margin, the identity gap, the context share, the affine fit, $N^{*}$, the margin and scoring sensitivities, the replication arms, and the policy analysis are secondary or exploratory. If a family of confirmatory contrasts were declared, a Holm correction would be required; the paper does not declare one.
 
 \section{Results}\label{sec:results}
 
