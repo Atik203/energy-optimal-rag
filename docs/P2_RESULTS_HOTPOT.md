@@ -51,12 +51,14 @@ Energy contrast (uncalibrated, not certified):
 
 - `J(4) = 31.46` J/query, `J(10) = 51.65` J/query.
 - Savings `1 − E(4)/E(10) = 23.03%` (95% CI 16.74–28.50%).
+- Block-estimator bound: 31.4% (same accuracy).
 - Affine fit `J(k) = 19.01 + 3.23 k`, `R² = 0.9992`, lack-of-fit
   `p = 0.0239`.
 
 The savings point (23.03%) sits just above the 20% floor, but because calibration
 failed on `k = 0` the contrast is not certified and must not be quoted as clean
-energy.
+energy. The measurement audit (D-028) gives a bounded range of **23.0–31.4%**;
+both bounds clear the 20% floor, but the point value is not identified.
 
 ## Conclusion
 

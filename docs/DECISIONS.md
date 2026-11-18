@@ -475,3 +475,22 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   `docs/BACKUP.md`.
 - **Consequences:** D-020's single-copy risk is reduced for this release. A
   second-site copy is still pending before the final `v0.2.0` archive.
+
+---
+
+## D-028 - Per-query NVML windows are sequence-dependent; block values bound the saving
+
+- **Date:** 2026-11-19
+- **Status:** accepted
+- **Context:** A power probe and replay test showed that the 0.3 s per-query
+  window measures the previous query's power level at short depths. The
+  continuous replay total is within 2% of the constant-depth block sum, so the
+  sweep/block gap is an estimator bias, not extra work. See
+  `docs/MEASUREMENT_VALIDITY.md`.
+- **Decision:** Keep every calibration gate unchanged. Report P2 energy as an
+  uncalibrated range from the sweep and block estimators. Treat P1's absolute
+  `J` as provisional because its `k=0` factor is 1.1% above the floor and the
+  same bias is present; the accuracy contrast and qualitative savings stand.
+- **Consequences:** No absolute P2 energy claim. HotpotQA savings are reported
+  as 23.0-31.4%, not a point. A future estimator must replay the sweep sequence
+  or bracket each query with a locally measured floor.

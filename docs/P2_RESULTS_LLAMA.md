@@ -27,6 +27,8 @@ failed the `[0.8, 1.4]` gate. Repeat CV passed (median 3.43%, max 18.41%).
 Energy is uncalibrated and uncertified.
 
 Affine fit (uncalibrated): `J(k) = 18.35 + 1.36 k`, `R² = 0.9907`.
+Block-estimator savings bound for 4 vs 32: 77.3% (sweep 68.9%); the qualitative
+saving is robust, the point value is not.
 
 ## Conclusion
 

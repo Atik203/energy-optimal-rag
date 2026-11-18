@@ -1,6 +1,11 @@
 # P1 Confirmatory Results — `squad_qwen4b_p1`
 
 **Status:** COMPLETE. The pre-registered 5 pp non-inferiority claim is **NOT SUPPORTED**.
+
+> **Measurement caveat (2026-11-19, D-028):** the later window-bias audit shows that
+> per-query NVML windows are sequence-dependent at short depths. The primary accuracy
+> contrast is unaffected, but the absolute `J` values are provisional. See
+> `docs/MEASUREMENT_VALIDITY.md`.
 **Run:** `squad_qwen4b_p1` (2026-11-15), commit `f73744c`, config `093521eb…`
 **Prereg:** `prereg-freeze-v1`, hash `fb9e5bcf…`
 **Design:** 1,000 SQuAD v1.1 dev questions × `k ∈ {0,1,2,4,8,16,32}`; qwen3.5:4b Q4;
@@ -45,6 +50,7 @@ Paired population: questions valid at both `k=4` and `k=32`, `n = 1,000`.
 | Invalid rows at `k=4` / `k=32` | 0 / 0 |
 | Energy savings `1 − E(4)/E(32)` | **58.17%** |
 | Savings 95% interval | [56.02, 60.14]% |
+| Block-estimator savings bound | 64.3% |
 | Decision | **NOT SUPPORTED** |
 
 The point estimate is inside the 5 pp margin, but the one-sided lower bound is outside it.

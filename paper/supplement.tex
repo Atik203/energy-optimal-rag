@@ -668,6 +668,80 @@ retained only as failure evidence. P1 started on the PI's authority as a documen
 0.8089 to 1.3111 (Section~\ref{sec:s6}); the P1 absolute energy is therefore calibrated and is
 reported as such. The P0 failure and the fixed $[0.8,1.4]$ range are unchanged.
 
+\section{Measurement validity: window bias}\label{sec:s5b}
+
+A continuous NVML probe on Qwen2.5-1.5B measured the power signal for 3~s after
+each query. The signal did not return to the pre-run idle: the residual after
+2--3~s was 5.0~W at $k=0$, 10.3~W at $k=8$, and 14.6~W at $k=32$, and the
+pre-query floor was 5--64~W above idle depending on the preceding depth. The
+per-query window therefore measures the neighbour's power level at short depths.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Probe residual above the pre-run idle (W) after each query. The signal does not settle within 3~s.}
+  \label{tab:s5bprobe}
+  \footnotesize
+  \begin{tabular}{@{}lrrrr@{}}
+    \toprule
+    $k$ & pre-query & 0.0--0.2~s & 0.6--1.0~s & 2.0--3.0~s \\
+    \midrule
+    0 & 5.3 & 6.4 & 8.8 & 5.0 \\
+    1 & 6.3 & 7.9 & 10.5 & 5.6 \\
+    2 & 7.2 & 9.2 & 13.0 & 6.0 \\
+    4 & 9.7 & 13.7 & 18.9 & 8.2 \\
+    8 & 15.9 & 20.7 & 27.5 & 10.3 \\
+    16 & 31.5 & 37.0 & 36.6 & 10.7 \\
+    32 & 63.8 & 61.1 & 40.1 & 14.6 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The replay discriminator replayed the sweep's exact 20-question depth permutation
+as one continuous block: 7{,}336.9~J, within 2.0\% of the 7{,}195.7~J sum of the
+seven constant-depth blocks. The sweep's per-query sum is much larger at short
+depths, so the gap is estimator bias, not extra work.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{$k=0$ energy by the preceding row's depth. A valid per-query estimator must not depend on this.}
+  \label{tab:s5bneighbour}
+  \footnotesize
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Arm & prev.\ $k=1$ & prev.\ $k=32$ & swing \\
+    \midrule
+    P1 Qwen4B & 15.75 & 19.59 & +24\% \\
+    Qwen1.5B & 14.66 & 21.73 & +48\% \\
+    HotpotQA & 17.64 & 21.51 & +22\% \\
+    Llama 3B & 12.84 & 23.33 & +82\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Bounded savings from the sweep and block estimators. Accuracy is the same in both columns.}
+  \label{tab:s5bbounded}
+  \footnotesize
+  \begin{tabular}{@{}llrr@{}}
+    \toprule
+    Arm & contrast & sweep & block \\
+    \midrule
+    P1 Qwen4B & 4 vs 32 & 68.5\% & 64.3\% \\
+    Qwen1.5B & 4 vs 32 & 92.1\% & 90.9\% \\
+    HotpotQA & 4 vs 10 & 23.0\% & 31.4\% \\
+    Llama 3B & 4 vs 32 & 68.9\% & 77.3\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The qualitative saving is robust: every arm is above the 20\% floor under both
+estimators. The point value is not. P1's calibrated 58.17\% is conservative
+relative to both, while HotpotQA's 23.03\% becomes 23.0--31.4\%. P2 energy is
+therefore reported as an uncalibrated range; all gates remain unchanged, and
+P1's absolute $J$ is provisional because its $k=0$ factor is only 1.1\% above
+the floor and the same bias is present.
+
 \section{P1 confirmatory results}\label{sec:s6}
 
 P1 is the first confirmatory run: SQuAD v1.1 dev, $n=1{,}000$, seven depths

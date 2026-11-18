@@ -50,7 +50,8 @@ Consequently the energy contrast below is **not certified** and must not be
 quoted as a clean energy result:
 
 - `J(4) = 37.28` J/query, `J(32) = 401.83` J/query (uncalibrated).
-- Savings `1 − E(4)/E(32) = 91.24%` (95% CI 89.93–92.36%).
+- Savings `1 - E(4)/E(32) = 91.24%` (95% CI 89.93-92.36%).
+- Block-estimator bound: 90.9% (same accuracy); the qualitative saving is robust.
 - Affine fit `J(k) = −8.32 + 11.02 k`, `R² = 0.8507`, lack-of-fit
   `p = 0.0022` (poor fit, driven by the `k = 32` outlier).
 

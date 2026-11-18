@@ -60,3 +60,7 @@ A-0058,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/margin_frontier.json,32
 A-0059,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/report.md,194b72cea1bb4d2eb687803b936067035c515b2d3eae259dd095913eadc9b93a,632,2026-11-18T18:08:02Z,CC-BY-4.0,Margin-frontier report
 A-0060,squad_qwen4b_p1,figure,paper/figures/p1_frontier.png,b04bc9e724329b8b3e459f14c90268c6d19670e8b993d62278a709deb8c79840,455757,2026-11-18T18:08:02Z,CC-BY-4.0,Margin-frontier figure (650 dpi)
 A-0061,squad_qwen4b_p1,analysis,artifacts/release/squad_qwen4b_p1_per_query.csv.gz,31edc21fd6ad16f821eb3c0bc887ce1f4cca773e8be01ebc134bb01443545e57,253329,2026-11-18T18:08:02Z,CC-BY-4.0,Sanitized per-query table
+A-0062,measurement,analysis,analysis/measurement/probe_qwen15b.json,3a5af060eda944ab51708ffe0f1a4bde2a7da6bc939983b7b3d42858d0a6c088,158821,2026-11-18T18:28:39Z,CC-BY-4.0,NVML probe: post-query floor does not settle in 3 s
+A-0063,measurement,analysis,analysis/measurement/replay_qwen15b.json,5b2a7a2dfe35fb40a9dd6a09f7a246fc84903f70352d3bca7c251fb5e3d83b22,473,2026-11-18T18:28:39Z,CC-BY-4.0,Replay total within 2% of constant-depth blocks
+A-0064,measurement,analysis,analysis/calibration_bias.json,8cfa49db57495fd27368b5045bbbf0987a3d35bef4f1596fb73c984457152170,6956,2026-11-18T18:28:39Z,CC-BY-4.0,k=0 energy by previous depth and cap ratios
+A-0065,measurement,document,docs/MEASUREMENT_VALIDITY.md,585e6b818159955c3ee8e4f0cd9c444f567ab906f6c64b8a681a127d08a80694,2966,2026-11-18T18:28:39Z,CC-BY-4.0,Measurement validity memo
