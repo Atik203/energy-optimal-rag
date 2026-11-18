@@ -328,7 +328,35 @@ The claim boundary is explicit. The manuscript does not claim a 5 pp result; the
 
 Let $\mathcal{Q}$ be the set of questions with $|\mathcal{Q}|=n$, and let $\mathcal{K}=\{0,1,2,4,8,16,32\}$ be the depth grid with reference depth $K=32$. For question $q$ at depth $k$, a retriever returns a ranked set $R_{k}(q)$ of $k$ passages, the reader $g$ produces an answer $\hat y_{qk}=g(q,R_{k}(q))$, and a scoring rule returns $C_{qk}\in\{0,1\}$. The energy of the request is $J_{qk}$ in joules, measured as described in Section~\ref{sec:measurement}. A question contributes one row per depth, and rows are paired by question; the unit of analysis is the question, not the request.
 
-Accuracy at depth $k$ is the proportion of correct answers, $A(k)=n_{k}^{-1}\sum_{q}C_{qk}$, where $n_{k}$ is the number of valid rows at that depth. Mean energy per query is $J(k)=n_{k}^{-1}\sum_{q}J_{qk}$. The energy per correct answer is the ratio estimand
+Table~\ref{tab:notation} fixes the notation. Accuracy at depth $k$ is the proportion of correct answers, $A(k)=n_{k}^{-1}\sum_{q}C_{qk}$, where $n_{k}$ is the number of valid rows at that depth.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Notation. Depths are integers; energy is in joules; accuracy is a proportion in $[0,1]$.}
+  \label{tab:notation}
+  \footnotesize
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Symbol} & \textbf{Meaning} & \textbf{Unit} \\
+    \midrule
+    $q$, $n$ & question index; number of paired questions & --- \\
+    $k$, $K$ & retrieval depth; reference depth (32) & passages \\
+    $C_{qk}$ & correctness indicator for question $q$ at depth $k$ & $\{0,1\}$ \\
+    $J_{qk}$, $J(k)$ & per-query energy; mean energy at depth $k$ & J \\
+    $A(k)$ & accuracy at depth $k$ & proportion \\
+    $E(k)$ & energy per correct answer, $\mathbb{E}[J_k]/\mathbb{E}[C_k]$ & J/correct \\
+    $S(k)$, $S_r(k)$ & context-side and retrieval-only energy share & proportion \\
+    $b$, $c$ & discordant pairs candidate-only and reference-only & count \\
+    $d$ & paired mean difference $A(k)-A(K)$ & proportion \\
+    $\delta$ & non-inferiority margin & proportion \\
+    $\varepsilon_J$, $\varepsilon_A$ & energy and accuracy elasticities & dimensionless \\
+    $\Delta(k)$ & identity gap $\varepsilon_J-\varepsilon_A$ & dimensionless \\
+    $k^{*}_{\delta}$ & constrained minimizer under margin $\delta$ & passages \\
+    $N^{*}$ & certification break-even & queries \\
+    $\mathrm{CV}$ & coefficient of variation of repeat energy & proportion \\
+    \bottomrule
+  \end{tabular}
+\end{table} Mean energy per query is $J(k)=n_{k}^{-1}\sum_{q}J_{qk}$. The energy per correct answer is the ratio estimand
 \begin{equation}\label{eq:ratio}
   E(k)=\frac{\mathbb{E}[J_{k}]}{\mathbb{E}[C_{k}]},
   \qquad
