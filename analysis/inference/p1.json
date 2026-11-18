@@ -1,0 +1,386 @@
+{
+  "run_id": "squad_qwen4b_p1",
+  "layer": "exploratory/sensitivity",
+  "claim_boundary": "Exploratory/sensitivity only. The preregistered 5 pp non-inferiority test is the single confirmatory test and its verdict is unchanged. Nothing here certifies a margin, creates a new k*, or supports a universal depth.",
+  "design": {
+    "candidate_depth": 4,
+    "reference_depth": 32,
+    "margin": 0.05,
+    "alpha": 0.05,
+    "n_pairs": 1000,
+    "n_excluded_questions": 0,
+    "excluded_question_ids": [],
+    "n_invalid_candidate": 0,
+    "n_invalid_reference": 0,
+    "b": 44,
+    "c": 87,
+    "discordance": 0.131,
+    "mean_diff": -0.043,
+    "sd_diff": 0.35955567062734567,
+    "se": 0.011370148648117152
+  },
+  "preregistered_primary": {
+    "role": "confirmatory, unchanged",
+    "margin": 0.05,
+    "z": 0.6156471842748666,
+    "p_value": 0.26906370128196655,
+    "lower_bound": -0.061702230242832876,
+    "upper_bound": -0.02429776975716712,
+    "non_inferior": false,
+    "mcnemar_exact_p": 0.00021577652478126048,
+    "mcnemar_z_p": 0.0002429711226703546,
+    "verdict": "not supported"
+  },
+  "consistency_with_registered_analysis": {
+    "checked_against": "analysis/squad_qwen4b_p1/noninferiority.json",
+    "consistent": true,
+    "details": {
+      "n_pairs": {
+        "observed": 1000,
+        "registered": 1000,
+        "matches": true
+      },
+      "mean_diff": {
+        "observed": -0.043,
+        "registered": -0.043,
+        "matches": true
+      },
+      "lower_bound": {
+        "observed": -0.061702230242832876,
+        "registered": -0.061702230242832876,
+        "matches": true
+      },
+      "non_inferior": {
+        "observed": false,
+        "registered": false,
+        "matches": true
+      }
+    }
+  },
+  "score_test": {
+    "method": "restricted-MLE score test (paired binary, one-sided)",
+    "margin": 0.05,
+    "alpha": 0.05,
+    "n_pairs": 1000,
+    "b": 44,
+    "c": 87,
+    "discordance": 0.131,
+    "mean_diff": -0.043,
+    "restricted_discordance": 0.1333187684357124,
+    "restricted_p_candidate_only": 0.04165938421785619,
+    "restricted_p_reference_only": 0.09165938421785619,
+    "boundary_mle": false,
+    "score": 53.50914156816874,
+    "efficient_information": 7644.163081166944,
+    "z": 0.6120163322797701,
+    "p_value": 0.27026347592401373,
+    "non_inferior": false,
+    "note": null
+  },
+  "exact_sensitivity": {
+    "method": "exact sensitivity",
+    "margin": 0.05,
+    "alpha": 0.05,
+    "n_pairs": 1000,
+    "b": 44,
+    "c": 87,
+    "discordance": 0.131,
+    "exact_unconditional_p": 0.4181552135627781,
+    "exact_unconditional_discordance": 0.9971456216654141,
+    "exact_conditional_p": 0.3112376607711895,
+    "exact_conditional_null_split": 0.31247951587510164,
+    "mcnemar_p_zero_two_sided": 0.00021577652478126048,
+    "mcnemar_p_zero_candidate_worse": 0.00010788826239063024,
+    "mcnemar_p_zero_candidate_better": 0.9999476529135671,
+    "sensitive_to_verdict": false,
+    "note": "exact_unconditional_p is the Berger-Boos supremum over the nuisance discordance and is the primary exact sensitivity. exact_conditional_p fixes the nuisance at the restricted MLE and is approximate. The McNemar values test d = 0, not d = -margin."
+  },
+  "tost": {
+    "five_pp": {
+      "method": "two one-sided tests (paired z)",
+      "margin": 0.05,
+      "alpha": 0.05,
+      "n_pairs": 1000,
+      "mean_diff": -0.043,
+      "sd_diff": 0.35955567062734567,
+      "se": 0.011370148648117152,
+      "p_lower": 0.2690637012819666,
+      "p_upper": 1.4273383892820844e-16,
+      "p_tost": 0.2690637012819666,
+      "p_value": 0.2690637012819666,
+      "ci_level": 0.9,
+      "lower_bound": -0.061702230242832876,
+      "upper_bound": -0.02429776975716712,
+      "equivalent": false,
+      "equivalent_from_interval": false,
+      "failing_arm": "lower"
+    },
+    "two_pp": {
+      "method": "two one-sided tests (paired z)",
+      "margin": 0.02,
+      "alpha": 0.05,
+      "n_pairs": 1000,
+      "mean_diff": -0.043,
+      "sd_diff": 0.35955567062734567,
+      "se": 0.011370148648117152,
+      "p_lower": 0.9784552154947326,
+      "p_upper": 1.5052527081264845e-08,
+      "p_tost": 0.9784552154947326,
+      "p_value": 0.9784552154947326,
+      "ci_level": 0.9,
+      "lower_bound": -0.061702230242832876,
+      "upper_bound": -0.02429776975716712,
+      "equivalent": false,
+      "equivalent_from_interval": false,
+      "failing_arm": "lower",
+      "role": "estimation-only"
+    }
+  },
+  "realized_power": [
+    {
+      "true_diff": 0.0,
+      "true_diff_pp": 0.0,
+      "realized_power": 0.9967719183433701,
+      "required_n_50pct": 142,
+      "required_n_80pct": 324,
+      "required_n_80pct_sample_sd": 320
+    },
+    {
+      "true_diff": -0.01,
+      "true_diff_pp": -1.0,
+      "realized_power": 0.9679366001947125,
+      "required_n_50pct": 222,
+      "required_n_80pct": 506,
+      "required_n_80pct_sample_sd": 500
+    },
+    {
+      "true_diff": -0.02,
+      "true_diff_pp": -2.0,
+      "realized_power": 0.8365234294228432,
+      "required_n_50pct": 393,
+      "required_n_80pct": 898,
+      "required_n_80pct_sample_sd": 889
+    },
+    {
+      "true_diff": -0.03,
+      "true_diff_pp": -3.0,
+      "realized_power": 0.5432354162311737,
+      "required_n_50pct": 880,
+      "required_n_80pct": 2011,
+      "required_n_80pct_sample_sd": 1999
+    },
+    {
+      "true_diff": -0.043,
+      "true_diff_pp": -4.3,
+      "realized_power": 0.15176371297556002,
+      "required_n_50pct": 7132,
+      "required_n_80pct": 16296,
+      "required_n_80pct_sample_sd": 16312
+    }
+  ],
+  "power_design": {
+    "discordance": 0.131,
+    "sd_from_discordance": 0.3593758478250869,
+    "sd_observed": 0.35955567062734567,
+    "formula": "Var(d_i) = discordance - mean_diff^2; power = Phi((d + margin)/(sigma/sqrt(n)) - z_{1-alpha})",
+    "caveat": "Realized power at the observed discordance is a design-precision diagnostic, not evidence for or against the hypothesis."
+  },
+  "mde": {
+    "n_pairs": 1000,
+    "margin": 0.05,
+    "alpha": 0.05,
+    "power": 0.8,
+    "sd": 0.3612946157712902,
+    "se": 0.011425138921926693,
+    "mde_difference": -0.021591679292630596,
+    "mde_difference_pp": -2.1591679292630594,
+    "mde_loss_pp": 2.1591679292630594,
+    "convention": "discordance identity Var(d) = pi_d - d^2",
+    "note": "mde_loss_pp is the largest true loss (in pp) that this design can still certify as non-inferior at the given margin and power.",
+    "power_50pct": {
+      "n_pairs": 1000,
+      "margin": 0.05,
+      "alpha": 0.05,
+      "power": 0.5,
+      "sd": 0.3605881422694592,
+      "se": 0.011402798268203281,
+      "mde_difference": -0.031244065911149876,
+      "mde_difference_pp": -3.1244065911149876,
+      "mde_loss_pp": 3.1244065911149876,
+      "convention": "discordance identity Var(d) = pi_d - d^2",
+      "note": "mde_loss_pp is the largest true loss (in pp) that this design can still certify as non-inferior at the given margin and power."
+    }
+  },
+  "bca": {
+    "mean_difference": {
+      "method": "BCa",
+      "level": 0.95,
+      "alpha": 0.05,
+      "n_observations": 1000,
+      "resamples": 10000,
+      "seed": 20261115,
+      "point": -0.043,
+      "lower": -0.066,
+      "upper": -0.022,
+      "alpha_low": 0.01877456959406147,
+      "alpha_high": 0.9670260206223515,
+      "bias_correction": -0.06597214776008464,
+      "acceleration": 0.0029819272452966433,
+      "percentile_interval": {
+        "lower": -0.065,
+        "upper": -0.021,
+        "n_inf": 0,
+        "n_missing": 0
+      },
+      "n_infinite": 0,
+      "n_missing": 0,
+      "n_infinite_jackknife": 0,
+      "estimand": "paired mean difference"
+    },
+    "savings": {
+      "method": "BCa",
+      "level": 0.95,
+      "alpha": 0.05,
+      "n_observations": 1000,
+      "resamples": 10000,
+      "seed": 20261115,
+      "point": 0.5816738530915218,
+      "lower": 0.5598664258339207,
+      "upper": 0.6010186960513815,
+      "alpha_low": 0.022841799363798064,
+      "alpha_high": 0.9726581655072261,
+      "bias_correction": -0.022310842464422612,
+      "acceleration": 0.0016034417511405258,
+      "percentile_interval": {
+        "lower": 0.5603040822000019,
+        "upper": 0.6014323535405632,
+        "n_inf": 0,
+        "n_missing": 0
+      },
+      "n_infinite": 0,
+      "n_missing": 0,
+      "n_infinite_jackknife": 0,
+      "estimand": "savings 1 - E(candidate)/E(reference)"
+    }
+  },
+  "joint_bootstrap": {
+    "unit": "question",
+    "resamples": 10000,
+    "seed": 20261115,
+    "alpha": 0.05,
+    "margin": 0.05,
+    "savings_floor": 0.2,
+    "n_questions": 1000,
+    "n_pairs_point": 1000,
+    "candidate": 4,
+    "reference": 32,
+    "point": {
+      "accuracy": {
+        "0": 0.001,
+        "1": 0.391,
+        "2": 0.417,
+        "4": 0.45,
+        "8": 0.467,
+        "16": 0.481,
+        "32": 0.493
+      },
+      "e_per_correct": {
+        "0": 14585.48992500001,
+        "1": 73.70558458056274,
+        "2": 73.33392070983216,
+        "4": 80.56386331777782,
+        "8": 95.57748579871519,
+        "16": 129.25987681704783,
+        "32": 192.58624858417852
+      },
+      "savings": 0.5816738530915218
+    },
+    "paired_n": {
+      "median": 1000.0,
+      "min": 1000,
+      "max": 1000
+    },
+    "p_non_inferior": 0.154,
+    "p_savings_floor": 1.0,
+    "p_joint": 0.154,
+    "p_joint_interior": 0.154,
+    "p_selected_interior": 1.0,
+    "p_k_optimal": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.0211,
+      "4": 0.7234,
+      "8": 0.2452,
+      "16": 0.0103,
+      "32": 0.0,
+      "none": 0.0
+    },
+    "difference_interval": {
+      "lower": -0.065,
+      "upper": -0.021,
+      "n_inf": 0,
+      "n_missing": 0
+    },
+    "savings_interval": {
+      "lower": 0.5603040822000019,
+      "upper": 0.6014323535405632,
+      "n_inf": 0,
+      "n_missing": 0
+    },
+    "definition": "Each resample draws questions once and recomputes A(k), E(k), the 5 pp feasible set, the selected depth, the paired savings and the one-sided NI decision (mean - 1.645 se > -margin). p_joint is the resample fraction with NI and savings >= the floor.",
+    "clustering": "none"
+  },
+  "cluster_bootstrap": {
+    "supported": false,
+    "cluster_key": "context_id",
+    "status": "skipped",
+    "reason": "the raw CSV has no 'context_id' column; P1 questions are independent and no clustering is defined",
+    "columns_observed": [
+      "run_id",
+      "question_id",
+      "question_order",
+      "k",
+      "order_in_question",
+      "nonce",
+      "correct_em",
+      "correct_lenient",
+      "f1",
+      "prediction",
+      "gold",
+      "j_gpu_raw",
+      "j_gpu_calibrated",
+      "j_retrieval_proxy",
+      "j_total",
+      "latency_s",
+      "prompt_tokens",
+      "output_tokens",
+      "load_s",
+      "prefill_s",
+      "eval_s",
+      "gpu_temp_c",
+      "sm_clock_mhz",
+      "power_mean_w",
+      "valid",
+      "invalid_reason"
+    ],
+    "resamples": 0
+  },
+  "caveats": [
+    "All inference here is exploratory or sensitivity analysis.",
+    "The preregistered 5 pp verdict is unchanged; no new margin is certified.",
+    "The P1 raw CSV has no context_id, so no cluster bootstrap is computed.",
+    "Post hoc power uses the observed discordance and is not a design guarantee."
+  ],
+  "provenance": {
+    "raw_csv_sha256": "ab3f571a0806fe82b0f907a9f52332b407b6ed608779ceade227cd14a0fd7088",
+    "prereg_sha256": {
+      "prereg/PREREGISTRATION.md": "1ac8ce25fe6592f8c9675670c651caa0340bed5c651fcddc2f8452e0d5df7c4e",
+      "prereg/analysis_plan.md": "7122cdfca410828f77fdbbc32c288df20230fa4e7554a3a7e43a7c4b69860b29"
+    },
+    "git_commit": "903ff51a71affe21276cda4f08ca92931e4f30a1"
+  },
+  "software": {
+    "python": "3.12.13",
+    "seed": 20261115
+  }
+}
