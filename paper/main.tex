@@ -720,6 +720,34 @@ for the non-inferiority test. At the observed effect, the same formula with $d=\
 
 \textbf{Multiplicity.} Exactly one confirmatory test is declared, so the family-wise error rate is the single-test error rate. The 2 pp margin, the identity gap, the context share, the affine fit, $N^{*}$, the margin and scoring sensitivities, the replication arms, and the policy analysis are secondary or exploratory. If a family of confirmatory contrasts were declared, a Holm correction would be required; the paper does not declare one.
 
+Table~\ref{tab:checklist} is the reporting checklist for a depth sweep. It is the minimum a reader needs to decide whether a reported depth comparison is reproducible and whether its energy scale is claimable.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Reporting checklist for a retrieval-depth energy study.}
+  \label{tab:checklist}
+  \footnotesize
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{6.0cm}>{\raggedright\arraybackslash}p{7.0cm}@{}}
+    \toprule
+    \textbf{Item} & \textbf{Where reported} \\
+    \midrule
+    Preregistration tag and SHA-256 & Sections~\ref{sec:gates}, \ref{sec:p1}; supplement S4 \\
+    Run config SHA-256 and model digest & Registry and supplement S7 \\
+    GPU, driver, CUDA, context, quantization & Section~\ref{sec:setup}; supplement S7 \\
+    Idle baseline, interval, tail, CV & Section~\ref{sec:measurement}; supplement S1 \\
+    Per-depth block factors and gate decision & Tables~\ref{tab:p1gates}; supplement S1 \\
+    Repeat CV and MDE & Section~\ref{sec:metrics}; supplement S1 \\
+    Nonce control and prefix-cache check & Section~\ref{sec:measurement} \\
+    Paired $n$, discordant $b/c$, invalid rows & Section~\ref{sec:p1} \\
+    Accuracy contrast, CI, NI $p$ & Section~\ref{sec:p1}; Table~\ref{tab:p1outputs} \\
+    Savings, interval, calibration status & Section~\ref{sec:p1}; Table~\ref{tab:validity} \\
+    Selection probability and 95\% span & Section~\ref{sec:p1} \\
+    $N^{*}$ and required $n$ at the margin & Section~\ref{sec:p1}; Figure~\ref{fig:frontier} \\
+    Raw or sanitized per-query table & \texttt{artifacts/release/}; DOI \texttt{10.5281/zenodo.24351059} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \section{Results}\label{sec:results}
 
 This section reports the pilot evidence (Section~\ref{sec:pilot}), the P0 harness reproduction (Section~\ref{sec:p0}), and the P1 confirmatory result (Section~\ref{sec:p1}). The separation is deliberate: the pilot is prior evidence collected before the freeze, P0 is a harness check that produced no claim, and P1 is the confirmatory run. P1 is negative on the primary policy claim and positive on the descriptive energy model; the two are reported separately.
