@@ -120,6 +120,9 @@ pointer. Status labels: `logs` (measured), `code only`, `author`, `missing`.
 | Energy taxes | 150 each | 0–32 | qwen3.5:4b | **COMPLETE, inconclusive** | docs/P2_RESULTS_TAXES.md |
 | P3 policy | 608/206/186 | 0-32 | qwen3.5:4b (P1 rows) | **COMPLETE, G4 NOT SUPPORTED** | docs/P3_RESULTS.md |
 | P4 theory validation | 4 arms | all | mixed | **COMPLETE, coverage model rejected** | docs/P4_RESULTS.md |
+| Formal theory | --- | --- | --- | **COMPLETE, appendix A** | paper/theory_appendix.tex |
+| Inference layer | 1,000 | 4 vs 32 | --- | **COMPLETE, exploratory** | analysis/inference/p1.json |
+| Simulations S1-S3 | synthetic | --- | --- | **COMPLETE** | analysis/simulations/ |
 | H200 64k accuracy check | 200 | 64 | Qwen3.5-4B | Not run; accuracy only | prereg §2; MEASUREMENT §12 |
 
 **Setup.** One local RTX 3060 Laptop 6 GB, batch size 1, AC power, screen off, no concurrent
@@ -170,6 +173,10 @@ gap; `N*`. No multiplicity correction for the single primary test. [prereg/analy
 | Tax arms | fixed A→0.5867 at k=32; per-passage A→0.5733 at k=32 | analysis/fixed_a/report.md; analysis/per_passage_b/report.md; C-037–C-038 | inconclusive |
 | P3 policy | test 0.4194 at 59.99 J/correct vs static k=1 0.4194 at 59.57 | analysis/policy/policy.json; C-039 | **G4 not supported** |
 | P3 oracle | matched gain 28.64%, policy capture -2.46%; no-abstention gap 7.21% | analysis/policy/policy.json; C-040 | abstention-dominated |
+| Inference sensitivities | score p=0.2703; exact p=0.4182; TOST 5pp p=0.2691; BCa [-6.60,-2.20] pp; joint P=0.154 | analysis/inference/p1.json | exploratory |
+| Simulation S1 | ratio-of-sums bias 0.4-4.9%; mean-of-ratios -32 to -99% | analysis/simulations/s1.json; C-050 | supports ratio estimand |
+| Simulation S2 | type-I 4.8-6.5%; power at d=-2 pp 33.9-98.9% | analysis/simulations/s2.json; C-051 | nominal 5% |
+| Simulation S3 | selection 32-63%; P(k*) 27-51%; N* bias -20% at n=200 | analysis/simulations/s3.json | selection is unstable |
 | P4 coverage fit | R² 0.273 (P1), 0.151 (Qwen), 0.879 (HotpotQA), 0.097 (Llama) | analysis/p4/p4.json | model rejected on 3/4 arms |
 | P4 monotonicity | P1/HotpotQA monotone; Qwen/Llama non-monotone | analysis/p4/p4.json | distractor counterexample present |
 | P4 identity | P1 +0.065/+0.200/+0.386/+0.566/+0.703 at k=2/4/8/16/32 | analysis/p4/identity.csv | local diagnostic |

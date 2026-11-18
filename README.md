@@ -72,9 +72,10 @@ conditional reader precision falls, and the two-stage model fits with RMSE
 See [`docs/P4_RESULTS.md`](docs/P4_RESULTS.md) and
 [`docs/RECALL_PRECISION.md`](docs/RECALL_PRECISION.md).
 
-**P5/P6 status (2026-11-18): paper and reproducibility checks.** The paper and
-supplement include P1–P4; tables are regenerated from registered runs and the
-figures pass the 600+ DPI check. The SQuAD and HotpotQA manifest checksums verify,
+**P5/P6 status (2026-11-19): paper and reproducibility checks.** The paper and
+supplement include P1–P4, a formal theory appendix, an inference sensitivity
+layer, and simulation evidence; tables are regenerated from registered runs and
+the figures pass the 600+ DPI check. The SQuAD and HotpotQA manifest checksums verify,
 and a clean-room rerun of the P1/P2/P3/P4 analyses reproduces the committed
 outputs (line-ending normalized for P4). The raw/processed/analysis archive is
 backed up at `G:\energy-optimal-rag-backup\2026-11-18\` (D-027), with checksums in
