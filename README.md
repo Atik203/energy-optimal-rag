@@ -28,8 +28,12 @@ rows, 0 invalid**, and all seven block factors passed and were applied. The prim
 `A(4) - A(32) = -4.30 pp`, one-sided 95% lower bound **-6.17 pp**, p = 0.2691, so the 5 pp
 non-inferiority criterion is **not met**; energy savings are **58.17%** [56.02, 60.14].
 H1 and H4 are supported; H3 fails; K3 and K5 fail; G1 and G2 fail; G3 passes. The static 5 pp
-policy claim is dead, and the 2 pp claim remains dead. See
-[`docs/P1_RESULTS.md`](docs/P1_RESULTS.md).
+policy claim is dead, and the 2 pp claim remains dead. The same paired contrast
+is clearly nonzero (two-sided 95% CI [-6.53, -2.07] pp; McNemar p = 0.0002), so
+depth reduction has a measurable accuracy cost. A later window-bias audit (D-028)
+makes the absolute `J` provisional; the accuracy contrast and qualitative saving
+stand. See [`docs/P1_RESULTS.md`](docs/P1_RESULTS.md) and
+[`docs/MEASUREMENT_VALIDITY.md`](docs/MEASUREMENT_VALIDITY.md).
 
 **P2 status (2026-11-16): P2 experimental program complete.** Confirmatory arms:
 Qwen2.5-1.5B `A(4)−A(32)=+2.00 pp` (upper +4.90 pp), **H7 not supported**;
@@ -39,7 +43,8 @@ k=32; accuracy 0.475→0.505 from k=32 to 64), 16k context probe (no accuracy
 gain at k=32 vs 4k; J 87.90 vs 83.14), Llama 3B (peak at k=4, 0.476). Energy
 is uncalibrated on every arm except the boundary probe (all-pass). Tax arms run:
 fixed tax and per-passage tax (accuracy rises to k=32 on both; no clean k* shift;
-energy uncalibrated).
+energy uncalibrated). P2 energy is reported as a sweep/block range (see
+`docs/MEASUREMENT_VALIDITY.md`).
 See [`docs/P2_RESULTS.md`](docs/P2_RESULTS.md),
 [`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md),
 [`docs/P2_RESULTS_LLAMA.md`](docs/P2_RESULTS_LLAMA.md), and
