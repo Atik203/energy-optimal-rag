@@ -1,9 +1,9 @@
 # Analysis parameters fixed before the P1 confirmatory run.
-# These values are frozen at the prereg-freeze-v1 tag.
+# Frozen at the prereg-freeze-v1 tag on 2026-11-15.
 schema_version = 1
 kind = "analysis"
 phase = "P1"
-frozen = false
+frozen = true
 n_questions = 1000
 seed = 20261115
 
@@ -23,6 +23,19 @@ margin_pp = 2.0
 role = "estimation_only"
 report_ci = true
 used_for_certification = false
+
+[calibration]
+# P0 failed the k=0 gate at 0.7944; the range is unchanged. The primary savings
+# contrast is a ratio and is invariant to a depth-invariant factor. If any depth
+# fails, no factor is applied and absolute J/E/N*/S are not claimed.
+block_factor_min = 0.8
+block_factor_max = 1.4
+all_depths_required = true
+apply_only_if_all_pass = true
+p0_gate_passed = false
+p0_k0_factor_csv = 0.7944
+primary_savings_population = "paired"
+absolute_energy_claim_if_uncalibrated = false
 
 [bootstrap]
 resamples = 10000

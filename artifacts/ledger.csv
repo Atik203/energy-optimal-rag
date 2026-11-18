@@ -3,8 +3,54 @@ A-0001,pilot,document,docs/PILOT_EVIDENCE.md,1465d8308a0a0ca2078fbe4bf063d608e80
 A-0002,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/estimates.csv,e647e19a5eef99209469bc4e1eb0932ebf640c8c5aad1ba2f0e74dcbf8d33ce3,605,2026-11-14T19:02:40Z,CC-BY-4.0,P0 sweep estimates; uncalibrated because block calibration failed
 A-0003,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/p0_check.json,f36b1dd78935371a8320a0a9c7b0c542f344808951ab74158dbdb27f4bc6963a,1548,2026-11-14T19:02:40Z,CC-BY-4.0,P0 anchor check; FAIL
 A-0004,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/report.md,8242cab87ff04429c76b2b916de0cc1360a8671f2ee1b8c741cd1ac2f97b47ad,605,2026-11-14T19:02:40Z,CC-BY-4.0,P0 analysis report; FAIL
-A-0005,golden_squad_qwen4b_p0,document,docs/P0_HARNESS_REPORT.md,e75262afdc2ac4751a0a88ca41393b1582366c5f2cce38b21bb0f342be9906c5,10172,2026-11-14T19:02:40Z,CC-BY-4.0,P0 harness failure and clean-rerun status report; updated for _r3 invalid outcome
+A-0005,golden_squad_qwen4b_p0,document,docs/P0_HARNESS_REPORT.md,6274cae9f0f7369c104a95fabd46a5d7917a94595e0a25baa84898e0b3c8761d,10652,2026-11-14T19:02:40Z,CC-BY-4.0,P0 harness failure and clean-rerun status report; updated for _r3 invalid outcome
 A-0006,golden_squad_qwen4b_p0,analysis,analysis/p0_calibration_diagnostic/README.md,2ec5968777f1d8e8f32ec9083938525eaf13b46f777c7f2345831e9fb2a28b59,3894,2026-11-14T19:49:52Z,CC-BY-4.0,P0 block/thermal diagnostic archive; failure evidence
 A-0007,golden_squad_qwen4b_p0,analysis,analysis/p0_calibration_diagnostic/diag_blocks.py,d210c6b8d05954956452c20f4c085e6339177866f62a4876439e71036d893930,3372,2026-11-14T19:49:52Z,CC-BY-4.0,Historical block diagnostic script
 A-0008,golden_squad_qwen4b_p0,analysis,analysis/p0_calibration_diagnostic/diag_thermal_block.py,88a7c5f07d0b0cdeb6181271b9da595c66736d40b6f285e9e347eeaa47cc8e95,2852,2026-11-14T19:49:52Z,CC-BY-4.0,Historical thermal block diagnostic script
 A-0009,golden_squad_qwen4b_p0,analysis,analysis/golden_squad_qwen4b_p0/metadata.json,718abef6a1b6aedf4fa9eed64e0d749bb9ab642018938c238f6a164ecba295da,221,2026-11-14T19:51:18Z,CC-BY-4.0,Analysis provenance: config/prereg/git/seed/calibration flag
+A-0010,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/estimates.csv,b6fc50c557ad0bde1cccc4756e477555eb0a453ed994c97d7d86c6f2f7e4f54f,891,2026-11-15T10:56:58Z,CC-BY-4.0,P1 calibrated per-depth estimates
+A-0011,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/noninferiority.json,2fc80deca51b081970c263bf22bd94fa4d2fe977804e02a23411c50ac2c7ab1c,2532,2026-11-15T10:56:58Z,CC-BY-4.0,P1 primary 5pp non-inferiority result
+A-0012,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/gates.json,8cb60b40df05865951bff851365796fd92e36fc2a19867d8ce6e92b58a15ee00,1141,2026-11-15T10:56:58Z,CC-BY-4.0,P1 K1-K7 and G1-G5 evaluation
+A-0013,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/bootstrap.json,366a344b5ee947a3f631be7cf1a869ead7c84c44b55aac2310149f771d4b0192,4458,2026-11-15T10:56:58Z,CC-BY-4.0,"P1 paired bootstrap, savings and P(k*)"
+A-0014,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/certification.json,9b8e557f479474cfa0eb14dfbb477d60786b50d2d7c974aa1aaff72dfa474455,2482,2026-11-15T10:56:58Z,CC-BY-4.0,P1 N* per candidate
+A-0015,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/fit.json,9f87f745597a1274305372f3278b137f75e915e280219d18712589b94407152d,786,2026-11-15T10:56:58Z,CC-BY-4.0,P1 affine fit and H1 adjudication
+A-0016,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/identity.csv,a10d52531850170d1d3e1b2211d54a3576ef9ad91dfe7469c9ee03bd31858944,573,2026-11-15T10:56:58Z,CC-BY-4.0,P1 identity gap by depth
+A-0017,squad_qwen4b_p1,analysis,analysis/squad_qwen4b_p1/report.md,1bb6f15f6ceceaa98484e8ea63f4506490707567d82753cbf5a72202b30d4e9b,2672,2026-11-15T10:56:58Z,CC-BY-4.0,P1 human-readable confirmatory report
+A-0018,squad_qwen4b_p1,document,docs/P1_RESULTS.md,440ab8ffcf7f3bb99ce322af31aedd4dd6e4e5e8555b004b45440663827de7e5,7266,2026-11-15T10:56:58Z,CC-BY-4.0,"P1 result memo: primary negative, calibration and gates"
+A-0019,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/estimates.csv,ebbdc14c733db2a15ae82a5474dcbeb7cbce1802740c4a393308af10cd580198,922,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm depth estimates
+A-0020,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/fit.json,286fbed9d087998978239e0d3f7bf31b1ee5ac86b76f17b17878beff9f825e3b,437,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm affine fit (uncalibrated)
+A-0021,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/direction.json,133eda5114bb622d0b6bb4ab4c23548539573a9e1c9a96d60a14be96beb48d3c,1021,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm H7 direction result (not supported)
+A-0022,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/bootstrap.json,6a1679cc7895e07ac7c40af1236cfdc218d07f26848af88a9b4ddd4c48b25851,4506,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm bootstrap savings (uncalibrated)
+A-0023,squad_qwen15b_p2,analysis,analysis/squad_qwen15b_p2/report.md,0ac66c8b718674c07c569efb39bf02ccdfded6c6f7fa22211cef8b2dc24738cf,1573,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm human-readable report
+A-0024,squad_qwen15b_p2,document,docs/P2_RESULTS.md,951c19f7297e6f41601f6ddf3eadfc3dd025220afa96e56ad14e0a86c192d5ea,3019,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm result memo
+A-0025,squad_qwen15b_p2,analysis,runs/squad_qwen15b_p2/blocks.json,117ddcdb266d46c21bfa493e04a109c8a1febe0a8dc99924e545d41b3bebbc6e,4191,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm block calibration (4 of 7 passed)
+A-0026,squad_qwen15b_p2,analysis,runs/squad_qwen15b_p2/repeat.json,1efbb3a3bcf9ca2aca2f65e96ddc582cbeff5651d5d87728e04281cbcecff589,2937,2026-11-15T15:36:46Z,CC-BY-4.0,P2 Qwen arm repeat CV (failed)
+A-0027,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2/estimates.csv,058fd09691b14e16d466cf0934d0ad5242c4b7699da8fd50c3cb51317155293a,801,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm depth estimates
+A-0028,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2/fit.json,365e18d8239357ea892e9957248cc0515f31bafd5e8d31238996283ba84ef9e4,422,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm affine fit (uncalibrated)
+A-0029,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2/direction.json,e35d06ece23914c907ce237d008e0080309475e3494886aad33f4a999f3996b7,1024,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm H7 direction result (supported)
+A-0030,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2/bootstrap.json,ae7f536bc72192782055dd8e389566f433e4c3e65f807270ff98045c01e9c83c,3960,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm bootstrap savings (uncalibrated)
+A-0031,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2/report.md,c4868b4c18a58f144b8b27e7ca34413a005588457d980284e0f27881f34c7f5f,1504,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm human-readable report
+A-0032,hotpot_qwen4b_p2,document,docs/P2_RESULTS_HOTPOT.md,840ce053e68f638b0997af17d5f25328fb4272d9503baf30f16373e76e8b9e8a,3122,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm result memo
+A-0033,hotpot_qwen4b_p2,analysis,runs/hotpot_qwen4b_p2/blocks.json,83b08ece74452b3146d24977ab4b63e482cead5550afba0269afb50174ad515a,3600,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm block calibration (k=0 miss)
+A-0034,hotpot_qwen4b_p2,analysis,runs/hotpot_qwen4b_p2/repeat.json,78e7eca344f7bb999a1b6cd609c5f95223d6c35c2b9ea61c767271f3b9856779,2937,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot arm repeat CV (passed)
+A-0035,hotpot_qwen4b_p2,analysis,analysis/hotpot_qwen4b_p2_retrieval_recall.json,bbb55fda31843656f61f41951eae9d597731dff690f4a089a7feced504c87300,1130,2026-11-15T16:41:28Z,CC-BY-4.0,Hotpot supporting-fact recall
+A-0036,squad_llama3b_p2,analysis,analysis/squad_llama3b_p2/report.md,1107cabac17f32ba4dd1a1af6ef74dd21fc495c12f76c045f34f8e8eac09b21f,604,2026-11-16T06:51:10Z,CC-BY-4.0,Llama 3B exploratory report
+A-0037,squad_llama3b_p2,analysis,runs/squad_llama3b_p2/blocks.json,0011690dc9d44e78d5d3e3886197565ef2be27023feeca0594054f6263680174,4218,2026-11-16T06:51:10Z,CC-BY-4.0,Llama 3B block calibration (3 of 7 passed)
+A-0038,squad_llama3b_p2,analysis,runs/squad_llama3b_p2/repeat.json,22f2c7d608da4693abc99a166368b89774ddd322ff575974a27f03c99808fbda,2932,2026-11-16T06:51:10Z,CC-BY-4.0,Llama 3B repeat CV (passed)
+A-0039,squad_llama3b_p2,document,docs/P2_RESULTS_LLAMA.md,a2551a8d7aca1b9f83ef6629e8ca555feea8bcea5e8d8ea1bdf163775fcb68ec,1118,2026-11-16T06:51:10Z,CC-BY-4.0,Llama 3B exploratory memo
+A-0040,fixed_a,analysis,analysis/fixed_a/report.md,2f581a761293e6f3149b0e087c7f3caf529cca0e0b2a6a01fc4ffa213f646945,592,2026-11-16T08:31:11Z,CC-BY-4.0,Fixed tax arm report
+A-0041,fixed_a,analysis,runs/fixed_a/blocks.json,c69a162924e13d7722b6bf6060cd224c1b738736cd164ef3d1618b5e420469f9,4107,2026-11-16T08:31:11Z,CC-BY-4.0,Fixed tax block calibration (k=0 miss)
+A-0042,fixed_a,analysis,runs/fixed_a/repeat.json,84fcb176cf1607ab873e865a9f6ce1d38a8714bdb59ee33bc4fa196c4e1cfc3a,2923,2026-11-16T08:31:11Z,CC-BY-4.0,Fixed tax repeat CV (passed)
+A-0043,per_passage_b,analysis,analysis/per_passage_b/report.md,d6cfd35b36e8375667860b9168a3f567bbc46579e7443f0d9ea8850e7fae0e3e,599,2026-11-16T08:31:11Z,CC-BY-4.0,Per-passage tax arm report
+A-0044,per_passage_b,analysis,runs/per_passage_b/blocks.json,cc72bc148cd6cedc98a12d2aac3d4e70ea4cb2f1edf8f0c43936e3d92f90f4aa,4115,2026-11-16T08:31:11Z,CC-BY-4.0,Per-passage tax block calibration (k=0 miss)
+A-0045,per_passage_b,analysis,runs/per_passage_b/repeat.json,71222875659d3a81c05d0833e6f5d59384531e2d44c75a170458a343c31d7958,2934,2026-11-16T08:31:11Z,CC-BY-4.0,Per-passage tax repeat CV (passed)
+A-0046,taxes,document,docs/P2_RESULTS_TAXES.md,546d61312d3f6ea05fc49e4203d4cc3daa661995e907785479e18fad9f1140fb,1690,2026-11-16T08:31:11Z,CC-BY-4.0,Tax arms result memo
+A-0047,policy,analysis,analysis/policy/policy.json,62da45a09f3042307194760a070443e992e994ee75281651765dcfe093dd5bc2,2015,2026-11-18T16:54:43Z,CC-BY-4.0,P3 policy training and test results
+A-0048,policy,analysis,analysis/policy/report.md,3f9028d6b7dc92ef406c1182f4aaa67c46802b613d6383e501dd4c81b3b85f15,581,2026-11-18T16:54:43Z,CC-BY-4.0,P3 policy report
+A-0049,policy,document,docs/P3_RESULTS.md,5ee50183725c67b5faee51112df337207cb3adc21ffcf9db8f70e72903c149bc,2047,2026-11-18T16:54:43Z,CC-BY-4.0,P3 result memo
+A-0050,p4,analysis,analysis/p4/p4.json,a1b59ba0e53847b97656e4e418ee99f219200d999e866b5bde64039bba15fc13,52423,2026-11-18T17:03:16Z,CC-BY-4.0,P4 cross-arm theory validation
+A-0051,p4,analysis,analysis/p4/report.md,7ceb384375fa5eb08347c818dd6d437a57c41fcfa57a3b2b7265c0e4bcdadd3b,1630,2026-11-18T17:03:16Z,CC-BY-4.0,P4 human-readable report
+A-0052,p4,analysis,analysis/p4/identity.csv,2834c313952a2968022fa8252c6590bfdffe32c15094ec88873bdba01a2d0097,2326,2026-11-18T17:03:16Z,CC-BY-4.0,P4 identity gaps
+A-0053,p4,analysis,analysis/p4/margin.csv,f4d00a845742cd11553f0d4c3bbd7afd4f2f00e92c5aa7c3e26205d1c71e0d60,1887,2026-11-18T17:03:16Z,CC-BY-4.0,P4 margin sensitivity
+A-0054,p4,analysis,analysis/p4/scoring.csv,281d86f597f550d17c0c692f9f5791dbcb39dd007c75c18de94ff979bb2da319,4425,2026-11-18T17:03:16Z,CC-BY-4.0,P4 scoring sensitivity
+A-0055,p4,document,docs/P4_RESULTS.md,aa2d481de0ea68fcbbf6218971e2ad295d0cb5ad2c9674b3ce48bbf90cd579ed,3265,2026-11-18T17:03:16Z,CC-BY-4.0,P4 result memo

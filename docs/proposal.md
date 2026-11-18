@@ -10,7 +10,10 @@
 **Package / environment:** `rag_energy` / `energy-optimal-rag`
 **Status:** Post-pilot, pre-confirmatory. This document requests approval to start P0 and P1.
 **Current status (2026-11-15):** P0 harness failed block calibration at `k=0`
-(`factor_csv = 0.7944`); P1 is deferred. No confirmatory results exist.
+(`factor_csv = 0.7944`). P1 started on PI authority (D-022), completed 7,000/7,000 rows with
+0 invalid and calibration 7/7, but the pre-registered 5 pp non-inferiority claim was **not
+supported** (`A(4)-A(32) = -4.30 pp`, one-sided lower bound `-6.17 pp`; savings `58.17%`).
+No static policy claim exists; the 2 pp claim remains dead. See `docs/P1_RESULTS.md`.
 
 ---
 
@@ -328,7 +331,7 @@ The preregistration is frozen before P1 and tagged `prereg-freeze-v1`. Deviation
 
 **Resources.** Three to four people for 20 weeks; 15–20 GPU-hours on the local 3060; a $47 local cap ($2 electricity, $25 wall meter, $10 USB backup, $10 contingency); supervisor sign-off on the frozen prereg; access to the Ollama store, the cached 1.5B reader, and the optional university H200 accuracy-only check.
 
-**Decision.** Approve P0/P1 now. The first 10 days produce a working harness, reproducible pilot curve, frozen prereg, power memo, and the first half of the powered run. If the golden `J(1)`, `J(4)`, and `J(32)` anchors or the affine `a`/`b` differ by more than 10%, P1 stops until the harness is fixed; `E(k)` and `A(k)` are reported without a gate (D-014).
+**Decision.** Approve P0/P1 now. The first 10 days produce a working harness, reproducible pilot curve, frozen prereg, power memo, and the first half of the powered run. If the golden `J(1)`, `J(4)`, and `J(32)` anchors or the affine `a`/`b` differ by more than 10%, the original rule stopped P1; the PI instead started P1 under D-022 as a documented reversal, withholding absolute energy unless all seven P1 block factors pass. `E(k)` and `A(k)` are reported without a gate (D-014).
 
 ---
 

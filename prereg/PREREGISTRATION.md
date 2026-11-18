@@ -1,10 +1,10 @@
 # Pre-Registration — Energy-Optimal Retrieval Depth (G2)
 
-**Status:** DRAFT — revised 2026-11-11 before freeze (population/failure clarification, split
-wording); not yet frozen. Freeze at the P1 start, tag `prereg-freeze-v1`.
-**Version:** 0.1-draft · 2026-11-09
+**Status:** FROZEN 2026-11-15 at tag `prereg-freeze-v1` (pre-freeze revision: P0
+calibration failure and the calibration-invariant primary contrast; see §4.1).
+**Version:** 1.0-frozen · 2026-11-15
 **Registry:** none (no external registry). The frozen git tag and its SHA-256 are the record.
-**Prereg hash:** `TBD` (recorded at freeze)
+**Prereg hash:** recorded in the freeze commit, the run manifest, and `runs/registry.csv`
 **Analysis plan:** [`analysis_plan.md`](analysis_plan.md)
 **Amendments:** [`amendments.md`](amendments.md)
 
@@ -94,6 +94,32 @@ the point estimate of savings is at least 20%. If the test rejects but savings a
 the result is "non-inferior but not materially greener" and is reported as a failure of the
 policy claim.
 
+### 4.1 Calibration status and the primary contrast
+
+P0 failed its block-calibration gate on 2026-11-15: the clean `_r3` sweep was valid at every
+depth, but the `k = 0` `factor_csv` was 0.7944, below the fixed 0.8 floor. The floor is not
+changed and the P0 result stays FAIL.
+
+P1 starts on the PI's explicit authority (D-022), not because the gate passed. The primary
+energy contrast is a ratio of sums:
+
+```
+savings = 1 - E(4) / E(32),   E(k) = sum_i J_ik / sum_i C_ik.
+```
+
+A depth-invariant multiplicative calibration factor `f` multiplies every `J_ik` and cancels in
+the ratio. The accuracy contrast is unaffected by calibration. The primary decision therefore
+does not depend on the absolute energy scale.
+
+P1 still runs block calibration at all seven depths after the sweep. If every depth's
+`factor_csv` lies in [0.8, 1.4], the factors are applied and calibrated `J`, `E`, `N*`, and
+`S(k)` are reported as primary. If any depth fails, no factor is applied (all-or-nothing),
+`j_gpu_calibrated = j_gpu_raw`, and the analysis reports: the primary savings and accuracy
+contrast as the calibration-invariant result; the measured factors and their failure; and
+absolute `J`, `E`, `N*`, and `S(k)` as uncalibrated descriptive values that are not claimed.
+Mixing calibrated and uncalibrated depths is forbidden because it would make the ratio depend
+on which depths happened to pass.
+
 ## 5. Secondary estimands
 
 1. **2 pp margin.** Same procedure at a 2 pp margin, reported with a CI, no certification
@@ -145,7 +171,9 @@ cannot certify it against a 2 pp boundary.
 The unit is a question. A **valid row** requires a non-empty nonce, a completed request, and a
 power window with no sampler error. A failed or empty generation after a completed request is a
 **wrong answer** (`correct = 0`) and is retained, not invalidated; a row is **invalid** only for
-a protocol violation: missing nonce, request/backend failure, or sampler error. Descriptive
+a protocol violation: missing nonce, request/backend failure, or sampler error. A model reload
+inside a run (`load_s > 1 s`) is a backend failure and invalidates the row, because the
+reloaded model is a different measurement condition. Descriptive
 `A(k)`, `J(k)`, and `E(k)` use every sampled question with a valid row at depth `k`, and
 `n_valid(k)` and `n_invalid(k)` are reported at each depth. A question is not dropped from
 depth `k` because it has no row at another depth. The primary paired test uses questions with
@@ -191,7 +219,13 @@ and refuses to run on a mismatch.
 
 | ID | Date | Section | Change | Outcome data seen | Approval |
 |---|---|---|---|---|---|
-| — | — | — | _No deviations. The preregistration has not been frozen yet._ | — | — |
+| — | — | — | _No post-freeze deviations._ | — | — |
+
+### Pre-freeze revision log
+
+| Date | Section | Change | Outcome data seen | Approval |
+|---|---|---|---|---|
+| 2026-11-15 | §4.1 | P0 calibration failure recorded; primary savings defined as the calibration-invariant ratio; all-or-nothing factor application | P0 harness energy only | PI (D-022) |
 
 ## 12. Data and code availability
 

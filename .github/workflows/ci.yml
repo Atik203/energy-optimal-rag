@@ -34,7 +34,7 @@ jobs:
         run: python -m pytest -q tests/test_smoke.py
 
       - name: Install test dependencies
-        run: python -m pip install pytest ruff pandas pyarrow rank-bm25 requests
+        run: python -m pip install pytest ruff pandas pyarrow rank-bm25 requests scipy
 
       - name: Compile package
         run: python -m compileall -q src

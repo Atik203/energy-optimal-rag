@@ -324,3 +324,118 @@ def test_p0_chain_runs_sweep_blocks_repeat_and_analysis(tmp_path: Path) -> None:
     blocks = json.loads(blocks_path.read_text(encoding="utf-8"))
     assert [item["n_queries"] for item in blocks["depths"]] == [2, 2]
     assert all(0.8 <= item["factor_csv"] <= 1.4 for item in blocks["depths"])
+
+
+class RecordingReader(FakeReader):
+    def __init__(self) -> None:
+        super().__init__()
+        self.calls: list[tuple[str, int, list[str]]] = []
+
+    def generate(self, question: str, passages: list[str], nonce: str) -> ReaderResult:
+        self.calls.append((question, len(passages), list(passages)))
+        return super().generate(question, passages, nonce)
+
+
+def _write_hotpot_processed(tmp_path: Path) -> Path:
+    processed = tmp_path / "processed_hotpot"
+    processed.mkdir()
+    questions = []
+    corpus = []
+    for qid in ("h1", "h2"):
+        questions.append(
+            {
+                "qid": qid,
+                "question": f"Question {qid}?",
+                "gold": "alpha",
+                "type": "bridge",
+                "level": "hard",
+                "n_paragraphs": 10,
+                "n_gold_paragraphs": 2,
+            }
+        )
+        for index in range(10):
+            corpus.append(
+                {
+                    "passage_id": f"hotpot:{qid}:{index}",
+                    "qid": qid,
+                    "title": f"T{index}",
+                    "text": f"alpha {qid} paragraph {index}",
+                    "is_gold": index < 2,
+                }
+            )
+    pd.DataFrame(questions).to_parquet(processed / "hotpot_questions.parquet", index=False)
+    pd.DataFrame(corpus).to_parquet(processed / "hotpot_corpus.parquet", index=False)
+    (processed / "hotpot_splits.json").write_text(
+        json.dumps({"splits": {"hotpot": ["h1", "h2"]}}), encoding="utf-8"
+    )
+    return processed
+
+
+def _write_hotpot_config(tmp_path: Path) -> Path:
+    _write_config(tmp_path)
+    run = tmp_path / "configs" / "runs" / "hotpot.toml"
+    run.write_text(
+        """\
+schema_version = 1
+kind = "run"
+run_id = "test_hotpot"
+dataset = "hotpot"
+n_questions = 2
+k_grid = [0, 2, 10]
+id_split = "hotpot"
+seed = 20261115
+phase = "P2"
+[reader]
+model = "fake"
+[retrieval]
+top_k = 10
+chunking = "whole_paragraph"
+[energy]
+sampler = "nvml"
+sample_interval_ms = 10
+idle_baseline_s = 1
+block_size = 2
+warmup_queries = 1
+nonce_hex_chars = 10
+cpu_retrieval_proxy_watts = 20.0
+[scoring]
+primary = "normalized_em"
+[output]
+dir = "runs"
+raw_csv = "raw.csv"
+blocks_json = "blocks.json"
+""",
+        encoding="utf-8",
+    )
+    return run
+
+
+def test_hotpot_sweep_uses_only_the_questions_own_paragraphs(tmp_path: Path) -> None:
+    processed = _write_hotpot_processed(tmp_path)
+    config_path = _write_hotpot_config(tmp_path)
+    reader = RecordingReader()
+
+    raw_path = run_depth_sweep(
+        config_path,
+        root=tmp_path,
+        processed_dir=processed,
+        out_root=tmp_path / "runs",
+        registry_path=tmp_path / "runs" / "registry.csv",
+        reader=reader,
+        sampler_factory=FakeSampler,
+        idle_power_w=15.0,
+    )
+
+    rows = list(csv.DictReader(raw_path.open(encoding="utf-8", newline="")))
+    assert len(rows) == 6
+    assert {row["k"] for row in rows} == {"0", "2", "10"}
+    counts = sorted(count for _, count, _ in reader.calls)
+    assert counts == [0, 0, 0, 2, 2, 10, 10]
+    for question, count, passages in reader.calls:
+        if count == 0:
+            assert passages == []
+            continue
+        own = "h1" if question.startswith("Question h1") else "h2"
+        other = "h2" if own == "h1" else "h1"
+        assert all(own in passage for passage in passages)
+        assert not any(other in passage for passage in passages)

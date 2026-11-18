@@ -17,7 +17,9 @@ analysis/
    ├─ identity.csv         elasticities and gap with CI
    ├─ noninferiority.json  5 pp test, 2 pp estimation
    ├─ certification.json   C_cert, N* per candidate
-   ├─ sensitivity.csv      margins × scoring rules
+   ├─ fit.json             affine fit, quadratic lack-of-fit, H1 verdict
+   ├─ sensitivity.json     margins × scoring rules
+   ├─ gates.json           K1–K7 and G1–G5 evaluations
    ├─ policy.json          train/validation/test, capture, baseline
    ├─ taxes.json           sign tests for fixed and per-passage conditions
    └─ report.md            human-readable summary

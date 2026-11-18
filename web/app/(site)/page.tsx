@@ -16,6 +16,7 @@ import {
 import {
   claimBoundary,
   p0,
+  p1,
   pilot,
   project,
   rerun,
@@ -131,8 +132,8 @@ export default function HomePage() {
 
           <p className="mt-6 max-w-xl text-[1.02rem] leading-relaxed text-muted-foreground sm:text-lg">
             Retrieval depth in RAG, measured in joules per correct answer. The pilot found a
-            steep energy–depth tradeoff — and killed its own 2 pp claim. The 5 pp signal is
-            waiting for a powered rerun.
+            steep energy–depth tradeoff — and killed its own 2 pp claim. The powered P1 test
+            has now reported: the 5 pp claim is not supported, with 58.2% savings.
           </p>
 
           <div className="mt-5 flex flex-wrap gap-2">
@@ -142,10 +143,13 @@ export default function HomePage() {
             <Chip tone="caution" dot>
               {p0.label}
             </Chip>
-            <Chip tone="dead" dot>
-              No confirmatory results
+            <Chip tone="caution" dot>
+              {p1.label}
             </Chip>
-            <Chip tone="neutral">Prereg not frozen</Chip>
+            <Chip tone="dead" dot>
+              5 pp not supported
+            </Chip>
+            <Chip tone="neutral">Prereg frozen</Chip>
           </div>
 
           <div className="mt-7 flex flex-wrap items-center gap-3">

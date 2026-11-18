@@ -33,7 +33,7 @@ export const project = {
   version: "0.1.0",
   status: "post-pilot MARGINAL",
   statusDetail:
-    "Public scaffold. P0 harness failed block calibration on the clean _r3 run; P1 deferred. No confirmatory results. Preregistration not frozen.",
+    "Public scaffold. P0 harness failed block calibration on the clean _r3 run. P1 completed with calibration 7/7, but the pre-registered 5 pp non-inferiority claim was not supported.",
   updated: "2026-11-15",
   repo: "https://github.com/Atik203/energy-optimal-rag",
   author: "Atikur Rahaman and contributors",
@@ -52,6 +52,16 @@ export const p0 = {
   label: "P0 failed",
   note: "Harness check only; the clean sweep was valid but k=0 block factor was 0.7944.",
   backup: "local-only; external backup deferred (D-020)",
+};
+
+export type P1Status = "running" | "pass" | "fail" | "deferred";
+
+export const p1 = {
+  runId: "squad_qwen4b_p1",
+  status: "fail" as P1Status,
+  label: "P1 failed (5 pp)",
+  note: "7,000/7,000 rows, 0 invalid, calibration 7/7; A(4)-A(32) = -4.30 pp, one-sided lower -6.17 pp; 5 pp NI not supported; savings 58.17%.",
+  preregHash: "fb9e5bcf",
 };
 
 /* Course and team — EEE 4261 Green Computing, Section C. Sadman Ifaz is
@@ -281,9 +291,15 @@ export const pilotTable: Array<{
   },
   {
     quantity: "5 pp margin at k = 4",
-    value: "69.3% savings \u00b7 N* = 876 \u00b7 P = .537",
+    value: "Pilot: 69.3% savings \\u00b7 N* = 876 \\u00b7 P = .537",
     status: "signal",
-    note: "Pilot signal, not certified. Needs the powered rerun.",
+    note: "Pilot signal; the P1 test did not confirm it.",
+  },
+  {
+    quantity: "P1 5 pp non-inferiority",
+    value: "A(4)-A(32) = -4.30 pp \\u00b7 one-sided lower -6.17 pp \\u00b7 p = 0.2691",
+    status: "rejected",
+    note: "Not supported at n = 1,000; savings 58.17%.",
   },
   {
     quantity: "Adaptive oracle",
@@ -360,8 +376,14 @@ export const survivalClaims: Array<{
   {
     status: "signal",
     claim: "5 pp non-inferiority at k = 4",
-    evidence: "69.3% savings \u00b7 N* = 876 \u00b7 P = .537",
+    evidence: "Pilot: 69.3% savings \\u00b7 N* = 876 \\u00b7 P = .537",
     note: "Pilot signal",
+  },
+  {
+    status: "rejected",
+    claim: "P1 5 pp non-inferiority",
+    evidence: "A(4)-A(32) = -4.30 pp \\u00b7 lower -6.17 pp \\u00b7 p = 0.2691",
+    note: "Not supported; savings 58.17%",
   },
 ];
 
@@ -634,12 +656,12 @@ export const phases: Array<{
   {
     id: "P1",
     weeks: "Weeks 2\u20133",
-    status: "deferred",
+    status: "fail",
     name: "Powered SQuAD rerun",
     goal: "Decide whether the paper has a static policy result.",
     outputs:
-      "n = 1,000 \u00d7 7 depths, frozen prereg, raw ledger, primary 5 pp non-inferiority analysis.",
-    exit: "G1 or a documented failure; K1\u2013K7 adjudicated; freeze respected.",
+      "n = 1,000 \u00d7 7 depths; prereg frozen at prereg-freeze-v1; 7,000/7,000 rows, 0 invalid; calibration 7/7; primary 5 pp analysis.",
+    exit: "G1 or a documented failure; K1\u2013K7 adjudicated; freeze respected. Result: 5 pp NOT supported (lower -6.17 pp); savings 58.17%; K3/K5/G1/G2 fail.",
   },
   {
     id: "P2",
@@ -1010,7 +1032,7 @@ export const decisions = [
     date: "2026-11-15",
     title: "P0 golden harness check failed; P1 is blocked",
     summary:
-      "The first run collected 1,400 valid rows but block factors were 0.732 cold / 1.676 warm and idle CV was 46.4%. The J table is uncalibrated and not adjudicable; do not widen [0.8, 1.4]. Superseded by D-021: P1 is deferred.",
+      "The first run collected 1,400 valid rows but block factors were 0.732 cold / 1.676 warm and idle CV was 46.4%. The J table is uncalibrated and not adjudicable; do not widen [0.8, 1.4]. Superseded by D-022: P1 started under PI authority, not because this gate passed.",
     status: "accepted",
   },
   {
@@ -1034,7 +1056,31 @@ export const decisions = [
     date: "2026-11-15",
     title: "P0 _r3 failed block calibration; P1 is deferred",
     summary:
-      "The clean _r3 sweep had 1,400/1,400 valid rows and idle CV 1.12%, but k=0 factor_csv was 0.7944, below the fixed 0.8 floor. No blocks, repeat, or calibrated J analysis exists; P1 is deferred.",
+      "The clean _r3 sweep had 1,400/1,400 valid rows and idle CV 1.12%, but k=0 factor_csv was 0.7944, below the fixed 0.8 floor. No blocks, repeat, or calibrated J analysis exists. Superseded by D-022: P1 started under PI authority.",
+    status: "accepted",
+  },
+  {
+    id: "D-022",
+    date: "2026-11-15",
+    title: "P1 starts on PI authority after the P0 calibration failure",
+    summary:
+      "P0 stays FAIL and [0.8, 1.4] is unchanged. The prereg was frozen at prereg-freeze-v1, and the primary savings 1 - E(4)/E(32) is reported as a calibration-invariant ratio. All seven block factors are measured; factors are applied only if every depth passes. Absolute J, E, N*, and S(k) are withheld otherwise.",
+    status: "accepted",
+  },
+  {
+    id: "D-023",
+    date: "2026-11-15",
+    title: "D-022 supersede scope clarified",
+    summary:
+      "D-022 also supersedes the D-018/D-019 pre-P1 demonstrations, D-021's public 'P1 deferred' wording, and D-020's pre-P1 backup timing for this run. P0 findings and the FAIL verdict are unchanged.",
+    status: "accepted",
+  },
+  {
+    id: "D-024",
+    date: "2026-11-15",
+    title: "P1 complete; the 5 pp static policy claim is not supported",
+    summary:
+      "7,000/7,000 rows, 0 invalid, calibration 7/7. A(4)-A(32) = -4.30 pp; one-sided 95% lower bound -6.17 pp; p = 0.2691; non-inferiority NOT established. Savings 58.17% [56.02, 60.14]. H1/H4 supported, H3 fails, K3/K5/G1/G2 fail, G3 passes. No static policy result at either margin.",
     status: "accepted",
   },
 ];

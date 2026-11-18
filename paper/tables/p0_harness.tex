@@ -1,0 +1,25 @@
+\begin{table}[t]
+\centering
+\caption{P0 harness energy by retrieval depth for run \texttt{golden\_squad\_qwen4b\_p0\_r3}. Values are recomputed from \texttt{raw.csv}; $J_{\mathrm{gpu,raw}}$ is per-query GPU energy before block calibration. The run is uncalibrated and is not a paper result.}
+\label{tab:p0_harness}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{rrrrrrr}
+\toprule
+$k$ & $n_{\mathrm{valid}}$ & $n_{\mathrm{invalid}}$ & $A(k)$ & $\bar{J}_{\mathrm{gpu,raw}}$ (J) & 95\% CI (J) & $E_{\mathrm{gpu,raw}}$ (J/correct) \\
+\midrule
+0 & 200 & 0 & 0.000 & 17.43 & [16.94, 17.92] & -- \\
+1 & 200 & 0 & 0.455 & 19.31 & [18.65, 19.98] & 42.4 \\
+2 & 200 & 0 & 0.470 & 21.04 & [20.30, 21.78] & 44.8 \\
+4 & 200 & 0 & 0.520 & 24.11 & [23.30, 24.92] & 46.4 \\
+8 & 200 & 0 & 0.520 & 31.07 & [30.21, 31.92] & 59.7 \\
+16 & 200 & 0 & 0.560 & 47.58 & [46.48, 48.68] & 85.0 \\
+32 & 200 & 0 & 0.535 & 84.94 & [83.67, 86.22] & 158.8 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}
+\begin{flushleft}
+\footnotesize
+Block calibration at $k=0$: $\mathrm{factor}_{\mathrm{csv}}=0.7944$ (outside $[0.8,1.4]$; FAIL), $\mathrm{factor}_{\mathrm{block}}=0.9989$, consistency $=1.2573$. Idle baseline $=15.573$ W, CV $=1.12\%$, $n=551$. Because calibration failed, $j_{\mathrm{gpu,calibrated}}\equiv j_{\mathrm{gpu,raw}}$; no calibrated $J$ curve exists. $E$ is total GPU joules over total correct answers; $k=0$ has zero correct answers. Sources: \texttt{runs/golden\_squad\_qwen4b\_p0\_r3/raw.csv}, \texttt{runs/golden\_squad\_qwen4b\_p0\_r3/manifest.json}, \texttt{docs/P0\_HARNESS\_REPORT.md}.
+\end{flushleft}
+\end{table}

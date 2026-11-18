@@ -8,6 +8,7 @@ import pytest
 import requests
 
 from rag_energy.readers.base import ReaderError
+from rag_energy.readers.hf_reader import HFConfig, HFReader
 from rag_energy.readers.ollama_reader import OllamaConfig, OllamaReader
 
 
@@ -105,3 +106,97 @@ def test_generate_raises_reader_error_on_timeout(monkeypatch: pytest.MonkeyPatch
 
     with pytest.raises(ReaderError, match="Ollama request failed"):
         reader.generate("Q?", [], "abc123")
+
+
+class _FakeTensor:
+    def __init__(self, length: int, shape: tuple[int, ...] | None = None) -> None:
+        self.shape = shape or (1, length)
+
+    def to(self, device: str) -> _FakeTensor:
+        return self
+
+    def __getitem__(self, key: Any) -> _FakeTensor:
+        return _FakeTensor(3, shape=(3,))
+
+
+class _FakeTokenizer:
+    pad_token_id = 0
+    eos_token_id = 0
+
+    def apply_chat_template(
+        self,
+        messages: list[dict],
+        tokenize: bool,
+        add_generation_prompt: bool,
+    ) -> str:
+        assert tokenize is False
+        assert add_generation_prompt is True
+        return "chat prompt"
+
+    def __call__(
+        self,
+        prompt: str,
+        return_tensors: str,
+        truncation: bool,
+        max_length: int,
+    ) -> dict[str, _FakeTensor]:
+        assert prompt == "chat prompt"
+        assert return_tensors == "pt"
+        assert truncation is True
+        assert max_length == 4072
+        return {"input_ids": _FakeTensor(5), "attention_mask": _FakeTensor(5)}
+
+    def decode(self, tokens: _FakeTensor, skip_special_tokens: bool) -> str:
+        assert skip_special_tokens is True
+        return "  Paris  "
+
+
+class _FakeModel:
+    def __init__(self) -> None:
+        self.kwargs: dict[str, Any] = {}
+
+    def generate(self, **kwargs: Any) -> _FakeTensor:
+        self.kwargs = kwargs
+        return _FakeTensor(8)
+
+
+class _FakeTorch:
+    class _InferenceMode:
+        def __enter__(self) -> None:
+            return None
+
+        def __exit__(self, *args: Any) -> None:
+            return None
+
+    def inference_mode(self) -> _FakeTorch._InferenceMode:
+        return self._InferenceMode()
+
+
+def test_hf_generate_uses_greedy_decoding_and_counts_tokens() -> None:
+    reader = HFReader(HFConfig(num_ctx=4096, num_predict=24))
+    model = _FakeModel()
+    reader._torch = _FakeTorch()
+    reader._tokenizer = _FakeTokenizer()
+    reader._model = model
+    reader._device = "cpu"
+
+    result = reader.generate("Who wrote Hamlet?", ["Hamlet was written by Shakespeare."], "abc123")
+
+    assert result.text == "Paris"
+    assert result.prompt_tokens == 5
+    assert result.output_tokens == 3
+    assert result.eval_s == pytest.approx(result.latency_s)
+    assert model.kwargs["max_new_tokens"] == 24
+    assert model.kwargs["do_sample"] is False
+    assert model.kwargs["num_beams"] == 1
+    assert model.kwargs["pad_token_id"] == 0
+    assert "input_ids" in model.kwargs
+
+
+def test_hf_build_messages_puts_nonce_first() -> None:
+    reader = HFReader()
+
+    messages = reader.build_messages("Who wrote Hamlet?", ["passage one"], "abc123")
+
+    assert messages[0]["role"] == "system"
+    assert messages[1]["content"].startswith("[request abc123]")

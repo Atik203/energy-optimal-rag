@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-15
 **Run:** `golden_squad_qwen4b_p0` (first run) and `golden_squad_qwen4b_p0_r3` (clean rerun)
-**Status:** **FAIL - P1 is deferred.**
+**Status:** **FAIL - P1 was started on PI authority (D-022) and completed negative (5 pp not supported).**
 **Purpose:** harness check only. This run is not confirmatory evidence and produces no
 `claims_evidence.csv` claim.
 
@@ -135,7 +135,7 @@ pre-set range.
 
 ## 4. Decision
 
-- **P0 FAIL. P1 does not start.** No confirmatory GPU hours are spent.
+- **P0 FAIL. P1 was started on 2026-11-15 on PI authority (D-022), not because this gate passed, and completed negative (5 pp not supported).**
 - The registry row is `invalid`; the raw run remains git-ignored.
 - The block-factor range is **not** widened after seeing the outcome.
 - The P0 analysis is uncalibrated and is retained only as failure evidence.
@@ -157,7 +157,9 @@ uncommitted; its registry row is `aborted`. The applied fixes were:
 
 Those checks did not all pass: `_r3` failed at `k=0` (`factor_csv = 0.7944`). The honest status
 is: **the harness measures rows reliably, but it does not reproduce the pilot's absolute
-energy calibration. P1 is deferred (D-021).**
+energy calibration.** The PI then directed P1 to start as a documented reversal (D-022), with
+the primary savings treated as a calibration-invariant ratio and absolute J withheld unless all
+seven P1 block factors pass.
 
 ## 6. Clean-rerun status
 
@@ -171,9 +173,10 @@ energy calibration. P1 is deferred (D-021).**
   0 invalid, pre-warm-up idle 15.573 W (CV 1.12%). Block calibration then **failed at `k=0`**
   with `factor_csv = 0.7944` (raw_sum 446.672 J, block 354.847 J, idle 15.573 W,
   `factor_block=0.9989`, consistency 1.2573). No `blocks.json`, repeat CV, or calibrated
-  J analysis exists. `_r3` is registered `invalid`; P0 is FAIL; P1 is deferred.
+  J analysis exists. `_r3` is registered `invalid`; P0 is FAIL. P1 completed under D-022
+  with the 5 pp claim not supported.
 
-## 7. Post-P0 handoff (P1 deliberately deferred)
+## 7. Post-P0 handoff (P1 completed under D-022)
 
 P0 is finished as a documented failure; the remaining work is handoff, not a new run.
 
@@ -187,8 +190,10 @@ P0 is finished as a documented failure; the remaining work is handoff, not a new
    Results, Roadmap, About, and slide pages. The public status must match the registry, not a
    hand-written optimistic value.
 4. Run CI, Vercel production deploy, and verify the live pages.
-5. Merge PR #1 only after the P0 evidence and frontend are consistent. **P1 remains deferred
-   until the user starts it**; do not spend P1 GPU hours on P0 completion day.
+5. Merge PR #1 only after the P0 evidence and frontend are consistent. **P1 started on
+   2026-11-15 under D-022 and completed negative**: 7,000/7,000 rows, 0 invalid, calibration
+   7/7, but 5 pp non-inferiority was not supported (lower −6.17 pp). See
+   [`P1_RESULTS.md`](P1_RESULTS.md).
 6. Back up `runs/`, `analysis/`, `artifacts/`, `data/processed/`, and `data/splits/` to the
    approved external target; never commit raw/gold data. **Status 2026-11-15:** the user
    deferred the external backup (D-020); the raw P0 run is local-only.

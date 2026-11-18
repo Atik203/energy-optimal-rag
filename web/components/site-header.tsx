@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Github, Menu, Presentation, X } from "lucide-react";
-import { navItems, p0, project } from "@/lib/project-data";
+import { navItems, p0, p1, project } from "@/lib/project-data";
 import { cn } from "@/lib/cn";
 import { ObservatoryMark } from "@/components/observatory-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -77,7 +77,7 @@ export function SiteHeader() {
         <div className="flex shrink-0 items-center gap-2">
           <span className="hidden items-center gap-2 rounded-[2px] border border-caution/30 bg-caution/10 px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-caution xl:inline-flex">
             <span className="h-1.5 w-1.5 rounded-full bg-caution" aria-hidden />
-            {project.status} · {p0.label}
+            {p0.label} · {p1.label}
           </span>
 
           <Link
@@ -159,7 +159,7 @@ export function SiteHeader() {
             </li>
           </ul>
           <p className="mt-3 border-t border-line pt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-caution">
-            {project.status} · {p0.label} · No confirmatory results
+            {p0.label} · {p1.label} · No results yet
           </p>
         </nav>
       )}

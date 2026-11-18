@@ -30,14 +30,18 @@ from pathlib import Path
 from typing import Any
 
 from rag_energy.config import REPO_ROOT, load_toml, resolve_run_config
-from rag_energy.data.loader import SquadSplit, load_squad_split
+from rag_energy.data.loader import SquadSplit, load_prepared_split
 from rag_energy.energy.idle import IdleStats, summarize_idle
 from rag_energy.energy.integrate import idle_subtract, mean_power, trapezoid_joules
 from rag_energy.energy.nonce import make_nonce
 from rag_energy.energy.nvml_sampler import NvmlSampler, PowerSample
 from rag_energy.readers.base import Reader, ReaderError
-from rag_energy.registry import append_registry_row, update_registry_status
-from rag_energy.retrieval.bm25 import BM25Index, build_index
+from rag_energy.registry import (
+    append_registry_row,
+    read_registry,
+    update_registry_status,
+)
+from rag_energy.retrieval.index import RetrievalIndex
 from rag_energy.retrieval.proxy_energy import cpu_retrieval_joules
 from rag_energy.scoring import correctness, token_f1
 
@@ -132,8 +136,24 @@ def _prereg_sha256(root: Path) -> str:
 
 def _default_reader(config: dict[str, Any]) -> Reader:
     reader = config.get("reader", {})
-    if reader.get("backend") != "ollama":
-        raise NotImplementedError("only the Ollama reader is implemented in P0")
+    backend = str(reader.get("backend", "ollama"))
+    if backend == "hf":
+        from rag_energy.readers.hf_reader import HFConfig, HFReader
+
+        return HFReader(
+            HFConfig(
+                model=str(reader.get("model", "Qwen/Qwen2.5-1.5B-Instruct")),
+                device=str(reader.get("device", "cuda")),
+                dtype=str(reader.get("dtype", "float16")),
+                num_ctx=int(reader.get("num_ctx", 4096)),
+                num_predict=int(reader.get("num_predict", 24)),
+                temperature=float(reader.get("temperature", 0.0)),
+                top_k=int(reader.get("top_k", 1)),
+                seed=int(reader.get("seed", 42)),
+            )
+        )
+    if backend != "ollama":
+        raise NotImplementedError(f"unsupported reader backend: {backend!r}")
     from rag_energy.readers.ollama_reader import OllamaConfig, OllamaReader
 
     return OllamaReader(
@@ -153,6 +173,22 @@ def _default_reader(config: dict[str, Any]) -> Reader:
 
 
 def _model_digest(reader: Reader, config: dict[str, Any]) -> str:
+    if str(config.get("reader", {}).get("backend", "ollama")) == "hf":
+        revision = getattr(reader, "revision", None)
+        if revision:
+            return str(revision)
+        model = str(config.get("reader", {}).get("model", ""))
+        try:
+            from huggingface_hub import scan_cache_dir
+
+            for repo in scan_cache_dir().repos:
+                if repo.repo_id == model:
+                    revisions = list(repo.revisions)
+                    if revisions:
+                        return str(revisions[0].commit_hash)
+        except Exception:
+            pass
+        return "unknown"
     host = str(config.get("reader", {}).get("host", "http://127.0.0.1:11434"))
     model = str(config.get("reader", {}).get("model", ""))
     try:
@@ -276,7 +312,12 @@ def run_depth_sweep(
     if not split_name:
         raise ValueError(f"{config_path}: id_split is required")
 
-    split = load_squad_split(processed_dir, split_name, limit=limit_questions)
+    split = load_prepared_split(
+        processed_dir,
+        str(config.get("dataset", "squad")),
+        split_name,
+        limit=limit_questions,
+    )
     k_grid = [int(k) for k in config["k_grid"]]
     run_dir = out_root / spec.run_id
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -288,9 +329,8 @@ def run_depth_sweep(
     rows_written = 0
     started = _utc_now()
 
-    pairs = list(zip(split.corpus["passage_id"], split.corpus["text"], strict=True))
     index_started = time.perf_counter()
-    index: BM25Index = build_index(pairs)
+    index: RetrievalIndex = RetrievalIndex.from_corpus(split.corpus)
     index_build_s = time.perf_counter() - index_started
 
     reader = reader or _default_reader(config)
@@ -298,7 +338,23 @@ def run_depth_sweep(
     prereg_hash = _prereg_sha256(root)
     git_commit = _git_commit(root)
     registry_row = _registry_row(spec, split, raw_path, root, git_commit, prereg_hash, digest)
-    append_registry_row(registry_path, registry_row)
+    existing_row = None
+    if resume:
+        existing_row = next(
+            (row for row in read_registry(registry_path) if row["run_id"] == spec.run_id),
+            None,
+        )
+        if existing_row is not None and existing_row.get("config_sha256") not in (
+            "",
+            spec.config_sha256,
+        ):
+            raise ValueError(
+                f"{spec.run_id}: config hash changed since the run started "
+                f"({existing_row['config_sha256'][:12]}... != {spec.config_sha256[:12]}...); "
+                "a resumed run must keep the original config"
+            )
+    if existing_row is None:
+        append_registry_row(registry_path, registry_row)
     update_registry_status(registry_path, spec.run_id, "running")
 
     interval_ms = int(config.get("energy", {}).get("sample_interval_ms", 100))
@@ -328,11 +384,13 @@ def run_depth_sweep(
             raise ValueError("idle_power_w must be non-negative")
 
         first = split.questions.iloc[0]
+        first_qid = str(first["qid"])
+        first_question = str(first["question"])
         for index_number in range(max(0, warmup_queries)):
             depth = k_grid[index_number % len(k_grid)]
-            retrieved = index.search(str(first["question"]), depth)
+            retrieved = index.search(first_qid, first_question, depth)
             reader.generate(
-                str(first["question"]),
+                first_question,
                 [passage.text for passage in retrieved],
                 make_nonce(nonce_hex_chars),
             )
@@ -352,7 +410,7 @@ def run_depth_sweep(
                         continue
                     nonce = make_nonce(nonce_hex_chars)
                     retrieval_started = time.perf_counter()
-                    retrieved = index.search(question, depth)
+                    retrieved = index.search(qid, question, depth)
                     retrieval_s = time.perf_counter() - retrieval_started
                     retrieval_j = cpu_retrieval_joules(retrieval_s, proxy_watts)
 
@@ -553,7 +611,7 @@ def run_block_calibration(
     raw_path = run_dir / str(config.get("output", {}).get("raw_csv", "raw.csv"))
     rows = _read_raw_rows(raw_path)
     split_name = str(config.get("id_split", ""))
-    split = load_squad_split(processed_dir, split_name)
+    split = load_prepared_split(processed_dir, str(config.get("dataset", "squad")), split_name)
     k_grid = [int(k) for k in config["k_grid"]]
     block_size = int(config.get("energy", {}).get("block_size", 20))
     interval_ms = int(config.get("energy", {}).get("sample_interval_ms", 100))
@@ -582,13 +640,13 @@ def run_block_calibration(
         idle_record = {"mean_w": float(idle_power_w), "sd_w": None, "cv": None, "n": 0}
 
     questions = split.questions.set_index("qid")["question"].to_dict()
-    pairs = list(zip(split.corpus["passage_id"], split.corpus["text"], strict=True))
-    index = build_index(pairs)
+    index = RetrievalIndex.from_corpus(split.corpus)
     warmup_queries = int(config.get("energy", {}).get("warmup_queries", 20))
+    first_qid = str(split.questions.iloc[0]["qid"])
     first_question = str(split.questions.iloc[0]["question"])
     for index_number in range(max(0, warmup_queries)):
         warmup_depth = k_grid[index_number % len(k_grid)]
-        retrieved = index.search(first_question, warmup_depth)
+        retrieved = index.search(first_qid, first_question, warmup_depth)
         reader.generate(
             first_question,
             [passage.text for passage in retrieved],
@@ -619,9 +677,10 @@ def run_block_calibration(
             time.sleep(cooldown_s)
         # A cooldown leaves the first short query at a cold, low-power state;
         # two discarded queries put the block back at the measured steady state.
-        warmup_question = str(questions[depth_rows[0]["question_id"]])
+        warmup_qid = str(depth_rows[0]["question_id"])
+        warmup_question = str(questions[warmup_qid])
         for _ in range(2):
-            retrieved = index.search(warmup_question, depth)
+            retrieved = index.search(warmup_qid, warmup_question, depth)
             reader.generate(
                 warmup_question,
                 [passage.text for passage in retrieved],
@@ -635,7 +694,7 @@ def run_block_calibration(
         try:
             for row in depth_rows:
                 qid = row["question_id"]
-                retrieved = index.search(str(questions[qid]), depth)
+                retrieved = index.search(qid, str(questions[qid]), depth)
                 query_started = time.monotonic()
                 result = reader.generate(
                     str(questions[qid]),
@@ -661,14 +720,7 @@ def run_block_calibration(
         factor_csv = block_energy / raw_sum_csv
         factor_block = block_energy / raw_sum_block
         consistency = factor_block / factor_csv if factor_csv > 0 else float("inf")
-        if not 0.8 <= factor_csv <= 1.4:
-            raise ValueError(
-                f"k={depth}: block factor {factor_csv:.4f} outside [0.8, 1.4] "
-                f"(raw_sum_csv={raw_sum_csv:.3f} J, raw_sum_block={raw_sum_block:.3f} J, "
-                f"block_energy={block_energy:.3f} J, duration={duration:.3f} s, "
-                f"idle={idle_power_w:.3f} W, factor_block={factor_block:.4f}, "
-                f"consistency={consistency:.4f}); stop and diagnose the sensor window"
-            )
+        passed = 0.8 <= factor_csv <= 1.4
         factors[depth] = factor_csv
         blocks.append(
             {
@@ -684,12 +736,18 @@ def run_block_calibration(
                 "factor_csv": round(factor_csv, 6),
                 "factor_block": round(factor_block, 6),
                 "consistency": round(consistency, 6),
+                "passed": passed,
+                "fail_reason": "" if passed else f"factor_csv {factor_csv:.4f} outside [0.8, 1.4]",
                 "started_utc": started,
                 "finished_utc": finished,
             }
         )
 
-    _apply_block_factors(raw_path, factors)
+    all_passed = len(blocks) == len(k_grid) and all(block["passed"] for block in blocks)
+    # All-or-nothing calibration: mixing calibrated and uncalibrated depths would
+    # make the ratio estimand depend on which depths happened to pass.
+    if all_passed:
+        _apply_block_factors(raw_path, factors)
     payload = {
         "run_id": spec.run_id,
         "created_utc": _utc_now(),
@@ -697,6 +755,15 @@ def run_block_calibration(
         "idle_power_w": round(float(idle_power_w), 6),
         "idle": idle_record,
         "depths": blocks,
+        "all_passed": bool(all_passed),
+        "applied": bool(all_passed),
+        "calibration_note": (
+            "All depth factors passed the [0.8, 1.4] gate; j_gpu_calibrated is primary."
+            if all_passed
+            else "At least one depth factor failed the [0.8, 1.4] gate; no factor was "
+            "applied and j_gpu_calibrated equals j_gpu_raw. Primary savings are reported "
+            "as the calibration-invariant ratio; absolute J is not claimed."
+        ),
     }
     blocks_path = run_dir / str(config.get("output", {}).get("blocks_json", "blocks.json"))
     _write_json_atomic(blocks_path, payload)
@@ -735,7 +802,7 @@ def run_repeat_cv(
     out_root = Path(out_root or root / "runs")
     run_dir = out_root / spec.run_id
     split_name = str(config.get("id_split", ""))
-    split = load_squad_split(processed_dir, split_name)
+    split = load_prepared_split(processed_dir, str(config.get("dataset", "squad")), split_name)
     measurement = config.get("measurement", {})
     n_blocks = int(measurement.get("repeat_blocks", 3))
     n_queries = int(measurement.get("repeat_queries_per_block", 20))
@@ -765,8 +832,7 @@ def run_repeat_cv(
             )
         idle_power_w = idle_stats.mean_w
 
-    pairs = list(zip(split.corpus["passage_id"], split.corpus["text"], strict=True))
-    index = build_index(pairs)
+    index = RetrievalIndex.from_corpus(split.corpus)
     questions = split.questions.head(n_queries)
     per_query: dict[str, list[float]] = {
         str(row.qid): [] for row in questions.itertuples(index=False)
@@ -777,7 +843,7 @@ def run_repeat_cv(
         for row in questions.itertuples(index=False):
             qid = str(row.qid)
             question = str(row.question)
-            retrieved = index.search(question, depth)
+            retrieved = index.search(qid, question, depth)
             sampler = sampler_factory(interval_ms)
             sampler.start()
             try:

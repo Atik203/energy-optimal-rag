@@ -1,0 +1,65 @@
+{
+  "passed": false,
+  "calibrated": true,
+  "adjudicable": true,
+  "note": "Block-calibrated energy; the anchor check is adjudicable.",
+  "checks": [
+    {
+      "name": "J(1)",
+      "observed": null,
+      "reference": 17.98,
+      "relative_error": null,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "J(4)",
+      "observed": null,
+      "reference": 25.1,
+      "relative_error": null,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "J(32)",
+      "observed": 98.412815,
+      "reference": 89.55,
+      "relative_error": 0.09897057509771075,
+      "tolerance": 0.1,
+      "passed": true
+    },
+    {
+      "name": "fit.a",
+      "observed": 27.654963351666638,
+      "reference": 15.74,
+      "relative_error": 0.7569862358110951,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "fit.b",
+      "observed": 2.2179321275,
+      "reference": 2.283,
+      "relative_error": 0.02850103920280324,
+      "tolerance": 0.1,
+      "passed": true
+    },
+    {
+      "name": "fit.r2",
+      "observed": 0.9998888909966319,
+      "reference": 0.95,
+      "relative_error": null,
+      "tolerance": null,
+      "passed": true
+    }
+  ],
+  "fit": {
+    "a": 27.654963351666638,
+    "b": 2.2179321275,
+    "r2": 0.9998888909966319,
+    "n": 3
+  },
+  "e_anchors": {
+    "32": 207.18487368421052
+  }
+}

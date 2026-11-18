@@ -139,12 +139,13 @@ python scripts\05_analyze.py --run-id squad_qwen4b_p1
 
 P0 writes `analysis\golden_squad_qwen4b_p0\`: `estimates.csv`, `p0_check.json`,
 `metadata.json`, and `report.md`; it is failure evidence and uncalibrated. `_r3` has no
-analysis because calibration stopped first. P1 adds the planned `bootstrap.json`,
-`identity.csv`, `noninferiority.json`, and `certification.json` under
-`analysis\squad_qwen4b_p1\`.
+analysis because calibration failed first. P1 writes `estimates.csv`, `identity.csv`,
+`noninferiority.json`, `bootstrap.json`, `certification.json`, `fit.json`, `sensitivity.json`,
+`gates.json`, `metadata.json`, and `report.md` under `analysis\squad_qwen4b_p1\`.
 
-The script must refuse to run if the prereg hash in the registry does not match the frozen
-hash.
+The script refuses to run if the manifest's prereg hash differs from the current frozen hash.
+The manifest records `prereg-freeze-v1` hash `fb9e5bcf…`; the full hash is in
+`prereg/FREEZE.md`.
 
 ## 8. Power and policy (P1/P3)
 

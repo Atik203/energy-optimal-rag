@@ -1,0 +1,8 @@
+{
+  "run_id": "fixed_a",
+  "calibrated": false,
+  "config_sha256": "570c43ea6a03a18b577ebedfb44dd19bf97960e98e965d604f7a2a767360c093",
+  "prereg_sha256": "fb9e5bcfe8d93404f64bbf62e04cacc13fdcfbbcbfae02ec3212c6e12affc49f",
+  "git_commit": "e2df189",
+  "seed": 20261115
+}

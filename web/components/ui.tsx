@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { FileText } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { p0, type ClaimStatus } from "@/lib/project-data";
+import { p0, p1, type ClaimStatus } from "@/lib/project-data";
 
 export type Tone = "signal" | "data" | "beam" | "caution" | "dead" | "neutral";
 
@@ -96,7 +96,7 @@ export function PageHero({
         <span className="eyebrow">{eyebrow}</span>
         <span className="h-px flex-1 bg-line" aria-hidden />
         <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
-          Status / Post-pilot MARGINAL · {p0.label}
+          Status / Post-pilot MARGINAL · {p0.label} · {p1.label}
         </span>
       </div>
       <h1 className="display-title mt-6 max-w-4xl text-[2.55rem] leading-[1.01] sm:text-5xl lg:text-[3.65rem]">

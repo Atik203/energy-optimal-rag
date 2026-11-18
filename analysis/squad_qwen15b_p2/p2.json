@@ -1,0 +1,128 @@
+{
+  "run_id": "squad_qwen15b_p2",
+  "candidate_depth": 4,
+  "reference_depth": 32,
+  "h7_supported": false,
+  "mean_diff": 0.02,
+  "one_sided_upper_zero": 0.049045695511900425,
+  "savings_pct": 91.23699081633822,
+  "p_k_optimal": {
+    "0": 0.0,
+    "1": 0.6647,
+    "2": 0.0777,
+    "4": 0.2576,
+    "8": 0.0,
+    "16": 0.0,
+    "32": 0.0,
+    "none": 0.0
+  },
+  "fit": {
+    "a": -8.317210951405993,
+    "b": 11.024516495807019,
+    "r2": 0.8507202225113996,
+    "quadratic_coefficient": 0.5172958268581054,
+    "lack_of_fit_f": 48.87256131658948,
+    "lack_of_fit_p": 0.002202852028221236,
+    "df_num": 1,
+    "df_den": 4,
+    "n": 7,
+    "residuals": [
+      27.216957103405992,
+      28.84263363359897,
+      21.42720402179195,
+      1.502755056177918,
+      -33.54253968105016,
+      -102.80853623950631,
+      57.36152610558133
+    ]
+  },
+  "calibration": {
+    "measured": true,
+    "applied": false,
+    "all_passed": false,
+    "depths": [
+      {
+        "k": 0,
+        "factor_csv": 0.261055,
+        "factor_block": 0.998602,
+        "consistency": 3.825248,
+        "passed": false
+      },
+      {
+        "k": 1,
+        "factor_csv": 0.427477,
+        "factor_block": 1.247251,
+        "consistency": 2.9177,
+        "passed": false
+      },
+      {
+        "k": 2,
+        "factor_csv": 0.536894,
+        "factor_block": 1.287778,
+        "consistency": 2.39857,
+        "passed": false
+      },
+      {
+        "k": 4,
+        "factor_csv": 0.96489,
+        "factor_block": 1.267039,
+        "consistency": 1.313144,
+        "passed": true
+      },
+      {
+        "k": 8,
+        "factor_csv": 1.097903,
+        "factor_block": 1.222939,
+        "consistency": 1.113886,
+        "passed": true
+      },
+      {
+        "k": 16,
+        "factor_csv": 1.196104,
+        "factor_block": 1.175541,
+        "consistency": 0.982809,
+        "passed": true
+      },
+      {
+        "k": 32,
+        "factor_csv": 1.290912,
+        "factor_block": 1.057791,
+        "consistency": 0.819414,
+        "passed": true
+      }
+    ]
+  },
+  "completeness": {
+    "n_questions_config": 500,
+    "n_questions_observed": 500,
+    "depths_config": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "depths_observed": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "expected_rows": 3500,
+    "n_rows": 3500,
+    "complete": true
+  },
+  "p1_reference": {
+    "run_id": "squad_qwen4b_p1",
+    "mean_diff": -0.043,
+    "lower_bound": -0.061702230242832876,
+    "upper_bound": -0.02429776975716712,
+    "margin": 0.05,
+    "direction": "negative"
+  }
+}

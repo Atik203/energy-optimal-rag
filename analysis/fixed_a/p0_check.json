@@ -1,0 +1,67 @@
+{
+  "passed": false,
+  "calibrated": false,
+  "adjudicable": false,
+  "note": "No block calibration was applied; the anchor check is confounded and is not adjudicable as a clean energy test.",
+  "checks": [
+    {
+      "name": "J(1)",
+      "observed": 29.14361044,
+      "reference": 17.98,
+      "relative_error": 0.6208904582869855,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "J(4)",
+      "observed": 33.92982004,
+      "reference": 25.1,
+      "relative_error": 0.35178565896414343,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "J(32)",
+      "observed": 92.56476510666667,
+      "reference": 89.55,
+      "relative_error": 0.03366571866741119,
+      "tolerance": 0.1,
+      "passed": true
+    },
+    {
+      "name": "fit.a",
+      "observed": 25.492016511729325,
+      "reference": 15.74,
+      "relative_error": 0.6195690286994489,
+      "tolerance": 0.1,
+      "passed": false
+    },
+    {
+      "name": "fit.b",
+      "observed": 2.0717059983792816,
+      "reference": 2.283,
+      "relative_error": 0.09255103005725726,
+      "tolerance": 0.1,
+      "passed": true
+    },
+    {
+      "name": "fit.r2",
+      "observed": 0.9970227754890839,
+      "reference": 0.95,
+      "relative_error": null,
+      "tolerance": null,
+      "passed": true
+    }
+  ],
+  "fit": {
+    "a": 25.492016511729325,
+    "b": 2.0717059983792816,
+    "r2": 0.9970227754890839,
+    "n": 7
+  },
+  "e_anchors": {
+    "1": 67.25448563076922,
+    "4": 64.42370893670886,
+    "32": 157.78084961363638
+  }
+}

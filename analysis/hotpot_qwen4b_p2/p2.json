@@ -1,0 +1,117 @@
+{
+  "run_id": "hotpot_qwen4b_p2",
+  "candidate_depth": 4,
+  "reference_depth": 10,
+  "h7_supported": true,
+  "mean_diff": -0.108,
+  "one_sided_upper_zero": -0.08002537221731465,
+  "savings_pct": 23.03113383939721,
+  "p_k_optimal": {
+    "0": 0.0,
+    "1": 0.0,
+    "2": 0.0,
+    "4": 0.0002,
+    "8": 0.9379,
+    "10": 0.0619,
+    "none": 0.0
+  },
+  "fit": {
+    "a": 19.00969886962888,
+    "b": 3.2272162029690725,
+    "r2": 0.9991883619569478,
+    "quadratic_coefficient": 0.0355349322378804,
+    "lack_of_fit_f": 18.058174225797163,
+    "lack_of_fit_p": 0.023878713398746587,
+    "df_num": 1,
+    "df_den": 3,
+    "n": 6,
+    "residuals": [
+      0.5208804183711209,
+      -0.1842601305979521,
+      -0.05466815756702914,
+      -0.455629647505166,
+      -0.18966993138145938,
+      0.36334744868038626
+    ]
+  },
+  "calibration": {
+    "measured": true,
+    "applied": false,
+    "all_passed": false,
+    "depths": [
+      {
+        "k": 0,
+        "factor_csv": 0.700216,
+        "factor_block": 0.996976,
+        "consistency": 1.423811,
+        "passed": false
+      },
+      {
+        "k": 1,
+        "factor_csv": 0.83822,
+        "factor_block": 0.999284,
+        "consistency": 1.19215,
+        "passed": true
+      },
+      {
+        "k": 2,
+        "factor_csv": 0.897374,
+        "factor_block": 0.999055,
+        "consistency": 1.11331,
+        "passed": true
+      },
+      {
+        "k": 4,
+        "factor_csv": 0.946111,
+        "factor_block": 0.997774,
+        "consistency": 1.054605,
+        "passed": true
+      },
+      {
+        "k": 8,
+        "factor_csv": 1.039276,
+        "factor_block": 0.999016,
+        "consistency": 0.961261,
+        "passed": true
+      },
+      {
+        "k": 10,
+        "factor_csv": 1.136516,
+        "factor_block": 0.99925,
+        "consistency": 0.879222,
+        "passed": true
+      }
+    ]
+  },
+  "completeness": {
+    "n_questions_config": 500,
+    "n_questions_observed": 500,
+    "depths_config": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      10
+    ],
+    "depths_observed": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      10
+    ],
+    "expected_rows": 3000,
+    "n_rows": 3000,
+    "complete": true
+  },
+  "p1_reference": {
+    "run_id": "squad_qwen4b_p1",
+    "mean_diff": -0.043,
+    "lower_bound": -0.061702230242832876,
+    "upper_bound": -0.02429776975716712,
+    "margin": 0.05,
+    "direction": "negative"
+  }
+}

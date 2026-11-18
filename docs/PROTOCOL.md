@@ -1,6 +1,6 @@
 # Experimental Protocol
 
-**Status:** draft for the P1 freeze · revised 2026-11-15 for the P0 D-019 protocol · v0.1.1
+**Status:** frozen for P1 (`prereg-freeze-v1`, 2026-11-15) · revised 2026-11-15 for the P0 D-019 protocol · v0.1.1
 **Applies to:** SQuAD primary run, 1.5B replication, exploratory Llama 3B panel, HotpotQA
 distractor run, boundary probe, 16k context-budget probe, and energy-tax conditions.
 
@@ -107,6 +107,13 @@ After the main sweep, for each depth in ascending order:
 5. Write `factor_csv`, `factor_block`, `consistency`, block duration/energy, temperature,
    clock, and idle power to `blocks.json`. Gate on `factor_csv` in [0.8, 1.4].
 
+All seven depths are measured before the gate is evaluated. If every depth passes, the factors
+are applied and the calibrated energy is primary. If any depth fails, no factor is applied
+(all-or-nothing; mixing calibrated and uncalibrated depths would make the ratio depend on which
+depths passed), `j_gpu_calibrated = j_gpu_raw`, and the run continues to analysis. A completed
+sweep is never discarded because a post-sweep block failed; the failure is recorded and the
+absolute-energy claim is withheld (D-022).
+
 The calibrated per-query energy is `j_gpu_raw * factor`. Both raw and calibrated values are
 retained. The analysis reports both; the calibrated value is primary.
 
@@ -162,8 +169,13 @@ Stop the run and diagnose if:
 - the repeat CV exceeds 20%,
 - the GPU clock drops below 50% of the starting clock and stays there,
 - Ollama reports a prefix-cache hit on a nonce-bearing request,
-- the block scale factor falls outside [0.8, 1.4],
+- a **pre-run** block check falls outside [0.8, 1.4],
 - the wall meter disagrees with the integrated energy by more than 2×.
+
+A post-sweep `factor_csv` outside [0.8, 1.4] is not a stop rule. All seven depths are recorded,
+no factor is applied, and the run continues under the uncalibrated rule (D-022): the primary
+savings and accuracy contrast are reported, and absolute `J`, `E`, `N*`, and `S(k)` are not
+claimed.
 
 ## 10. Post-run checklist
 
@@ -172,6 +184,7 @@ Stop the run and diagnose if:
    invalidity reason.
 3. Write `blocks.json`, `raw.csv`, and the run manifest.
 4. Add the registry row with the config hash and git commit.
-5. Copy the run directory to the USB backup.
+5. Copy the run directory to an external backup once one exists; the backup is deferred
+   (D-020), so the P1 run is local-only until then.
 6. Verify the checksums in `artifacts/ledger.csv`.
 7. Only then run the analysis script.

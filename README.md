@@ -12,14 +12,55 @@ answer** — and deciding whether the energy spent finding that depth is worth i
 contains no confirmatory results. The pilot evidence is reported below exactly as measured,
 including the claim that failed.
 
-**P0 harness status (2026-11-15): FAIL - P1 is deferred.** The first golden run failed
-calibration. The clean `_r3` rerun then completed 1,400/1,400 valid rows with 0 invalid rows and
-a 1.12% idle CV, but its `k=0` block factor was **0.7944**, below the fixed 0.8 floor. No
-`blocks.json`, repeat CV, or calibrated J analysis was produced. The J table is uncalibrated,
-so the pilot comparison is not adjudicable as a clean energy test. This is an energy-calibration
-and thermal-state failure, not a row-collection failure. See
+**P0 harness status (2026-11-15): FAIL - P1 started anyway, on PI authority (D-022).** The
+first golden run failed calibration. The clean `_r3` rerun then completed 1,400/1,400 valid rows
+with 0 invalid rows and a 1.12% idle CV, but its `k=0` block factor was **0.7944**, below the
+fixed 0.8 floor. No `blocks.json`, repeat CV, or calibrated J analysis was produced. The J table
+is uncalibrated, so the pilot comparison is not adjudicable as a clean energy test. This is an
+energy-calibration and thermal-state failure, not a row-collection failure. See
 [`docs/P0_HARNESS_REPORT.md`](docs/P0_HARNESS_REPORT.md). `_r2` was aborted after 409 rows
-because it started from an uncommitted tree. P1 is deferred; no confirmatory run has started.
+because it started from an uncommitted tree.
+
+**P1 status (2026-11-15): COMPLETE - 5 pp claim NOT supported.** The preregistration was
+frozen at `prereg-freeze-v1` (hash `fb9e5bcf…`). The powered sweep collected **7,000/7,000
+rows, 0 invalid**, and all seven block factors passed and were applied. The primary result:
+`A(4) - A(32) = -4.30 pp`, one-sided 95% lower bound **-6.17 pp**, p = 0.2691, so the 5 pp
+non-inferiority criterion is **not met**; energy savings are **58.17%** [56.02, 60.14].
+H1 and H4 are supported; H3 fails; K3 and K5 fail; G1 and G2 fail; G3 passes. The static 5 pp
+policy claim is dead, and the 2 pp claim remains dead. See
+[`docs/P1_RESULTS.md`](docs/P1_RESULTS.md).
+
+**P2 status (2026-11-16): P2 experimental program complete.** Confirmatory arms:
+Qwen2.5-1.5B `A(4)−A(32)=+2.00 pp` (upper +4.90 pp), **H7 not supported**;
+HotpotQA `A(4)−A(10)=−10.80 pp` (upper −8.00 pp), **H7 supported**. G5 is
+**supported via HotpotQA**. Exploratory arms run: boundary probe (no cliff at
+k=32; accuracy 0.475→0.505 from k=32 to 64), 16k context probe (no accuracy
+gain at k=32 vs 4k; J 87.90 vs 83.14), Llama 3B (peak at k=4, 0.476). Energy
+is uncalibrated on every arm except the boundary probe (all-pass). Tax arms run:
+fixed tax and per-passage tax (accuracy rises to k=32 on both; no clean k* shift;
+energy uncalibrated).
+See [`docs/P2_RESULTS.md`](docs/P2_RESULTS.md),
+[`docs/P2_RESULTS_HOTPOT.md`](docs/P2_RESULTS_HOTPOT.md),
+[`docs/P2_RESULTS_LLAMA.md`](docs/P2_RESULTS_LLAMA.md), and
+[`docs/P2_RESULTS_TAXES.md`](docs/P2_RESULTS_TAXES.md).
+
+**P3 status (2026-11-18): COMPLETE - adaptive claim NOT supported.** A
+BM25-feature, per-depth logistic policy was trained on 600 P1 questions, tuned
+on 200, and evaluated once on 200. Static `k=1` is the validation energy
+minimum (accuracy 0.400). On test, the policy reaches 0.380 accuracy at 66.38
+J/correct versus static 0.385 at 65.71 J/correct (saving −1.02%). The hindsight
+oracle gains 41.28%, but the policy captures −2.48% of that gap, so G4 fails.
+The oracle is unconstrained (accuracy 0.605 vs 0.385), so its gain is not a
+matched-accuracy quantity. No adaptive claim is made. See
+[`docs/P3_RESULTS.md`](docs/P3_RESULTS.md).
+
+**P4 status (2026-11-18): COMPLETE - theory is local, coverage model rejected.**
+Across P1, Qwen2.5-1.5B, HotpotQA, and Llama 3B, the coverage model fits poorly
+(R² 0.10–0.88), and the Qwen and Llama accuracy curves are non-monotone, so the
+distractor counterexample is present. Identity gaps are positive at `k ≥ 4` on
+P1, Qwen, and Llama (up to +0.70), and HotpotQA is negative at `k=2` then
+positive. The identity remains a local diagnostic; no global `k*` is claimed.
+See [`docs/P4_RESULTS.md`](docs/P4_RESULTS.md).
 
 ---
 
@@ -110,8 +151,8 @@ pre-specified interior depth, with a question-level bootstrap (10,000 resamples)
 and the ratio.
 
 Full design, power table, gates, and stop rules: [`ROADMAP.md`](ROADMAP.md) and
-[`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md). Draft analysis intent, frozen at
-P1: [`prereg/PREREGISTRATION.md`](prereg/PREREGISTRATION.md).
+[`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md). Frozen analysis intent and plan
+(2026-11-15): [`prereg/PREREGISTRATION.md`](prereg/PREREGISTRATION.md).
 
 ---
 

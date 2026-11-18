@@ -363,3 +363,101 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
 - **Consequences:** P0 ends as a documented harness failure. The public record must say
   "first golden run failed; clean `_r3` sweep complete; block calibration failed at `k=0`
   0.7944; P1 deferred." No confirmatory result exists, and no claims-evidence row is added.
+
+---
+
+## D-022 - P1 starts on PI authority after the P0 calibration failure
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Supersedes:** the "do not start P1" clauses of D-018, D-019, and D-021. Their P0 findings
+  and the FAIL verdict stand unchanged.
+- **Context:** The PI directed P1 to start. P0 failed the `k=0` block gate at 0.7944, and the
+  same 0.3 s protocol measured 0.834 in the dry run; the registry decomposition puts the
+  shortfall in the block-window bookkeeping (`factor_block = 0.9989`, `consistency = 1.2573`),
+  not in a 20% per-query bias. The P1 primary estimand is a ratio of sums,
+  `savings = 1 - E(4)/E(32)`, which is invariant to a depth-invariant factor, and the accuracy
+  test is calibration-free.
+- **Decision:** Start P1 as a documented PI reversal, not a gate pass. Freeze the
+  preregistration first. Run block calibration at all seven depths; apply factors only if every
+  depth passes; if any depth fails, apply none and report uncalibrated absolute energy. Do not
+  claim absolute `J`, `E`, `N*`, or `S(k)` unless all seven pass. The [0.8, 1.4] range is
+  unchanged and P0 stays FAIL.
+- **Consequences:** P1 can produce the 5 pp non-inferiority result and the savings ratio even
+  if the calibration gate fires again. The residual risk is a depth-dependent factor; the
+  report must show every measured factor and its pass/fail. The wall meter remains waived
+  (D-016) and the raw data remain local-only (D-020) until an external backup is made.
+
+---
+
+## D-023 - D-022 supersede scope clarified
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Supersedes:** D-018's "the next run must demonstrate … before any P1 work"; D-019's "P1
+  stays blocked until `_r3` passes …"; D-021's "P1 is deferred by the PI" and its mandated
+  public wording "P1 deferred"; D-020's "revisit the backup before P1" timing condition for
+  this run only.
+- **Context:** D-022 superseded only the literal "do not start P1" clauses. Four further
+  blocking or record clauses remained live and are contradicted by the started P1 run.
+- **Decision:** P1 proceeds without the D-018/D-019 pre-P1 demonstrations, as a documented PI
+  reversal. The public record changes from "P1 deferred" to "P1 started 2026-11-15; prereg
+  frozen at `prereg-freeze-v1`; results pending." The external backup revisit is deferred until
+  P1 completes; the raw data remain local-only.
+- **Consequences:** The D-018/D-019 P0 findings and the D-021 FAIL remain unchanged. No gate
+  threshold changes.
+
+---
+
+## D-024 - P1 complete; the 5 pp static policy claim is not supported
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** P1 collected 7,000/7,000 rows with 0 invalid. All seven block factors passed the
+  fixed [0.8, 1.4] gate (0.8089, 1.2506, 1.2403, 1.3111, 1.2902, 1.2143, 1.0587); the `k=0`
+  factor is only 1.1% above the floor. Idle 15.794 W (CV 1.23%); repeat CV median 2.81%, max
+  18.44%. The pre-registered primary contrast is `A(4) - A(32) = -4.30 pp`, one-sided 95%
+  lower bound **-6.17 pp**, p = 0.2691; savings **58.17%** [56.02, 60.14].
+- **Decision:** Mark P1 complete. Report the 5 pp claim as **not supported**: the point
+  estimate is inside the margin, but the lower bound is outside it, so non-inferiority is not
+  established. The 2 pp claim remains dead. Do not re-threshold the margin or the gates. H1
+  and H4 are supported; H3 fails; K3 (P=0.724) and K5 (95% span 4, k=4/8) fail; G1 and G2
+  fail; G3 passes.
+- **Consequences:** There is no static policy result at either margin. Absolute `J`, `E`, `N*`,
+  and `S(k)` are reportable because calibration passed, with the marginal `k=0` factor
+  disclosed. P3 adaptive policy is the remaining route to a policy result and must be
+  separately preregistered; no adaptive claim exists yet.
+
+---
+
+## D-025 - H7 operationalized as a direction-only contrast before P2 analysis
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** H7 says the direction of H2 replicates on Qwen2.5-1.5B-Instruct or
+  HotpotQA distractor, but the frozen text does not define a decision rule, an error rate,
+  or a HotpotQA reference depth. P1 observed `A(4) - A(32) = -4.30 pp`, so "replicates"
+  means the same negative sign.
+- **Decision:** Record amendment A-001 in `prereg/amendments.md`. H7 is supported when the
+  paired mean `A(4) - A(reference)` is negative and its one-sided 95% upper bound is below
+  zero; reference is 32 on SQuAD and 10 on HotpotQA distractor. The 5 pp estimate is
+  secondary and unpowered on these arms. No margin, gate, or sample size changes.
+- **Consequences:** The P2 verdict is fixed before any P2 outcome is read. A positive or
+  interval-crossing contrast is a failed replication, not a null result to be re-thresholded.
+  H2 and the P1 negative decision are unchanged.
+
+---
+
+## D-026 - HotpotQA frame restricted to questions with 10 paragraphs
+
+- **Date:** 2026-11-15
+- **Status:** accepted
+- **Context:** HotpotQA distractor dev has 7,405 questions, but 60 provide only 2-9 paragraphs.
+  Sampling them would make `k = 10` and the H7 reference depth mean different things per
+  question.
+- **Decision:** Record amendment A-002. Sample the 500 HotpotQA questions only from the 7,345
+  questions with exactly 10 paragraphs, stratified by bridge/comparison. The prepared corpus has
+  500 questions and 5,000 whole paragraphs; checksums and split IDs are tracked.
+- **Consequences:** The HotpotQA arm uses a uniform 10-paragraph reference. No change to
+  `n = 500`, the depth grid, the 4-vs-10 contrast, or any gate. The excluded questions are an
+  upstream-data property, not an outcome-based exclusion.

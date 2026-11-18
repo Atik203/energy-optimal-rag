@@ -1,0 +1,73 @@
+{
+  "run_id": "squad_qwen4b_p1",
+  "candidate_depth": 4,
+  "reference_depth": 32,
+  "selected_depth": 4,
+  "margin": 0.05,
+  "seed": 20261115,
+  "resamples": 10000,
+  "n_rows": 7000,
+  "n_valid": 7000,
+  "n_invalid": 0,
+  "calibrated": true,
+  "calibration": {
+    "measured": true,
+    "applied": true,
+    "all_passed": true,
+    "depths": [
+      {
+        "k": 0,
+        "factor_csv": 0.808899,
+        "factor_block": 0.99826,
+        "consistency": 1.234098,
+        "passed": true
+      },
+      {
+        "k": 1,
+        "factor_csv": 1.250626,
+        "factor_block": 1.391153,
+        "consistency": 1.112366,
+        "passed": true
+      },
+      {
+        "k": 2,
+        "factor_csv": 1.240312,
+        "factor_block": 1.36611,
+        "consistency": 1.101424,
+        "passed": true
+      },
+      {
+        "k": 4,
+        "factor_csv": 1.311107,
+        "factor_block": 1.299717,
+        "consistency": 0.991313,
+        "passed": true
+      },
+      {
+        "k": 8,
+        "factor_csv": 1.290241,
+        "factor_block": 1.25188,
+        "consistency": 0.970268,
+        "passed": true
+      },
+      {
+        "k": 16,
+        "factor_csv": 1.214256,
+        "factor_block": 1.188346,
+        "consistency": 0.978662,
+        "passed": true
+      },
+      {
+        "k": 32,
+        "factor_csv": 1.058708,
+        "factor_block": 1.094605,
+        "consistency": 1.033907,
+        "passed": true
+      }
+    ]
+  },
+  "config_sha256": "093521eb5ccd5978dbf57bb3f4127b86454be8cd4725acce4b21bb24455203c5",
+  "prereg_sha256": "fb9e5bcfe8d93404f64bbf62e04cacc13fdcfbbcbfae02ec3212c6e12affc49f",
+  "git_commit": "f73744c",
+  "phase": "P1"
+}
