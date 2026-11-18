@@ -275,7 +275,7 @@
 % Abstract
 \linenumbers
 \begin{abstract}
-  Retrieval-augmented generation spends GPU energy in proportion to the number of passages placed in the prompt, while accuracy rises and then plateaus. Whether an interior depth can replace the retriever's ceiling at an acceptable accuracy cost is a decision problem, and this paper reports a preregistered test of it. The study uses 1{,}000 SQuAD v1.1 dev questions at seven depths, a 4-bit Qwen3.5-4B reader, BM25 retrieval, and one laptop GPU. All seven block factors passed calibration (0.8089 to 1.3111; idle 15.794~W, CV 1.23\%), so calibrated energy is reported. Energy per correct answer rose from 73.71 J at $k=1$ to 192.59 J at $k=32$, the per-query curve was affine ($J=24.0759+2.2772k$, $R^{2}=0.9714$), and the context-side share rose from 0.209 to 0.807; H1 and H4 are supported. At a 5 pp exact-match margin, $k=4$ lost 4.30 pp against $k=32$ (paired $n=1{,}000$; 44 versus 87 discordant pairs), with a one-sided 95\% lower bound of $-6.17$ pp ($p=0.2691$). The point estimate is inside the margin but the lower bound is outside it, so the accuracy gate is not met and the static 5 pp policy claim is not supported. The measured saving is 58.17\% of energy per correct answer (95\% CI 56.02--60.14\%), well above the 20\% floor: the saving is real, but this sample does not establish the accuracy guarantee that would make it deployable. The optimal-depth identity (H3) fails at $k=4$ (gap $+0.2004$, 95\% CI 0.1677--0.2320), and the bootstrap selection probability is 0.7244 at $k=4$ and 0.2433 at $k=8$, so the selected depth is unstable between the two. The 2 pp margin is also unsupported. The descriptive energy result replicates; the static policy result does not.
+  Retrieval-augmented generation spends GPU energy in proportion to the number of passages placed in the prompt, while accuracy rises and then plateaus. Whether an interior depth can replace the retriever's ceiling at an acceptable accuracy cost is a decision problem, and this paper reports a preregistered test of it. The study uses 1{,}000 SQuAD v1.1 dev questions at seven depths, a 4-bit Qwen3.5-4B reader, BM25 retrieval, and one laptop GPU. All seven block factors passed calibration (0.8089 to 1.3111; idle 15.794~W, CV 1.23\%), so calibrated energy is reported. Energy per correct answer rose from 73.71 J at $k=1$ to 192.59 J at $k=32$, the per-query curve was affine ($J=24.0759+2.2772k$, $R^{2}=0.9714$), and the context-side share rose from 0.209 to 0.807; H1 and H4 are supported. At a 5 pp exact-match margin, $k=4$ lost 4.30 pp against $k=32$ (paired $n=1{,}000$; 44 versus 87 discordant pairs), with a one-sided 95\% lower bound of $-6.17$ pp ($p=0.2691$). The point estimate is inside the margin but the lower bound is outside it, so the accuracy gate is not met and the static 5 pp policy claim is not supported. The measured saving is 58.17\% of energy per correct answer (95\% CI 56.02--60.14\%), well above the 20\% floor: the saving is real, but this sample does not establish the accuracy guarantee that would make it deployable. The optimal-depth identity (H3) fails at $k=4$ (gap $+0.2004$, 95\% CI 0.1677--0.2320), and the bootstrap selection probability is 0.7244 at $k=4$ and 0.2433 at $k=8$, so the selected depth is unstable between the two. The 2 pp margin is also unsupported. The descriptive energy result replicates; the static policy result does not. P2 tests the direction of the contrast on a second reader and on a multi-hop dataset: the direction replicates on HotpotQA ($A(4)-A(10)=-10.80$ pp, upper bound $-8.00$ pp) but not on Qwen2.5-1.5B-Instruct ($+2.00$ pp, upper bound $+4.90$ pp), so G5 is satisfied via HotpotQA while the 1.5B replication fails. P2 block calibration is incomplete, so those energy contrasts are not certified.
 \end{abstract}
 
 % Keywords
@@ -766,11 +766,11 @@ The selection is also unstable. The bootstrap probability of optimality is 0.023
 
 \subsubsection{Gate adjudication}
 
-Table~\ref{tab:p1gates} reports the gates. The measurement gates and the descriptive gates pass: K1 (1.613, a 161\% relative energy effect between $k=1$ and $k=32$), K2 ($k=4$, interior), K4 ($S(4)=0.355$, not flat), K7 (maximum repeat CV 18.44\%, MDE 5.62\%), and G3 ($S(4)=0.355$ in $[0.10,0.70]$ and rising). The policy gates fail: K3 (0.7244), K5 (span 4, $k=4$ and $k=8$), G1 (accuracy gate not met although savings are 58.17\%), and G2 (loss bound 6.17 pp and $P=0.7244$). K6, G4, and G5 are not evaluated because the oracle and policy analyses belong to P3 and the replication belongs to P2. The pattern is consistent: the measurement and descriptive claims are supported, while the static policy claim is not.
+Table~\ref{tab:p1gates} reports the gates. The measurement gates and the descriptive gates pass: K1 (1.613, a 161\% relative energy effect between $k=1$ and $k=32$), K2 ($k=4$, interior), K4 ($S(4)=0.355$, not flat), K7 (maximum repeat CV 18.44\%, MDE 5.62\%), and G3 ($S(4)=0.355$ in $[0.10,0.70]$ and rising). The policy gates fail: K3 (0.7244), K5 (span 4, $k=4$ and $k=8$), G1 (accuracy gate not met although savings are 58.17\%), and G2 (loss bound 6.17 pp and $P=0.7244$). K6 and G4 are not evaluated because the oracle and policy analyses belong to P3; G5 is evaluated in Section~\ref{sec:p2} and passes via HotpotQA. The pattern is consistent: the measurement and descriptive claims are supported, the static policy claim is not, and the direction replicates on the multi-hop arm but not on the 1.5B reader.
 
 \begin{table}[pos=htbp]
   \centering
-  \caption{P1 gate adjudication. Criteria were fixed before the run and are not re-thresholded. K6, G4, and G5 are marked not evaluated because the oracle and policy analyses (P3) and the replication (P2) do not exist.}
+  \caption{P1 gate adjudication. Criteria were fixed before the run and are not re-thresholded. K6 and G4 are marked not evaluated because the oracle and policy analyses belong to P3; G5 is evaluated in Section~\ref{sec:p2} and passes via HotpotQA.}
   \label{tab:p1gates}
   \footnotesize
   \setlength{\tabcolsep}{4pt}
@@ -790,7 +790,7 @@ Table~\ref{tab:p1gates} reports the gates. The measurement gates and the descrip
     G2 & loss bound at most 5 pp and $\Pr\ge0.8$ & 6.17 pp; 0.7244 & fail \\
     G3 & context share in $[0.10,0.70]$, varying & 0.355, rising & pass \\
     G4 & oracle at least 20\%, policy at least 50\% & P3 analysis & not evaluated \\
-    G5 & replication on 1.5B reader or HotpotQA & P2 analysis & not evaluated \\
+    G5 & replication on 1.5B reader or HotpotQA & HotpotQA, $-10.80$ pp & pass \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -827,9 +827,33 @@ Table~\ref{tab:p1sens} reports the margin and scoring sensitivity. The selected 
   \end{tabular}
 \end{table}
 
+\subsection{P2 Replication and Exploratory Arms}\label{sec:p2}
+
+P2 tested the direction of the P1 contrast on a second reader and on a multi-hop dataset. H7 was fixed before the P2 outcomes as a direction-only rule: support requires a paired mean $A(4)-A(\text{reference})<0$ and a one-sided 95\% upper bound below zero, with reference 32 on SQuAD and 10 on HotpotQA (A-001, D-025). This is not a 5 pp test and cannot revive the P1 policy claim.
+
+Table~\ref{tab:p2} reports the two confirmatory arms. The Qwen2.5-1.5B-Instruct arm did not replicate the direction: $A(4)-A(32)=+2.00$ pp with an upper bound of $+4.90$ pp, so H7 is not supported. The HotpotQA distractor arm did: $A(4)-A(10)=-10.80$ pp with an upper bound of $-8.00$ pp, so H7 is supported and G5 is satisfied via HotpotQA. The Qwen arm's block calibration failed at $k=0,1,2$ and its repeat CV reached 80.15\%, so its energy contrast is uncalibrated. The HotpotQA arm missed only $k=0$ and its repeat CV was 6.77\%, but its energy contrast is also uncalibrated because calibration is all-or-nothing.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{P2 confirmatory arms. H7 is a direction-only contrast; the 5 pp test is secondary and not powered on these arms. Energy is uncalibrated on both arms because at least one block factor failed.}
+  \label{tab:p2}
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}lrrrrrr@{}}
+    \toprule
+    \textbf{Arm} & $n$ & $A(4)$ & $A(\text{ref})$ & \textbf{Diff.} & \textbf{Upper} & \textbf{H7} \\
+    \midrule
+    Qwen2.5-1.5B & 500 & 0.360 & 0.340 & +2.00 pp & +4.90 pp & not supported \\
+    HotpotQA & 500 & 0.410 & 0.518 & $-10.80$ pp & $-8.00$ pp & supported \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The exploratory arms are descriptive and carry no gate. The boundary probe placed accuracy at 0.475, 0.485, and 0.505 for $k=32,48,64$, so the grid boundary at 32 is not a cliff and the linear energy model survives to 64. The 16k context-budget probe gave 0.475, 0.485, and 0.500 at the same depths, indistinguishable from the 4k control at $k=32$ (0.475), so the 16k allocation did not change accuracy. The Llama 3.2 3B reader peaked at $k=4$ (0.476) and declined to 0.426 at $k=32$, consistent with a weaker reader preferring a shallower depth. The fixed and per-passage tax arms raised the intended cost terms, but accuracy kept rising to $k=32$ on both, so no clean $k^{*}$ shift is identifiable; the tax prediction is inconclusive rather than confirmed or refuted.
+
 \subsection{Evidence Status}\label{sec:status}
 
-P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of 7{,}000 rows, all seven block factors in range, an idle CV of 1.23\%, and a repeat CV below the 20\% threshold. The descriptive energy model is supported: the per-query curve is affine with $b>0$, $R^{2}=0.9714$, and a lack-of-fit $p$ of 0.2813, and the context share rises from 0.209 to 0.807. The policy claim fails: the accuracy lower bound is outside the 5 pp margin, the selection probability is 0.7244, and the identity gap at $k=4$ excludes zero. The 2 pp margin remains dead, and the 5 pp margin is now also unsupported. P2 and P3 are untested.
+P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of 7{,}000 rows, all seven block factors in range, an idle CV of 1.23\%, and a repeat CV below the 20\% threshold. The descriptive energy model is supported: the per-query curve is affine with $b>0$, $R^{2}=0.9714$, and a lack-of-fit $p$ of 0.2813, and the context share rises from 0.209 to 0.807. The policy claim fails: the accuracy lower bound is outside the 5 pp margin, the selection probability is 0.7244, and the identity gap at $k=4$ excludes zero. The 2 pp margin remains dead, and the 5 pp margin is now also unsupported. P2 is complete. Its 1.5B-reader arm does not support H7 ($+2.00$ pp, upper $+4.90$ pp), while the HotpotQA arm does ($-10.80$ pp, upper $-8.00$ pp) and satisfies G5. Energy on both P2 arms is uncalibrated because at least one block factor failed, so the P2 energy contrasts are not certified. P3 is untested.
 
 \section{Discussion and Limitations}\label{sec:discussion}
 
@@ -851,13 +875,13 @@ P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of
 
 \textbf{Hardware and measurement.} All energy measurements come from one laptop GPU. The pilot reached 88.4~$^{\circ}$C and a 1003~MHz clock, and P0 reached 90~$^{\circ}$C with a 900~MHz clock floor, so the device is thermally throttled during long runs. NVML updates \texttt{power.draw} at roughly 1~s despite the 100~ms cadence, so per-query energy is a paired observation rather than a precision measurement. Block calibration failed in P0 and passed in P1, but the $k=0$ factor is 0.8089, only 1.1\% above the floor, and the repeat CV maximum is 18.44\%, close to the 20\% threshold. No wall meter is available (D-016), and the CPU retrieval term is a 20~W time-to-joules proxy. The shared H200 slice cannot supply an energy measurement at all because per-instance power telemetry is unavailable.
 
-\textbf{Design and scope.} The study uses one corpus (SQuAD v1.1), one retriever (BM25), one reader family, and a 4-bit quantized model at a 4096-token context with $k\le32$. SQuAD is a closed-corpus extractive task, so the results do not automatically transfer to open-domain generation, dense retrieval, long-context readers, or API models. The boundary probe at $k\in\{32,48,64\}$ and the context-budget probe are planned for P2 and are diagnostic; neither is a new $k^{*}$. The Llama 3.2 3B reader is exploratory and does not satisfy the replication gate. The accuracy metric is normalized exact match, which is conservative and does not credit paraphrases; the scoring sensitivity shows that the selected depth changes under lenient span and token F1, so the result is rule-dependent. The pilot used strict exact match, so pilot and P1 accuracy values are not like-for-like. A single run seed controls the within-question depth order, and seed-to-seed variability is not estimated.
+\textbf{Design and scope.} The study uses one corpus (SQuAD v1.1), one retriever (BM25), one reader family, and a 4-bit quantized model at a 4096-token context with $k\le32$. SQuAD is a closed-corpus extractive task, so the results do not automatically transfer to open-domain generation, dense retrieval, long-context readers, or API models. The boundary probe at $k\in\{32,48,64\}$ and the context-budget probe were run in P2 and are diagnostic; neither is a new $k^{*}$. The Llama 3.2 3B reader is exploratory and does not satisfy the replication gate. The P2 Qwen arm failed block calibration at $k=0,1,2$ and its repeat CV reached 80.15\%, so its energy contrast is uncalibrated; the HotpotQA arm missed only $k=0$ but is also uncalibrated because calibration is all-or-nothing. The accuracy metric is normalized exact match, which is conservative and does not credit paraphrases; the scoring sensitivity shows that the selected depth changes under lenient span and token F1, so the result is rule-dependent. The pilot used strict exact match, so pilot and P1 accuracy values are not like-for-like. A single run seed controls the within-question depth order, and seed-to-seed variability is not estimated.
 
 \textbf{Statistical power.} The planning calculation assumed an 8\% discordant rate and an interval half-width of about 1.8 pp at $n=1{,}000$. The run produced 13.1\% discordance, so the realized interval is wider and the 5 pp margin was not resolved. The design can estimate a difference of this size but did not establish the margin; a larger sample, or a lower-discordance reader, would be needed to do so, and the required size depends on the discordance rate that was observed. The 2 pp margin is dead at this sample size and remains estimation-only. The selection probability is a bootstrap quantity and inherits the uncertainty of the curve. Secondary estimands are not corrected for multiplicity because only one confirmatory test is declared, and they are labelled accordingly.
 
 \textbf{Identity and selection.} H3 is not supported: the identity gap at $k=4$ is $+0.2004$ with an interval that excludes zero. The identity is a diagnostic, not a policy gate, and its failure says that the selected depth is not an unconstrained energy optimum. K3 and K5 fail because the selection is unstable between $k=4$ and $k=8$. Neither failure invalidates the descriptive curve, but both limit any claim that a particular static depth is the best one.
 
-\textbf{Status.} The confirmatory result is negative on the primary policy claim and positive on the measurement and descriptive claims. P2 (replication, distractor, boundary, taxes) and P3 (adaptive policy) are untested, and no result from those phases is reported.
+\textbf{Status.} The confirmatory result is negative on the primary policy claim and positive on the measurement and descriptive claims. P2 is complete: the direction replicates on HotpotQA but not on the 1.5B reader, and the P2 energy contrasts are uncalibrated. P3 (adaptive policy) is untested, and no result from that phase is reported.
 
 \textbf{Data and reproducibility.} Raw SQuAD text is not redistributed, and the raw run directories are local-only under D-020. The repository publishes the dataset IDs, checksums, configs, prompts, split IDs, predictions, and aggregate statistics, but a reader cannot rebuild the energy table from the public repository alone. The P0 manifest omitted the GPU driver, which is a reporting gap; the driver is part of the reporting checklist and must accompany the published manifest before the absolute scale is treated as reproducible.
 
@@ -869,7 +893,9 @@ The confirmatory result is negative on the static policy claim. At $n=1{,}000$, 
 
 The positive results are measurement and description. P1 collected 7{,}000 of 7{,}000 rows with zero invalid rows, passed all seven block factors, and recorded an idle CV of 1.23\% and a repeat CV below the 20\% threshold. The calibrated per-query curve is affine ($J=24.0759+2.2772k$, $R^{2}=0.9714$, lack-of-fit $p=0.2813$), the context-side share rises from 0.209 to 0.807, and the per-correct-answer cost rises by a factor of 2.61 from $k=1$ to $k=32$. H1 and H4 are supported; H3 is not.
 
-These results do not establish a universal $k^{*}$, a 2 pp optimum, or a learned-policy gain. They establish that the energy lever is real and measurable, that the static 5 pp rule is too fragile to support at this sample size, and that the adaptive direction is the remaining route to a positive policy result. P3 is untested, and the negative result is reported as the finding rather than tuned after the fact.
+P2 gives a mixed external-validity picture. The direction replicates on HotpotQA ($-10.80$ pp, upper bound $-8.00$ pp) but not on Qwen2.5-1.5B-Instruct ($+2.00$ pp, upper bound $+4.90$ pp), so G5 is satisfied via HotpotQA while the 1.5B replication fails. The boundary, 16k, Llama, and tax arms are exploratory and do not change the gate outcome. Energy on the P2 arms is uncalibrated, so those contrasts are descriptive.
+
+These results do not establish a universal $k^{*}$, a 2 pp optimum, or a learned-policy gain. They establish that the energy lever is real and measurable, that the static 5 pp rule is too fragile to support at this sample size, that external validity is dataset-dependent, and that the adaptive direction is the remaining route to a positive policy result. P3 is untested, and the negative result is reported as the finding rather than tuned after the fact.
 
 \printcredits
 

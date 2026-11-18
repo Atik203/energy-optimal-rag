@@ -897,6 +897,75 @@ than as a proven loss. Replication (P2) and the policy arm (P3) are untested.
   \end{tabularx}
 \end{table}
 
+\section{P2 replication and exploratory arms}\label{sec:s8}
+
+\subsection{Confirmatory arms and H7}
+
+H7 was fixed before the P2 outcomes (A-001). Support requires a paired mean
+$A(4)-A(\text{reference})<0$ and a one-sided 95\% upper bound below zero, with
+reference 32 on SQuAD and 10 on HotpotQA. The rule is direction-only and is not a
+5~pp test.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{P2 confirmatory arms. The 5~pp test is secondary and not powered.}
+  \label{tab:s8confirm}
+  \footnotesize
+  \begin{tabular}{@{}lrrrrrr@{}}
+    \toprule
+    \textbf{Arm} & $n$ & $A(4)$ & $A(\text{ref})$ & \textbf{Diff.} & \textbf{Upper} & \textbf{H7} \\
+    \midrule
+    Qwen2.5-1.5B & 500 & 0.360 & 0.340 & $+2.00$ pp & $+4.90$ pp & not supported \\
+    HotpotQA & 500 & 0.410 & 0.518 & $-10.80$ pp & $-8.00$ pp & supported \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The Qwen2.5-1.5B-Instruct arm used the same 500 SQuAD IDs as the replication
+split, seven depths, and the HF reader at revision \texttt{989aa798}. It
+completed 3{,}500/3{,}500 rows with zero invalid rows. Block calibration failed
+at $k=0,1,2$ (factors 0.261, 0.427, 0.537), so no factor was applied, and the
+repeat CV maximum was 80.15\%, so the energy contrast is uncalibrated.
+
+The HotpotQA arm used 500 distractor questions drawn only from the 7{,}345 dev
+questions with exactly ten paragraphs (A-002), per-question BM25 top-10, and the
+Ollama \texttt{qwen3.5:4b} reader. It completed 3{,}000/3{,}000 rows with zero
+invalid rows. Block calibration missed only $k=0$ (factor 0.700), so no factor
+was applied, and the repeat CV maximum was 6.77\%. Supporting-paragraph recall
+was 0.732 at $k=4$, 0.902 at $k=8$, and 1.000 at $k=10$; the last value is
+trivial because the candidate set has ten paragraphs.
+
+\subsection{Exploratory arms}
+
+Table~\ref{tab:s8explore} summarises the exploratory arms. None enters a gate.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Exploratory P2 arms. Accuracy is normalized exact match; energy is
+  uncalibrated except for the boundary probe.}
+  \label{tab:s8explore}
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.4cm}rr>{\raggedright\arraybackslash}X}
+    \toprule
+    \textbf{Arm} & $n$ & $k$ & \textbf{Result} \\
+    \midrule
+    Boundary & 200 & 32/48/64 & $A=0.475/0.485/0.505$; no cliff at 32 \\
+    16k context & 200 & 32/48/64 & $A=0.475/0.485/0.500$; 4k control $A(32)=0.475$ \\
+    Llama 3.2 3B & 500 & 0--32 & peak $A(4)=0.476$, $A(32)=0.426$ \\
+    Fixed tax & 150 & 0--32 & $A$ rises to 0.5867 at $k=32$; no clean $k^{*}$ shift \\
+    Per-passage tax & 150 & 0--32 & $A$ rises to 0.5733 at $k=32$; no clean $k^{*}$ shift \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+The tax arms used a calibrated matmul dummy workload that raised the fixed
+cost by 3.15~J (fixed) or the per-passage cost by 0.46~J (per-passage), close to
+the 20\% target. The dummy work ran inside the NVML window, so its energy was
+measured rather than added. Both arms missed the $k=0$ block factor and are
+therefore uncalibrated. The accuracy curves did not plateau, so the predicted
+$k^{*}$ movement is not identifiable; the tax test is inconclusive.
+
 \section{Reproducibility}\label{sec:s7}
 
 \subsection{Environment and artifacts}
