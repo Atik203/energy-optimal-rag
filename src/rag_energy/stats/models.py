@@ -74,8 +74,7 @@ def coverage_fit(xs: list[float], ys: list[float]) -> tuple[float, float, float]
         for p_i in range(1, 1001):  # 0.001 .. 1.000
             p = p_i / 1000.0
             ss_res = sum(
-                (y - coverage_accuracy(a0, p, int(k))) ** 2
-                for k, y in zip(xs, ys, strict=True)
+                (y - coverage_accuracy(a0, p, int(k))) ** 2 for k, y in zip(xs, ys, strict=True)
             )
             if best is None or ss_res < best[2]:
                 best = (a0, p, ss_res)

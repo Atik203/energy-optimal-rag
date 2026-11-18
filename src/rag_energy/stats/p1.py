@@ -726,9 +726,7 @@ def scoring_sensitivity(
             if reference_depth is not None
             else max(summary.k for summary in summaries)
         )
-        results[key] = margin_sensitivity(
-            summaries, margins=margins, reference_depth=reference
-        )
+        results[key] = margin_sensitivity(summaries, margins=margins, reference_depth=reference)
     return results
 
 
