@@ -65,9 +65,12 @@ See [`docs/P4_RESULTS.md`](docs/P4_RESULTS.md).
 **P5/P6 status (2026-11-18): paper and reproducibility checks.** The paper and
 supplement include P1–P4; tables are regenerated from registered runs and the
 figures pass the 600+ DPI check. The SQuAD and HotpotQA manifest checksums verify,
-and rerunning the P1/P2 analyses from raw CSVs reproduces the committed outputs.
-The external backup and Zenodo deposit remain open under D-020, so the release is
-a candidate (`v0.2.0-rc1`), not a final archive.
+and a clean-room rerun of the P1/P2/P3/P4 analyses reproduces the committed
+outputs (line-ending normalized for P4). The raw/processed/analysis archive is
+backed up at `G:\energy-optimal-rag-backup\2026-11-18\` (D-027), with checksums in
+`docs/BACKUP.md`. Zenodo metadata is prepared (`.zenodo.json`,
+`docs/ZENODO_DEPOSIT.md`) but the DOI is not minted, so the release remains
+`v0.2.0-rc1`.
 
 ---
 

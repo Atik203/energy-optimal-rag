@@ -461,3 +461,17 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
 - **Consequences:** The HotpotQA arm uses a uniform 10-paragraph reference. No change to
   `n = 500`, the depth grid, the 4-vs-10 contrast, or any gate. The excluded questions are an
   upstream-data property, not an outcome-based exclusion.
+
+---
+
+## D-027 - External backup created
+
+- **Date:** 2026-11-18
+- **Status:** accepted
+- **Context:** D-020 deferred the external backup of raw P0/P1/P2 data. The
+  release candidate needs a second copy outside the repository.
+- **Decision:** Create `G:\energy-optimal-rag-backup\2026-11-18\` with a tracked
+  code archive and a raw/processed/analysis archive. Checksums are recorded in
+  `docs/BACKUP.md`.
+- **Consequences:** D-020's single-copy risk is reduced for this release. A
+  second-site copy is still pending before the final `v0.2.0` archive.

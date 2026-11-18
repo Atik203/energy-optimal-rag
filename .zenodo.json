@@ -1,0 +1,32 @@
+{
+  "title": "Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation",
+  "description": "Research harness and decision-theoretic study of retrieval depth in retrieval-augmented generation. The release contains the P0-P4 experiment configurations, preregistration, registered run metadata, analysis outputs, paper sources, and reproducibility scripts. Raw SQuAD/HotpotQA text and raw run directories are not redistributed; the release publishes IDs, checksums, configs, prompts, predictions, and aggregate results.",
+  "creators": [
+    {
+      "name": "Rahaman, Atikur",
+      "affiliation": "Independent researcher"
+    }
+  ],
+  "version": "0.2.0",
+  "publication_date": "2026-11-18",
+  "access_right": "open",
+  "license": "MIT",
+  "keywords": [
+    "green AI",
+    "retrieval-augmented generation",
+    "energy efficiency",
+    "retrieval depth",
+    "large language models",
+    "measurement",
+    "reproducibility",
+    "decision theory"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Atik203/energy-optimal-rag",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
+  ],
+  "notes": "Release candidate. The external raw-data backup is recorded in docs/BACKUP.md. A Zenodo DOI has not yet been minted; this file is the deposit metadata."
+}

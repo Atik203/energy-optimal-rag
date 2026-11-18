@@ -8,16 +8,18 @@ abstract: >-
   E(k) = E[J_k] / E[C_k] under a pre-registered accuracy gate, tests an
   optimal-depth elasticity identity, estimates a price-of-static-depth bound, and
   evaluates a certification-cost threshold for deciding whether calibration is
-  worth its energy. The initial pilot is MARGINAL: a static 2 percentage-point
-  claim failed at the boundary, while a 5 percentage-point non-inferiority
-  policy at k = 4 saved 69.3% of energy in the pilot. No confirmatory results are
-  claimed in version 0.1.0.
+  worth its energy. The P1 confirmatory result is negative: the 5 pp static
+  policy is not supported (-4.30 pp, one-sided lower bound -6.17 pp; savings
+  58.17%). P2 is mixed: H7 replicates on HotpotQA (-10.80 pp) but not on
+  Qwen2.5-1.5B (+2.00 pp). P3's policy does not capture the matched-accuracy
+  oracle gap, and P4 rejects the coverage model on most arms. Energy on the P2
+  arms is uncalibrated.
 authors:
   - family-names: Rahaman
     given-names: Atikur
     email: atikurrahaman0305@gmail.com
-version: 0.1.0
-date-released: 2026-11-09
+version: 0.2.0
+date-released: 2026-11-18
 repository-code: "https://github.com/Atik203/energy-optimal-rag"
 url: "https://github.com/Atik203/energy-optimal-rag"
 license: MIT
