@@ -132,6 +132,9 @@ artifacts/*
 !artifacts/README.md
 !artifacts/ledger.csv
 !artifacts/claims_evidence.csv
+!artifacts/release/
+!artifacts/release/README.md
+!artifacts/release/*.csv.gz
 paper/build/
 paper/out*/
 paper/*.aux
