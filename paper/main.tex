@@ -1148,6 +1148,32 @@ Table~\ref{tab:claims} collects the claim-to-evidence map. Each row states the e
 
 \textbf{Relation to the adaptive direction.} The static claim fails, so P3 tested whether a query-conditional policy can recover the oracle gap. The answer on this feature set is no: the BM25-feature logistic policy captures $-1.92\%$ of a $36.80\%$ unconstrained oracle gap, and $-2.46\%$ of a $28.64\%$ matched-accuracy oracle gap, so G4 is not supported. The unconstrained oracle accuracy (0.6667) exceeds the static accuracy (0.4194); the matched oracle holds accuracy at 0.4194 and still leaves a 28.64\% gap that the policy does not capture. Without abstention, the matched gap falls to 7.21\%, so most of the oracle advantage is an abstention gain rather than depth routing. A predictability audit gives an out-of-fold AUC of 0.733 for correctness at $k=1$, flat from 50 to 608 training questions, and an answer-presence oracle reaches only 47.8\% capture on this test split. The 50\% gate is therefore at the edge of what a perfect presence signal achieves and well beyond the deployable feature set. The negative result is for this policy class, not a proof that no adaptive policy can work. The 78.8\% pilot oracle figure remains a hindsight upper bound. The static curve remains the comparator that any policy must beat.
 
+\subsection{Threats to Validity}\label{sec:threats}
+
+Table~\ref{tab:validity} organizes the threats by construct, internal, external, and statistical-conclusion validity. The table is not a substitute for the limitations below; it is the checklist a reader can use to decide which claims travel.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Threats to validity and their residual risk.}
+  \label{tab:validity}
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{6.0cm}>{\raggedright\arraybackslash}p{6.2cm}@{}}
+    \toprule
+    \textbf{Type} & \textbf{Threat} & \textbf{Evidence and residual risk} \\
+    \midrule
+    Construct & Normalized EM does not credit paraphrases; energy per correct answer depends on the scoring rule. & Scoring sensitivity repeated under lenient span and F1; selected depth changes, qualitative saving survives. \\
+    Construct & GPU energy is not whole-system energy; BM25 is a CPU proxy. & Wall meter waived (D-016); proxy reported separately; absolute scale provisional. \\
+    Internal & Per-query NVML windows are sequence-dependent at short depths. & Probe and replay: replay within 2\% of blocks; P2 energy reported as a range; P1 absolute J provisional. \\
+    Internal & Thermal drift and block calibration. & P0 failed; P1 passed 7/7 with k=0 at 0.8089; repeat CV 18.44\%; gate not re-thresholded. \\
+    External & One GPU, one retriever, one corpus family. & Four reader/task arms; boundary and 16k probes; no universal k* claimed. \\
+    External & Quantized 4B reader at 4k context. & Reader-conditional results; Llama and 1.5B arms reported; no API-model claim. \\
+    Statistical & Realized discordance 13.1\% vs 8\% planned; 5 pp not resolved. & Two-sided CI and margin frontier reported; required n ~7,100 at observed effect. \\
+    Statistical & Selection instability; multiple exploratory analyses. & P(k*) reported; one confirmatory test; secondary analyses labelled. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \subsection{Limitations}\label{sec:limitations}
 
 \textbf{Hardware and measurement.} All energy measurements come from one laptop GPU. The pilot reached 88.4~$^{\circ}$C and a 1003~MHz clock, and P0 reached 90~$^{\circ}$C with a 900~MHz clock floor, so the device is thermally throttled during long runs. NVML updates \texttt{power.draw} at roughly 1~s despite the 100~ms cadence, so per-query energy is a paired observation rather than a precision measurement. Block calibration failed in P0 and passed in P1, but the $k=0$ factor is 0.8089, only 1.1\% above the floor, and the repeat CV maximum is 18.44\%, close to the 20\% threshold. No wall meter is available (D-016), and the CPU retrieval term is a 20~W time-to-joules proxy. The shared H200 slice cannot supply an energy measurement at all because per-instance power telemetry is unavailable.
