@@ -912,7 +912,11 @@ stops at the first local minimum is not safe.
 The identity gap is positive at $k\ge4$ on P1, Qwen, and Llama (P1: $+0.200$ at
 $k=4$, $+0.703$ at $k=32$), consistent with over-retrieval, while HotpotQA is
 negative at $k=2$ and positive from $k=4$. The identity remains a local
-diagnostic; it does not establish a global optimum on any arm. Margin and
+diagnostic; it does not establish a global optimum on any arm. A continuous
+interpolation resolves the P1 H3 failure: the unconstrained optimum is
+$k^{*}=1.214$ with a numerically zero identity gap, so the positive gap at the
+gate-selected $k=4$ is over-retrieval relative to that optimum, not a failure of
+the identity. This is exploratory and does not re-adjudicate H3. Margin and
 scoring sensitivity are reported in the supplement: the selected depth depends
 on the scoring rule on every arm.
 

@@ -1,0 +1,21 @@
+{
+  "run_id": "squad_qwen4b_p1",
+  "a": 24.0759199777782,
+  "b": 2.2771527658659148,
+  "k_star_continuous": 1.214431102554657,
+  "accuracy": 0.399777056665432,
+  "e_per_correct": 67.14083430850135,
+  "epsilon_j": 0.10302922863927415,
+  "epsilon_a": 0.10302942339046778,
+  "identity_gap": -1.9475119363010496e-07,
+  "grid_depths": [
+    0,
+    1,
+    2,
+    4,
+    8,
+    16,
+    32
+  ],
+  "note": "Exploratory; H3 remains adjudicated at k=4."
+}

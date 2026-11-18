@@ -69,3 +69,4 @@ A-0067,policy,analysis,analysis/policy_audit/report.md,493dc72aac99c4890fabd0ad3
 A-0068,recall_precision,analysis,analysis/recall_precision.json,ee018f624e68d681d9f134e29a50b87a81e6649c913ea503f60425f49113ceb8,3665,2026-11-18T19:07:54Z,CC-BY-4.0,Recall x precision decomposition
 A-0069,recall_precision,document,docs/RECALL_PRECISION.md,7f57c055cc38a3c498a18b3980e07ea49a43b9856a52e4c6186f3ea63df69e95,1492,2026-11-18T19:07:54Z,CC-BY-4.0,Recall x precision memo
 A-0070,measurement,analysis,analysis/measurement/probe_qwen4b_p1.json,1be383a79c875a4a7922a15562b9f389329b3d7d239f074a51a69ad0f8bcabd6,158973,2026-11-18T19:07:54Z,CC-BY-4.0,P1 Ollama power probe
+A-0071,squad_qwen4b_p1,analysis,analysis/identity_continuous.json,Continuous-optimum identity diagnostic,437a4cb913f30b9791bec94892f56b1e14ee599a69af4d5a485a89220e9a9f73,464,2026-11-18T19:09:51Z,CC-BY-4.0,Exploratory; H3 unchanged

@@ -65,6 +65,16 @@ curves are descriptive break-evens, not deployment guarantees. On arms where
 calibration failed (Qwen, HotpotQA, Llama), the energy side is uncalibrated, so
 `N*` inherits that limitation.
 
+## Continuous-optimum identity
+
+`analysis/identity_continuous.json` interpolates the P1 accuracy curve with a
+monotone cubic and minimizes `E(k)=(a+bk)/A(k)` over `[0,32]`. The continuous
+optimum is `k*=1.214` with `E=67.14` J/correct and identity gap `-1.9e-7`
+(numerically zero). The pre-registered H3 test at the gate-selected `k=4` still
+fails; the positive gap there is over-retrieval relative to the unconstrained
+optimum, not a falsification of the identity. This is exploratory and does not
+re-adjudicate H3.
+
 ## Recall × precision decomposition
 
 A separate decomposition (`docs/RECALL_PRECISION.md`) shows `A(k)=R(k)Q(k)`.
