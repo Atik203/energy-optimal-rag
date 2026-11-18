@@ -816,6 +816,28 @@ discordance, realized power at $d=-4.3$~pp is 0.152; 80\% power needs about 16{,
 
 \begin{table}[pos=htbp]
   \centering
+  \caption{Inference sensitivity for the P1 primary contrast. The first row is the preregistered confirmatory test; the rest are exploratory.}
+  \label{tab:p1inference}
+  \footnotesize
+  \begin{tabular}{@{}llrr@{}}
+    \toprule
+    \textbf{Method} & \textbf{Null} & \textbf{Statistic} & \textbf{Result} \\
+    \midrule
+    Wald NI (primary) & $d\le-5$ pp & $z=0.616$ & $p=0.2691$ \\
+    Score NI & $d\le-5$ pp & $z=0.612$ & $p=0.2703$ \\
+    Exact unconditional & $d\le-5$ pp & sup over nuisance & $p=0.4182$ \\
+    McNemar exact & $d=0$ & $b=44,c=87$ & $p=0.0002$ \\
+    TOST & $|d|\ge5$ pp & max one-sided & $p=0.2691$ \\
+    TOST & $|d|\ge2$ pp & max one-sided & $p=0.9785$ \\
+    BCa difference & --- & 10{,}000 resamples & $[-6.60,-2.20]$ pp \\
+    BCa savings & --- & 10{,}000 resamples & $[55.99,60.10]$\% \\
+    Joint bootstrap & NI and savings $\ge20$\% & 10{,}000 resamples & $P=0.154$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[pos=htbp]
+  \centering
   \caption{Primary 5~pp result for $k=4$ against $k=32$ on the paired population
   ($n=1{,}000$). The null is a loss of 5~pp or more; the test is one-sided at $\alpha=0.05$.
   Values are from \texttt{analysis/squad\_qwen4b\_p1/noninferiority.json}.}
