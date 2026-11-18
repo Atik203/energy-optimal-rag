@@ -3,7 +3,7 @@
 Evidence base for drafting the energy-optimal-rag paper. Every material fact carries a source
 pointer. Status labels: `logs` (measured), `code only`, `author`, `missing`.
 
-- **Last scanned:** 2026-11-15 (updated after the P1 analysis was registered)
+- **Last scanned:** 2026-11-18 (updated after the P2 analysis was registered and the paper was updated)
 - **Files read:** `README.md`, `ROADMAP.md`, `AGENTS.md`, `CITATION.cff`, `docs/P0_HARNESS_REPORT.md`,
   `docs/P1_RESULTS.md`, `docs/MEASUREMENT.md`, `docs/PROTOCOL.md`, `docs/IMPLEMENTATION_PLAN.md`,
   `docs/DECISIONS.md`, `prereg/PREREGISTRATION.md`, `prereg/analysis_plan.md`,
@@ -112,12 +112,12 @@ pointer. Status labels: `logs` (measured), `code only`, `author`, `missing`.
 |---|---:|---|---|---|---|
 | P0 golden harness | 200 | 0–32 | qwen3.5:4b | **FAIL** (block calibration) | docs/P0_HARNESS_REPORT.md |
 | P1 primary | 1,000 | 0–32 | qwen3.5:4b | **COMPLETE, NOT SUPPORTED** | runs/registry.csv; docs/P1_RESULTS.md |
-| Replication (H7) | 500 | 0–32 | Qwen2.5-1.5B-Instruct | Not run (P2) | prereg §3 |
-| Exploratory reader | 500 | 0–32 | Llama 3.2 3B Instruct, Q4, 4k | Not run (P2) | prereg §2; D-012 |
-| HotpotQA distractor | 500 | 0–10 | qwen3.5:4b | Not run (P2) | prereg §3 |
-| Boundary probe | 200 | 32,48,64 | qwen3.5:4b, 8k | Not run (P2) | D-013 |
-| Context-budget probe | 200 | 32,48,64 | qwen3.5:4b, 16k, plus 4k control | Not run (P2) | D-013; analysis_plan §16 |
-| Energy taxes | 150 each | 0–32 | qwen3.5:4b | Not run (P2) | docs/PROTOCOL.md §7 |
+| Replication (H7) | 500 | 0–32 | Qwen2.5-1.5B-Instruct | **COMPLETE, H7 NOT SUPPORTED** | docs/P2_RESULTS.md |
+| Exploratory reader | 500 | 0–32 | Llama 3.2 3B Instruct, Q4, 4k | **COMPLETE, exploratory** | docs/P2_RESULTS_LLAMA.md |
+| HotpotQA distractor | 500 | 0–10 | qwen3.5:4b | **COMPLETE, H7 SUPPORTED** | docs/P2_RESULTS_HOTPOT.md |
+| Boundary probe | 200 | 32,48,64 | qwen3.5:4b, 8k | **COMPLETE, no cliff** | analysis/boundary_qwen4b_p2 |
+| Context-budget probe | 200 | 32,48,64 | qwen3.5:4b, 16k, plus 4k control | **COMPLETE, no accuracy gain** | analysis/squad_qwen4b_ctx16k_p2 |
+| Energy taxes | 150 each | 0–32 | qwen3.5:4b | **COMPLETE, inconclusive** | docs/P2_RESULTS_TAXES.md |
 | H200 64k accuracy check | 200 | 64 | Qwen3.5-4B | Not run; accuracy only | prereg §2; MEASUREMENT §12 |
 
 **Setup.** One local RTX 3060 Laptop 6 GB, batch size 1, AC power, screen off, no concurrent
@@ -155,6 +155,17 @@ gap; `N*`. No multiplicity correction for the single primary test. [prereg/analy
 | P1 identity gap | `Δ(4)=+0.2004` [0.1677, 0.2320]; `Δ(32)=0.703` | identity.csv; C-029 | H3 not supported |
 | P1 certification | `N*=6,189` [5,697, 6,748]; `C_cert=311,992` J | certification.json | descriptive |
 | P1 selection and gates | `k*=4`, `P(k* optimal)=0.7244`; K1 K2 K4 K7 pass, K3 K5 fail; G1 G2 fail, G3 pass | gates.json; bootstrap.json | adjudicated |
+| P2 Qwen rows | 3,500/3,500 rows, 0 invalid | runs/registry.csv; docs/P2_RESULTS.md | logs |
+| P2 Qwen H7 | `A(4)=0.360`, `A(32)=0.340`, diff +2.00 pp, upper +4.90 pp | analysis/squad_qwen15b_p2/direction.json; C-030 | **not supported** |
+| P2 Qwen calibration | 4/7 factors pass; repeat CV max 80.15% | runs/squad_qwen15b_p2/blocks.json; repeat.json | energy uncalibrated |
+| P2 Hotpot rows | 3,000/3,000 rows, 0 invalid | runs/registry.csv; docs/P2_RESULTS_HOTPOT.md | logs |
+| P2 Hotpot H7 | `A(4)=0.410`, `A(10)=0.518`, diff −10.80 pp, upper −8.00 pp | analysis/hotpot_qwen4b_p2/direction.json; C-033 | **supported** |
+| P2 Hotpot calibration | 6/7 factors pass (k=0 miss); repeat CV max 6.77% | runs/hotpot_qwen4b_p2/blocks.json; repeat.json | energy uncalibrated |
+| P2 Hotpot recall | 0.732 at k=4, 0.902 at k=8, 1.000 at k=10 | analysis/hotpot_qwen4b_p2_retrieval_recall.json | descriptive |
+| Boundary probe | A 0.475/0.485/0.505 at k=32/48/64 | analysis/boundary_qwen4b_p2/report.md | diagnostic |
+| 16k probe | A 0.475/0.485/0.500 at k=32/48/64; 4k control A(32)=0.475 | analysis/squad_qwen4b_ctx16k_p2/report.md | diagnostic |
+| Llama 3B | peak A(4)=0.476; A(32)=0.426 | analysis/squad_llama3b_p2/report.md; C-036 | exploratory |
+| Tax arms | fixed A→0.5867 at k=32; per-passage A→0.5733 at k=32 | analysis/fixed_a/report.md; analysis/per_passage_b/report.md; C-037–C-038 | inconclusive |
 
 ## 7. Claim-evidence map
 
@@ -167,6 +178,7 @@ gap; `N*`. No multiplicity correction for the single primary test. [prereg/analy
 | The optimal-depth identity holds at an interior depth and flags over-retrieval at `k = 32`. | **Not supported at `k=4`** (gap +0.2004, CI excludes 0); flags `k=32` (gap 0.703) | identity.csv; C-029 | Diagnostic only; no promotion |
 | Absolute `J`, `E`, `N*`, `S(k)` for P1. | **Claimable**: all seven block factors passed | runs/squad_qwen4b_p1/blocks.json; prereg §4.1 | Calibrated, with the `k=0` 0.8089 caveat |
 | A query-conditional policy captures ≥50% of a ≥20% oracle gap. | Not tested | ROADMAP.md §1.2–1.3; D-007 | P3 held-out evaluation |
+| H7 direction replicates on Qwen2.5-1.5B or HotpotQA. | **Mixed**: Qwen not supported (+2.00 pp), HotpotQA supported (−10.80 pp) | docs/P2_RESULTS.md; docs/P2_RESULTS_HOTPOT.md; C-030, C-033 | G5 satisfied via HotpotQA; Qwen arm does not replicate |
 | Llama 3B / 16k context probe change H7 or G5. | No | prereg §2; D-012–D-013 | Prohibited post-outcome |
 | H200 energy result. | No energy claim possible | prereg §2; MEASUREMENT §12 | Prohibited |
 | P0 reproduces the pilot energy curve. | No: P0 FAIL | docs/P0_HARNESS_REPORT.md §4 | Not a paper claim |
@@ -215,15 +227,15 @@ gap; `N*`. No multiplicity correction for the single primary test. [prereg/analy
 
 | Section | Status | Main gaps |
 |---|---|---|
-| Abstract | Not drafted | Must lead with the negative 5 pp result and the descriptive savings |
-| Introduction | Not drafted | Gap statement needs citations |
+| Abstract | Drafted | Lead with the negative 5 pp result and the mixed P2 replication |
+| Introduction | Drafted | Gap statement needs citations |
 | Related work | Blocked | `refs.bib` exists but the related-work keys and claims are not verified |
-| Theory | Not drafted | Theorem statements are described in `docs/IMPLEMENTATION_PLAN.md §10`, not written out |
+| Theory | Drafted | Theorem statements are described in `docs/IMPLEMENTATION_PLAN.md §10` |
 | Method / protocol | Supplement S1–S4 drafted | — |
-| Results | Evidence available | P1 analysis complete; paper tables not yet drafted |
-| Replication, policy, taxes | Blocked | P2/P3 not run |
-| Limitations | Partly drafted in supplement S5, S7.5 | Needs paper-level framing of the negative result and the `k=0` factor |
-| Supplement | S1–S7 complete | Affiliation placeholder only |
+| Results | Drafted | P1 and P2 analysis complete; paper tables drafted |
+| Replication, policy, taxes | P2 complete; P3 untested | P3 adaptive policy remains |
+| Limitations | Drafted in main text and supplement S5, S7.5 | — |
+| Supplement | S1–S8 complete | Affiliation placeholder only |
 
 ## 12. Open questions
 
