@@ -425,7 +425,7 @@ selected depth and the bootstrap distribution.
     G2 & Upper confidence bound on accuracy loss, and selection stability & $\le5.0$~pp and $\ge0.80$ & Not claimed \\
     G3 & Context-side share at the selected depth lies in a non-degenerate band and varies with $k$ & $[0.10,0.70]$ & Not reported at the selected depth \\
     G4 & Oracle gain and policy capture at matched accuracy & $\ge20.0\%$ and $\ge50.0\%$ & Oracle ceiling 78.8\%; no learned policy \\
-    G5 & Replication of the direction of H2 & 1.5B reader or HotpotQA & Not run (P2) \\
+    G5 & Replication of the direction of H2 & 1.5B reader or HotpotQA & Supported via HotpotQA (P2) \\
     \bottomrule
   \end{tabularx}
 \end{table}
@@ -851,13 +851,13 @@ supported; H2 and H3 are not; H5--H7 are outside P1 scope.
     K3 & $P(k^{*}\text{ optimal})=0.7244$ & Fail \\
     K4 & $S(4)=0.355$, not flat & Pass \\
     K5 & 95\% set $\{4,8\}$, reported span 4 & Fail \\
-    K6 & Oracle gain is a P3 analysis & Not evaluated \\
+    K6 & Oracle gain 41.28\%, above the 15\% kill floor & Pass \\
     K7 & Max CV 18.44\%; MDE 5.62\% below the 161\% effect & Pass \\
     G1 & Non-inferior false; savings 58.17\% & Fail \\
     G2 & Upper bound on loss 6.17~pp; $P=0.7244$ & Fail \\
     G3 & $S(4)=0.355$ in $[0.10,0.70]$ and increasing & Pass \\
-    G4 & Policy capture is a P3 analysis & Not evaluated \\
-    G5 & Replication is a P2 analysis & Not evaluated \\
+    G4 & Oracle 41.28\%; policy capture $-2.48\%$ & Fail \\
+    G5 & HotpotQA direction $-10.80$~pp & Pass \\
     \bottomrule
   \end{tabularx}
 \end{table}
@@ -868,7 +868,8 @@ Table~\ref{tab:outputs} lists the produced analysis files. The result supports H
 rejects H2 and H3. It does not support a static 5~pp policy at $k=4$, a 2~pp optimum, a universal
 $k^{*}$, or an adaptive-policy gain. The 58.17\% savings is a calibrated descriptive ratio of
 sums, not a certified saving, and the 5~pp result must be described as not established rather
-than as a proven loss. Replication (P2) and the policy arm (P3) are untested.
+than as a proven loss. Replication (P2) is complete and mixed: HotpotQA supports H7, the 1.5B
+reader does not. The policy arm (P3) is complete and negative: G4 is not supported.
 
 \begin{table}[pos=htbp]
   \centering

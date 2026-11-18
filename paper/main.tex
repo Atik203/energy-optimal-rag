@@ -6,7 +6,7 @@
 %
 %  STATUS: P1 is complete.  The primary 5 pp policy claim is not supported;
 %  the calibrated descriptive curve and the measurement checks are reported.
-%  P2 and P3 remain untested.
+%  P2, P3, and P4 are complete; P5/P6 finalize the paper and release.
 % ===========================================================================
 \documentclass[a4paper,fleqn]{cas-sc}
 
@@ -334,7 +334,7 @@ The baseline in this paper is not a different reader or a different retriever. I
 \begin{equation}\label{eq:affine}
   J(k)=a+bk,
 \end{equation}
-with $a$ the depth-independent cost of a request (prompt, decoding, amortized model load, and fixed overhead) and $b$ the marginal cost of one retrieved passage. The parameters are estimated by ordinary least squares on the seven depth means, and $R^{2}$ is reported with the fit. The pilot values were $a=15.74$ J, $b=2.283$ J per passage, and $R^{2}=0.9990$. The affine form is a measurement model, not an assumption about the reader: it says that each passage costs approximately the same number of joules to prefill in this regime, which is what a fixed 70-word chunk and a fixed prompt template imply. A boundary probe at $k\in\{32,48,64\}$ is planned for P2 to test whether the linearity survives beyond the grid; the identity in this paper is not extended beyond $k=32$.
+with $a$ the depth-independent cost of a request (prompt, decoding, amortized model load, and fixed overhead) and $b$ the marginal cost of one retrieved passage. The parameters are estimated by ordinary least squares on the seven depth means, and $R^{2}$ is reported with the fit. The pilot values were $a=15.74$ J, $b=2.283$ J per passage, and $R^{2}=0.9990$. The affine form is a measurement model, not an assumption about the reader: it says that each passage costs approximately the same number of joules to prefill in this regime, which is what a fixed 70-word chunk and a fixed prompt template imply. A boundary probe at $k\in\{32,48,64\}$ was run in P2 to test whether the linearity survives beyond the grid; the identity in this paper is not extended beyond $k=32$.
 
 \textbf{Why a static depth is the baseline.} A static depth has three properties that make it the right first object. It is identified without a policy model, so it can be tested confirmatorily with the sample at hand. It is the depth that determines the energy bill of a deployment that does not inspect the query. And it is the correct comparator for adaptivity: a query-conditional policy that spends more energy on hard questions can appear to save energy if it is compared with a weak fixed depth, whereas a comparison at matched accuracy against the best static depth isolates the value of allocation. The baseline is therefore the constrained minimizer below, not an arbitrary fixed depth.
 
@@ -547,7 +547,7 @@ Scoring is normalized exact match for the primary analysis. The pilot used stric
 
 \subsection{Baselines and Procedure}\label{sec:procedure}
 
-The baseline is the static depth grid of Table~\ref{tab:grid} on the same reader and retriever. The reference depth is $k=32$, the candidate is $k=4$, and the comparison is paired by question. The other depths describe the curve, supply the finite differences for the identity, and enter the affine fit. The 2 pp margin is estimated on the same rows and reported with an interval, without a decision claim. No second reader, no dense retriever, and no learned policy are evaluated in P1. The replication arms are planned for P2: Qwen2.5-1.5B-Instruct at $n=500$ and HotpotQA distractor at $n=500$ with $k\le10$ \cite{qwen25,yang2018hotpotqa}. The boundary probe ($k\in\{32,48,64\}$, $n=200$, 8k context) and the 16k context-budget probe are diagnostic; the 16k allocation is a budget, not a 16k-token prompt at $k\le64$. The optional H200 MIG check at 64k is accuracy-only and is never pooled with the RTX 3060 energy results.
+The baseline is the static depth grid of Table~\ref{tab:grid} on the same reader and retriever. The reference depth is $k=32$, the candidate is $k=4$, and the comparison is paired by question. The other depths describe the curve, supply the finite differences for the identity, and enter the affine fit. The 2 pp margin is estimated on the same rows and reported with an interval, without a decision claim. No second reader, no dense retriever, and no learned policy are evaluated in P1. The replication arms were run in P2: Qwen2.5-1.5B-Instruct at $n=500$ and HotpotQA distractor at $n=500$ with $k\le10$ \cite{qwen25,yang2018hotpotqa}. The boundary probe ($k\in\{32,48,64\}$, $n=200$, 8k context) and the 16k context-budget probe are diagnostic; the 16k allocation is a budget, not a 16k-token prompt at $k\le64$. The optional H200 MIG check at 64k is accuracy-only and is never pooled with the RTX 3060 energy results.
 
 The procedure is the one in Algorithm~\ref{alg:run}. The sweep is run first, with no interim look at the accuracy outcome. Block calibration follows the sweep at the same thermal state. The gate is evaluated on all seven factors, and the analysis then runs once, with the preregistration hash checked. The analysis produces the primary decision, the descriptive curve, the identity gap, the context share, the affine fit, $N^{*}$, the margin and scoring sensitivities, and the gate table. The run is registered as \texttt{running} until completion and as \texttt{completed} or \texttt{invalid} afterwards; an aborted run is registered as \texttt{aborted} and is never analysed as if complete.
 
@@ -783,13 +783,13 @@ Table~\ref{tab:p1gates} reports the gates. The measurement gates and the descrip
     K3 & $\Pr(k^{*}\ \text{optimal})<0.8$ & 0.7244 & fail \\
     K4 & context share below 5\% and flat & 0.355, rising & pass \\
     K5 & $k^{*}$ spans more than one depth & 95\% span 4 ($k=4$, $k=8$) & fail \\
-    K6 & oracle gain below 15\% & P3 analysis & not evaluated \\
+    K6 & oracle gain below 15\% & 41.28\% & pass \\
     K7 & repeat CV above 20\% or MDE above effect & maximum 18.44\%, MDE 5.62\% & pass \\
     \midrule
     G1 & 5 pp test and at least 20\% savings & gate not met; savings 58.17\% & fail \\
     G2 & loss bound at most 5 pp and $\Pr\ge0.8$ & 6.17 pp; 0.7244 & fail \\
     G3 & context share in $[0.10,0.70]$, varying & 0.355, rising & pass \\
-    G4 & oracle at least 20\%, policy at least 50\% & P3 analysis & not evaluated \\
+    G4 & oracle at least 20\%, policy at least 50\% & 41.28\%; $-2.48\%$ & fail \\
     G5 & replication on 1.5B reader or HotpotQA & HotpotQA, $-10.80$ pp & pass \\
     \bottomrule
   \end{tabular}
