@@ -1,7 +1,7 @@
 # Zenodo deposit
 
-**Status:** metadata prepared; DOI not minted. No `ZENODO_TOKEN` is available in
-the local environment, so the upload is a manual step.
+**Status:** published. DOI: **`10.5281/zenodo.24351059`**
+(https://doi.org/10.5281/zenodo.24351059).
 
 ## Files to deposit
 
