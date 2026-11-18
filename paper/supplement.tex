@@ -966,6 +966,38 @@ measured rather than added. Both arms missed the $k=0$ block factor and are
 therefore uncalibrated. The accuracy curves did not plateau, so the predicted
 $k^{*}$ movement is not identifiable; the tax test is inconclusive.
 
+\section{P3 query-conditional policy}\label{sec:s9}
+
+The policy uses BM25 score features (top, second, gap, mean, standard deviation,
+softmax entropy, positive count) and question length. Features are available
+before generation. A per-depth logistic model predicts correctness; the policy
+picks the cheapest depth whose predicted correctness clears a threshold tuned on
+validation. The split is 600 train / 200 validation / 200 test from the P1
+questions, with no test-set tuning.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{P3 held-out test results. The oracle is unconstrained and has higher
+  accuracy than the static baseline, so its gain is not a matched-accuracy
+  quantity.}
+  \label{tab:s9policy}
+  \footnotesize
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    \textbf{Method} & \textbf{Accuracy} & \textbf{J/correct} & \textbf{Saving vs static} \\
+    \midrule
+    Static $k=1$ & 0.385 & 65.71 & — \\
+    Learned policy & 0.380 & 66.38 & $-1.02\%$ \\
+    Hindsight oracle & 0.605 & 38.58 & $41.28\%$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The oracle gain is 41.28\%, above the 20\% G4 floor, but the policy captures
+$-2.48\%$ of that gap, below the 50\% capture floor. G4 is therefore not
+supported. The negative result is specific to this BM25-only policy class; it
+does not prove that no query-conditional policy can work.
+
 \section{Reproducibility}\label{sec:s7}
 
 \subsection{Environment and artifacts}

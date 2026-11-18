@@ -1,0 +1,92 @@
+{
+  "run_id": "squad_qwen4b_p1",
+  "n_train": 600,
+  "n_validation": 200,
+  "n_test": 200,
+  "k_grid": [
+    0,
+    1,
+    2,
+    4,
+    8,
+    16,
+    32
+  ],
+  "static_depth": 1,
+  "static_validation_accuracy": 0.4,
+  "threshold": 0.05,
+  "validation": {
+    "static": {
+      "0": {
+        "k": 0,
+        "accuracy": 0.0,
+        "energy_per_correct": Infinity
+      },
+      "1": {
+        "k": 1,
+        "accuracy": 0.4,
+        "energy_per_correct": 63.371032725
+      },
+      "2": {
+        "k": 2,
+        "accuracy": 0.405,
+        "energy_per_correct": 66.13917692592592
+      },
+      "4": {
+        "k": 4,
+        "accuracy": 0.41,
+        "energy_per_correct": 77.42339497560975
+      },
+      "8": {
+        "k": 8,
+        "accuracy": 0.455,
+        "energy_per_correct": 87.50502261538462
+      },
+      "16": {
+        "k": 16,
+        "accuracy": 0.46,
+        "energy_per_correct": 125.30908451086957
+      },
+      "32": {
+        "k": 32,
+        "accuracy": 0.48,
+        "energy_per_correct": 189.41530834374998
+      }
+    },
+    "policy": {
+      "n": 200.0,
+      "accuracy": 0.4,
+      "total_j": 5086.823223,
+      "energy_per_correct": 63.5852902875,
+      "mean_depth": 1.015,
+      "threshold": 0.05
+    }
+  },
+  "test": {
+    "static": {
+      "n": 200.0,
+      "accuracy": 0.385,
+      "total_j": 5059.448849,
+      "energy_per_correct": 65.70712790909091,
+      "depth": 1.0
+    },
+    "policy": {
+      "n": 200.0,
+      "accuracy": 0.38,
+      "total_j": 5044.792884,
+      "energy_per_correct": 66.37885373684212,
+      "mean_depth": 1.02,
+      "threshold": 0.05
+    },
+    "oracle": {
+      "n": 200.0,
+      "accuracy": 0.605,
+      "total_j": 4668.388894,
+      "energy_per_correct": 38.581726396694215,
+      "mean_depth": 2.41
+    },
+    "oracle_gain_pct": 41.282281505175575,
+    "policy_saving_pct": -1.022302829429056,
+    "oracle_gap_captured_pct": -2.47637192557027
+  }
+}

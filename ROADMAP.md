@@ -62,7 +62,7 @@ generations, on an RTX 3060 Laptop 6 GB with Ollama `qwen3.5:4b` (Q4) and BM25 t
 | **P0** | 1 | Scaffold and golden reproduction | Repo, CI green, environment lock, data manifest, 200-question golden reproduction of the pilot curve, measurement harness checks | Block `factor_csv` in [0.8, 1.4], then golden `J(k)` anchors and affine fit within 10%; E/A reported, not gated; `validate` clean. **Result 2026-11-15: FAIL at block calibration (`k=0` 0.7944); K7 not run.** |
 | **P1** | 2–3 | Powered SQuAD rerun | `n = 1,000` × 7 depths, frozen prereg, raw ledger, primary 5 pp non-inferiority analysis | G1 or documented failure; K1–K7 adjudicated; freeze respected. **Result 2026-11-15: 5 pp NOT supported (one-sided lower -6.17 pp); savings 58.17%; K3/K5/G1/G2 fail; documented failure.** |
 | **P2** | 4–6 | External validity and causal test | Qwen2.5-1.5B replication (`n = 500`), Llama 3.2 3B exploratory reader (`n = 500`, 4k), HotpotQA distractor (`n = 500`, `k ≤ 10`), boundary probe (`k ∈ {32,48,64}`, `n = 200`, 8k), 16k context-budget probe (`n = 200`), fixed/per-passage taxes, optional H200 accuracy-only check (not run) | G5 replication; tax signs match Corollary 1; boundary probe resolves; exploratory arms reported without gates. **Status 2026-11-15: in progress; Qwen1.5B sweep collecting, HotpotQA prepared (A-002); no result yet.** |
-| **P3** | 7–10 | Query-conditional policy | Feature set, policy model, 600/200/200 split, matched-accuracy evaluation, oracle gap capture | G4: oracle gain ≥20% and policy captures ≥50% at matched accuracy, or documented negative |
+| **P3** | 7–10 | Query-conditional policy | Feature set, policy model, 600/200/200 split, matched-accuracy evaluation, oracle gap capture | G4: oracle gain ≥20% and policy captures ≥50% at matched accuracy, or documented negative. **Result 2026-11-18: oracle gain 41.28%, policy capture −2.48%; G4 not supported (documented negative).** |
 | **P4** | 11–14 | Theory validation and sensitivity | Identity tests across datasets/readers, certification-cost curves, margin sensitivity, distractor counterexample check, robustness to scoring rule | Theory report; identity and comparative statics either supported or revised |
 | **P5** | 15–18 | Paper | Manuscript draft, supplement, figures, tables, claims-evidence map | Internal review; every number traces to `runs/<run_id>/raw.csv` |
 | **P6** | 19–20 | Buffer and release | Camera-ready fixes, reproducibility package, Zenodo DOI, data card, release tag | Clean-room reproduction on a second machine; archive deposited |
@@ -147,6 +147,13 @@ split is a target: hashed per-question assignment can produce slightly different
 counts, which are reported. There is no test-set tuning. Evaluate at matched accuracy against
 the best static `k`, and report the fraction of the oracle gap captured. The oracle is an
 upper bound; the learned policy is the result.
+
+**P3 status (2026-11-18): G4 not supported.** 600/200/200 split on P1, BM25-only
+features, per-depth logistic correctness models. Static `k=1` is the validation
+energy minimum. Test: policy 0.380 accuracy at 66.38 J/correct vs static 0.385 at
+65.71 J/correct (saving −1.02%); oracle gain 41.28% but policy capture −2.48%.
+The oracle is unconstrained, so the gain is not matched-accuracy. See
+[`docs/P3_RESULTS.md`](docs/P3_RESULTS.md).
 
 **P4 — Theory validation and sensitivity (weeks 11–14).** Test the identity across datasets
 and readers. Fit the coverage model and report its failure where it fails. Map the

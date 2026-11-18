@@ -45,3 +45,6 @@ A-0043,per_passage_b,analysis,analysis/per_passage_b/report.md,d6cfd35b36e837566
 A-0044,per_passage_b,analysis,runs/per_passage_b/blocks.json,cc72bc148cd6cedc98a12d2aac3d4e70ea4cb2f1edf8f0c43936e3d92f90f4aa,4115,2026-11-16T08:31:11Z,CC-BY-4.0,Per-passage tax block calibration (k=0 miss)
 A-0045,per_passage_b,analysis,runs/per_passage_b/repeat.json,71222875659d3a81c05d0833e6f5d59384531e2d44c75a170458a343c31d7958,2934,2026-11-16T08:31:11Z,CC-BY-4.0,Per-passage tax repeat CV (passed)
 A-0046,taxes,document,docs/P2_RESULTS_TAXES.md,546d61312d3f6ea05fc49e4203d4cc3daa661995e907785479e18fad9f1140fb,1690,2026-11-16T08:31:11Z,CC-BY-4.0,Tax arms result memo
+A-0047,policy,analysis,analysis/policy/policy.json,62da45a09f3042307194760a070443e992e994ee75281651765dcfe093dd5bc2,2015,2026-11-18T16:54:43Z,CC-BY-4.0,P3 policy training and test results
+A-0048,policy,analysis,analysis/policy/report.md,3f9028d6b7dc92ef406c1182f4aaa67c46802b613d6383e501dd4c81b3b85f15,581,2026-11-18T16:54:43Z,CC-BY-4.0,P3 policy report
+A-0049,policy,document,docs/P3_RESULTS.md,5ee50183725c67b5faee51112df337207cb3adc21ffcf9db8f70e72903c149bc,2047,2026-11-18T16:54:43Z,CC-BY-4.0,P3 result memo
