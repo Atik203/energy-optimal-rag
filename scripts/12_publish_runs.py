@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import csv
 import gzip
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -64,9 +63,10 @@ def main() -> int:
             print(f"skip {run_id}: no raw.csv")
             continue
         target = out / f"{run_id}_per_query.csv.gz"
-        with raw.open("r", encoding="utf-8", newline="") as source, gzip.open(
-            target, "wt", encoding="utf-8", newline=""
-        ) as dest:
+        with (
+            raw.open("r", encoding="utf-8", newline="") as source,
+            gzip.open(target, "wt", encoding="utf-8", newline="") as dest,
+        ):
             reader = csv.DictReader(source)
             writer = csv.DictWriter(dest, fieldnames=FIELDS, extrasaction="ignore")
             writer.writeheader()

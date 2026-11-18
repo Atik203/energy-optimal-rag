@@ -11,12 +11,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-import sys
-
 sys.path.insert(0, str(ROOT / "src"))
 
 from rag_energy.stats.p1 import (  # noqa: E402
@@ -76,9 +74,7 @@ def build_frontier(run_id: str, raw_path: Path) -> dict:
 
 def write_outputs(payload: dict, out_dir: Path) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "margin_frontier.json").write_text(
-        json.dumps(payload, indent=2), encoding="utf-8"
-    )
+    (out_dir / "margin_frontier.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
     lines = [
         f"# Margin frontier — {payload['run_id']}",
         "",
