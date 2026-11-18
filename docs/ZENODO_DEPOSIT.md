@@ -1,22 +1,23 @@
 # Zenodo deposit
 
-**Status:** published. DOI: **`10.5281/zenodo.24351059`**
-(https://doi.org/10.5281/zenodo.24351059).
+**Status:** published. DOI: **`10.5281/zenodo.24352803`**
+(https://doi.org/10.5281/zenodo.24352803).
 
-## Files to deposit
+## Files deposited
 
-- `energy-optimal-rag-code-v0.2.0.zip` (tracked code at the release tag)
-- `energy-optimal-rag-raw-v0.2.0.tar.gz` (raw runs, raw datasets, processed
-  parquet, analysis outputs; external backup at
-  `G:\energy-optimal-rag-backup\2026-11-18\`)
+- `energy-optimal-rag-v0.2.1.zip` (tracked code, paper PDFs, supplemental PDF;
+  no raw text)
+- Raw runs, raw datasets, processed parquet, and analysis outputs remain in the
+  external backup at `G:\energy-optimal-rag-backup\2026-11-18\`; they are not in
+  the public deposit.
 
-Both checksums are in `docs/BACKUP.md`.
+The v0.2.0 checksums are in `docs/BACKUP.md`.
 
 ## Metadata
 
 - Use `.zenodo.json` at the repository root. It matches `CITATION.cff` and the
   release title.
-- Version: `0.2.0`
+- Version: `0.2.1`
 - License: MIT for code; SQuAD and HotpotQA remain CC BY-SA 4.0 and are not
   redistributed.
 - Do not add raw question/context text to the deposit. The archive contains the

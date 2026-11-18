@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs: CC BY 4.0](https://img.shields.io/badge/Docs-CC%20BY%204.0-lightgrey.svg)](LICENSE-DOCS)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24351059.svg)](https://doi.org/10.5281/zenodo.24351059)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24352803.svg)](https://doi.org/10.5281/zenodo.24352803)
 
 Measuring, certifying, and deciding the retrieval depth that minimizes **joules per correct
 answer** — and deciding whether the energy spent finding that depth is worth it.
@@ -80,7 +80,7 @@ and a clean-room rerun of the P1/P2/P3/P4 analyses reproduces the committed
 outputs (line-ending normalized for P4). The raw/processed/analysis archive is
 backed up at `G:\energy-optimal-rag-backup\2026-11-18\` (D-027), with checksums in
 `docs/BACKUP.md`. The public code and analysis package is archived at
-**DOI `10.5281/zenodo.24351059`**; raw question/context text is not redistributed.
+**DOI `10.5281/zenodo.24352803`**; raw question/context text is not redistributed.
 
 ---
 

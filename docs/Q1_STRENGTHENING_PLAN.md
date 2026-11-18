@@ -14,7 +14,7 @@ plan strengthens the paper without changing the preregistered claim boundary.
    reported as a sweep/block range.
 4. Released **sanitized per-query tables** (no text, gold answers, predictions,
    or nonces) so readers can rebuild the energy/accuracy tables.
-5. Published the archive at DOI `10.5281/zenodo.24351059`; tag `v0.2.0`.
+5. Published the archive at DOI `10.5281/zenodo.24352803`; tag `v0.2.0`.
 
 ## Highest-value remaining work
 

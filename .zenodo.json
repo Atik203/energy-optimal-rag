@@ -7,8 +7,8 @@
       "affiliation": "Independent researcher"
     }
   ],
-  "version": "0.2.0",
-  "publication_date": "2026-11-18",
+  "version": "0.2.1",
+  "publication_date": "2026-11-19",
   "access_right": "open",
   "license": "MIT",
   "keywords": [
@@ -28,5 +28,5 @@
       "resource_type": "software"
     }
   ],
-  "notes": "Published at https://doi.org/10.5281/zenodo.24351059. The external raw-data backup is recorded in docs/BACKUP.md; raw question/context text is not redistributed."
+  "notes": "Published at https://doi.org/10.5281/zenodo.24352803. The external raw-data backup is recorded in docs/BACKUP.md; raw question/context text is not redistributed."
 }
