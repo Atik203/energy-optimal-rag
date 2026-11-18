@@ -304,7 +304,7 @@ The prior evidence comes from a 200-question pilot on SQuAD v1.1 \cite{rajpurkar
 
 A harness reproduction (P0) was run before the powered study. It failed. The first golden run produced block factors of 0.732 in a cold block and 1.676 in a warm block, with an idle coefficient of variation of 46.4\%. After the measurement protocol was revised, the clean rerun collected all 1{,}400 rows with zero invalid rows and an idle CV of 1.12\%, but its $k=0$ block factor was 0.7944, below the fixed 0.8 floor (Section~\ref{sec:p0}). No block file, repeatability check, or calibrated analysis was produced. The powered study (P1) then ran on the principal investigator's authority as a documented reversal of the gate (D-022), not because the gate passed. Its preregistration was frozen at tag \texttt{prereg-freeze-v1} before the confirmatory data were seen. P1 collected 7{,}000 of 7{,}000 rows, passed all seven block factors, and produced a negative result on the primary policy claim: the accuracy gate was not met even though the energy saving was large.
 
-The paper makes four contributions. First, it formalizes the depth decision with a ratio estimand, a local optimal-depth identity, and a certification cost $N^{*}$ that prices the evidence needed to support a static claim (Section~\ref{sec:conventional}). Second, it specifies a measurement protocol for depth sweeps on a single GPU: a measured 0.3 s post-query tail, an idle baseline taken before warm-up, per-depth block calibration gated on \texttt{factor\_csv}, and all-or-nothing application of the factors (Section~\ref{sec:measurement}). Third, it specifies and executes a preregistered confirmatory design at $n=1{,}000$: a one-sided 5 pp exact-match test at $k=4$ against $k=32$ with a 20\% savings floor, a 2 pp margin as estimation only, and gates K1--K7 and G1--G5 fixed before the outcome was seen (Sections~\ref{sec:estimators} and~\ref{sec:gates}). Fourth, it reports the confirmatory result: the static 5 pp claim is not supported, while the calibrated energy curve, the affine fit, the context-side share, and the measurement calibration are supported (Section~\ref{sec:p1}).
+The paper makes five contributions. First, it formalizes the depth decision with a ratio estimand, a local optimal-depth identity, and a certification cost $N^{*}$ that prices the evidence needed to support a static claim (Section~\ref{sec:conventional}). Second, it specifies a measurement protocol for depth sweeps on a single GPU: a measured 0.3 s post-query tail, an idle baseline taken before warm-up, per-depth block calibration gated on \texttt{factor\_csv}, and all-or-nothing application of the factors (Section~\ref{sec:measurement}). Third, it specifies and executes a preregistered confirmatory design at $n=1{,}000$: a one-sided 5 pp exact-match test at $k=4$ against $k=32$ with a 20\% savings floor, a 2 pp margin as estimation only, and gates K1--K7 and G1--G5 fixed before the outcome was seen (Sections~\ref{sec:estimators} and~\ref{sec:gates}). Fourth, it reports the confirmatory result: the static 5 pp claim is not supported, while the calibrated energy curve, the affine fit, the context-side share, and the measurement calibration are supported (Section~\ref{sec:p1}). Fifth, it audits the measurement itself: a power probe and replay show that per-query NVML windows are sequence-dependent at short depths, so absolute P2 joules are reported as a range and P1 absolute $J$ is provisional, while the accuracy contrast and qualitative saving remain (Section~\ref{sec:validity}).
 
 The claim boundary is explicit. The manuscript does not claim a 5 pp result; the confirmatory test did not establish one. It does not claim a universal $k^{*}$ across datasets, readers, retrievers, or hardware; it does not claim a 2 pp optimum; it does not claim a learned-policy gain, because no policy has been trained and evaluated on held-out questions; and it makes no carbon claim beyond constant-factor reporting. The 78.8\% oracle figure is a pilot upper bound computed with hindsight. The optional shared-memory H200 check is accuracy-only and can never enter an energy table. The Llama 3.2 3B reader and the 16k context-budget probe are exploratory and are not promoted into any hypothesis or gate. Section~\ref{sec:conventional} defines the baseline and the identity, Section~\ref{sec:proposed} the proposed protocol, Section~\ref{sec:experiment} the experimental design, Section~\ref{sec:results} the evidence, and Sections~\ref{sec:discussion} and~\ref{sec:conclusion} the interpretation and its limits.
 
@@ -1044,6 +1044,35 @@ The decomposition explains three results. The SQuAD plateau is a precision decli
 \subsection{Evidence Status}\label{sec:status}
 
 P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of 7{,}000 rows, all seven block factors in range, an idle CV of 1.23\%, and a repeat CV below the 20\% threshold. The descriptive energy model is supported: the per-query curve is affine with $b>0$, $R^{2}=0.9714$, and a lack-of-fit $p$ of 0.2813, and the context share rises from 0.209 to 0.807. The policy claim fails: the accuracy lower bound is outside the 5 pp margin, the selection probability is 0.7244, and the identity gap at $k=4$ excludes zero. The 2 pp margin remains dead, and the 5 pp margin is now also unsupported. P2 is complete. Its 1.5B-reader arm does not support H7 ($+2.00$ pp, upper $+4.90$ pp), while the HotpotQA arm does ($-10.80$ pp, upper $-8.00$ pp) and satisfies G5. Energy on both P2 arms is uncalibrated because at least one block factor failed, so the P2 energy contrasts are not certified. P3 is complete and negative: on a hashed 608/206/186 split, the BM25-feature logistic policy reaches 0.4194 accuracy at 59.99 J/correct versus static $k=1$ at 0.4194 and 59.57 J/correct, capturing $-2.46\%$ of a $28.64\%$ matched oracle gap, so G4 is not supported. P4 shows the theory is local: the coverage model is rejected on three of four arms, Qwen and Llama are non-monotone, and positive identity gaps at $k\ge4$ flag over-retrieval without certifying a global optimum.
+
+Table~\ref{tab:claims} collects the claim-to-evidence map. Each row states the estimate, its uncertainty, the status, and what would falsify it. The table is the compact form of the paper's argument: the measurement and descriptive claims survive, the 5 pp policy claim does not, the direction replicates on HotpotQA but not on the 1.5B reader, the adaptive gate fails, and the theory is local.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Claim-to-evidence map. Status is fixed by the preregistration and is not re-thresholded.}
+  \label{tab:claims}
+  \scriptsize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{3.0cm}@{}}
+    \toprule
+    \textbf{Claim} & \textbf{Estimate} & \textbf{Uncertainty} & \textbf{Status} & \textbf{Falsifier} \\
+    \midrule
+    H1: energy is affine in depth & $J=24.0759+2.2772k$, $R^{2}=0.9714$ & lack-of-fit $p=0.2813$ & supported & curvature or negative $b$ \\
+    H2: 5 pp static policy & $A(4)-A(32)=-4.30$ pp & one-sided lower $-6.17$ pp; $p=0.2691$ & not supported & lower bound above $-5$ pp \\
+    Accuracy cost is nonzero & $-4.30$ pp & two-sided 95\% CI $[-6.53,-2.07]$; McNemar $p=0.0002$ & supported & interval includes zero \\
+    H3: identity at $k=4$ & $\Delta(4)=+0.2004$ & 95\% CI $[0.1677,0.2320]$ & not supported & interval includes zero \\
+    Continuous optimum & $k^{*}=1.214$, $\Delta\approx0$ & interpolation diagnostic & exploratory & curve not concave near optimum \\
+    H4: context share rises & $S(4)=0.355$; 0.209 to 0.807 & bootstrap interval & supported & flat or falling share \\
+    H7 on Qwen1.5B & $+2.00$ pp & upper $+4.90$ pp & not supported & negative interval \\
+    H7 on HotpotQA & $-10.80$ pp & upper $-8.00$ pp & supported & interval crosses zero \\
+    G5 external validity & HotpotQA direction & one-sided upper $-8.00$ pp & pass & both arms fail \\
+    G4 adaptive policy & 28.64\% matched oracle; policy $-2.46$\% & AUC 0.733; answer-presence 47.8\% & fail & policy capture $\ge50$\% \\
+    Coverage model & $R^{2}$ 0.097--0.879 & model rejected on 3/4 arms & rejected & good fit on all arms \\
+    Recall $\times$ precision & two-stage RMSE 0.015--0.024 & versus 0.062--0.149 one-stage & descriptive & two-stage worse than one-stage \\
+    P2 energy & sweep/block range & uncalibrated; window bias & descriptive & calibrated replay agrees \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \section{Discussion and Limitations}\label{sec:discussion}
 
