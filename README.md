@@ -62,6 +62,13 @@ P1, Qwen, and Llama (up to +0.70), and HotpotQA is negative at `k=2` then
 positive. The identity remains a local diagnostic; no global `k*` is claimed.
 See [`docs/P4_RESULTS.md`](docs/P4_RESULTS.md).
 
+**P5/P6 status (2026-11-18): paper and reproducibility checks.** The paper and
+supplement include P1–P4; tables are regenerated from registered runs and the
+figures pass the 600+ DPI check. The SQuAD and HotpotQA manifest checksums verify,
+and rerunning the P1/P2 analyses from raw CSVs reproduces the committed outputs.
+The external backup and Zenodo deposit remain open under D-020, so the release is
+a candidate (`v0.2.0-rc1`), not a final archive.
+
 ---
 
 ## Status: what survived the pilot, and what did not
