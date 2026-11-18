@@ -119,6 +119,7 @@ pointer. Status labels: `logs` (measured), `code only`, `author`, `missing`.
 | Context-budget probe | 200 | 32,48,64 | qwen3.5:4b, 16k, plus 4k control | **COMPLETE, no accuracy gain** | analysis/squad_qwen4b_ctx16k_p2 |
 | Energy taxes | 150 each | 0–32 | qwen3.5:4b | **COMPLETE, inconclusive** | docs/P2_RESULTS_TAXES.md |
 | P3 policy | 600/200/200 | 0–32 | qwen3.5:4b (P1 rows) | **COMPLETE, G4 NOT SUPPORTED** | docs/P3_RESULTS.md |
+| P4 theory validation | 4 arms | all | mixed | **COMPLETE, coverage model rejected** | docs/P4_RESULTS.md |
 | H200 64k accuracy check | 200 | 64 | Qwen3.5-4B | Not run; accuracy only | prereg §2; MEASUREMENT §12 |
 
 **Setup.** One local RTX 3060 Laptop 6 GB, batch size 1, AC power, screen off, no concurrent
@@ -169,6 +170,9 @@ gap; `N*`. No multiplicity correction for the single primary test. [prereg/analy
 | Tax arms | fixed A→0.5867 at k=32; per-passage A→0.5733 at k=32 | analysis/fixed_a/report.md; analysis/per_passage_b/report.md; C-037–C-038 | inconclusive |
 | P3 policy | test 0.380 at 66.38 J/correct vs static k=1 0.385 at 65.71 | analysis/policy/policy.json; C-039 | **G4 not supported** |
 | P3 oracle | 41.28% gain, policy capture −2.48%; oracle accuracy 0.605 vs static 0.385 | analysis/policy/policy.json; C-040 | unconstrained oracle |
+| P4 coverage fit | R² 0.273 (P1), 0.151 (Qwen), 0.879 (HotpotQA), 0.097 (Llama) | analysis/p4/p4.json | model rejected on 3/4 arms |
+| P4 monotonicity | P1/HotpotQA monotone; Qwen/Llama non-monotone | analysis/p4/p4.json | distractor counterexample present |
+| P4 identity | P1 +0.065/+0.200/+0.386/+0.566/+0.703 at k=2/4/8/16/32 | analysis/p4/identity.csv | local diagnostic |
 
 ## 7. Claim-evidence map
 
@@ -179,6 +183,8 @@ gap; `N*`. No multiplicity correction for the single primary test. [prereg/analy
 | At a 5 pp margin, `k = 4` is non-inferior to `k = 32` and saves ≥20%. | **Not supported (P1)** | analysis/squad_qwen4b_p1/noninferiority.json; C-025; docs/P1_RESULTS.md §2 | None; reported as a negative |
 | At `k = 4` the calibrated saving is 58.17% [56.02, 60.14]. | Supported (descriptive) | C-026; estimates.csv | Not a certified saving |
 | The optimal-depth identity holds at an interior depth and flags over-retrieval at `k = 32`. | **Not supported at `k=4`** (gap +0.2004, CI excludes 0); flags `k=32` (gap 0.703) | identity.csv; C-029 | Diagnostic only; no promotion |
+| The coverage model describes `A(k)` generally. | **Rejected** on 3/4 arms (R² 0.097–0.879) | analysis/p4/p4.json; docs/P4_RESULTS.md | No model-based claim |
+| Greedy search is safe because `A(k)` is monotone. | **Rejected** on Qwen and Llama (non-monotone) | analysis/p4/p4.json | Global search or monotonicity check required |
 | Absolute `J`, `E`, `N*`, `S(k)` for P1. | **Claimable**: all seven block factors passed | runs/squad_qwen4b_p1/blocks.json; prereg §4.1 | Calibrated, with the `k=0` 0.8089 caveat |
 | A query-conditional policy captures ≥50% of a ≥20% oracle gap. | **Not supported (P3)**: oracle gain 41.28%, policy capture −2.48% | docs/P3_RESULTS.md; analysis/policy/policy.json; C-039–C-040 | No adaptive claim |
 | H7 direction replicates on Qwen2.5-1.5B or HotpotQA. | **Mixed**: Qwen not supported (+2.00 pp), HotpotQA supported (−10.80 pp) | docs/P2_RESULTS.md; docs/P2_RESULTS_HOTPOT.md; C-030, C-033 | G5 satisfied via HotpotQA; Qwen arm does not replicate |

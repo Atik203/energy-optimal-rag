@@ -48,3 +48,9 @@ A-0046,taxes,document,docs/P2_RESULTS_TAXES.md,546d61312d3f6ea05fc49e4203d4cc3da
 A-0047,policy,analysis,analysis/policy/policy.json,62da45a09f3042307194760a070443e992e994ee75281651765dcfe093dd5bc2,2015,2026-11-18T16:54:43Z,CC-BY-4.0,P3 policy training and test results
 A-0048,policy,analysis,analysis/policy/report.md,3f9028d6b7dc92ef406c1182f4aaa67c46802b613d6383e501dd4c81b3b85f15,581,2026-11-18T16:54:43Z,CC-BY-4.0,P3 policy report
 A-0049,policy,document,docs/P3_RESULTS.md,5ee50183725c67b5faee51112df337207cb3adc21ffcf9db8f70e72903c149bc,2047,2026-11-18T16:54:43Z,CC-BY-4.0,P3 result memo
+A-0050,p4,analysis,analysis/p4/p4.json,a1b59ba0e53847b97656e4e418ee99f219200d999e866b5bde64039bba15fc13,52423,2026-11-18T17:03:16Z,CC-BY-4.0,P4 cross-arm theory validation
+A-0051,p4,analysis,analysis/p4/report.md,7ceb384375fa5eb08347c818dd6d437a57c41fcfa57a3b2b7265c0e4bcdadd3b,1630,2026-11-18T17:03:16Z,CC-BY-4.0,P4 human-readable report
+A-0052,p4,analysis,analysis/p4/identity.csv,2834c313952a2968022fa8252c6590bfdffe32c15094ec88873bdba01a2d0097,2326,2026-11-18T17:03:16Z,CC-BY-4.0,P4 identity gaps
+A-0053,p4,analysis,analysis/p4/margin.csv,f4d00a845742cd11553f0d4c3bbd7afd4f2f00e92c5aa7c3e26205d1c71e0d60,1887,2026-11-18T17:03:16Z,CC-BY-4.0,P4 margin sensitivity
+A-0054,p4,analysis,analysis/p4/scoring.csv,281d86f597f550d17c0c692f9f5791dbcb39dd007c75c18de94ff979bb2da319,4425,2026-11-18T17:03:16Z,CC-BY-4.0,P4 scoring sensitivity
+A-0055,p4,document,docs/P4_RESULTS.md,aa2d481de0ea68fcbbf6218971e2ad295d0cb5ad2c9674b3ce48bbf90cd579ed,3265,2026-11-18T17:03:16Z,CC-BY-4.0,P4 result memo

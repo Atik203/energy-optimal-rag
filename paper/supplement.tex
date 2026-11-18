@@ -998,6 +998,56 @@ $-2.48\%$ of that gap, below the 50\% capture floor. G4 is therefore not
 supported. The negative result is specific to this BM25-only policy class; it
 does not prove that no query-conditional policy can work.
 
+\section{P4 theory validation}\label{sec:s10}
+
+P4 is descriptive and reuses the registered raw CSVs. Table~\ref{tab:s10coverage}
+reports the coverage-model fit and monotonicity status. Table~\ref{tab:s10identity}
+reports the identity gaps; edge depths use forward/backward differences.
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{P4 coverage fit and monotonicity. The model is rejected on three of
+  four arms.}
+  \label{tab:s10coverage}
+  \footnotesize
+  \begin{tabular}{@{}lrrrl@{}}
+    \toprule
+    \textbf{Arm} & $a_0$ & $p$ & $R^2$ & \textbf{Monotone} \\
+    \midrule
+    P1 SQuAD & 0.31 & 0.015 & 0.273 & Yes \\
+    Qwen2.5-1.5B & 0.25 & 0.007 & 0.151 & No \\
+    HotpotQA & 0.10 & 0.073 & 0.879 & Yes \\
+    Llama 3B & 0.34 & 0.008 & 0.097 & No \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[pos=htbp]
+  \centering
+  \caption{P4 identity gaps $\Delta(k)=\epsilon_J(k)-\epsilon_A(k)$. Positive
+  gaps flag over-retrieval; the identity is local.}
+  \label{tab:s10identity}
+  \footnotesize
+  \begin{tabular}{@{}lrrrrr@{}}
+    \toprule
+    \textbf{Arm} & $\Delta(2)$ & $\Delta(4)$ & $\Delta(8)$ & $\Delta(16)$ & $\Delta(\max)$ \\
+    \midrule
+    P1 SQuAD & +0.065 & +0.200 & +0.386 & +0.566 & +0.703 (32) \\
+    Qwen2.5-1.5B & +1.517 & +1.221 & +1.092 & +1.046 & +1.177 (32) \\
+    HotpotQA & $-0.236$ & +0.076 & +0.281 & --- & +0.340 (10) \\
+    Llama 3B & +0.042 & +0.218 & +0.427 & +0.604 & +0.760 (32) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The Qwen and Llama curves are non-monotone, so a greedy search can stop at a
+local optimum; the distractor counterexample is present. Margin and scoring
+sensitivity are in \texttt{analysis/p4/margin.csv} and
+\texttt{analysis/p4/scoring.csv}. The selected depth depends on the scoring
+rule on every arm, and the certification curves are descriptive break-evens.
+Energy on the Qwen, HotpotQA, and Llama arms is uncalibrated, so their $N^*$
+values inherit that limitation.
+
 \section{Reproducibility}\label{sec:s7}
 
 \subsection{Environment and artifacts}

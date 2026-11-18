@@ -54,6 +54,14 @@ The oracle is unconstrained (accuracy 0.605 vs 0.385), so its gain is not a
 matched-accuracy quantity. No adaptive claim is made. See
 [`docs/P3_RESULTS.md`](docs/P3_RESULTS.md).
 
+**P4 status (2026-11-18): COMPLETE - theory is local, coverage model rejected.**
+Across P1, Qwen2.5-1.5B, HotpotQA, and Llama 3B, the coverage model fits poorly
+(R² 0.10–0.88), and the Qwen and Llama accuracy curves are non-monotone, so the
+distractor counterexample is present. Identity gaps are positive at `k ≥ 4` on
+P1, Qwen, and Llama (up to +0.70), and HotpotQA is negative at `k=2` then
+positive. The identity remains a local diagnostic; no global `k*` is claimed.
+See [`docs/P4_RESULTS.md`](docs/P4_RESULTS.md).
+
 ---
 
 ## Status: what survived the pilot, and what did not
