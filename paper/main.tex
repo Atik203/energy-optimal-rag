@@ -603,7 +603,37 @@ The procedure is the one in Algorithm~\ref{alg:run}. The sweep is run first, wit
 
 \subsection{Evaluation Metrics}\label{sec:metrics}
 
-Accuracy is a proportion in $[0,1]$ from normalized exact match, and energy is in joules. The per-depth quantities are $A(k)$, $J(k)$, and $E(k)$ from Equation~\eqref{eq:ratio}; $E(k)$ is reported in joules per correct answer. $E(0)$ is reported descriptively but is not used in the fit or the decision, because it divides by the one or two successes at that depth. The savings is the ratio in Equation~\eqref{eq:savings}, reported with a 10{,}000-resample paired percentile interval. The context-side and retrieval-only shares follow Section~\ref{sec:measurement}. The identity gap is $\Delta(k)$ from Equation~\eqref{eq:gap}, with a bootstrap interval at the selected depth. The affine fit reports $a$ in joules, $b$ in joules per passage, $R^{2}$, and a lack-of-fit check at the 5\% level, because a high $R^{2}$ on seven means does not by itself establish linearity.
+Let $\nu(y)$ be the normalization that lowercases, removes punctuation, removes the articles \emph{a}, \emph{an}, and \emph{the}, and collapses whitespace. The primary correctness rule is normalized exact match,
+\begin{equation}\label{eq:em}
+  C_{qk}^{\mathrm{EM}}=\mathbf{1}\{\nu(\hat y_{qk})=\nu(y_{q})\}.
+\end{equation}
+The secondary rules are lenient span match and token F1,
+\begin{equation}\label{eq:lenient}
+  C_{qk}^{\mathrm{span}}=\mathbf{1}\{\nu(y_{q})\subseteq\nu(\hat y_{qk})\},
+  \qquad
+  C_{qk}^{\mathrm{F1}}=\mathbf{1}\{\mathrm{F1}(\hat y_{qk},y_{q})\ge0.5\},
+\end{equation}
+where, with $\mathcal{T}(y)$ the multiset of normalized tokens,
+\begin{equation}\label{eq:f1}
+  P=\frac{|\mathcal{T}(\hat y)\cap\mathcal{T}(y)|}{|\mathcal{T}(\hat y)|},
+  \quad
+  R=\frac{|\mathcal{T}(\hat y)\cap\mathcal{T}(y)|}{|\mathcal{T}(y)|},
+  \quad
+  \mathrm{F1}=\frac{2PR}{P+R},
+\end{equation}
+with $\mathrm{F1}=1$ when both token sets are empty and $0$ when either is empty. The primary rule is deliberately conservative: it does not credit a paraphrase, so $A(k)$ is a lower bound on answer quality and $E(k)$ an upper bound. The two secondary rules are sensitivity axes, not alternative primary tests.
+
+Accuracy is a proportion in $[0,1]$ from normalized exact match, and energy is in joules. The per-depth quantities are $A(k)$, $J(k)$, and $E(k)$ from Equation~\eqref{eq:ratio}; $E(k)$ is reported in joules per correct answer. $E(0)$ is reported descriptively but is not used in the fit or the decision, because it divides by the one or two successes at that depth. The savings is the ratio in Equation~\eqref{eq:savings}, reported with a 10{,}000-resample paired percentile interval. The context-side and retrieval-only shares are
+\begin{equation}\label{eq:shares}
+  S(k)=\frac{J_{\mathrm{ret}}(k)+J_{\mathrm{pre}}(k)}{J(k)},
+  \qquad
+  S_{r}(k)=\frac{J_{\mathrm{ret}}(k)}{J(k)},
+\end{equation}
+where $J_{\mathrm{ret}}$ is the CPU BM25 proxy and $J_{\mathrm{pre}}$ is the GPU prefill of the question and the $k$ passages. The proxy is
+\begin{equation}\label{eq:proxy}
+  J_{\mathrm{ret}}(k)=P_{\mathrm{cpu}}\,t_{\mathrm{ret}}(k),
+\end{equation}
+with $P_{\mathrm{cpu}}=20$~W and $t_{\mathrm{ret}}$ the measured retrieval wall time. The score is an upper bound, not a measured CPU energy. The identity gap is $\Delta(k)$ from Equation~\eqref{eq:gap}, with a bootstrap interval at the selected depth. The affine fit reports $a$ in joules, $b$ in joules per passage, $R^{2}$, and a lack-of-fit check at the 5\% level, because a high $R^{2}$ on seven means does not by itself establish linearity.
 
 Repeatability is the coefficient of variation of per-query energy across the three repetitions at $k=8$,
 \begin{equation}\label{eq:cv}
