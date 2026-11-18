@@ -90,6 +90,10 @@ analytic undefined probability is `1-(1-A)^n`. The table's mean-of-ratios
 estimator uses the 0-for-failure convention and is therefore finite, but it
 estimates a different quantity. Its own-target coverage is in `s1.json`.
 
+**Key patterns (simulation).** The largest absolute ratio-of-sums relative
+bias is 4.9% at A=0.1, n=200. Delta coverage stays in [94.2%, 96.0%]; percentile and BCa coverage fall to 91.2% and 91.5%. Mean-of-ratios relative bias against `E[J]/A` ranges from -98.7% to -32.3%, while its coverage of its own target stays in [93.5%, 95.6%]. The estimator is
+consistent for a different estimand, not a noisy version of the ratio of sums.
+
 ## S2 - non-inferiority test
 
 Paired binary outcomes with a 12% discordant-pair rate and 50% reference accuracy.
@@ -122,6 +126,10 @@ The margin is 5 pp; `d = -5 pp` is the type-I cell. `z` is the frozen paired tes
 Rejection at `d = -5 pp` is the type-I rate; the other rows are power. The
 one-sided lower-bound coverage is in `s2.json`.
 
+**Key patterns (simulation).** At the margin the z rejection rate ranges
+from 4.8% to 6.5% and the score
+rate from 4.8% to 6.6%. Wald coverage ranges from 94.0% to 95.9%; score coverage from 91.9% to 95.9%. Above the margin, z rejection ranges from 33.9% at d=-2 pp, n=200 to 100.0% at d=+2 pp, n=1000.
+
 ## S3 - selection and certification
 
 Seven depths, known `A(k)` and `E(k)`, with the 5 pp gate. The design solves the
@@ -145,6 +153,12 @@ Winner's curse is `E_hat(k_hat) - E_true(k_hat)` in J/correct; a negative value
 means the selected depth looks cheaper than it is. `N*` is the frozen
 certification-cost break-even; it is descriptive and not a deployment guarantee.
 The exact column is the frozen per-query-energy variant.
+
+**Key patterns (simulation).** Selection accuracy ranges from
+32.0% to 62.8%; the mean bootstrap `P(k*)` ranges from 26.7% to 50.6%, and the K3 pass rate is at most 15.5%. The winner's curse ranges from -3.41 to -0.57 J/correct. The accuracy-weighted `N*` is biased low by -20.1% to -2.0%; the
+per-query-energy variant stays within [-0.0%, 3.1%]. The 5 pp gate is the binding constraint: at fixed n the selection rate is
+similar across E gaps, because a noisy `A(32)` can make `k=4` infeasible or
+make a shallower depth feasible. The gate, not the E gap, dominates reliability.
 
 ## Caveats
 

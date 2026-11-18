@@ -1261,7 +1261,10 @@ def _format_pct(value: Any, digits: int = 1) -> str:
         return "n/a"
     if isinstance(value, str):
         return value
-    return f"{100.0 * float(value):.{digits}f}%"
+    percent = 100.0 * float(value)
+    if abs(percent) < 0.05:
+        percent = 0.0
+    return f"{percent:.{digits}f}%"
 
 
 def _format_number(value: Any, digits: int = 2) -> str:
@@ -1335,6 +1338,40 @@ def render_report(
             "estimator uses the 0-for-failure convention and is therefore finite, but it",
             "estimates a different quantity. Its own-target coverage is in `s1.json`.",
             "",
+        ]
+    )
+    ratio_cells = ratio_study["cells"]
+    worst_bias = max(ratio_cells, key=lambda cell: abs(cell["ratio_of_sums"]["relative_bias"]))
+    delta_coverages = [cell["ratio_of_sums"]["coverage"]["delta"] for cell in ratio_cells]
+    percentile_coverages = [
+        cell["ratio_of_sums"]["coverage"]["percentile"]
+        for cell in ratio_cells
+        if cell["ratio_of_sums"]["coverage"]["percentile"] is not None
+    ]
+    bca_coverages = [
+        cell["ratio_of_sums"]["coverage"]["bca"]
+        for cell in ratio_cells
+        if cell["ratio_of_sums"]["coverage"]["bca"] is not None
+    ]
+    mor_relative = [cell["mean_of_ratios"]["relative_bias"] for cell in ratio_cells]
+    mor_own = [cell["mean_of_ratios"]["coverage_vs_own_target"] for cell in ratio_cells]
+    lines.extend(
+        [
+            "**Key patterns (simulation).** The largest absolute ratio-of-sums relative",
+            f"bias is {_format_pct(worst_bias['ratio_of_sums']['relative_bias'])} at "
+            f"A={worst_bias['accuracy']:.1f}, n={worst_bias['n']}. Delta coverage stays in "
+            f"[{_format_pct(min(delta_coverages))}, {_format_pct(max(delta_coverages))}]; "
+            f"percentile and BCa coverage fall to {_format_pct(min(percentile_coverages))} and "
+            f"{_format_pct(min(bca_coverages))}. Mean-of-ratios relative bias against `E[J]/A` "
+            f"ranges from {_format_pct(min(mor_relative))} to {_format_pct(max(mor_relative))}, "
+            f"while its coverage of its own target stays in "
+            f"[{_format_pct(min(mor_own))}, {_format_pct(max(mor_own))}]. The estimator is",
+            "consistent for a different estimand, not a noisy version of the ratio of sums.",
+            "",
+        ]
+    )
+    lines.extend(
+        [
             "## S2 - non-inferiority test",
             "",
             "Paired binary outcomes with a 12% discordant-pair rate and 50% reference accuracy.",
@@ -1360,6 +1397,44 @@ def render_report(
             "Rejection at `d = -5 pp` is the type-I rate; the other rows are power. The",
             "one-sided lower-bound coverage is in `s2.json`.",
             "",
+        ]
+    )
+    power_cells = power_study["cells"]
+    margin_cells = [cell for cell in power_cells if cell["is_margin_cell"]]
+    margin_z = [cell["rejection"]["z"] for cell in margin_cells]
+    margin_score = [cell["rejection"]["score"] for cell in margin_cells]
+    wald_coverages = [cell["coverage"]["wald_two_sided"] for cell in power_cells]
+    score_coverages = [cell["coverage"]["score_two_sided"] for cell in power_cells]
+    above_margin = [
+        cell
+        for cell in power_cells
+        if cell["true_difference_pp"] > -100.0 * power_study["margin"] + 1e-9
+    ]
+    if above_margin:
+        weakest = min(above_margin, key=lambda cell: cell["rejection"]["z"])
+        strongest = max(above_margin, key=lambda cell: cell["rejection"]["z"])
+        power_sentence = (
+            "Above the margin, z rejection ranges from "
+            f"{_format_pct(weakest['rejection']['z'])} at d={weakest['true_difference_pp']:+.0f} pp, "
+            f"n={weakest['n']} to {_format_pct(strongest['rejection']['z'])} at "
+            f"d={strongest['true_difference_pp']:+.0f} pp, n={strongest['n']}."
+        )
+    else:
+        power_sentence = "No above-margin cell is present in this run."
+    lines.extend(
+        [
+            "**Key patterns (simulation).** At the margin the z rejection rate ranges",
+            f"from {_format_pct(min(margin_z))} to {_format_pct(max(margin_z))} and the score",
+            f"rate from {_format_pct(min(margin_score))} to {_format_pct(max(margin_score))}. "
+            f"Wald coverage ranges from {_format_pct(min(wald_coverages))} to "
+            f"{_format_pct(max(wald_coverages))}; score coverage from "
+            f"{_format_pct(min(score_coverages))} to {_format_pct(max(score_coverages))}. "
+            f"{power_sentence}",
+            "",
+        ]
+    )
+    lines.extend(
+        [
             "## S3 - selection and certification",
             "",
             "Seven depths, known `A(k)` and `E(k)`, with the 5 pp gate. The design solves the",
@@ -1389,6 +1464,43 @@ def render_report(
             "certification-cost break-even; it is descriptive and not a deployment guarantee.",
             "The exact column is the frozen per-query-energy variant.",
             "",
+        ]
+    )
+    selection_cells = selection_study["cells"]
+    selection_rates = [cell["selection_rate"] for cell in selection_cells]
+    p_true_means = [cell["bootstrap"]["p_true_mean"] for cell in selection_cells]
+    k3_rates = [cell["bootstrap"]["k3_pass_rate"] for cell in selection_cells]
+    curse_values = [cell["winner_curse"]["mean_e_bias"] for cell in selection_cells]
+    n_star_bias = [
+        cell["n_star"]["relative_bias"]
+        for cell in selection_cells
+        if cell["n_star"]["relative_bias"] is not None
+    ]
+    n_star_exact_bias = [
+        cell["n_star"]["exact_relative_bias"]
+        for cell in selection_cells
+        if cell["n_star"]["exact_relative_bias"] is not None
+    ]
+    lines.extend(
+        [
+            "**Key patterns (simulation).** Selection accuracy ranges from",
+            f"{_format_pct(min(selection_rates))} to {_format_pct(max(selection_rates))}; "
+            f"the mean bootstrap `P(k*)` ranges from {_format_pct(min(p_true_means))} to "
+            f"{_format_pct(max(p_true_means))}, and the K3 pass rate is at most "
+            f"{_format_pct(max(k3_rates))}. The winner's curse ranges from "
+            f"{_format_number(min(curse_values), 2)} to {_format_number(max(curse_values), 2)} "
+            "J/correct. The accuracy-weighted `N*` relative bias ranges from "
+            f"{_format_pct(min(n_star_bias))} to {_format_pct(max(n_star_bias))} (negative is",
+            "optimistic); the per-query-energy variant stays within "
+            f"[{_format_pct(min(n_star_exact_bias))}, {_format_pct(max(n_star_exact_bias))}]. "
+            "The 5 pp gate is the binding constraint: at fixed n the selection rate is",
+            "similar across E gaps, because a noisy `A(32)` can make `k=4` infeasible or",
+            "make a shallower depth feasible. The gate, not the E gap, dominates reliability.",
+            "",
+        ]
+    )
+    lines.extend(
+        [
             "## Caveats",
             "",
             "- The generative models are stylized. The lognormal and gamma copulas are not",
