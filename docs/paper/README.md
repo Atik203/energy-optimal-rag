@@ -12,7 +12,7 @@ The Overleaf package is the `paper/` folder:
 | `main.tex` | Manuscript; the single `.tex` source |
 | `refs.bib` | Bibliography |
 | `cas-sc.cls`, `cas-common.sty` | CAS class files |
-| `figures/` | six 650-DPI figures used by `main.tex` |
+| `figures/` | eight 650-DPI figures used by `main.tex` |
 | `out/main.pdf` | the only build product |
 
 `main.tex` is the root file. No other `.tex` file is required.

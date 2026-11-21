@@ -812,6 +812,8 @@ def figure_p1_curve(use_p1: bool = False) -> None:
 
     est = estimates.set_index("k")
     ks = estimates["k"].to_numpy(dtype=float)
+    # Categorical axis: map each depth to its equally-spaced position.
+    xs = np.array([DEPTHS.index(int(k)) for k in ks], dtype=float)
 
     # Panel (a): A(k) with the 5 pp gate band around A(32).
     a = estimates["accuracy"].to_numpy(dtype=float)
@@ -835,7 +837,7 @@ def figure_p1_curve(use_p1: bool = False) -> None:
     ax_a.axhspan(a32 - 0.05, a32 + 0.05, color=GREEN, alpha=0.13, linewidth=0, zorder=0)
     ax_a.axhline(a32, color=GRAY, linewidth=1.0, linestyle="--", zorder=1)
     ax_a.errorbar(
-        ks,
+        xs,
         a,
         yerr=np.vstack([a - a_lo, a_hi - a]),
         fmt="o-",
@@ -849,7 +851,7 @@ def figure_p1_curve(use_p1: bool = False) -> None:
         zorder=3,
     )
     ax_a.scatter(
-        [4],
+        [DEPTHS.index(4)],
         [a4],
         s=110,
         facecolors="none",
@@ -858,7 +860,7 @@ def figure_p1_curve(use_p1: bool = False) -> None:
         zorder=5,
     )
     ax_a.scatter(
-        [32],
+        [DEPTHS.index(32)],
         [a32],
         s=110,
         facecolors="none",
@@ -891,7 +893,7 @@ def figure_p1_curve(use_p1: bool = False) -> None:
     ax_b.set_ylim(0, 105)
     ax_b.set_yticks([0, 25, 50, 75, 100])
     ax_b.plot(
-        ks,
+        xs,
         estimates["mean_j"].to_numpy(dtype=float),
         "o-",
         color=BLUE,
@@ -915,7 +917,7 @@ def figure_p1_curve(use_p1: bool = False) -> None:
     e_lo = np.array([_require_ci(bootstrap, "e_per_correct", int(k))[0] for k in ks[mask]])
     e_hi = np.array([_require_ci(bootstrap, "e_per_correct", int(k))[1] for k in ks[mask]])
     ax_c.errorbar(
-        ks[mask],
+        xs[mask],
         e,
         yerr=np.vstack([e - e_lo, e_hi - e]),
         fmt="o-",
@@ -1257,7 +1259,7 @@ def check_outputs() -> int:
     """Print width/height/DPI for every PNG and fail if the journal floor is missed."""
     from PIL import Image
 
-    expected = ("design.png", "p0_harness.png", "p1_curve.png")
+    expected = ("design.png", "p0_harness.png", "p1_curve.png", "p1_contrasts.png", "rq_curves.png")
     print(f"\n{'file':<24} {'width':>6} {'height':>7} {'dpi':>7} {'width_in':>9}")
     print("-" * 58)
     ok = True

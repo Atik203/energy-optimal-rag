@@ -743,7 +743,6 @@ The pilot ran 200 SQuAD v1.1 dev questions at seven depths, 1{,}400 generations,
     Affine energy fit & $J(k)=15.74+2.283k$ J, $R^{2}=0.9990$ & supported \\
     Accuracy & $A_{\mathrm{EM}}$ 0.395 ($k=1$) to 0.570 ($k=32$); flat 0.520--0.535 for $k=4$--16 & rises then plateaus \\
     Context-side share & 36.3\% ($k=2$) to 85.1\% ($k=32$) & supported \\
-    Retrieval-only share & 17.3\% ($k=1$) to 3.5\% ($k=32$), CPU proxy & upper bound \\
     Optimal-depth identity & gap $+0.044$ at $k=2$, 95\% CI $[-0.050,+0.128]$; $+0.700$ at $k=32$ & holds at 2, fails at 32 \\
     Repeat CV at $k=8$ & median 3.80\%, maximum 9.24\% & supported \\
     Static 2 pp claim & $k^{*}=32$ at the boundary, $\Pr(k^{*}\ \text{optimal})=0.61$ & dead \\
@@ -801,7 +800,7 @@ The clean rerun then collected 1{,}400 of 1{,}400 rows with zero invalid rows, 1
 
 \begin{table}[pos=htbp]
   \centering
-  \caption{P0 clean rerun at 200 questions per depth. Panel A is the uncalibrated sweep; Panel B compares raw anchors with the pilot. Neither is a claimed energy result.}
+  \caption{P0 clean rerun at 200 questions per depth (uncalibrated sweep). No block factor was applied, so $J$ and $E$ are raw and are not claimed.}
   \label{tab:p0sweep}
   \footnotesize
   \setlength{\tabcolsep}{4pt}
@@ -819,17 +818,6 @@ The clean rerun then collected 1{,}400 of 1{,}400 rows with zero invalid rows, 1
     8  & 200 & 103 & 0.515 & 27.13 & 52.68 \\
     16 & 200 & 111 & 0.555 & 42.41 & 76.41 \\
     32 & 200 & 105 & 0.525 & 76.15 & 145.05 \\
-    \midrule
-    \multicolumn{6}{@{}l}{\emph{Panel B: anchors against the pilot (calibrated)}} \\
-    \midrule
-    \textbf{Quantity} & \textbf{Observed} & \textbf{Pilot} & \textbf{Rel.\ error} & \textbf{Tolerance} & \textbf{Result} \\
-    \midrule
-    $J(1)$  & 15.18  & 17.98 & 15.6\% & 10\% & fail \\
-    $J(4)$  & 19.80  & 25.10 & 21.1\% & 10\% & fail \\
-    $J(32)$ & 76.15  & 89.55 & 15.0\% & 10\% & fail \\
-    $a$     & 11.102 & 15.74 & 29.5\% & 10\% & fail \\
-    $b$     & 2.022  & 2.283 & 11.4\% & 10\% & fail \\
-    $R^{2}$ & 0.9941 & at least 0.95 & --- & --- & pass \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -908,7 +896,7 @@ The P1 sweep ran 1{,}000 SQuAD v1.1 dev questions at seven depths on 2026-11-15 
   \end{tabular}
 \end{table}
 
-The accuracy contrast is the decisive quantity. The paired population is all 1{,}000 questions; 44 pairs favour $k=4$ and 87 favour $k=32$, for a mean difference of $-4.30$ pp. The point estimate is inside the 5 pp margin by 0.70 pp, but the one-sided 95\% lower bound is $-6.17$ pp, which is 1.17 pp outside the margin, and the one-sided test of the null that the loss is at least 5 pp gives $p=0.2691$. The null is therefore not rejected. The correct statement is that non-inferiority is not established at 5 pp; it is not a demonstration that the true loss exceeds 5 pp. The same paired contrast is clearly nonzero in the other direction: its two-sided 95\% interval is [$-6.53$, $-2.07$] pp and the exact McNemar test gives $p=0.0002$. The data therefore establish a measurable accuracy cost, while leaving the 5 pp bound unresolved. The observed discordance is 13.1\% (131 of 1{,}000 pairs), above the 8\% used in the planning calculation, which widens the interval and explains why a design powered at 8\% discordance did not resolve the margin. The 2 pp contrast has the same point estimate and lower bound and $p=0.9785$; it is estimation-only and is also not supported. H2 is therefore not supported: the savings condition is met and the accuracy condition is not.
+The accuracy contrast is the decisive quantity. The paired population is all 1{,}000 questions; 44 pairs favour $k=4$ and 87 favour $k=32$, for a mean difference of $-4.30$ pp. The point estimate is inside the 5 pp margin by 0.70 pp, but the one-sided 95\% lower bound is $-6.17$ pp, which is 1.17 pp outside the margin, and the one-sided test of the null that the loss is at least 5 pp gives $p=0.2691$. The null is therefore not rejected. The correct statement is that non-inferiority is not established at 5 pp; it is not a demonstration that the true loss exceeds 5 pp. The same paired contrast is clearly nonzero in the other direction: its two-sided 95\% interval is [$-6.53$, $-2.07$] pp and the exact McNemar test gives $p=0.0002$. The data therefore establish a measurable accuracy cost, while leaving the 5 pp bound unresolved. The observed discordance is 13.1\% (131 of 1{,}000 pairs), above the 8\% used in the planning calculation, which widens the interval and explains why a design powered at 8\% discordance did not resolve the margin. The 2 pp contrast has the same point estimate and lower bound and $p=0.9785$; it is estimation-only and is also not supported. H2 is therefore not supported: the savings condition is met and the accuracy condition is not. Figure~\ref{fig:contrasts}(a) puts the three accuracy contrasts on one scale.
 
 The exploratory inference layer agrees. A restricted-MLE score test gives $p=0.2703$ and an exact unconditional sensitivity gives $p=0.4182$; TOST fails at $\pm5$ pp ($p=0.2691$) and at $\pm2$ pp ($p=0.9785$); the BCa interval for the mean difference is $[-6.60,-2.20]$ pp and for the savings $[55.99,60.10]$%. The joint question bootstrap puts the probability of (5 pp NI and $\ge20$\% savings) at 0.154. At the observed discordance, realized power at $d=-4.3$ pp is 0.152, and 80\% power would require about 16{,}300 pairs (50\% power about 7{,}130). These are sensitivity quantities; the confirmatory verdict is unchanged. Energy, in contrast, clears its floor with room to spare. The calibrated saving is 58.17\% with a 95\% interval of [56.02, 60.14]\%, well above the 20\% floor. The policy decision requires both conditions, and since the accuracy gate fails, the decision is \textbf{not supported}. The saving is real as a descriptive quantity; it is not attached to an accuracy guarantee that this sample can support.
 
@@ -1005,7 +993,7 @@ The exploratory inference layer agrees. A restricted-MLE score test gives $p=0.2
 
 P2 tested the direction of the P1 contrast on a second reader and on a multi-hop dataset. H7 was fixed before the P2 outcomes as a direction-only rule: support requires a paired mean $A(4)-A(\text{reference})<0$ and a one-sided 95\% upper bound below zero, with reference 32 on SQuAD and 10 on HotpotQA (A-001, D-025). This is not a 5 pp test and cannot revive the P1 policy claim.
 
-Table~\ref{tab:p2} reports the two confirmatory arms. The Qwen2.5-1.5B-Instruct arm did not replicate the direction: $A(4)-A(32)=+2.00$ pp with an upper bound of $+4.90$ pp, so H7 is not supported. The HotpotQA distractor arm did: $A(4)-A(10)=-10.80$ pp with an upper bound of $-8.00$ pp, so H7 is supported and G5 is satisfied via HotpotQA. The Qwen arm's block calibration failed at $k=0,1,2$ and its repeat CV reached 80.15\%, so its energy contrast is uncalibrated. The HotpotQA arm missed only $k=0$ and its repeat CV was 6.77\%, but its energy contrast is also uncalibrated because calibration is all-or-nothing.
+Table~\ref{tab:p2} reports the two confirmatory arms. The Qwen2.5-1.5B-Instruct arm did not replicate the direction: $A(4)-A(32)=+2.00$ pp with an upper bound of $+4.90$ pp, so H7 is not supported. The HotpotQA distractor arm did: $A(4)-A(10)=-10.80$ pp with an upper bound of $-8.00$ pp, so H7 is supported and G5 is satisfied via HotpotQA. Figure~\ref{fig:contrasts}(a) shows why: the HotpotQA interval lies entirely below zero while the Qwen1.5B interval straddles it. The Qwen arm's block calibration failed at $k=0,1,2$ and its repeat CV reached 80.15\%, so its energy contrast is uncalibrated. The HotpotQA arm missed only $k=0$ and its repeat CV was 6.77\%, but its energy contrast is also uncalibrated because calibration is all-or-nothing.
 
 \begin{table}[pos=htbp]
   \centering
@@ -1024,6 +1012,15 @@ Table~\ref{tab:p2} reports the two confirmatory arms. The Qwen2.5-1.5B-Instruct 
 \end{table}
 
 The exploratory arms are descriptive and carry no gate. The boundary probe placed accuracy at 0.475, 0.485, and 0.505 for $k=32,48,64$, so the grid boundary at 32 is not a cliff and the linear energy model survives to 64. The 16k context-budget probe gave 0.475, 0.485, and 0.500 at the same depths, indistinguishable from the 4k control at $k=32$ (0.475), so the 16k allocation did not change accuracy. The Llama 3.2 3B reader peaked at $k=4$ (0.476) and declined to 0.426 at $k=32$, consistent with a weaker reader preferring a shallower depth. The fixed and per-passage tax arms raised the intended cost terms, but accuracy kept rising to $k=32$ on both, so no clean $k^{*}$ shift is identifiable; the tax prediction is inconclusive rather than confirmed or refuted.
+
+\begin{figure}[pos=htbp]
+  \centering
+  \IfFileExists{figures/p1_contrasts.png}%
+    {\includegraphics[width=0.98\linewidth]{figures/p1_contrasts.png}}%
+    {\missingfigure{figures/p1_contrasts.png}{Accuracy contrasts and selection figure.}}
+  \caption{Accuracy contrasts with decision bounds and bootstrap selection. Whiskers are two-sided 95\% intervals; arrows are one-sided 95\% bounds; the dashed line is the 5 pp margin.}
+  \label{fig:contrasts}
+\end{figure}
 
 \subsection{Theory, Mechanism, and Simulations}\label{sec:p4}
 
@@ -1074,7 +1071,16 @@ Accuracy decomposes as $A(k)=R(k)Q(k)$, where $R(k)$ is the fraction of question
   \end{tabular}
 \end{table}
 
-The decomposition explains three results. The SQuAD plateau is a precision decline, not a retrieval ceiling. The Llama peak at $k=4$ is a steeper precision decline. The P3 policy fails because BM25 features predict $R$, not $Q$; the missing signal is reader-side. The two-stage fit is also much tighter than the one-stage coverage model on every arm: RMSE 0.015--0.024 against 0.062--0.149. The model is descriptive and is not used for any decision.
+Figure~\ref{fig:rq} shows the decomposition. The SQuAD plateau is a precision decline, not a retrieval ceiling. The Llama peak at $k=4$ is a steeper precision decline. The P3 policy fails because BM25 features predict $R$, not $Q$; the missing signal is reader-side. The two-stage fit is also much tighter than the one-stage coverage model on every arm: RMSE 0.015--0.024 against 0.062--0.149. The model is descriptive and is not used for any decision.
+
+\begin{figure}[pos=htbp]
+  \centering
+  \IfFileExists{figures/rq_curves.png}%
+    {\includegraphics[width=0.98\linewidth]{figures/rq_curves.png}}%
+    {\missingfigure{figures/rq_curves.png}{Recall and precision curves.}}
+  \caption{Recall rises with depth on all arms while conditional precision falls except on HotpotQA; their product is the accuracy plateau.}
+  \label{fig:rq}
+\end{figure}
 
 \label{sec:simulations}
 
@@ -1150,35 +1156,13 @@ P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of
 
 \textbf{Interpretation.} The point estimate is inside the 5 pp margin by 0.70 pp, but the one-sided lower bound is outside it by 1.17 pp, so non-inferiority is not established. The result is a precision failure at $n=1{,}000$, not proof that the true loss exceeds 5 pp. It is, however, evidence of a real cost: the two-sided interval excludes zero and the McNemar test rejects equality ($p=0.0002$), so the data support “depth reduction is not free” even though they do not settle “the loss is at most 5 pp.” The observed discordance is 13.1\%, above the 8\% used in the planning calculation, so the realized interval is wider than the design assumed; the power calculation was conditional on a rate that the run did not reproduce. The energy side is not the problem. A 58.17\% saving is large and its interval is far above the 20\% floor, but the policy decision requires both conditions, and the accuracy gate is the binding one. The pilot's 69.3\% signal did not replicate as a supported claim: the saving is smaller at 58.17\% and the accuracy bound does not clear the margin. The descriptive energy result replicated; the policy result did not.
 
-\textbf{Selection stability and identity.} The selected depth is unstable between $k=4$ and $k=8$. The source is visible in the point estimate: $k=4$ clears the accuracy gate by only 0.70 pp, so a small resampling movement in $A(4)$ makes $k=8$ the smallest feasible depth, and $k=8$ has a higher $E$. K3 fails on the 0.8 selection threshold and K5 fails because the 95\% span covers both depths. The identity gap is positive at $k=4$, which says that the energy elasticity exceeds the accuracy elasticity and that the gate-selected depth lies above the unconstrained energy optimum. This is consistent with a gate that binds at the smallest feasible depth rather than a contradiction of the policy result. Both diagnostics point the same way: the static selection is driven by the margin, not by an interior energy minimum, so it is fragile to the accuracy estimate. No universal $k^{*}$ follows, and the instability is a reason not to report one. \textbf{Measurement.} P0 failed block calibration; P1 passed all seven factors, so the absolute energy scale is reportable as provisional for P1 under the window-bias audit (D-028). The pass is not comfortable. The $k=0$ factor, 0.8089, is only 1.1\% above the fixed floor, and $k=0$ is the depth with the least stable accuracy (one correct answer in 1{,}000), so the intercept $a=24.0759$ is the least well identified parameter of the fit. The 25.9\% discrepancy that failed P0 is exactly the kind of error the gate is designed to catch; the P1 pass shows that the revised protocol can work, not that the calibration is comfortable. The wall meter remains waived (D-016), so the GPU integration is not cross-checked against system energy.
+\textbf{Selection stability and identity.} The selected depth is unstable between $k=4$ and $k=8$. The source is visible in the point estimate: $k=4$ clears the accuracy gate by only 0.70 pp, so a small resampling movement in $A(4)$ makes $k=8$ the smallest feasible depth, and $k=8$ has a higher $E$. K3 fails on the 0.8 selection threshold and K5 fails because the 95\% span covers both depths. Figure~\ref{fig:contrasts}(b) shows the split: 0.7244 at $k=4$ against 0.2433 at $k=8$. The identity gap is positive at $k=4$, which says that the energy elasticity exceeds the accuracy elasticity and that the gate-selected depth lies above the unconstrained energy optimum. This is consistent with a gate that binds at the smallest feasible depth rather than a contradiction of the policy result. Both diagnostics point the same way: the static selection is driven by the margin, not by an interior energy minimum, so it is fragile to the accuracy estimate. No universal $k^{*}$ follows, and the instability is a reason not to report one. \textbf{Measurement.} P0 failed block calibration; P1 passed all seven factors, so the absolute energy scale is reportable as provisional for P1 under the window-bias audit (D-028). The pass is not comfortable. The $k=0$ factor, 0.8089, is only 1.1\% above the fixed floor, and $k=0$ is the depth with the least stable accuracy (one correct answer in 1{,}000), so the intercept $a=24.0759$ is the least well identified parameter of the fit. The 25.9\% discrepancy that failed P0 is exactly the kind of error the gate is designed to catch; the P1 pass shows that the revised protocol can work, not that the calibration is comfortable. The wall meter remains waived (D-016), so the GPU integration is not cross-checked against system energy.
 
 \textbf{Implication for practice.} The static 5 pp rule is not supported on this evidence. A deployment that needs a 5 pp accuracy guarantee should not adopt $k=4$ on the basis of this run, even though the point estimate saves 58.17\% of energy per correct answer. The margin-indexed decision procedure remains the right object: state the margin, measure the curve on the target corpus and reader, and test the candidate. The sensitivity analysis shows what that procedure returns at other margins: $k=16$ at 2 pp with 32.9\% savings, $k=8$ at 3--4 pp with 50.4\%, $k=4$ at 5--6 pp with 58.2\%, and $k=2$ at 8--10 pp with 61.9\%. These are point estimates from one sample, not guarantees, and no rule selects $k=32$.
 
 \textbf{Relation to the adaptive direction.} The static claim fails, so P3 tested whether a query-conditional policy can recover the oracle gap. The answer on this feature set is no: the BM25-feature logistic policy captures $-1.92\%$ of a $36.80\%$ unconstrained oracle gap, and $-2.46\%$ of a $28.64\%$ matched-accuracy oracle gap, so G4 is not supported. The unconstrained oracle accuracy (0.6667) exceeds the static accuracy (0.4194); the matched oracle holds accuracy at 0.4194 and still leaves a 28.64\% gap that the policy does not capture. Without abstention, the matched gap falls to 7.21\%, so most of the oracle advantage is an abstention gain rather than depth routing. A predictability audit gives an out-of-fold AUC of 0.733 for correctness at $k=1$, flat from 50 to 608 training questions, and an answer-presence oracle reaches only 47.8\% capture on this test split. The 50\% gate is therefore at the edge of what a perfect presence signal achieves and well beyond the deployable feature set. The negative result is for this policy class, not a proof that no adaptive policy can work. The 78.8\% pilot oracle figure remains a hindsight upper bound. The static curve remains the comparator that any policy must beat.
 
-Table~\ref{tab:validity} organizes the threats by construct, internal, external, and statistical-conclusion validity. Construct threats concern what the energy and accuracy numbers measure, internal threats concern calibration and window bias, external threats concern the reader and corpus, and statistical threats concern power and selection. The table is not a substitute for the limitations below; it is the checklist a reader can use to decide which claims travel, and the paragraphs below expand the threats that bind the headline claims.
-
-\begin{table}[pos=htbp]
-  \centering
-  \caption{Threats to validity and their residual risk.}
-  \label{tab:validity}
-  \footnotesize
-  \setlength{\tabcolsep}{4pt}
-  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{6.0cm}>{\raggedright\arraybackslash}p{6.2cm}@{}}
-    \toprule
-    \textbf{Type} & \textbf{Threat} & \textbf{Evidence and residual risk} \\
-    \midrule
-    Construct & Normalized EM does not credit paraphrases; energy per correct answer depends on the scoring rule. & Scoring sensitivity repeated under lenient span and F1; selected depth changes, qualitative saving survives. \\
-    Construct & GPU energy is not whole-system energy; BM25 is a CPU proxy. & Wall meter waived (D-016); proxy reported separately; absolute scale provisional. \\
-    Internal & Per-query NVML windows are sequence-dependent at short depths. & Probe and replay: replay within 2\% of blocks; P2 energy reported as a range; P1 absolute J provisional. \\
-    Internal & Thermal drift and block calibration. & P0 failed; P1 passed 7/7 with k=0 at 0.8089; repeat CV 18.44\%; gate not re-thresholded. \\
-    External & One GPU, one retriever, one corpus family. & Four reader/task arms; boundary and 16k probes; no universal k* claimed. \\
-    External & Quantized 4B reader at 4k context. & Reader-conditional results; Llama and 1.5B arms reported; no API-model claim. \\
-    Statistical & Realized discordance 13.1\% vs 8\% planned; 5 pp not resolved. & Two-sided CI and margin frontier reported; required n ~7,100 at observed effect. \\
-    Statistical & Selection instability; multiple exploratory analyses. & P(k*) reported; one confirmatory test; secondary analyses labelled. \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+The threats below are organized by construct, internal, external, and statistical-conclusion validity. Construct threats concern what the energy and accuracy numbers measure, internal threats concern calibration and window bias, external threats concern the reader and corpus, and statistical threats concern power and selection. The paragraphs expand the threats that bind the headline claims.
 
 \textbf{Hardware and measurement.} All energy measurements come from one laptop GPU. The pilot reached 88.4~$^{\circ}$C and a 1003~MHz clock, and P0 reached 90~$^{\circ}$C with a 900~MHz clock floor, so the device is thermally throttled during long runs. NVML updates \texttt{power.draw} at roughly 1~s despite the 100~ms cadence, so per-query energy is a paired observation rather than a precision measurement. Block calibration failed in P0 and passed in P1, but the $k=0$ factor is 0.8089, only 1.1\% above the floor, and the repeat CV maximum is 18.44\%, close to the 20\% threshold. No wall meter is available (D-016), and the CPU retrieval term is a 20~W time-to-joules proxy. The shared H200 slice cannot supply an energy measurement at all because per-instance power telemetry is unavailable. \textbf{Design and scope.} The study uses one corpus (SQuAD v1.1), one retriever (BM25), one reader family, and a 4-bit quantized model at a 4096-token context with $k\le32$. SQuAD is a closed-corpus extractive task, so the results do not automatically transfer to open-domain generation, dense retrieval, long-context readers, or API models. The boundary probe at $k\in\{32,48,64\}$ and the context-budget probe were run in P2 and are diagnostic; neither is a new $k^{*}$. The Llama 3.2 3B reader is exploratory and does not satisfy the replication gate. The P2 Qwen arm failed block calibration at $k=0,1,2$ and its repeat CV reached 80.15\%, so its energy contrast is uncalibrated; the HotpotQA arm missed only $k=0$ but is also uncalibrated because calibration is all-or-nothing. P4 shows the accuracy curve is not generally monotone or well described by the coverage model, so the identity and any greedy search are local diagnostics rather than global guarantees. The accuracy metric is normalized exact match, which is conservative and does not credit paraphrases; the scoring sensitivity shows that the selected depth changes under lenient span and token F1, so the result is rule-dependent. The pilot used strict exact match, so pilot and P1 accuracy values are not like-for-like. A single run seed controls the within-question depth order, and seed-to-seed variability is not estimated.
 
@@ -1211,7 +1195,6 @@ The paper asked whether an interior retrieval depth can replace the retriever's 
 
 \section*{Acknowledgements}
 The authors thank the curators of SQuAD for releasing the dataset under CC BY-SA 4.0, and the maintainers of Ollama, BM25 implementations, and NVML for the tooling that made the measurement possible. All computations were run on a single local laptop GPU; no cloud compute was used.
-
 
 \hbadness=10000
 \sloppy

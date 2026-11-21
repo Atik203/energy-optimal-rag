@@ -1,8 +1,8 @@
 # Paper figures and tables
 
-**Status:** 2026-11-22. The current paper uses six figures: `design.png`,
+**Status:** 2026-11-23. The current paper uses eight figures: `design.png`,
 `p0_harness.png`, `measurement_validity.png`, `p1_curve.png`, `p1_frontier.png`,
-and `sim_ratio.png`. The old `p1_calibration.png` was removed from the package because
+`sim_ratio.png`, `p1_contrasts.png`, and `rq_curves.png`. The old `p1_calibration.png` was removed from the package because
 the paper now reports the block factors in a table.
 
 The P1 primary result is **negative**: the 5 pp non-inferiority test is **not supported**
@@ -15,7 +15,7 @@ The scripts are the source of truth:
 - `tools/paper/scripts/make_tables.py` → `tools/paper/tables/*.tex`
 
 The supplement is now embedded in `paper/main.tex`; the old standalone
-`supplement.tex` no longer exists. The figure package is limited to the six files
+`supplement.tex` no longer exists. The figure package is limited to the eight files
 listed above.
 
 ---
@@ -162,7 +162,11 @@ questions per depth, explicitly labelled **UNCALIBRATED**; (b) the `k=0` block d
 `A(4)-A(32) = -4.30 pp`, one-sided lower `-6.17 pp`, 5 pp NI **not supported**, savings
 `58.17%`.
 
-**`p1_calibration.png`** — the seven `factor_csv` values against `[0.8,1.4]`; all pass.
+**`p1_contrasts.png`** - (a) forest plot of the three accuracy contrasts with the 5 pp margin: P1 `-4.30 pp` (one-sided lower `-6.17 pp`, two-sided 95% CI), Qwen1.5B `+2.00 pp` (upper `+4.90 pp`), HotpotQA `-10.80 pp` (upper `-8.00 pp`); (b) bootstrap selection probabilities `P(k*)` against the 0.8 gate (`0.7244` at `k=4`, `0.2433` at `k=8`).
+
+**`rq_curves.png`** - (a) recall `R(k)` rising on all four arms; (b) conditional precision `Q(k)` falling on SQuAD/Llama and rising on HotpotQA. Sources: registered recall-precision analysis.
+
+**`p1_calibration.png`** - the seven `factor_csv` values against `[0.8,1.4]`; all pass.
 The `k=0` point is annotated as marginal (`+0.0089`, `+1.1%` above the 0.80 floor), and
 the repeat CV at `k=8` is shown (`median 2.81%`, `max 18.44%`).
 
