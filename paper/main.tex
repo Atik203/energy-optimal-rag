@@ -1104,7 +1104,7 @@ P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of
   \label{tab:claims}
   \scriptsize
   \setlength{\tabcolsep}{3pt}
-  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{3.0cm}@{}}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}p{3.9cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{2.8cm}@{}}
     \toprule
     \textbf{Claim} & \textbf{Estimate} & \textbf{Uncertainty} & \textbf{Status} & \textbf{Falsifier} \\
     \midrule
@@ -2759,7 +2759,7 @@ reader does not. The policy arm (P3) is complete and negative: G4 is not support
 
 \section{P2 replication and exploratory arms}\label{sec:s8}
 
-All P2 numbers in this section are registered outputs of \texttt{analysis/squad\_qwen15b\_p2/}, \texttt{analysis/hotpot\_qwen4b\_p2/}, and the exploratory arms. P2 energy is uncalibrated because at least one block factor failed on each arm.
+All P2 numbers in this section are registered outputs of \texttt{analysis/\allowbreak squad\_qwen15b\_p2/}, \texttt{analysis/\allowbreak hotpot\_qwen4b\_p2/}, and the exploratory arms. P2 energy is uncalibrated because at least one block factor failed on each arm.
 
 \subsection{Confirmatory arms and H7}
 
@@ -3005,15 +3005,17 @@ pytest -q
 python -m rag_energy.cli validate
 \end{verbatim}
 The manuscript is built from \texttt{paper/main.tex} with
+\small
 \begin{verbatim}
 pdflatex -interaction=nonstopmode main.tex
 bibtex main
 pdflatex -interaction=nonstopmode main.tex
 pdflatex -interaction=nonstopmode main.tex
 \end{verbatim}
+\normalsize
 from the \texttt{paper/} directory. Tables and figures are generated from registered run data by
-the scripts in \texttt{tools/paper/scripts/}; the older root-level
-\texttt{scripts/08\_make\_tables.py} and \texttt{scripts/09\_make\_figures.py} are v0.1.0 stubs
+the scripts in \texttt{tools/\allowbreak paper/\allowbreak scripts/}; the older root-level
+\texttt{scripts/\allowbreak 08\_make\_tables.py} and \texttt{scripts/\allowbreak 09\_make\_figures.py} are v0.1.0 stubs
 that exit with status 2. No generated table or figure may be edited by hand.
 
 \subsection{Registry, ledger, and claims}
