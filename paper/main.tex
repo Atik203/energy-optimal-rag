@@ -356,8 +356,6 @@ Correctness is normalized exact match, following the SQuAD evaluation: answers a
 
 The depth grid contains 0 because it isolates the fixed per-query cost of the reader with no retrieved context. Accuracy at $k=0$ is near zero in practice: in P1 one question of 1{,}000 was answered correctly without context, so $E(0)$ is dominated by a single success and is reported descriptively but is not used in the fit or the decision. Depth 32 is the BM25 ceiling and the reference depth for the primary contrast. Depths 1, 2, 4, 8, and 16 are the interior grid. Table~\ref{tab:grid} lists the role of each depth and the estimands reported at all of them.
 
-
-
 The baseline in this paper is not a different reader or a different retriever. It is the best static depth on the same reader and the same retriever, chosen under the same accuracy margin. A static policy fixes one depth for every question before the question is seen. This is what a deployment without a query classifier does, it is the object that the 2 pp and 5 pp claims are about, and it is the comparator that any query-conditional policy must beat at matched accuracy. Holding the reader, the retriever, the prompt, and the scoring rule fixed isolates the decision variable and keeps the comparison paired.
 
 \textbf{Affine energy model.} Over the grid, the pilot energy curve is well described by
@@ -542,8 +540,6 @@ The calibration rule has two reporting regimes, and the manuscript stays in one 
   \end{algorithmic}
 \end{algorithm}
 
-
-
 The gates were fixed before the confirmatory data were seen and are not re-thresholded after the outcome. A fired gate is a finding and is reported, not tuned away. The kill and reframe gates K1--K7 test whether the depth story is worth telling at all; the go gates G1--G5 test whether the specific policy claim is supported. K1--K4 and K6 firing is a kill or a reframe. K5 and K7 are measurement or framing problems that can be fixed once before they become kills. Table~\ref{tab:gates} lists the criteria and the pilot values.
 
 \begin{table}[pos=htbp]
@@ -580,8 +576,6 @@ G1 and G2 are the static-policy gates. They operationalize the preregistered pri
 \subsection{Setup and Dataset}\label{sec:setup}\label{sec:dataset}
 
 All measurements are taken on a single laptop with an NVIDIA RTX 3060 Laptop GPU with 6~GB of memory, running Windows. The GPU is used at batch size one with no concurrent jobs, so a query is never measured while another process shares the device. The reader is the Ollama tag \texttt{qwen3.5:4b} at Q4 quantization with a 4096-token context \cite{ollama}. The retriever is BM25 \cite{robertson2009bm25} over a corpus of 45{,}651 passages built from 70-word chunks of the SQuAD contexts. The prompt template, decoding parameters, chunking, and scoring rule are fixed before the run, and the run manifest records the config hash, the preregistration hash, the model digest, the interpreter, and the idle measurement. The P0 manifest did not record the GPU driver, which is a harness gap: the driver is part of the reporting checklist and must accompany the published manifest before the absolute scale is treated as reproducible. The run seed is 20261115. Depth order is shuffled within each question by that seed. The seed controls only the within-question depth order; the design does not average over seeds, so seed-to-seed variability of the curve is not estimated. Every request carries a unique 10-hex nonce. Power is sampled through NVML at 100~ms, the post-query tail is 0.3~s, idle is measured before warm-up, and the block size is 20 queries per depth. The wall meter is not measured (D-016). Raw run directories are local-only under decision D-020; the repository publishes the registry row, the configs, the manifest, the split IDs, and the aggregate analysis, not the raw CSV or the raw SQuAD text.
-
-
 
 The corpus is SQuAD v1.1 \cite{rajpurkar2016squad}. Preparation yields 10{,}570 questions, 20{,}958 contexts, and 45{,}651 passages, the same counts as the pilot. The question splits are disjoint by construction: 200 questions for P0, 1{,}000 for P1, 500 for the reader replication, 200 for the boundary probe, 200 for the context-budget probe, and 150 for the energy-tax arm. P0 is disjoint from P1, and the nested arms are mutually disjoint. The pilot question IDs are not available, so the overlap between the P0 sample and the pilot sample is unknown; by chance it is expected to be about 4 of 200 questions, and the manuscript does not treat the two samples as paired. The P1 sweep is $n=1{,}000$ questions at seven depths, which is 7{,}000 rows; all 7{,}000 were collected with zero invalid rows. The primary analysis population is defined on the question. A valid row requires a non-empty nonce, a completed request, and a power window with no sampler error. A failed or empty generation after a completed request is a wrong answer with $C=0$ and is retained; a row is invalid only for a protocol violation, namely a missing nonce, a request or backend failure, or a sampler error. A model reload inside a run is a backend failure and invalidates the row, because the reloaded model is a different measurement condition. Descriptive $A(k)$, $J(k)$, and $E(k)$ use every sampled question with a valid row at depth $k$, and $n_{\mathrm{valid}}(k)$ and $n_{\mathrm{invalid}}(k)$ are reported at each depth. A question is not dropped from depth $k$ because it lacks a row at another depth. The primary paired test uses questions with valid rows at both $k=4$ and $k=32$, and the paired $n$, the discordant counts, and the invalid counts are reported. There are no outcome-based exclusions: no winsorizing, no trimming, no imputation, and wrong, slow, and throttled answers stay in.
 
@@ -1131,10 +1125,6 @@ P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of
   \end{tabular}
 \end{table}
 
-
-
-
-
 \textbf{Observation.} P1 gives a calibrated curve, with absolute $J$ provisional after the window-bias audit: energy per correct answer rises from 73.71 J at $k=1$ to 192.59 J at $k=32$ (2.61$\times$), the per-query curve is affine with $R^{2}=0.9714$, and the context-side share rises from 0.209 to 0.807. The primary accuracy contrast is $-4.30$ pp with a one-sided lower bound of $-6.17$ pp, and the saving is 58.17\% with a 95\% interval of [56.02, 60.14]\%. The selection probability is 0.7244 at $k=4$ and 0.2433 at $k=8$, the identity gap at $k=4$ is $+0.2004$ with an interval that excludes zero, and $N^{*}$ is a descriptive break-even of 6{,}189 queries.
 
 \textbf{Interpretation.} The point estimate is inside the 5 pp margin by 0.70 pp, but the one-sided lower bound is outside it by 1.17 pp, so non-inferiority is not established. The result is a precision failure at $n=1{,}000$, not proof that the true loss exceeds 5 pp. It is, however, evidence of a real cost: the two-sided interval excludes zero and the McNemar test rejects equality ($p=0.0002$), so the data support “depth reduction is not free” even though they do not settle “the loss is at most 5 pp.” The observed discordance is 13.1\%, above the 8\% used in the planning calculation, so the realized interval is wider than the design assumed; the power calculation was conditional on a rate that the run did not reproduce. The energy side is not the problem. A 58.17\% saving is large and its interval is far above the 20\% floor, but the policy decision requires both conditions, and the accuracy gate is the binding one. The pilot's 69.3\% signal did not replicate as a supported claim: the saving is smaller at 58.17\% and the accuracy bound does not clear the margin. The descriptive energy result replicated; the policy result did not.
@@ -1144,8 +1134,6 @@ P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of
 \textbf{Implication for practice.} The static 5 pp rule is not supported on this evidence. A deployment that needs a 5 pp accuracy guarantee should not adopt $k=4$ on the basis of this run, even though the point estimate saves 58.17\% of energy per correct answer. The margin-indexed decision procedure remains the right object: state the margin, measure the curve on the target corpus and reader, and test the candidate. The sensitivity analysis shows what that procedure returns at other margins: $k=16$ at 2 pp with 32.9\% savings, $k=8$ at 3--4 pp with 50.4\%, $k=4$ at 5--6 pp with 58.2\%, and $k=2$ at 8--10 pp with 61.9\%. These are point estimates from one sample, not guarantees, and no rule selects $k=32$.
 
 \textbf{Relation to the adaptive direction.} The static claim fails, so P3 tested whether a query-conditional policy can recover the oracle gap. The answer on this feature set is no: the BM25-feature logistic policy captures $-1.92\%$ of a $36.80\%$ unconstrained oracle gap, and $-2.46\%$ of a $28.64\%$ matched-accuracy oracle gap, so G4 is not supported. The unconstrained oracle accuracy (0.6667) exceeds the static accuracy (0.4194); the matched oracle holds accuracy at 0.4194 and still leaves a 28.64\% gap that the policy does not capture. Without abstention, the matched gap falls to 7.21\%, so most of the oracle advantage is an abstention gain rather than depth routing. A predictability audit gives an out-of-fold AUC of 0.733 for correctness at $k=1$, flat from 50 to 608 training questions, and an answer-presence oracle reaches only 47.8\% capture on this test split. The 50\% gate is therefore at the edge of what a perfect presence signal achieves and well beyond the deployable feature set. The negative result is for this policy class, not a proof that no adaptive policy can work. The 78.8\% pilot oracle figure remains a hindsight upper bound. The static curve remains the comparator that any policy must beat.
-
-
 
 Table~\ref{tab:validity} organizes the threats by construct, internal, external, and statistical-conclusion validity. Construct threats concern what the energy and accuracy numbers measure, internal threats concern calibration and window bias, external threats concern the reader and corpus, and statistical threats concern power and selection. The table is not a substitute for the limitations below; it is the checklist a reader can use to decide which claims travel, and the paragraphs below expand the threats that bind the headline claims.
 
@@ -1170,8 +1158,6 @@ Table~\ref{tab:validity} organizes the threats by construct, internal, external,
     \bottomrule
   \end{tabular}
 \end{table}
-
-
 
 \textbf{Hardware and measurement.} All energy measurements come from one laptop GPU. The pilot reached 88.4~$^{\circ}$C and a 1003~MHz clock, and P0 reached 90~$^{\circ}$C with a 900~MHz clock floor, so the device is thermally throttled during long runs. NVML updates \texttt{power.draw} at roughly 1~s despite the 100~ms cadence, so per-query energy is a paired observation rather than a precision measurement. Block calibration failed in P0 and passed in P1, but the $k=0$ factor is 0.8089, only 1.1\% above the floor, and the repeat CV maximum is 18.44\%, close to the 20\% threshold. No wall meter is available (D-016), and the CPU retrieval term is a 20~W time-to-joules proxy. The shared H200 slice cannot supply an energy measurement at all because per-instance power telemetry is unavailable. \textbf{Design and scope.} The study uses one corpus (SQuAD v1.1), one retriever (BM25), one reader family, and a 4-bit quantized model at a 4096-token context with $k\le32$. SQuAD is a closed-corpus extractive task, so the results do not automatically transfer to open-domain generation, dense retrieval, long-context readers, or API models. The boundary probe at $k\in\{32,48,64\}$ and the context-budget probe were run in P2 and are diagnostic; neither is a new $k^{*}$. The Llama 3.2 3B reader is exploratory and does not satisfy the replication gate. The P2 Qwen arm failed block calibration at $k=0,1,2$ and its repeat CV reached 80.15\%, so its energy contrast is uncalibrated; the HotpotQA arm missed only $k=0$ but is also uncalibrated because calibration is all-or-nothing. P4 shows the accuracy curve is not generally monotone or well described by the coverage model, so the identity and any greedy search are local diagnostics rather than global guarantees. The accuracy metric is normalized exact match, which is conservative and does not credit paraphrases; the scoring sensitivity shows that the selected depth changes under lenient span and token F1, so the result is rule-dependent. The pilot used strict exact match, so pilot and P1 accuracy values are not like-for-like. A single run seed controls the within-question depth order, and seed-to-seed variability is not estimated.
 
@@ -1868,7 +1854,6 @@ It does not claim the following.
   change the status of H3 or of any gate. H3 remains adjudicated at $k=4$ and
   remains unsupported.
 \end{itemize}
-
 
 \clearpage
 \section*{Supplementary Material}
@@ -3069,8 +3054,6 @@ The only build product is \texttt{paper/out/main.pdf}. Support scripts live in
 \texttt{tools/paper/scripts/}, and writing notes live in \texttt{docs/paper/}; neither is needed
 to compile the manuscript. The supplement contains no citations of its own: literature
 references belong to the main manuscript and are resolved from its bibliography.
-
-
 
 \hbadness=10000
 \sloppy
