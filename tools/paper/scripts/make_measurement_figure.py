@@ -12,7 +12,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 PROBE = ROOT / "analysis" / "measurement" / "probe_qwen15b.json"
 BIAS = ROOT / "analysis" / "calibration_bias.json"
 OUT = ROOT / "paper" / "figures" / "measurement_validity.png"
@@ -30,7 +30,11 @@ def main() -> int:
         xs = [0.5 * (b["window_s"][0] + b["window_s"][1]) for b in bins]
         ys = []
         for index in range(len(bins)):
-            vals = [r["post_bins"][index]["mean_net_w"] for r in records if r["post_bins"][index]["mean_net_w"] is not None]
+            vals = [
+                r["post_bins"][index]["mean_net_w"]
+                for r in records
+                if r["post_bins"][index]["mean_net_w"] is not None
+            ]
             ys.append(float(np.mean(vals)))
         ax1.plot(xs, ys, marker="o", label=f"k={depth}", color=color)
     ax1.axhline(0, color="black", linewidth=0.7, linestyle="--")
@@ -49,7 +53,13 @@ def main() -> int:
         values = bias[arm]["k0_by_previous_depth"]
         xs = sorted(int(k) for k in values)
         ys = [values[str(k)]["mean_j"] for k in xs]
-        ax2.plot(xs, ys, marker="o", label=arm.replace("squad_", "").replace("_p1", "").replace("_p2", ""), color=color)
+        ax2.plot(
+            xs,
+            ys,
+            marker="o",
+            label=arm.replace("squad_", "").replace("_p1", "").replace("_p2", ""),
+            color=color,
+        )
     ax2.set_xlabel("Previous row's depth")
     ax2.set_ylabel("k=0 energy (J)")
     ax2.set_title("k=0 depends on the neighbour")

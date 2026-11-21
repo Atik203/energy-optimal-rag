@@ -1,9 +1,9 @@
 # Paper figures and tables
 
-**Status:** 2026-11-15. P1 is complete and calibrated. `figures/p1_curve.png` and
-`figures/p1_calibration.png` are now data-backed from the registered P1 outputs.
-`figures/p0_harness.png` remains the P0 harness failure figure, and `figures/design.png`
-is the protocol schematic.
+**Status:** 2026-11-22. The current paper uses six figures: `design.png`,
+`p0_harness.png`, `measurement_validity.png`, `p1_curve.png`, `p1_frontier.png`,
+and `sim_ratio.png`. The old `p1_calibration.png` was removed from the package because
+the paper now reports the block factors in a table.
 
 The P1 primary result is **negative**: the 5 pp non-inferiority test is **not supported**
 (`A(4)-A(32) = -4.30` pp; one-sided lower bound `-6.17` pp; savings `58.17%`). The figure
@@ -11,12 +11,12 @@ states that explicitly. No positive 5 pp claim is made anywhere.
 
 The scripts are the source of truth:
 
-- `paper/scripts/make_figures.py` → `paper/figures/*.png`
-- `paper/scripts/make_tables.py` → `paper/tables/*.tex`
+- `tools/paper/scripts/make_figures.py` → `paper/figures/*.png`
+- `tools/paper/scripts/make_tables.py` → `tools/paper/tables/*.tex`
 
-`paper/main.tex` and `paper/supplement.tex` were intentionally **not** modified by this
-figure task. Their P1 prose/captions must be reconciled separately with the completed
-result.
+The supplement is now embedded in `paper/main.tex`; the old standalone
+`supplement.tex` no longer exists. The figure package is limited to the six files
+listed above.
 
 ---
 
@@ -70,7 +70,7 @@ The project contract is stricter than the smallest reference:
 
 ## 2. Exact rcParams
 
-`apply_style()` in `paper/scripts/make_figures.py` is the source of truth. Current block:
+`apply_style()` in `tools/paper/scripts/make_figures.py` is the source of truth. Current block:
 
 ```python
 {
@@ -241,16 +241,16 @@ From `E:\PROJECT\energy-optimal-rag`:
 conda activate energy-optimal-rag
 
 # Placeholder path: design + P0 + P1 placeholders
-python paper/scripts/make_figures.py
+python tools/paper/scripts/make_figures.py
 
 # Data-backed P1 result figures (current files)
-python paper/scripts/make_figures.py --p1
+python tools/paper/scripts/make_figures.py --p1
 
 # Verify only
-python paper/scripts/make_figures.py --check
+python tools/paper/scripts/make_figures.py --check
 
 # Tables are separate from this figure task
-python paper/scripts/make_tables.py
+python tools/paper/scripts/make_tables.py
 ```
 
 `--p1` requires these registered sources and fails with a clear error if any is missing:
@@ -284,8 +284,8 @@ python -c "from PIL import Image; import glob, os; [print(os.path.basename(f), I
 Style/lint check:
 
 ```powershell
-python -m ruff format paper/scripts/make_figures.py paper/scripts/make_tables.py
-python -m ruff check paper/scripts/make_figures.py paper/scripts/make_tables.py
+python -m ruff format tools/paper/scripts/make_figures.py tools/paper/scripts/make_tables.py
+python -m ruff check tools/paper/scripts/make_figures.py tools/paper/scripts/make_tables.py
 ```
 
 ---
@@ -303,7 +303,7 @@ python -m ruff check paper/scripts/make_figures.py paper/scripts/make_tables.py
 | `analysis/squad_qwen4b_p1/noninferiority.json` | present | primary NI verdict and bounds |
 | `runs/squad_qwen4b_p1/blocks.json` | present | seven block factors |
 | `runs/squad_qwen4b_p1/repeat.json` | present | repeat CV |
-| `paper/tables/p1_estimates.tex` | template/TBD in this figure task | run `make_tables.py` separately to fill it |
+| `tools/paper/tables/p1_estimates.tex` | template/TBD in this figure task | run `make_tables.py` separately to fill it |
 | `paper/main.tex`, `paper/supplement.tex` | present, **not modified** | their P1 text still needs reconciliation |
 
 `paper/main.tex` currently describes P1 as pending in its P1 subsection; that text is

@@ -8,7 +8,7 @@ pointer. Status labels: `logs` (measured), `code only`, `author`, `missing`.
   `docs/P1_RESULTS.md`, `docs/MEASUREMENT.md`, `docs/PROTOCOL.md`, `docs/IMPLEMENTATION_PLAN.md`,
   `docs/DECISIONS.md`, `prereg/PREREGISTRATION.md`, `prereg/analysis_plan.md`,
   `prereg/FREEZE.md`, `prereg/amendments.md`, `analysis/README.md`,
-  `analysis/squad_qwen4b_p1/` (all outputs), `paper/README.md` (previous and current),
+  `analysis/squad_qwen4b_p1/` (all outputs), `docs/paper/README.md` (previous and current),
   `data/README.md`, `configs/base.toml`, `configs/analysis/prereg.toml`,
   `configs/runs/squad_qwen4b.toml`, `runs/registry.csv`, `runs/squad_qwen4b_p1/` (manifest,
   blocks, repeat), `artifacts/ledger.csv`, `artifacts/claims_evidence.csv`,
@@ -46,7 +46,7 @@ pointer. Status labels: `logs` (measured), `code only`, `author`, `missing`.
 - **Article type.** Measurement plus decision theory, with a causal tax manipulation and an
   adaptive-policy arm. Target venue is not stated in the repository; the format follows the
   reference manuscript `G:\HaluRISC\Journal_Paper\halurisc.tex` (Elsevier CAS).
-  [paper/FORMAT.md §1; paper/README.md §File map]
+  [docs/paper/FORMAT.md §1; docs/paper/README.md §File map]
 
 ## 2. Data
 
@@ -102,9 +102,9 @@ pointer. Status labels: `logs` (measured), `code only`, `author`, `missing`.
 5. Repeat block at `k = 8`; write `repeat.json`. `scripts/04b_repeat_cv.py`.
 6. Analyze the raw CSV; write `analysis/<run_id>/`. `scripts/05_analyze.py --run-id …`.
 7. Generate paper tables and figures from the analysis output; map each number in
-   `artifacts/claims_evidence.csv`. `paper/scripts/make_tables.py` and
-   `paper/scripts/make_figures.py` emit `\input` fragments and PNGs from the registered run and
-   analysis outputs. [analysis/README.md §Rules; paper/README.md §Tables and figures]
+   `artifacts/claims_evidence.csv`. `tools/paper/scripts/make_tables.py` and
+   `tools/paper/scripts/make_figures.py` emit `\input` fragments and PNGs from the registered run and
+   analysis outputs. [analysis/README.md §Rules; docs/paper/README.md §Tables and figures]
 
 ## 5. Experiments
 
@@ -226,13 +226,13 @@ gap; `N*`. No multiplicity correction for the single primary test. [prereg/analy
 | `P = .537` for the 5 pp selection | README.md §Claim boundary; ROADMAP.md §1.1; D-010 | Neither until resolved | Yes: selection probability or p-value? P1 supersedes its use, but the pilot wording still needs an answer |
 | "P1 deferred" vs "P1 started" | D-021 vs D-022/D-023 | D-022/D-023 | No: supersession is logged; use D-022 wording |
 | "The run is still invalid on the calibration failure and the 46.4% idle CV" | docs/P0_HARNESS_REPORT.md §2 | Read as the first run; `_r3` had 1.12% CV | No, but quote carefully: `_r3` is invalid for calibration, not for idle |
-| "LaTeX and BibTeX arrive in P5" | old paper/README.md | Superseded | No: supplement exists; update is done |
+| "LaTeX and BibTeX arrive in P5" | old docs/paper/README.md | Superseded | No: supplement exists; update is done |
 | Paper author list: one author in CITATION.cff, four authors in the reference manuscript | CITATION.cff vs G:\HaluRISC\Journal_Paper\halurisc.tex | CITATION.cff is this project's record | Yes: confirm the author list, affiliations, corresponding author |
 
 ## 10. Venue and supervisor constraints
 
 - **Template.** Elsevier CAS (`cas-sc`), copied from the reference manuscript. No venue is named
-  in the repository. [paper/FORMAT.md]
+  in the repository. [docs/paper/FORMAT.md]
 - **Length, citation style, word limit.** Not stated. Numeric citations follow the reference
   (`elsarticle-num`). `[missing — author to confirm]`
 - **AI-use policy and supervisor writing guide.** Not present in the repository. The authorship

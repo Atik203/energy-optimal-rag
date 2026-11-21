@@ -185,7 +185,7 @@ P0 is finished as a documented failure; the remaining work is handoff, not a new
    failed before analysis.
 2. Update `README.md`, `ROADMAP.md`, this report, `docs/MEASUREMENT.md`,
    `docs/PROTOCOL.md`, `docs/RUNBOOK.md`, `docs/DECISIONS.md`,
-   `docs/IMPLEMENTATION_PLAN.md`, `analysis/README.md`, and `paper/README.md`.
+   `docs/IMPLEMENTATION_PLAN.md`, `analysis/README.md`, and `docs/paper/README.md`.
 3. Update the public frontend from `web/lib/project-data.ts` and the Home, Research, Method,
    Results, Roadmap, About, and slide pages. The public status must match the registry, not a
    hand-written optimistic value.

@@ -120,13 +120,13 @@ The identity is reported as a diagnostic, not as proof of optimality.
 | K3 `P(k* optimal) ≥ 0.8` | 0.7244 | **FAIL** |
 | K4 context share ≥ 5% | 0.355, not flat | **PASS** |
 | K5 `k*` span ≤ 1 depth | 95% span 4 (`k=4`, `k=8`) | **FAIL** |
-| K6 oracle gain | P3 analysis | not evaluated |
+| K6 oracle gain | 36.80% (P3) | **PASS** |
 | K7 repeat CV ≤ 20% and MDE < effect | 18.44%, 5.62% < 161% | **PASS** |
 | G1 5 pp non-inferiority + ≥20% savings | non-inferior false; savings 58.17% | **FAIL** |
 | G2 loss upper bound ≤ 5 pp and `P(k*) ≥ 0.8` | 6.17 pp; 0.7244 | **FAIL** |
 | G3 context share in [0.10, 0.70] and increasing | 0.355, increasing | **PASS** |
-| G4 policy capture | P3 analysis | not evaluated |
-| G5 replication | P2 analysis | not evaluated |
+| G4 policy capture | -2.46% matched (P3) | **FAIL** |
+| G5 replication | HotpotQA -10.80 pp (P2) | **PASS** |
 
 `P(k* optimal)` from the paired bootstrap: `k=2` 0.0237, `k=4` 0.7244, `k=8` 0.2433,
 `k=16` 0.0086; all other depths 0.0. The 5 pp selection is not stable at the 0.8 threshold.
@@ -171,15 +171,15 @@ measurement calibration and repeatability; the negative 5 pp result; the 58.2% s
 descriptive quantity.
 
 **May not be claimed:** 5 pp non-inferiority; "certified" or "G1 passed"; a 2 pp optimum; a
-universal `k*`; an adaptive-policy gain (P3 is untested); replication (P2 is untested).
+universal `k*`; an adaptive-policy gain (P3 tested and did not capture the oracle gap); replication (P2 tested: HotpotQA supports the direction, Qwen2.5-1.5B does not).
 
-## 10. What remains
+## 10. Downstream phases (completed after this document)
 
-- **P2:** Qwen2.5-1.5B replication and HotpotQA; boundary and 16k probes; energy taxes.
-- **P3:** query-conditional policy; the static policy is dead, so the adaptive direction is
-  the remaining route to a positive policy result.
-- **P4:** theory validation, including the H3 failure.
-- **P5/P6:** manuscript and release.
+- **P2:** Qwen2.5-1.5B did not replicate the direction; HotpotQA did. Boundary and 16k probes
+  are exploratory; energy taxes are inconclusive.
+- **P3:** the query-conditional policy did not capture the matched oracle gap; G4 is not
+  supported.
+- **P4:** the coverage model is rejected on three of four arms; the identity remains local.
+- **P5/P6:** the manuscript and release are complete at DOI `10.5281/zenodo.24352803`.
 
-The raw run is local-only (D-020). The external backup should be made before P2 or any
-machine change.
+The raw run is local-only (D-020); the external backup is recorded in D-027.
