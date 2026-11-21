@@ -197,7 +197,7 @@ registered runs. For the journal package keep:
 - `runs/<run_id>/raw.csv`, `blocks.json`, `repeat.json`, `manifest.json` (local/USB; never git)
 - `analysis/<run_id>/estimates.csv`, `p0_check.json`, `metadata.json`, `report.md` (tracked)
 - `runs/registry.csv`, `artifacts/ledger.csv`, `artifacts/claims_evidence.csv` (tracked)
-- `paper/tables/` and `paper/figures/`, generated only from the above.
+- `tools/paper/tables/` and `paper/figures/`, generated only from the above.
 
 A table or figure without a registered run ID and artifact hash is not ready for the paper.
 

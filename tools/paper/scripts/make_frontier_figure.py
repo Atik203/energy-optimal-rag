@@ -12,7 +12,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 DATA = ROOT / "analysis" / "squad_qwen4b_p1" / "margin_frontier.json"
 OUT = ROOT / "paper" / "figures" / "p1_frontier.png"
 DPI = 650
@@ -32,7 +32,13 @@ def main() -> int:
     ax1.set_title("Selected depth and saving")
     ax1.grid(alpha=0.25)
     for margin, saving, row in zip(margins, savings, rows, strict=True):
-        ax1.annotate(f"k={row['selected_depth']}", (margin, saving), fontsize=7, xytext=(3, 3), textcoords="offset points")
+        ax1.annotate(
+            f"k={row['selected_depth']}",
+            (margin, saving),
+            fontsize=7,
+            xytext=(3, 3),
+            textcoords="offset points",
+        )
 
     ax2.plot(margins, required, marker="o", color="#D55E00")
     ax2.set_yscale("log")

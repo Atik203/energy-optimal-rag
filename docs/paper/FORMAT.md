@@ -110,7 +110,7 @@ Measured from the reference figure files:
   carries the title. Use a colourblind-safe palette and distinguish series by marker or dash as
   well as colour.
 - `\graphicspath` in the reference lists four prefixes. This project uses one: `figures/`, with
-  generated files written by `paper/scripts/make_figures.py`. The root-level
+  generated files written by `tools/paper/scripts/make_figures.py`. The root-level
   `scripts/09_make_figures.py` is an older v0.1.0 stub and is not the paper pipeline.
 
 ## 6. Mathematics

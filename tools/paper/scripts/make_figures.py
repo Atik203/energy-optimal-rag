@@ -6,14 +6,13 @@ Outputs (``paper/figures``):
 * ``design.png``          -- P1 measurement/analysis protocol schematic (no data)
 * ``p0_harness.png``      -- P0 ``_r3`` uncalibrated GPU energy and k=0 block diagnostic
 * ``p1_curve.png``        -- P1 A(k)/J(k)/E(k); placeholder by default, data with ``--p1``
-* ``p1_calibration.png``  -- seven P1 block factors; placeholder by default, data with ``--p1``
 
-The default path keeps the P1 placeholders.  ``--p1`` reads the registered P1 analysis
-outputs and regenerates the two result figures with calibrated values::
+The default path keeps the P1 placeholder.  ``--p1`` reads the registered P1 analysis
+outputs and regenerates the P1 figure with calibrated values::
 
-    python paper/scripts/make_figures.py          # design + P0 + P1 placeholders
-    python paper/scripts/make_figures.py --p1     # data-backed P1 result figures
-    python paper/scripts/make_figures.py --check  # size/DPI check only
+    python tools/paper/scripts/make_figures.py          # design + P0 + P1 placeholders
+    python tools/paper/scripts/make_figures.py --p1     # data-backed P1 result figures
+    python tools/paper/scripts/make_figures.py --check  # size/DPI check only
 
 The script never invents a P1 curve or a P1 block factor.  In ``--p1`` mode every point,
 interval, factor, and annotation is read from the registered output; missing inputs stop
@@ -42,7 +41,7 @@ try:  # scipy is available in the project environment; keep a stdlib fallback.
 except ImportError:  # pragma: no cover - only used outside the project environment
     _scipy_stats = None
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 PAPER_DIR = ROOT / "paper"
 FIG_DIR = PAPER_DIR / "figures"
 P0_RAW = ROOT / "runs" / "golden_squad_qwen4b_p0_r3" / "raw.csv"
@@ -801,7 +800,7 @@ def figure_p1_curve(use_p1: bool = False) -> None:
         fig.text(
             0.5,
             0.012,
-            "Regenerated from analysis/squad_qwen4b_p1/estimates.csv by paper/scripts/make_figures.py "
+            "Regenerated from analysis/squad_qwen4b_p1/estimates.csv by tools/paper/scripts/make_figures.py "
             "when the P1 analysis exists.",
             ha="center",
             va="center",
@@ -1258,7 +1257,7 @@ def check_outputs() -> int:
     """Print width/height/DPI for every PNG and fail if the journal floor is missed."""
     from PIL import Image
 
-    expected = ("design.png", "p0_harness.png", "p1_curve.png", "p1_calibration.png")
+    expected = ("design.png", "p0_harness.png", "p1_curve.png")
     print(f"\n{'file':<24} {'width':>6} {'height':>7} {'dpi':>7} {'width_in':>9}")
     print("-" * 58)
     ok = True
@@ -1309,7 +1308,6 @@ def main() -> int:
     figure_design()
     figure_p0(summary)
     figure_p1_curve(use_p1=args.p1)
-    figure_p1_calibration(use_p1=args.p1)
     return check_outputs()
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Build the paper's LaTeX tables from registered run files.
 
-Outputs (``paper/tables``):
+Outputs (``tools/paper/tables``):
 
 * ``p0_harness.tex``   -- P0 ``_r3`` per-depth uncalibrated GPU energy + k=0 diagnostic
 * ``p1_estimates.tex`` -- P1 per-depth estimates, or a TBD template while P1 is pending
@@ -18,7 +18,7 @@ Rules:
 
 Run from the repository root::
 
-    python paper/scripts/make_tables.py
+    python tools/paper/scripts/make_tables.py
 """
 
 from __future__ import annotations
@@ -30,8 +30,8 @@ from typing import Any
 
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[2]
-TABLE_DIR = ROOT / "paper" / "tables"
+ROOT = Path(__file__).resolve().parents[3]
+TABLE_DIR = ROOT / "tools" / "paper" / "tables"
 P0_RAW = ROOT / "runs" / "golden_squad_qwen4b_p0_r3" / "raw.csv"
 P0_MANIFEST = ROOT / "runs" / "golden_squad_qwen4b_p0_r3" / "manifest.json"
 P1_ESTIMATES = ROOT / "analysis" / "squad_qwen4b_p1" / "estimates.csv"
