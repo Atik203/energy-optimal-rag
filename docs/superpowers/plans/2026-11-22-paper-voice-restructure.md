@@ -5,7 +5,7 @@
 **Executor:** OpenCode agent with `academic-writer-humanizer` and
 `subagent-driven-development`
 **Manuscript:** `paper/main.tex`
-**Status:** draft for execution
+**Status:** implemented on branch `paper/voice-restructure`; final review pending
 
 ## 1. Goal
 

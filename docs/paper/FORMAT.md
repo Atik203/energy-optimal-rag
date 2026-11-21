@@ -1,4 +1,8 @@
-# FORMAT.md — manuscript format specification
+# FORMAT.md - manuscript format specification
+
+> **Note (2026-11-22):** the supplement is now embedded in `paper/main.tex`.
+> References to `supplement.tex` below are historical; the current source is the
+> single `main.tex`.
 
 This file records the format of the reference manuscript
 `G:\HaluRISC\Journal_Paper\halurisc.tex` and turns it into a checklist for this project's

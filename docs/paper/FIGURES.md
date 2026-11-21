@@ -1,9 +1,9 @@
 # Paper figures and tables
 
-**Status:** 2026-11-15. P1 is complete and calibrated. `figures/p1_curve.png` and
-`figures/p1_calibration.png` are now data-backed from the registered P1 outputs.
-`figures/p0_harness.png` remains the P0 harness failure figure, and `figures/design.png`
-is the protocol schematic.
+**Status:** 2026-11-22. The current paper uses six figures: `design.png`,
+`p0_harness.png`, `measurement_validity.png`, `p1_curve.png`, `p1_frontier.png`,
+and `sim_ratio.png`. The old `p1_calibration.png` was removed from the package because
+the paper now reports the block factors in a table.
 
 The P1 primary result is **negative**: the 5 pp non-inferiority test is **not supported**
 (`A(4)-A(32) = -4.30` pp; one-sided lower bound `-6.17` pp; savings `58.17%`). The figure
@@ -14,9 +14,9 @@ The scripts are the source of truth:
 - `tools/paper/scripts/make_figures.py` → `paper/figures/*.png`
 - `tools/paper/scripts/make_tables.py` → `tools/paper/tables/*.tex`
 
-`paper/main.tex` and `paper/supplement.tex` were intentionally **not** modified by this
-figure task. Their P1 prose/captions must be reconciled separately with the completed
-result.
+The supplement is now embedded in `paper/main.tex`; the old standalone
+`supplement.tex` no longer exists. The figure package is limited to the six files
+listed above.
 
 ---
 
