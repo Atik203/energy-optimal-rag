@@ -5,7 +5,7 @@
 **Repository:** https://github.com/Atik203/energy-optimal-rag
 **Paper:** `paper/main.tex` (30 pp, single file, 8 figs, 650 DPI) + `paper/out/main.pdf` · DOI `10.5281/zenodo.24352803` · tag `v0.2.1` behind `main` (`328811e`)
 
-**Legend:** ✅ done · ❌ gate fired (= finding, reported not tuned away) · 📋 todo (planned, not started) · ⏳ in progress · 🔬 optional (pick ≤1) · ⏸️ blocked (needs approval/hardware)
+**Legend:** ✅ done · ❌ gate fired (= finding, reported not tuned away) · 📋 todo (planned, not started) · ⏳ in progress · 🔬 optional (pick ≤1) · ⏸️ blocked (needs approval/hardware). Phases 6–10 continue P0–P5; each phase ends at its G-gate.
 
 This roadmap compresses finished work (§1) and specifies the new Q1 program (§3–§5) in
 agent-executable detail. Gates are allowed to fire. A fired gate is a finding and must be
@@ -26,7 +26,7 @@ reported, not tuned away. Prereg discipline (§7) still binds.
 | P4 theory/sensitivity | ✅ done | Coverage rejected 3/4 arms; identity local-only; scoring flips `k*` 4↔8; frontier: 5 pp needs ~7,138 pairs, only 10 pp clears at `n=1,000` | `docs/P4_RESULTS.md`, `analysis/p4/`, `analysis/recall_precision.json` |
 | Measurement audit (D-028) | ✅ done | **Per-query NVML windows are sequence-dependent** (residual 5–15 W; `k=0` +24–82% by predecessor); replay 7,336.9 J vs blocks 7,195.7 J (1.020); P1 absolute `J` provisional, P2 range-only | `docs/MEASUREMENT_VALIDITY.md`, `docs/DECISIONS.md` D-028 |
 | Simulations S1–S3 | ✅ done | Ratio-of-sums bias 0.4–4.9%; NI type-I 4.8–6.5% (synthetic, no carryover); selection `P(true)` 0.27–0.51, K3-pass ≤0.155 | `analysis/simulations/` |
-| Paper + release | ✅ done | 30-pp single-file `paper/main.tex`, 8 figs; 420 tests pass; clean-room repro ok; backup `G:\energy-optimal-rag-backup\2026-11-18\` | `paper/out/main.pdf`, `docs/BACKUP.md` |
+| Paper + release | ⏳ in progress | Manuscript + figs + clean-room repro + backup done; ⏸️ public release pending (Overleaf verify, Zenodo new version, tag) — owned by Phase 10 | `paper/out/main.pdf`, `docs/BACKUP.md` |
 
 Rule: no new run re-thresholds P0–P4 gates. New data needs a **new prereg** (new run IDs, new hypothesis IDs); old runs are never patched.
 
@@ -55,28 +55,29 @@ Rule: no new run re-thresholds P0–P4 gates. New data needs a **new prereg** (n
 Derived from 3 parallel reviewers (methods / measurement / contribution). Each block lists
 severity and the phase that fixes it.
 
-1. **B1 FATAL — energy construct falsified.** Sequence dependence + sweep/block gap (Qwen `k=0` 19.7 vs 5.1 J/q) + P1 `k=0` 1.1% above floor + intercept +53% pilot→P1. Breaks H1/H4/savings-point/`N*`/taxes. → fixes in Q-A, Q-B.
-2. **B2 FATAL/MAJOR — power misspecification.** Plan assumed discordance 0.08; observed 0.131; realized power 0.152; 80% power needs ~16.3k pairs (~7.1k at 50%). `n=1,000` "comfortably powered for 5 pp" is a design miss. → Q-A reframe + Q-E new-study design.
-3. **B3 MAJOR — H7 disjunctive replication.** "1.5B **or** HotpotQA" with shifted reference (`k=10` vs `32`), different task shape, sign split (+2.00 vs −10.80 pp). A-001 direction rule set after P1 sign known. 7 hypotheses + 12 gates adjudicated with "one primary test, no correction". → Q-A relabel + gatekeeping.
-4. **B4 MAJOR — post-selection inference ignored.** `k*` selected and evaluated on same data; S3 winner's curse −0.6–3.4 J/correct, `N*` biased −20% at `n=200`; scoring flips EM `k=4` ↔ lenient/F1 `k=8`. → Q-A split-sample + S3-calibrated stability.
-5. **B5 MAJOR — sensor + calibration fragility.** 100 ms cadence on ~1 Hz sensor; Qwen intercept −8.32 (impossible), CV 80.15%; P0 bimodal 0.732/1.676; repeats only at `k=8`. → Q-B repeats + refit w/o `k=0`.
-6. **B6 MAJOR — no wall meter / proxy / bookkeeping.** D-016 waiver stands; CPU `20 W×t` unvalidated; P0 manifest lacks driver; throttling 88–90 °C, 1003→900 MHz under-reported. → Q-B meter + manifests + traces.
-7. **B7 HIGH — contribution is null without replacement.** G1/G2/K3/K5/G4 fail; survivors H1/H4 are `O(n)`-expected; P3 strawman (no Adaptive-RAG/Self-RAG/FLARE/IRCoT baseline, no reader-confidence feature); single BM25/SQuAD/Q4-reader scope; theory (Thm.1–3) is statics + rejected coverage; 30-pp lab-notebook arc. → Q-C (reader-aware router + dense arm) + Q-D (Pareto/cost reframe) + Q-E rewrite.
+1. **B1 FATAL — energy construct falsified.** Sequence dependence + sweep/block gap (Qwen `k=0` 19.7 vs 5.1 J/q) + P1 `k=0` 1.1% above floor + intercept +53% pilot→P1. Breaks H1/H4/savings-point/`N*`/taxes. → fixes in Phase 6, Phase 7.
+2. **B2 FATAL/MAJOR — power misspecification.** Plan assumed discordance 0.08; observed 0.131; realized power 0.152; 80% power needs ~16.3k pairs (~7.1k at 50%). `n=1,000` "comfortably powered for 5 pp" is a design miss. → Phase 6 reframe + Phase 10 new-study design.
+3. **B3 MAJOR — H7 disjunctive replication.** "1.5B **or** HotpotQA" with shifted reference (`k=10` vs `32`), different task shape, sign split (+2.00 vs −10.80 pp). A-001 direction rule set after P1 sign known. 7 hypotheses + 12 gates adjudicated with "one primary test, no correction". → Phase 6 relabel + gatekeeping.
+4. **B4 MAJOR — post-selection inference ignored.** `k*` selected and evaluated on same data; S3 winner's curse −0.6–3.4 J/correct, `N*` biased −20% at `n=200`; scoring flips EM `k=4` ↔ lenient/F1 `k=8`. → Phase 6 split-sample + S3-calibrated stability.
+5. **B5 MAJOR — sensor + calibration fragility.** 100 ms cadence on ~1 Hz sensor; Qwen intercept −8.32 (impossible), CV 80.15%; P0 bimodal 0.732/1.676; repeats only at `k=8`. → Phase 7 repeats + refit w/o `k=0`.
+6. **B6 MAJOR — no wall meter / proxy / bookkeeping.** D-016 waiver stands; CPU `20 W×t` unvalidated; P0 manifest lacks driver; throttling 88–90 °C, 1003→900 MHz under-reported. → Phase 7 meter + manifests + traces.
+7. **B7 HIGH — contribution is null without replacement.** G1/G2/K3/K5/G4 fail; survivors H1/H4 are `O(n)`-expected; P3 strawman (no Adaptive-RAG/Self-RAG/FLARE/IRCoT baseline, no reader-confidence feature); single BM25/SQuAD/Q4-reader scope; theory (Thm.1–3) is statics + rejected coverage; 30-pp lab-notebook arc. → Phase 8 (reader-aware router + dense arm) + Phase 6 (Pareto/cost reframe) + Phase 10 rewrite.
 
 Minimum resubmission without new GPU: demote absolute-J to ranges, relabel transport,
 replace 0.8 gate, lead with superiority cost + `R×Q` + measurement audit, retitle away from
-"Energy-Optimal" (see Q-A).
+"Energy-Optimal" (see Phase 6).
 
 ---
 
-## 4. Q1 hardening phases (agent-executable)
+## 4. Q1 hardening phases 6–10 (agent-executable)
 
 Conventions for every phase: read `AGENTS.md` first; seeds from config, never literals;
 joules in J, accuracy in [0,1], depths integers; `pytest -q`, `validate`, `ruff format/check`
 before commit; every number traces to `runs/<run_id>/raw.csv` or registered analysis;
 never commit raw text, weights, secrets, or `runs/<run_id>/` data (registry row only).
+Numbering continues P0–P5: Phase 6 = reframe, 7 = measurement, 8 = contribution, 9 = optional scaling, 10 = paper + release. Each phase lists goal, hypothesis, inputs, steps, outputs, and acceptance so any agent or teammate can execute it.
 
-### Q-A — 📋 Honesty reframe + inference repair (CPU-only, 0 GPU-h) — DO FIRST
+### Phase 6 — 📋 todo · Honesty reframe + inference repair (CPU-only, 0 GPU-h) — DO FIRST
 
 - **Goal:** make the paper reviewer-proof without new data; convert F2/F3/F4 + B7-presentation into a clean negative + mechanism story.
 - **Hypotheses:** (H-cost, superiority, pre-registered as re-analysis): `A(4)−A(32) < 0` on P1 (already `p=0.0002`); (H-het): depth effect is reader×task-conditional (P1 −4.30 vs 1.5B +2.00 vs HotpotQA −10.80 vs Llama peak-at-4).
@@ -91,7 +92,7 @@ never commit raw text, weights, secrets, or `runs/<run_id>/` data (registry row 
 - **Acceptance:** `make_figures.py --check` passes; `verify_main.py` (labels/refs/bib) clean; no absolute-J claim without "range/provisional"; 420 tests pass.
 - **Effort:** small, CPU-only.
 
-### Q-B 📋 todo · Measurement hardening (3–6 GPU-h local) — DO SECOND
+### Phase 7 — 📋 todo · Measurement hardening (3–6 GPU-h local) — DO SECOND
 
 - **Goal:** replace two-biased-estimators with one approximately unbiased estimator + bound the system gap (fixes B1/B5/B6).
 - **Hypotheses:** (H-replay): replay-sequence block factor calibrates the *contrast* (sweep/block/replay triple converges); (H-cv): per-depth CV is worst at `k∈{0,1}` and acceptable at `k≥4`.
@@ -105,7 +106,7 @@ never commit raw text, weights, secrets, or `runs/<run_id>/` data (registry row 
 - **Acceptance:** replay factor finite; per-depth CV table complete; wall factor reported (not used to rescale P1); block-gate rule pre-specified before seeing outcomes.
 - **Effort:** medium; single GPU, batch 1, no concurrent jobs; stay in project space (200 GB, `df -h` check).
 
-### Q-C 📋 todo · From mechanism to contribution (medium GPU) — THE Q1 BET
+### Phase 8 — 📋 todo · From mechanism to contribution (medium GPU) — THE Q1 BET
 
 - **Goal:** turn descriptive `R×Q` into a predictive, generalizable contribution (fixes B7-core + B4-theory).
 - **C1 — Reader-aware difficulty router (highest leverage, ∼2–4 GPU-h).**
@@ -120,31 +121,32 @@ never commit raw text, weights, secrets, or `runs/<run_id>/` data (registry row 
 - **Outputs:** `configs/qc_*`, `runs/<qc_router_id>/`, `runs/<qc_dense_id>/`, `analysis/qc_router/`, `analysis/qc_dense/`, `artifacts/claims_evidence.csv` new rows (C-new IDs), `artifacts/ledger.csv` rows.
 - **Effort:** medium; needs new prereg (`prereg/qc_prereg.md` + freeze tag) before any outcome is read.
 
-### Q-D 🔬 optional · Scaling / abstention / attribution (pick at most one before resubmission)
+### Phase 9 — 🔬 optional · Scaling / abstention / attribution (pick ≤1 before Phase 10)
 
 - **D1 Reader-strength scaling law (high reward, ∼2–4 GPU-h):** sweep `0.5B/1.5B/4B/7B` at `n=300–500`; test `k_peak` vs size / `Q`-slope `γ` (hint: Llama peaks `k=4`, Qwen4B monotone, 1.5B flat). If `γ` scales inversely with capability → new regularity.
 - **D2 Abstention-aware joint policy (∼1–2 GPU-h):** selective prediction (abstain at low confidence) + depth routing; compare vs depth-only; makes the 28.64%→7.21% decomposition an honest lever.
 - **D3 Token-level attribution (0 GPU-h if timestamps kept):** prefill-vs-decode split per `k`, `J/prefill-token` constancy; upgrades H1 to hardware-grounded model.
 - **Rule:** do NOT pursue 5 pp re-certification alone (~7–16k pairs, 15–60 GPU-h, exceeds budget, still single-condition null-prone), H200 accuracy-only expansion, more BM25 features, or more simulations.
 
-### Q-E 📋 todo · Q1 paper rewrite + submission (CPU-only + buffer)
+### Phase 10 — 📋 todo · Q1 paper rewrite + submission + release (CPU-only + buffer)
 
 - **Goal:** 18–22 pp + refs arc (from lab notebook to argument): *depth trades recall gains against reader-precision losses; the product plateaus while joules rise linearly — so static depth cannot win at fixed margin, and only reader-aware routing can.*
 - **Keep (spine):** abstract negative + Fig P1 `A/J/E` + contrasts/selection + sensitivity (k=32 never selected) + `R×Q` + P3 1-para + HotpotQA/1.5B contrast + sweep box + window-bias fig + slim claim map (8 rows).
 - **Cut/compress:** P0 forensics → 3 sentences; gate alphabet soup → G1/G4 only; S1–S3 + `sim_ratio` → 1 para; `k*=1.214` → footnote/drop; taxes → 2 sentences; boundary/16k → 2 sentences each; checklist/notation/N*-derivation/pilot table → compress (see contribution review §3).
 - **New title direction:** away from "Energy-Optimal" toward cost + mechanism (e.g. *The Cost of Depth…*); retitle decided at submission prereg.
 - **Acceptance:** every number traces to `raw.csv`/registered output; 0 undefined refs; all figs ≥600 DPI; `docs/paper/README.md` Overleaf steps verified; clean-room repro matches; Zenodo new version + tag.
+- **Release checklist (pending — the unfinished work):** 1) Overleaf compile of `paper/main.tex` matches `paper/out/main.pdf`; 2) clean-room repro from `git archive` + raw-data copy passes; 3) secret scan + `git status` clean of raw text/weights/secrets; 4) publish new Zenodo version (current DOI `10.5281/zenodo.24352803` is v0.2.1, behind `main`); 5) tag release and push; 6) verify `docs/BACKUP.md` checksums.
 
 ---
 
-## 5. Gates (new Q-gates; old K/G frozen as history)
+## 5. Gates (G6–G10 exit gates; old K/G frozen as history)
 
-| Gate | Criterion | Pass action |
-|---|---|---|
-| **Q1** | Replay-calibrated savings range clears 20% floor with pre-specified estimator | Keep range as primary energy result; else stay qualitative |
-| **Q2** | Router captures ≥30% of non-abstention matched gap on held-out split | Headline contribution; else report flat-curve negative + heterogeneity finding |
-| **Q3** | Dense arm completes with `R/Q` curves + same-reader NI test | Transport claim (either direction); else scope stays BM25-only |
-| **Q4** | Paper meets §Q-E keep/cut + traceability + DPI + clean-room repro | Submit; else revise, do not relax gates |
+| Gate | Phase exit | Criterion | Pass action |
+|---|---|---|---|
+| **G6** | Phase 6 | Paper honest: absolute-J demoted to ranges, HotpotQA labeled transport, S3-calibrated stability, Pareto tool in | Enter Phase 7; else revise text, do not relax |
+| **G7** | Phase 7 | Replay-calibrated savings range clears 20% floor with pre-specified estimator | Keep range as primary energy result; else stay qualitative |
+| **G8** | Phase 8 | Router captures ≥30% of non-abstention matched gap on held-out split, and/or dense arm completes with `R/Q` curves + same-reader test | Headline contribution / transport claim; else report negatives + heterogeneity finding |
+| **G10** | Phase 10 | Paper meets keep/cut + traceability + DPI + clean-room repro; Zenodo new version + tag pushed | Submit; else revise, do not relax gates |
 
 A gate may not be added/removed/re-thresholded after seeing the primary outcome. New studies get new preregs; amendments go in `prereg/amendments.md` + `docs/DECISIONS.md`.
 
@@ -159,15 +161,15 @@ These are judgments from the 3-reviewer audit, not measured probabilities.
 | Stage completed | Paper one-liner | Est. Q1 chance | Why |
 |---|---|---:|---|
 | Now (negatives + mechanism, provisional J) | Rigorous null report | ~10% | B1/B5/B6 measurement blocks are fatal for absolute-J claims; B7 contribution is null-without-replacement |
-| + Q-A reframe (ranges, transport label, Pareto tool) | Honest negative + decision tool | ~25% | Reviewer-proof on inference; still no positive deployable result |
-| + Q-B hardening (replay estimator + wall meter) | Credible metrology + bounded savings | ~35% | Numbers trustworthy, but contribution still a negative |
-| + Q-C router (C1 hits >=30% held-out capture) | Reader-aware routing that beats BM25 | ~55-65% | Positive, generalizable, mechanism-tested: genuine Q1 contribution |
-| + C2 dense arm | Retrieval-quality vs reader-overload settled | ~65-75% | Two transport axes; hard to reject on scope |
-| + Q-D pick-one (scaling law or abstention win) | New regularity | ~75%+ | Second positive finding; strong Q1 case |
+| + Phase 6 reframe (ranges, transport label, Pareto tool) | Honest negative + decision tool | ~25% | Reviewer-proof on inference; still no positive deployable result |
+| + Phase 7 hardening (replay estimator + wall meter) | Credible metrology + bounded savings | ~35% | Numbers trustworthy, but contribution still a negative |
+| + Phase 8 router (C1 hits >=30% held-out capture) | Reader-aware routing that beats BM25 | ~55-65% | Positive, generalizable, mechanism-tested: genuine Q1 contribution |
+| + Phase 8 dense arm (C2) | Retrieval-quality vs reader-overload settled | ~65-75% | Two transport axes; hard to reject on scope |
+| + Phase 9 pick-one (scaling law or abstention win) | New regularity | ~75%+ | Second positive finding; strong Q1 case |
 
-Reading: Q-A + Q-B are necessary but not sufficient — they remove
-rejection reasons without adding an acceptance reason. Q-C is the
-acceptance reason. Without Q-C (or Q-D), the right target is a
+Reading: Phase 6 + Phase 7 are necessary but not sufficient — they remove
+rejection reasons without adding an acceptance reason. Phase 8 is the
+acceptance reason. Without Phase 8 (or Phase 9), the right target is a
 reproducibility/measurement venue or a 10-page short paper, not a top-Q1
 full article (per contribution review).
 
@@ -177,7 +179,7 @@ full article (per contribution review).
 
 | Item | Cost | Notes |
 |---|---|---|
-| GPU compute (Q-B–Q-D) | **$0** | Local RTX 3060 6 GB, batch 1, single job; est. 8–15 GPU-h new work (Q-B 3–6, Q-C 3–6, Q-D optional 2–4) |
+| GPU compute (Phase 7–Phase 9) | **$0** | Local RTX 3060 6 GB, batch 1, single job; est. 8–15 GPU-h new work (Phase 7 3–6, Phase 8 3–6, Phase 9 optional 2–4) |
 | Electricity | **~$2** | Indicative, not metered billing |
 | Wall meter | **$25** | Full-condition cross-check (Q-B3); replaces 30-query-subset plan |
 | Backup USB | **$10** | Already held; verify `docs/BACKUP.md` checksums before new runs |
@@ -185,14 +187,14 @@ full article (per contribution review).
 | Storage | 0 | Stay in project space; `df -h`/`du -sh` before runs; 200 GB quota; never touch other users' files |
 | H200 slice | $0 | Accuracy-only, `1g.18gb` max, SSH via `uiu-h200` only; **no energy claim**; record driver 580.178.04 / CUDA 13.5; no env changes without approval |
 
-Order: **Q-A (now, 0 GPU-h) → Q-B → Q-C → Q-D (pick ≤1) → Q-E.** Do not start Q-C training on P3 test IDs. Do not download weights / use paid APIs / write outside `E:\PROJECT\energy-optimal-rag` without asking.
+Order: **Phase 6 (now, 0 GPU-h) → Phase 7 → Phase 8 → Phase 9 (pick ≤1) → Phase 10.** Do not start Phase 8 training on P3 test IDs. Do not download weights / use paid APIs / write outside `E:\PROJECT\energy-optimal-rag` without asking.
 
 ---
 
 ## 7. Deliverables (additive to §1)
 
 1. `prereg/qc_prereg.md` (+ freeze tag) for every new-data phase; analysis records prereg + config hashes.
-2. `runs/<new_id>/raw.csv` + registry rows + `analysis/<phase>/` JSON/reports for Q-B/Q-C(/Q-D).
+2. `runs/<new_id>/raw.csv` + registry rows + `analysis/<phase>/` JSON/reports for Phases 7/8(/9).
 3. Updated `paper/main.tex` + `paper/figures/` (all ≥600 DPI) + `paper/out/main.pdf` via Overleaf `main.tex`-as-root flow.
 4. Extended `artifacts/claims_evidence.csv` (new C-IDs) + `artifacts/ledger.csv` rows.
 5. `docs/DECISIONS.md` entries for every hardware/env/estimator change before confirmatory work.
@@ -211,5 +213,5 @@ Order: **Q-A (now, 0 GPU-h) → Q-B → Q-C → Q-D (pick ≤1) → Q-E.** Do no
 ## 9. Change control (binding)
 
 1. `prereg/PREREGISTRATION.md` + `analysis_plan.md` stay frozen at `prereg-freeze-v1`; any deviation → `prereg/amendments.md` (date, original, replacement, reason, outcome-seen?) + `docs/DECISIONS.md`.
-2. New-data phases (Q-B/Q-C/Q-D) require a **new** frozen prereg + tag *before* outcomes are read; re-analysis (Q-A) is labeled re-analysis.
+2. New-data phases (Phases 7/8/9) require a **new** frozen prereg + tag *before* outcomes are read; re-analysis (Phase 6) is labeled re-analysis.
 3. Secret scan + `git status` before any data/config commit; `pytest -q`, `rag_energy.cli validate`, `ruff format` + `ruff check` green before any paper-affecting commit.
