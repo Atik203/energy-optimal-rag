@@ -1,6 +1,6 @@
 # Roadmap — Depth Has a Knee → Q1 Hardening
 
-**Status:** P0–P6 COMPLETE · 2 audit rounds COMPLETE (6 reviewers, 2026-11-22) · entering Q1-hardening · last updated 2026-11-23
+**Status:** P0–P6 COMPLETE · 3 audit rounds COMPLETE (6 reviewers + design stress-test, 2026-11-22/23) · entering Q1-hardening · last updated 2026-11-23
 **Horizon:** 6–10 weeks · local RTX 3060 6 GB + optional H200 `1g.18gb` accuracy-only slice · ≤ $47 cash
 **Repository:** https://github.com/Atik203/energy-optimal-rag · **branch model:** `dev` integration → `main` release (PRs only)
 **Paper:** `paper/main.tex` (30 pp, 8 figs, 650 DPI) + `paper/out/main.pdf` · DOI `10.5281/zenodo.24352803` · tag `v0.2.1` behind `main`
@@ -62,31 +62,52 @@ negative on a small test set; HotpotQA as **transport**, not replication.
   confirmatory criterion (see §4 Phase 6, item 8).
 - No energy claim from H200/MIG, 16k probe, or any uncalibrated arm.
 - No pooling SQuAD `A(4)−A(32)` with HotpotQA `A(4)−A(10)`.
+- **No "7.21% non-abstention routing gap."** Under fixed per-depth block costs that gap is
+  **0.000%** — it was per-query energy noise. The routing headroom is **22.5% vs static `k=4`**.
+  P3's −2.46% must be described as a baseline-choice/measurement artifact, not as proof that
+  BM25 features cannot route.
+- **No per-query window energy as an estimator.** The window sum is 81.7% of the replay total;
+  windows are diagnostic only.
 
 ---
 
-## 3. Why this is not yet Q1 (audit round 1 + round 2)
+## 3. Why this is not yet Q1 (audit rounds 1–3)
 
 **Round 1 (3 reviewers):** B1 energy construct falsified · B2 power misspecified (discordance
 0.131 vs planned 0.08; realized power 0.152; ~16.3k pairs for 80%) · B3 H7 disjunctive with shifted
 reference · B4 post-selection inference ignored · B5 sensor/calibration fragility · B6 no wall
 meter, CPU proxy, missing manifests · B7 contribution is a null without replacement.
 
-**Round 2 (3 deep analyses) — new, plan-changing:**
+**Round 2 (3 deep analyses) — plan-changing:**
 
 - **R1 — Phase 7 was under-identified.** One replay/block ratio is **one equation for seven
   unknown per-depth biases**, and the factor is demonstrably not depth-common (`k=0` 0.8089 vs
   `k=32` 1.0587). A scalar cannot correct a per-depth curve.
-- **R2 — The router cannot pay for itself.** Non-abstention headroom is `7.21% × 59.57 ≈ 4.3
-  J/correct`; the cheapest reader-side probe (`k=0`, 14.59 J/query at A≈0.42) costs `≈34.8
-  J/correct`. Break-even probe is `≈1.8 J/query` (~12% of a `k=0` pass). Routing is net-negative
-  even if perfect — a finding, not a feature. G8 must therefore bound the value of routing, not
-  hunt for 30% capture on 186 questions.
+- **R2 — Probe-based routing cannot pay for itself.** A reader-side probe (`k=0`, 14.59 J/query at
+  A≈0.42) costs `≈34.8 J/correct`, far above the headroom available against a cheap baseline.
+  Break-even is `≈1.8 J/query`. **Correction (round 3):** this rules out *probe-based* routing,
+  not router policies built on **free pre-generation features** (BM25 + question shape), which carry
+  no probe cost. R5 supersedes the earlier blanket conclusion.
 - **R3 — The planned `P≥0.8 → ≥0.6` change is a forbidden re-threshold.** Keep 0.8 reported as
   failed; present 0.6 only as a simulation-derived exploratory "what would have been needed".
 - **R4 — Sequencing errors:** rewriting energy prose before the estimator changes forces two
   rewrites; "reuse P1 rows + fresh split" is contradictory (P3 consumed all 1,000 IDs); picking
   Phase 9 after seeing Phase 8 is a forking path; the DOI is stale at v0.2.1.
+- **R5 — The 7.21% router target is a measurement artifact (decisive).** The "non-abstention
+  matched gap" is computed against static `k=1` with **per-query windows**. Recomputing the same
+  oracle with **fixed per-depth block costs** gives **0.000%**: every question starts at the
+  cheapest depth and the cheapest upgrades cost zero, so the gap is zero by construction. The
+  7.21% exists only because some deeper rows measured cheaper than the same question's `k=1` row —
+  the oracle was selecting **energy noise**, not a question property. Consequences: (a) P3's
+  −2.46% is partly a baseline-choice artifact, not proof that BM25 features fail; (b) the correct
+  routing headroom is against a **deeper** static depth — **22.5% vs `k=4`** on all 1,000 P1 rows
+  (23.0% on the P3 test split), 38.1% vs `k=8`; (c) an exploratory binary rule (`k=1` if
+  `p(correct@1) ≥ 0.355`, else `k=4`) already captured **60.3%** of the `k=4` gap at **−1.07 pp**
+  on the reused P3 test IDs — feasibility, not confirmation.
+- **R6 — Per-query windows are not a partition.** The recorded replay totals `7,336.9 J` vs block
+  sum `7,195.7 J` (ratio 1.020), but the **per-query window sum is `5,996.7 J` = 81.7%** of the
+  replay total. Windows miss 18.3% of the timeline, so they cannot be the estimator; a single
+  global replay/block factor cancels in the savings ratio and leaves depth-specific bias intact.
 
 ---
 
@@ -141,94 +162,103 @@ outputs, acceptance.
   420 tests pass.
 - **Effort:** small, CPU-only, ~1 day with agents.
 
-### Phase 7 — 📋 todo · Metrology identification (5–7 GPU-h) — DO SECOND
+### Phase 7 — 📋 todo · Metrology: block estimator + falsified windows (5–8 GPU-h) — DO SECOND
 
-- **Goal:** turn two biased estimators into one identified, bounded answer (fixes R1).
-- **Hypotheses:** (H-ident) per-depth calibration factors are identifiable from ≥3 permutation
-  replays; (H-common) the factor is *not* depth-common beyond the floor — to be tested, not assumed.
-- **Inputs:** `docs/MEASUREMENT.md`, `docs/MEASUREMENT_VALIDITY.md`,
-  `runs/squad_qwen4b_p1/{blocks,repeat,manifest}.json`.
+- **Goal:** replace the falsified per-query window with a block estimator, and report the window
+  failure as a finding rather than correcting it with a scalar.
+- **Hypotheses:**
+  - **H-M1 (window falsification):** the per-query window sum is not a partition of the replay
+    total (already observed `0.8173`); therefore windows are diagnostic only.
+  - **H-M2 (CV):** per-depth CV is ≤ a pre-specified threshold at `k ≥ 4`; `k ∈ {0,1}`
+    reported but not gated.
+  - **H-M3 (carryover):** `J(k | preceding depth)` differs across predecessors; quantify `γ`.
+- **Inputs:** `docs/MEASUREMENT_VALIDITY.md`, `analysis/calibration_bias.json`,
+  `analysis/measurement/replay_qwen15b.json`, `runs/squad_qwen4b_p1/{blocks,repeat,manifest}.json`.
 - **Steps (new run IDs + new prereg — never patch P1):**
-  1. **Replay the primary arm.** The existing replay was Qwen1.5B; replay **P1's exact
-     permutation** as a continuous block (1–2 h). Split into 4 × 30 min sessions with the same
-     permutation and test for boundary drift (a 2 h continuous replay is itself a thermal confound).
-  2. **Over-identify the factors.** Run **three replays under different permutations**, or
-     pre-specify a one-parameter bias model `bias_k = c·g(k)` with `g` fixed in advance. A single
-     scalar ratio cannot be the primary estimator for a 7-point curve.
-  3. **Known-load validation.** Burn a fixed constant-power synthetic load for N seconds; compare
-     the NVML integral to `P×t`. The chain has never been checked against a known energy.
-  4. **Interleaved calibration blocks.** Blocks after a 2.5 h sweep measure the hot state, not the
-     sweep's mean. Interleave every ~500 queries (or pre/post and interpolate).
-  5. **Hierarchical bootstrap.** Resample blocks *and* queries so factor uncertainty enters the
-     savings CI; today the factor is a point correction.
-  6. **Convergence rule.** Sweep / block / replay / deconvolution side by side with a pre-specified
-     tolerance (e.g. ±3 pp) deciding which is primary.
-  7. **Depth-resolved wall meter** (∼$25, last step, then re-baseline idle): 3 depths × 3 repeats ×
-     100 queries, and **test** the depth-common-factor assumption (ratio homogeneity). One
-     aggregate number cannot support the invariance argument.
-  8. **CPU energy or retitle.** Measure CPU package energy (RAPL/HWiNFO) or explicitly retitle to
-     GPU energy; the `20 W × t` proxy is applied to BM25 wall time and is approximately k-invariant,
-     so "retrieval share falls with k" is a denominator artifact.
-  9. **Session variance.** ≥3 independent sessions on `n=200` subset (`k∈{1,4,32}`); report ICC.
-  10. **Carryover control.** Williams/Latin-square subset at `k∈{1,4,16,32}` plus a lag-adjusted
-      estimator (preceding depth as covariate). Randomisation balances but does not debias.
-  11. **Pilot↔P1 bridge.** ~100 common questions under both protocols on one day to decompose the
-      `+53%` intercept shift (15.74→24.08 J).
-  12. **Baseline sensitivity.** Pre-run idle vs local pre-query floor vs per-window floor: three
-      savings values. Plus thermal traces, clock-vs-J scatter, drop-first-50 numerically.
-- **Outputs:** `runs/<replay*>/`, `runs/<repeat*>/`, `analysis/measurement_hardening/`, updated
-  validity figure, `docs/DECISIONS.md`.
-- **Acceptance (G7):** per-depth factors identified (or bias model pre-specified and tested);
-  estimators agree within tolerance **or** the claim is demoted; known-load check within a stated
-  budget; wall factor depth-common or explicitly rejected.
+  1. **Block estimator is primary.** `B ≥ 5` blocks per depth, all seven depths, `Q = 20`,
+     randomized block order, cooldown at every block start, pre-specified discard `W`, **same
+     question set per block**. Integrate the block window as one measurement, subtract idle over the
+     block, and use the ratio of sums:
+     `E(k) = Σ_b J_block(k,b) / Σ_b C(k,b)`; `Sav = 1 − E(4)/E(32)`. CI = cluster bootstrap
+     over blocks (and questions for the accuracy denominator).
+  2. **Replays as validation, not correction.** `R ≥ 10` replays (exact sweep permutation plus
+     different permutations). Report the **distributions** of `replay/block` and
+     `per-query sum/replay` with 95% CIs. Do **not** apply a single global factor: it cancels in the
+     savings ratio and leaves depth-specific bias.
+  3. **Carryover regression (uses existing rows).** Fit
+     `J_i = α + βk_i + γk_{i−1} + δtemp_i + εclock_i` with cluster-robust SEs; report `γ`.
+     Add a crossed subset: for target depth `k`, vary the predecessor over `{0,4,32}`.
+  4. **CV distributions.** All seven depths, 5 blocks; report full distributions, not median/max.
+  5. **Depth-resolved wall meter** (last step, then re-baseline idle): condition `k ∈ {1,4,32}`
+     (~1 h) matching the new block run's power mode/thermal state. Report
+     `system_J/(GPU_J + CPU_proxy)` as a **range**; never rescale P1.
+  6. **Manifest schema.** Driver, CUDA, power mode, clocks, Ollama version/digest, model digest,
+     HF cache/revision, ambient temperature, throttle reasons, screen/AC state, batch size,
+     concurrency. Backfill a P1 sidecar with `unknown` — **never fabricate** values.
+  7. **Affine fit on `k ≥ 1`**; `k=0` reported as a floor, not a fit point.
+- **Outputs:** `prereg/measurement_hardening_prereg.md` (frozen before runs), `runs/<block*>/`,
+  `analysis/measurement_hardening/`, updated validity figure, `docs/DECISIONS.md`.
+- **Acceptance (G7):** block estimator with CI; windows explicitly reported as falsified (`0.817`)
+  and not used; `γ` reported; CV distributions for all seven depths; wall ratio as a range;
+  manifest complete.
 - **Effort:** medium; single GPU, batch 1, no concurrent jobs; `df -h`/`du -sh` before runs.
 
-### Phase 8 — 📋 todo · Causal identification + transport (4–6 GPU-h) — THE Q1 BET
+### Phase 8 — 📋 todo · Causal tests + retargeted router (6–9 GPU-h) — THE Q1 BET
 
-- **Goal:** turn the descriptive `R×Q` decomposition into an identified mechanism and a transport
-  claim. **Not** a router hunt.
-- **Hypotheses:** (H-overload) at fixed gold rank 1, adding distractors lowers accuracy — reader
-  overload, not retrieval failure; (H-dense) precision collapse is a BM25-rank artifact, so dense
-  retrieval restores monotonicity or shifts the knee; (H-voi) routing cannot repay its probe cost.
+- **Goal:** identify the mechanism causally, and test a router that has **real** headroom.
+- **Correction that drives this phase (R5):** the quoted 7.21% gap is a per-query-noise artifact
+  (`0.000%` under fixed block costs vs `k=1`). The real headroom is against static `k=4`:
+  **22.5%** on all 1,000 P1 rows, **23.0%** on the P3 test split. An exploratory rule captured
+  **60.3%** of it at `−1.07 pp` — feasibility only.
+- **Hypotheses:**
+  - **H-overload:** at fixed gold rank 1, adding distractors lowers accuracy (reader overload, not
+    retrieval failure).
+  - **H-dense:** precision collapse is a BM25-rank artifact; dense retrieval restores monotonicity
+    or shifts the knee.
+  - **H-route:** a pre-generation policy captures ≥ 30% of the `k=4` gap at a 2 pp accuracy margin.
 - **Steps:**
-  1. **Freeze `prereg/qc_prereg.md` first** (before any outcome is read, including calibration
-     factors). Then run a **new 500 × 7 SQuAD sweep** (~1.5 h) as the Phase 8 test set — P3 consumed
-     all 1,000 P1 IDs, so a fresh split requires fresh questions.
-  2. **C3 distractor dose-response (1–2 h, highest value).** 300–500 questions where gold is rank 1
-     at `k=1`; hold gold first and add 0/1/3/7/15/31 distractors after it. Add a position condition
-     (gold at rank 1/8/32 at fixed `k`). Paired McNemar/GLMM + trend test. This is the causal test
-     of `Q` and pre-empts the position-bias objection.
-  3. **C2 dense 2×2 (1.5–2 h).** {BM25, dense} × {raw order, cross-encoder rerank}, `k∈{4,16,32}`,
-     `n=500`; report `recall@k` for both retrievers and index-build joules with amortisation
-     break-even. Do not confound retrieval quality with ordering. Inference-only; **ask before
-     downloading weights**.
-  4. **Held-out replication (1 h).** `A(4)−A(32)` on the fresh 1,000-question split, accuracy only.
-     Cheap test of whether −4.30 pp is stable or a sampling draw.
-  5. **Token-matched padding (0.5 h).** Fixed prompt tokens, vary the number of *relevant*
-     passages — separate relevance from length.
-  6. **Value-of-information bound (0 GPU-h).** Formally: routing pays only if
-     `probe_cost < headroom(δ)/A`. With the measured `k=0` probe this fails by ~8×. Report the
-     break-even probe cost and the `capture(δ)` curve. **This is a positive contribution that
-     explains P3.**
-  7. **Router — optional only.** If run: cross-fit on all 1,000 questions (not `n=186`), include
-     abstention (the 28.64% prize), charge probe cost, report ECE/Brier, random-depth null with the
-     same marginal histogram, and set the criterion to a minimum detectable effect (≥5% energy at
-     matched accuracy, 95% CI excluding zero). Budget 4–6 h. It does not gate the paper.
-  8. **Equivalence tests** (TOST) for null claims ("dense does not restore monotonicity", "router
-     adds nothing") with pre-specified margins.
-- **Outputs:** `prereg/qc_prereg.md` + freeze tag, `runs/<qc_*>/`, `analysis/qc_*/`,
-  new `artifacts/claims_evidence.csv` rows, `artifacts/ledger.csv` rows.
-- **Acceptance (G8):** a pre-specified causal contrast confirms the predicted direction (either
-  direction publishable) **and** the dense arm is estimated with a CI (no NI test at `n=500` —
-  underpowered for 5 pp) **and** the VoI bound is reported.
-- **Effort:** medium; model-download approval has lead time — request it in Phase 7.
+  1. **Freeze `prereg/qc_prereg.md` first**, then draw a **fresh sample ≥ 1,000 SQuAD dev
+     questions not in P1/P3**, run `k ∈ {1,4}` (~2,000 generations, ~1 h). **Report the `k=4`
+     oracle gap before running the policy; stop rule: gap < 10% → do not run it.**
+  2. **C3 distractor dose-response (1–2 h).** 300–500 questions with gold at rank 1 at `k=1`;
+     hold gold first and add 0/1/3/7/15/31 distractors after it. Add a position condition (gold at
+     rank 1/8/32 at fixed `k`). Paired McNemar/GLMM + trend test. This is the causal test of `Q`.
+  3. **C2 dense 2×2 (2 h, `n = 1,000`).** Use **already-cached** models (no download):
+     `sentence-transformers/all-MiniLM-L6-v2` (rev `1110a243…`, Apache 2.0) and the
+     `cross-encoder/ms-marco-MiniLM-L-6-v2` reranker (rev `233902d2…`). Same 45,651 passages,
+     same 70-word chunks, same reader/prompt/decoding, same `k` grid. Precompute and freeze rankings.
+     Estimand: `Δ = [A_d(4)−A_d(32)] − [A_b(4)−A_b(32)]` with a paired bootstrap.
+     Report `R/Q` decomposition **before** the accuracy claim; retriever energy measured separately.
+     `n=500` is direction-only.
+  4. **Router (primary, pre-generation).** Features: BM25 top/second/gap/mean/std/entropy/n-positive,
+     question length, wh-type, plus a few pre-generation interactions. **No `p(correct|k=0)`**
+     (constant 0.001, leaky, and probe-dominated), no gold presence, no post-generation signal in the
+     primary arm. Mandatory baselines: static `k=1/4/8/32`, P3 BM25-only, presence oracle,
+     confidence-only, random with the same depth histogram, knapsack oracle, and one
+     Adaptive-RAG/Self-RAG/FLARE/IRCoT-style baseline or a defensible justification. Report capture
+     **with a CI**, accuracy difference, energy difference, depth histogram, AUC, calibration,
+     learning curve.
+  5. **Decision rule (frozen):** capture ≥ 30% of the `k=4` gap with 95% CI lower bound > 0,
+     and accuracy-loss CI lower bound > `−2 pp`. Null conditions: fresh gap < 10%; capture CI
+     includes 0; accuracy beyond margin; flat ablation.
+  6. **Value-of-information note.** Probe-based routing cannot pay (`≈34.8 J/correct` probe vs
+     `≈7.3 J/correct` headroom); pre-generation routing can, because its features are free.
+     Report both, and use this to explain P3.
+  7. **Token-matched padding (0.5 h)** and **equivalence tests (TOST)** for null claims.
+- **Outputs:** `prereg/qc_prereg.md` + freeze tag, `runs/<qc_*>/`, `analysis/qc_*/`, new
+  `artifacts/claims_evidence.csv` rows, `artifacts/ledger.csv` rows.
+- **Acceptance (G8):** fresh gap reported; router capture CI with the 2 pp margin (or documented
+  null with MDE); causal contrast confirms direction; dense DiD with CI and `R/Q` decomposition.
+- **Effort:** medium; dense models already cached — no download approval needed unless a
+  retrieval-tuned encoder (`BAAI/bge-small-en-v1.5`, ~133 MB) is requested.
 
 ### Phase 9 — 🔬 optional · Pick at most one (0–2 GPU-h)
 
 - **D3 token-level attribution** (0 GPU-h if timestamps kept): prefill vs decode per `k`,
   `J/prefill-token` constancy — upgrades H1 to a hardware-grounded model. **Do this first.**
-- **D2 abstention-aware policy** (1–2 h) only if the router is retained; the abstention prize
-  (28.64% vs 7.21%) is the only headroom that can pay for itself.
+- **D2 abstention-aware policy** (1–2 h) as a *secondary* arm alongside the Phase 8 depth
+  router. The 28.64% abstention figure is a coverage/selective-prediction gain, not depth routing —
+  report it under that label, with its own cost accounting.
 - **Dropped: reader-strength scaling law.** The premise is already contradicted by the data
   (Qwen1.5B does not peak early; Llama peaks at 4; Qwen4B rises to 32), and `n=300` cannot identify
   `k_peak` vs size.
@@ -267,8 +297,8 @@ outputs, acceptance.
 | Gate | Phase | Criterion | Pass action |
 |---|---|---|---|
 | **G6** | 6 | Cluster-robust SE + token-vs-k + cross-fit reported; 5 pp = "not established"; 0.8 still failed | Enter Phase 7 |
-| **G7** | 7 | Per-depth factors identified (or bias model tested); estimators agree within tolerance; known-load check | Keep range as primary energy result |
-| **G8** | 8 | Prereg frozen; causal contrast confirms direction; dense estimated with CI; VoI bound reported | Headline contribution |
+| **G7** | 7 | Block estimator with CI; windows falsified (0.817) and unused; carryover `γ` reported; CV for all seven depths; manifest complete | Block estimator is the primary energy result |
+| **G8** | 8 | Prereg frozen; fresh `k=4` gap reported; router capture CI vs 2 pp margin; causal contrast direction; dense DiD with CI | Headline contribution (or documented null with MDE) |
 | **G10** | 10 | 15–18 pp; traceability; clean-room repro; v0.3.0 DOI + tag | Submit |
 
 A gate may not be added, removed, or re-thresholded after seeing the primary outcome. New studies
@@ -282,12 +312,14 @@ get new preregs; amendments go in `prereg/amendments.md` + `docs/DECISIONS.md`.
 |---|---|---:|
 | Now | Rigorous null + provisional joules | ~10% |
 | + Phase 6 | Statistically clean negative + mechanism | ~25–30% |
-| + Phase 7 | Joules you can defend or bound | ~35–40% |
-| + Phase 8 | "Depth has a knee" with a causal control | ~45–55% |
-| + Phase 10 | Full paper + artifact | ~50–60% |
+| + Phase 7 | Block-identified joules; windows falsified | ~35–40% |
+| + Phase 8 | Knee + causal control + confirmed router | ~50–60% |
+| + Phase 10 | Full paper + artifact | ~55–65% |
 
-Reading: Phase 6 is the best credibility per hour (free). Phase 8 is the biggest single jump
-(~35% → ~50%). The residual ceiling is scope — one confirmatory corpus, one retriever family, one
+Reading: Phase 6 is the best credibility per hour (free). Phase 8 is the biggest single jump,
+and it is now a *positive* bet rather than a bound: the retargeted `k=4` gap is 22.5% and the
+exploratory rule already captured 60% of it. If the fresh confirmation fails, the paper falls back
+to ~40–45% (knee + causal control, no router). The residual ceiling is scope — one confirmatory corpus, one retriever family, one
 laptop class — which no phase removes; only a second corpus or second hardware class would, and
 both are outside budget. If Phase 8's causal contrast comes back flat or inverted, the fallback is
 a measurement/reproducibility venue or a short paper, not a tuned positive.
@@ -298,7 +330,7 @@ a measurement/reproducibility venue or a short paper, not a tuned positive.
 
 | Item | Cost | Notes |
 |---|---|---|
-| GPU compute (Phases 7–9) | **$0** | Local RTX 3060 6 GB, batch 1, single job; **~11–17 GPU-h** new work |
+| GPU compute (Phases 7–9) | **$0** | Local RTX 3060 6 GB, batch 1, single job; **~12–18 GPU-h** new work (Phase 7 5–8, Phase 8 6–9, Phase 9 0–2) |
 | Electricity | ~$2 | Indicative, not metered billing |
 | Wall meter | **$25** | Depth-resolved 3×3×100 run (Phase 7, last) |
 | Backup USB | $10 | Verify checksums before new runs |
@@ -314,7 +346,8 @@ estimator. Do not train on P3 test IDs. Do not download weights, use paid APIs, 
 
 ## 7. Deliverables (additive)
 
-1. `prereg/qc_prereg.md` (+ freeze tag) before any Phase 8 outcome.
+1. `prereg/measurement_hardening_prereg.md` and `prereg/qc_prereg.md` (+ freeze tags) before
+   any Phase 7/8 outcome.
 2. `runs/<new_id>/raw.csv` + registry rows + `analysis/<phase>/` for Phases 7–9.
 3. Updated `paper/main.tex`, figures (≥600 DPI), `paper/out/main.pdf` via Overleaf `main.tex` root.
 4. Extended `artifacts/claims_evidence.csv` + `artifacts/ledger.csv`.
@@ -328,7 +361,8 @@ estimator. Do not train on P3 test IDs. Do not download weights, use paid APIs, 
 - Universal `k*`; frontier/API readers; dense-retriever *training*; multi-GPU/datacenter energy;
   carbon-optimal beyond a banded, explicitly illustrative conversion; production/SLO study.
 - 5 pp re-certification at ~7–16k pairs as the sole Q1 bet (exceeds budget, still null-prone).
-- Router as the acceptance gate (VoI arithmetic says it cannot pay for its probe).
+- **Probe-based** routing as a claim (a `k=0` probe costs ~34.8 J/correct vs ~7.3 J/correct of
+  headroom). Pre-generation routing on free features is in scope and is Phase 8's primary test.
 - H200 energy via MIG (`power.draw = N/A`); 32k CPU-offload; raw-text redistribution.
 
 ---
