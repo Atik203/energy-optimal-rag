@@ -15,20 +15,18 @@ reported, not tuned away. Prereg discipline (§7) still binds.
 
 ## 1. Completed work (compressed — do not redo)
 
-| Phase | Status | Result (one line) | Evidence |
-|---|---|---|---|
-| Pilot (200 q × 7 k) | ✅ done | Steep tradeoff signal; 2 pp dead (`P(k*)=0.61`), 5 pp signal `k=4`, 69.3% (uncertified) | `artifacts/claims_evidence.csv` C-001–C-024 (transcribed, D-011) |
-| P0 golden (200 q × 7 k) | ❌ gate fired | Block calibration `k=0 factor_csv=0.7944` < 0.80 floor; uncalibrated sweep only | `docs/P0_HARNESS_REPORT.md`, `runs/registry.csv` |
-| P1 powered (1,000 q × 7 k) | ❌ gate fired | **5 pp NOT supported**: `A(4)−A(32)=−4.30 pp`, one-sided lower `−6.17 pp`, `p=0.2691`; savings `58.17% [56.02,60.14]`; K3/K5/G1/G2 fail | `docs/P1_RESULTS.md`, `analysis/squad_qwen4b_p1/` |
-| P2 replication/transport | ✅ done | H7 split: Qwen1.5B `+2.00 pp` (fail) vs HotpotQA `−10.80 pp` (pass, ref `k=10`); G5 via HotpotQA only; all P2 energy uncalibrated | `docs/P2_RESULTS*.md` |
-| P2 probes/taxes | ✅ done | Boundary (no cliff), 16k (null `0.475→0.475`), Llama peak `k=4`, taxes inconclusive | `docs/P2_RESULTS*.md` |
-| P3 policy (608/206/186) | ❌ gate fired | **G4 fail**: policy `0.4194/59.99` vs static `0.4194/59.57`; oracle `28.64%` matched, capture `−2.46%`, AUC `0.733` | `docs/P3_RESULTS.md`, `analysis/policy/` |
-| P4 theory/sensitivity | ✅ done | Coverage rejected 3/4 arms; identity local-only; scoring flips `k*` 4↔8; frontier: 5 pp needs ~7,138 pairs, only 10 pp clears at `n=1,000` | `docs/P4_RESULTS.md`, `analysis/p4/`, `analysis/recall_precision.json` |
-| Measurement audit (D-028) | ✅ done | **Per-query NVML windows are sequence-dependent** (residual 5–15 W; `k=0` +24–82% by predecessor); replay 7,336.9 J vs blocks 7,195.7 J (1.020); P1 absolute `J` provisional, P2 range-only | `docs/MEASUREMENT_VALIDITY.md`, `docs/DECISIONS.md` D-028 |
-| Simulations S1–S3 | ✅ done | Ratio-of-sums bias 0.4–4.9%; NI type-I 4.8–6.5% (synthetic, no carryover); selection `P(true)` 0.27–0.51, K3-pass ≤0.155 | `analysis/simulations/` |
-| Paper + release | ⏳ in progress | Manuscript + figs + clean-room repro + backup done; ⏸️ public release pending (Overleaf verify, Zenodo new version, tag) — owned by Phase 10 | `paper/out/main.pdf`, `docs/BACKUP.md` |
+| Phase | Status | Result (one line; details in `docs/P*_RESULTS.md`) |
+|---|---|---|
+| Pilot (200 q × 7 k) | ✅ | Signal only: 2 pp dead (`P(k*)=0.61`); 5 pp uncertified (`k=4`, 69.3%) |
+| P0 golden | ❌ | Calibration FAIL (`k=0` 0.7944 < 0.80); sweep uncalibrated |
+| P1 (1,000 q × 7 k) | ❌ | 5 pp NOT supported: `-4.30 pp`, lower `-6.17`, `p=0.2691`; savings `58.17%`; K3/K5/G1/G2 fail |
+| P2 arms + probes | ✅ | H7 split (Qwen1.5B `+2.00` fail / HotpotQA `-10.80` pass); boundary/16k null; all energy uncalibrated |
+| P3 policy | ❌ | G4 fail: capture `-2.48%`, AUC `0.733`; matched oracle `28.64%` |
+| P4 + sims | ✅ | Coverage rejected 3/4; `R×Q` mechanism (0.015–0.024 vs 0.062–0.149); 5 pp needs ~7.1k pairs |
+| Metrology (D-028) | ✅ | Per-query NVML seq-dependent; P1 `J` provisional, P2 range-only |
+| Paper + release | ⏳ | 30 pp + 8 figs; repro + backup done; release pending — owned by Phase 10 |
 
-Rule: no new run re-thresholds P0–P4 gates. New data needs a **new prereg** (new run IDs, new hypothesis IDs); old runs are never patched.
+Rule: no new run re-thresholds P0–P4 gates. New data needs a **new prereg**; old runs are never patched.
 
 ---
 
