@@ -47,8 +47,13 @@ pip install -e ".[dev]"
 
 ## 3. Branch and commit conventions
 
-Branch names: `feat/<short-name>`, `fix/<short-name>`, `docs/<short-name>`,
-`exp/<run-id>`, `chore/<short-name>`.
+`main` is **protected**: no direct pushes. Land changes as follows:
+
+- `dev` is the integration branch. Small docs/config edits may commit to `dev` directly.
+- Larger work uses a short-lived branch off `dev` (`feat/<name>`, `fix/<name>`,
+  `docs/<name>`, `exp/<run-id>`, `chore/<name>`) and merges into `dev` via PR.
+- `dev` merges into `main` only via PR with owner review (1 approval, all threads
+  resolved). Never push `dev` or a feature branch straight to `main`.
 
 Commits use Conventional Commits:
 
@@ -67,6 +72,7 @@ outputs.
 
 Every PR must state:
 
+- [ ] Target branch is correct: feature → `dev`; release → `main` (owner review required).
 - [ ] What changed and why.
 - [ ] **Does this PR touch the preregistration, frozen data, or analysis code?** (yes/no)
 - [ ] If yes: link the amendment in `prereg/amendments.md` and the decision in
