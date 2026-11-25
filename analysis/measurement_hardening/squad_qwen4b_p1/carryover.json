@@ -1,0 +1,135 @@
+{
+  "run_id": "squad_qwen4b_p1",
+  "estimand": "J_i = a + b k_i + g k_{i-1} + d temp_i + e clock_i",
+  "n_obs": 6999,
+  "n_clusters": 1000,
+  "gamma_without_controls": {
+    "name": "k_prev_depth",
+    "coef": 0.09083375512297515,
+    "se_cluster": 0.006211845794090967,
+    "t": 14.622667421876598,
+    "p_normal_approx": 0.0,
+    "ci95": [
+      0.07865853736655685,
+      0.10300897287939344
+    ]
+  },
+  "gamma_with_temp_clock": {
+    "name": "k_prev_depth",
+    "coef": 0.09073593844061378,
+    "se_cluster": 0.006199304726560738,
+    "t": 14.63647012734482,
+    "p_normal_approx": 0.0,
+    "ci95": [
+      0.07858530117655474,
+      0.10288657570467283
+    ]
+  },
+  "models": {
+    "bare": {
+      "terms": [
+        {
+          "name": "intercept",
+          "coef": 15.804145791458774,
+          "se_cluster": 0.12296405646262687,
+          "t": 128.5265487013452,
+          "p_normal_approx": 0.0,
+          "ci95": [
+            15.563136240792026,
+            16.045155342125522
+          ]
+        },
+        {
+          "name": "k_depth",
+          "coef": 2.12835588735317,
+          "se_cluster": 0.009293318693898994,
+          "t": 229.02000431239085,
+          "p_normal_approx": 0.0,
+          "ci95": [
+            2.110140982713128,
+            2.146570791993212
+          ]
+        },
+        {
+          "name": "k_prev_depth",
+          "coef": 0.09083375512297515,
+          "se_cluster": 0.006211845794090967,
+          "t": 14.622667421876598,
+          "p_normal_approx": 0.0,
+          "ci95": [
+            0.07865853736655685,
+            0.10300897287939344
+          ]
+        }
+      ],
+      "n_obs": 6999,
+      "n_clusters": 1000,
+      "r_squared": 0.9238457251770875,
+      "controls": false
+    },
+    "controlled": {
+      "terms": [
+        {
+          "name": "intercept",
+          "coef": 28.553069988666756,
+          "se_cluster": 2.3133822258062455,
+          "t": 12.342564782486654,
+          "p_normal_approx": 0.0,
+          "ci95": [
+            24.018840826086514,
+            33.087299151246995
+          ]
+        },
+        {
+          "name": "k_depth",
+          "coef": 2.1232438804269154,
+          "se_cluster": 0.009259211133927601,
+          "t": 229.31153094100264,
+          "p_normal_approx": 0.0,
+          "ci95": [
+            2.1050958266044173,
+            2.1413919342494134
+          ]
+        },
+        {
+          "name": "k_prev_depth",
+          "coef": 0.09073593844061378,
+          "se_cluster": 0.006199304726560738,
+          "t": 14.63647012734482,
+          "p_normal_approx": 0.0,
+          "ci95": [
+            0.07858530117655474,
+            0.10288657570467283
+          ]
+        },
+        {
+          "name": "temp_c",
+          "coef": -0.11750443214037154,
+          "se_cluster": 0.025912403986869944,
+          "t": -4.534678920562991,
+          "p_normal_approx": 5.774657086288215e-06,
+          "ci95": [
+            -0.16829274395463661,
+            -0.06671612032610645
+          ]
+        },
+        {
+          "name": "clock_mhz",
+          "coef": -0.0014546489859546935,
+          "se_cluster": 0.0003620067957844204,
+          "t": -4.018291929582878,
+          "p_normal_approx": 5.864970320712537e-05,
+          "ci95": [
+            -0.0021641823056921575,
+            -0.0007451156662172296
+          ]
+        }
+      ],
+      "n_obs": 6999,
+      "n_clusters": 1000,
+      "r_squared": 0.9242346987901362,
+      "controls": true
+    }
+  },
+  "confounding_note": "The predecessor sets the thermal state the current request runs in, so g is partly confounded with thermal history even with the controls. This bounds the carryover; it does not identify a pure effect."
+}
