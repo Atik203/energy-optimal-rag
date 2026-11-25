@@ -1,0 +1,45 @@
+{
+  "dense_run_id": "squad_qwen4b_qc_dense",
+  "bm25_run_id": "squad_qwen4b_p7_blocks_full",
+  "arms": {
+    "bm25": {
+      "recall": {
+        "4": 0.775,
+        "32": 0.892
+      },
+      "accuracy": {
+        "4": 0.459,
+        "32": 0.49
+      },
+      "precision": {
+        "4": 0.5922580645161291,
+        "32": 0.5493273542600897
+      }
+    },
+    "dense": {
+      "recall": {
+        "4": 0.711,
+        "32": 0.884
+      },
+      "accuracy": {
+        "4": 0.441,
+        "32": 0.494
+      },
+      "precision": {
+        "4": 0.6202531645569621,
+        "32": 0.5588235294117647
+      }
+    }
+  },
+  "n": {
+    "bm25": 1000,
+    "dense": 1000
+  },
+  "did_point": -0.02200000000000002,
+  "did_ci95": [
+    -0.05399999999999999,
+    0.010000000000000009
+  ],
+  "tost_bound_pp": 2.0,
+  "verdict": "DiD includes zero (TOST at +-2 pp decides equivalence); reported as a null finding, not a failure."
+}

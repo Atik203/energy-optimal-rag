@@ -718,3 +718,35 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   conservative at df=3). Future runners persist per-question outcomes.
 - **Decision:** report H-overload as rejected; carry the positional hypothesis into the
   dense DiD interpretation.
+
+## D-037 - Steps 3b/4 complete: knee is reader-side, energy follows tokens
+
+- **Date:** 2026-11-26
+- **Status:** accepted
+- **Context:** Dense reader run (`squad_qwen4b_qc_dense`, 10 blocks x 200 qids,
+  `k in {4,32}`, ~1 h) and padding run (`squad_qwen4b_qc_padding`, 200 fresh qids x
+  3 conditions, ~20 min) both complete. Analyses in `analysis/qc_dense/did.json`.
+- **Findings (dense DiD):**
+  - BM25: R 0.775/0.892, Q 0.592/0.549, A 0.459/0.490. Dense: R 0.711/0.884,
+    Q 0.620/0.559, A 0.441/0.494.
+  - **DiD = -2.20 pp [-5.40, +1.00]**: includes zero and extends outside the +-2 pp
+    TOST band, so neither different nor equivalent — an inconclusive null, reported
+    as a finding per the prereg.
+  - MiniLM recall is *worse* than BM25 at both depths (0.711 vs 0.775 at k=4), yet
+    both arms rise with depth. The knee does not travel with the retriever.
+- **Findings (padding):**
+  - k4: 0.445, 26.22 J/q. k4-padded (same 4 passages + neutral tokens to k=32
+    length): 0.485, **75.93 J/q**. k32: 0.525, 87.22 J/q.
+  - Padding recovers 87% of the k=32 energy cost: **energy follows prompt tokens,
+    not passage count**. The affine H1 fit is a token cost, hardware-grounded.
+  - Accuracy on pad tokens alone rises 4 pp (0.445 to 0.485, n=200, SE ~3.5 pp) —
+    borderline, reported without a claim.
+- **Interpretation (bounded):** Steps 2, 3b, and 4 converge. Gold-first distractors
+  help (+14.6 pp); the knee survives a retriever swap; length alone costs nearly as
+  much as real passages. The mechanism is reader-side: the reader handles extra
+  context when the gold is present early and pays per token regardless. None of this
+  moves the claim boundary — no universal k*, no adaptive claim, GPU energy only.
+- **Harness note:** two `.answer`-vs-`gold` column bugs (scripts 36, 37), both caught
+  by smoke runs before any full measurement; swept scripts 30-37 clean afterwards.
+- **Decision:** Phase 8 measurements complete. G8 is adjudicated in
+  `docs/PHASE8_RESULTS.md`.

@@ -75,6 +75,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Phase 8 dense reader run.")
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--run-id", default=None)
+    parser.add_argument("--replicates", type=int, default=None)
+    parser.add_argument("--questions", type=int, default=None,
+                        help="Override questions per block (scale testing).")
+    parser.add_argument("--cooldown-s", type=float, default=None,
+                        help="Override cooldown seconds (scale testing).")
     parser.add_argument("--interval-ms", type=int, default=100)
     parser.add_argument(
         "--settle-s",
@@ -102,10 +107,10 @@ def main(argv: list[str] | None = None) -> int:
     interval_ms = int(args.interval_ms)
 
     blocks_cfg = config.get("blocks", {})
-    replicates = int(blocks_cfg.get("replicates", 5))
-    q_per_block = int(blocks_cfg.get("questions_per_block", 200))
+    replicates = int(blocks_cfg.get("replicates", 5)) if args.replicates is None else int(args.replicates)
+    q_per_block = int(blocks_cfg.get("questions_per_block", 200)) if args.questions is None else int(args.questions)
     discard = int(blocks_cfg.get("discard_first", 2))
-    cooldown = float(blocks_cfg.get("cooldown_s", 120.0))
+    cooldown = float(blocks_cfg.get("cooldown_s", 120.0)) if args.cooldown_s is None else float(args.cooldown_s)
 
     if args.smoke:
         run_id = f"{run_id}_smoke"
