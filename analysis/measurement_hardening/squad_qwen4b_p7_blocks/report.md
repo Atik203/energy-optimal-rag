@@ -14,4 +14,20 @@ Run `squad_qwen4b_p7_blocks`; 35 blocks.
 
 Savings at k=4 vs k=32: 75.70% [73.92, 77.33]
 
+| k | saving vs k=32 | 95% CI |
+|---:|---:|---:|
+| 1 | 67.98% | [65.57, 70.31] |
+| 2 | 78.18% | [76.62, 79.55] |
+| 4 | 75.70% | [73.92, 77.33] |
+| 8 | 65.19% | [62.58, 67.53] |
+| 16 | 32.10% | [26.09, 37.30] |
+
 Affine (k>=1): a = 14.52 J, b = 2.523 J/passage, 95% b interval [2.329, 2.717].
+
+| reference | saving | gap (pp) | verdict at 3 pp |
+|---|---:|---:|---|
+| sweep | 58.17% | 17.53 | disagree |
+| block calibration | 64.30% | 11.40 | disagree |
+| raw window | 68.47% | 7.23 | disagree |
+
+G7 replay agreement: 0/3 references agree; fails, so absolute energy stays a range.

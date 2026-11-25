@@ -562,3 +562,35 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   comparison against other systems. The paper must say "GPU energy" wherever joules appear and
   must not imply system energy. An energy-venue submission would need a second hardware class
   and a meter, so it is out of scope; the IR/ML venue path is unaffected.
+
+## D-032 - Phase 7 final: the saving is 65%, G7 still fails, and the knee is at k=2
+
+- **Date:** 2026-11-25
+- **Status:** accepted
+- **Context:** The representative block run (`squad_qwen4b_p7_blocks_full`, 35 blocks x 200
+  disjoint questions, 1,000 per depth) completed. It was the design added by A-003 after run 1
+  failed G7 on a 20-question accuracy denominator. Results are in `docs/PHASE7_RESULTS.md`.
+- **Findings:**
+  - The saving at `k=4` vs `k=32` is **65.25% [61.27, 69.11]**, down from run 1's inflated
+    75.70% and above the P1 sweep's conservative 58.17%.
+  - `A(k)` is strictly monotone and reproduces the full P1 sample within 0.9 pp at every depth,
+    confirming run 1's anomaly was sampling, not method.
+  - Block CV is 1.2-7.0% at all seven depths (H-M2 pass); the affine slope is 2.131
+    [2.043, 2.219] J/passage (H-M3 pass).
+  - **H-M1 fails**: 7.08 pp from the sweep. Only 1 of 3 registered references agrees at 3 pp.
+    Those three references span 10.3 pp on their own, so the tolerance could not be met by any
+    pair.
+  - `E(k)` is minimised at `k=1` (52.84 J/correct) with `k=2` indistinguishable (53.92), not at
+    `k=4` (61.72). Accuracy still rises 3.9 pp from `k=2` to `k=4`, then only 0.6 pp to `k=8`.
+- **Decision:**
+  1. Report the saving as a **range with the estimator named**: 65.25% [61.27, 69.11] on the block
+     estimator, 58.17% on the window; the conservative single claim is "more than 60%".
+  2. **G7 remains failed.** Absolute `J` stays a range; no point `E(k)` is a deployment guarantee.
+  3. Report the depth result as a **knee at `k=2`**, not an optimum, and not a universal `k*`.
+  4. Fix the analysis script to write `analysis/measurement_hardening/<run_id>/` so two runs in
+     the record cannot overwrite each other. Run 1 was regenerated and reproduces its committed
+     values exactly.
+- **Consequences:** The paper's savings sentence changes from a P1 point value to the range form.
+  6b energy-language pass inherits the constraint that every joule is GPU energy (D-031). The
+  remaining Phase 7 work is the replay set (10 permutation replays) and the session-variance ICC;
+  neither can rescue G7 to a pass, but both are reported because the prereg lists them.
