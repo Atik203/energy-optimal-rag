@@ -79,7 +79,7 @@ def main() -> int:
     )
     rows = list(split.questions.head(args.questions).itertuples(index=False))
     questions = {str(row.qid): str(row.question) for row in rows}
-    golds = {str(row.qid): str(row.answer) for row in rows}
+    golds = split.questions.set_index("qid")["gold"].to_dict()
     index = RetrievalIndex.from_corpus(split.corpus)
     reader = _default_reader(config)
 
@@ -126,7 +126,7 @@ def main() -> int:
                         questions[qid], [p.text for p in retrieved], make_nonce(nonce_chars)
                     )
                     end = time.monotonic()
-                    hit = correctness(result.text, golds[qid], "normalized_em")
+                    hit = correctness(result.text, str(golds[qid]), "normalized_em")
                     correct += hit
                     windows.append((qid, start, end, hit))
             finally:

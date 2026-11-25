@@ -68,7 +68,7 @@ the 20-question subsample, not a property of the estimator.
 |---|---|---|
 | H-M2 (block CV <= 20% at `k >= 4`) | 4.3%, 4.0%, 4.3%, 1.2% | **pass** |
 | H-M3 (affine, positive slope, `k >= 1`) | slope CI `[2.043, 2.219]` excludes zero | **pass** |
-| H-M1 (block agrees with replay within 3 pp) | 65.25 vs 58.17 = **7.08 pp** | **fail** |
+| H-M1 (block agrees with replay within 3 pp) | 65.25 vs **78.90** = **13.65 pp** | **fail** |
 
 **G7 fails.** Of the three registered replay references, one agrees:
 
@@ -82,6 +82,73 @@ The three registered values themselves span 10.3 pp (58.17 to 68.47), so a 3 pp 
 could not have been met by any pair of them. Per the frozen decision rule, both estimators are
 reported and **absolute `J` is demoted to a range**. No point estimate of `E(k)` becomes a
 deployment guarantee.
+
+## Replay adjudication: the reference is not a ground truth
+
+Ten permutation replays (`scripts/24_phase7_replays.py`, `scripts/25_phase7_replay_analysis.py`)
+were run to settle H-M1 directly: 20 questions per depth, every depth once per question in a
+permuted order, continuous, no cooldown. Idle 15.54 W (CV 0.005).
+
+| replay | total J | replay/block | saved (window %) |
+|---:|---:|---:|---:|
+| 0 | 5,364.1 | 1.036 | 73.85 |
+| 1 | 5,231.0 | 1.010 | 75.48 |
+| 2 | 4,534.6 | 0.876 | 79.41 |
+| 3 | 4,381.7 | 0.846 | 78.98 |
+| 4 | 4,392.2 | 0.848 | 77.78 |
+| 5 | 4,302.8 | 0.831 | 78.82 |
+| 6 | 4,767.8 | 0.921 | 80.09 |
+| 7 | 4,254.0 | 0.821 | 80.11 |
+| 8 | 4,070.9 | 0.786 | 80.07 |
+| 9 | 4,252.7 | 0.821 | 78.32 |
+
+Total replay/block: median **0.847**, range 0.786-1.036, CV 9.5%. The replays imply a saving of
+**78.90%** (range 73.85-80.11), which is 13.65 pp from the block estimate. H-M1 fails by a wider
+margin against the replay than against the sweep.
+
+The replay does not, however, provide the ground truth that H-M1 assumed. Two defects make it
+unusable as a reference:
+
+**1. The depth-resolved replay energies are per-query window sums.** They therefore carry the
+falsified estimator into the comparison, and the bias is strongly depth-dependent:
+
+| k | replay/block (window sum) | range over 10 replays |
+|---:|---:|---|
+| 1 | 0.469 | 0.423-0.653 |
+| 2 | 0.469 | 0.410-0.604 |
+| 4 | 0.502 | 0.431-0.606 |
+| 8 | 0.529 | 0.491-0.664 |
+| 16 | 0.649 | 0.604-0.696 |
+| 32 | 0.820 | 0.751-0.847 |
+
+Within a continuous sequence, per-query windows recover only **47%** of the constant-depth block
+energy at `k=1` and **82%** at `k=32`. This is the same depth-dependent bias the sweep showed, but
+larger: the P1 window was 78% of the block at `k=4`, the continuous replay window is 50%. Because
+the bias differs by depth, no single correction factor reconciles the two estimators — which is
+what the prereg predicted when it forbade a global replay/block factor.
+
+**2. The total drifts with thermal position.** The continuous integral is 15% below the sum of
+cooldown-separated blocks on median, but the ratio is **not stationary across replays**: fit
+against replay index gives a slope of -0.0216 per replay (R² 0.609, Spearman rho -0.855). The
+first replay, run on the coolest GPU, matches the block sum (1.036); by the last three it has fallen
+to 0.79-0.82. The replays were not exchangeable, so their distribution describes a thermal
+transient as much as a property of the estimator.
+
+**What this establishes.** Cross-estimator agreement is *unattainable by construction* with these
+instruments: the alternatives are either depth-biased (windows) or position-biased (continuous
+sequences). It does **not** establish that the block estimate is correct. What can be said is
+narrower and still useful:
+
+- The block protocol is the only one of the four tested that is stable: CV 1.2-7.0% at every
+  depth, on a randomized block order with a fixed 120 s cooldown.
+- The alternatives vary by 10-20% with protocol details that are not part of the estimand
+  (thermal position, sequence continuity, window length).
+- Therefore the block estimate is retained **on stability grounds**, not on validation against a
+  reference, and absolute `J` is a range.
+
+This is a negative metrology result and should be reported as one. It is also the strongest
+argument for the paper's protocol contribution: the randomized cooldown-separated block is what
+removes a 15% thermal artifact that a continuous sweep would silently absorb.
 
 ## What changed between the runs, and why
 
@@ -137,12 +204,19 @@ BM25, word chunks of 70). It is not a universal `k*` and must not be reported as
 - Block-to-block precision: CV 1.2-7.0% at all seven depths, against a 20% gate.
 - Energy is monotone and affine in depth above the `k=0` floor, slope 2.131 J/passage
   [2.043, 2.219].
-- The block estimator is the more accurate of the two: the window overstates short-depth energy
-  by 22% at `k=4`.
+- The block estimator is the more stable of the two: the window recovers 50% of block energy at
+  `k=4` in a continuous sequence and 82% at `k=32`, so its bias is depth-dependent and not
+  scalar-correctable.
+- A continuous sequence drifts 15% with thermal position (Spearman rho -0.855 against replay
+  index), so a cooldown-separated randomized block design removes an artifact that a sweep
+  absorbs silently.
 - `A(k)` on the block design reproduces the full P1 sample within 1 pp at every depth, so the
   run 1 anomaly was sampling, not method.
-- The saving is at least 61% (lower bound of the `k=4` interval) and at most 72% (`k=2` upper
-  bound). A conservative single statement is "**more than 60%**".
+- The saving is at least 61% on the block estimator (lower bound of the `k=4` interval,
+  [61.27, 69.11]) and 58% on the sweep. Every estimator tested puts it above 50%, so
+  "**more than half the GPU energy per correct answer at `k=4` versus `k=32`**" is safe across
+  all protocols. A tighter single statement, "more than 60%", holds for the block estimate and
+  the sweep but not as a floor over all estimators, because the continuous replay reads 78.90%.
 
 **Not claimable**
 
