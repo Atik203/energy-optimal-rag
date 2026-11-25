@@ -9,9 +9,11 @@
 Measuring, certifying, and deciding the retrieval depth that minimizes **joules per correct
 answer** — and deciding whether the energy spent finding that depth is worth it.
 
-**Research status: post-pilot MARGINAL.** This repository is an initial public scaffold. It
-contains no confirmatory results. The pilot evidence is reported below exactly as measured,
-including the claim that failed.
+**Research status: pre-Q1 hardening; Phase 6 complete (2026-11-25).** The repository holds a
+confirmatory negative result (5 pp non-inferiority not established), a nonzero accuracy-cost
+estimate, and a recall/precision mechanism. Absolute joules remain provisional until Phase 7
+replaces the falsified per-query window estimator. Every number below traces to a registered
+run or a registered analysis output.
 
 **P0 harness status (2026-11-15): FAIL - P1 started anyway, on PI authority (D-022).** The
 first golden run failed calibration. The clean `_r3` rerun then completed 1,400/1,400 valid rows
@@ -72,15 +74,28 @@ conditional reader precision falls, and the two-stage model fits with RMSE
 See [`docs/P4_RESULTS.md`](docs/P4_RESULTS.md) and
 [`docs/RECALL_PRECISION.md`](docs/RECALL_PRECISION.md).
 
-**P5/P6 status (2026-11-19): paper and reproducibility checks.** The paper and
-supplement include P1–P4, a formal theory appendix, an inference sensitivity
-layer, and simulation evidence; tables are regenerated from registered runs and
-the figures pass the 600+ DPI check. The SQuAD and HotpotQA manifest checksums verify,
+**P5/P6 status (2026-11-19, revised 2026-11-25): paper and reproducibility checks.** The
+manuscript is a single self-contained file (`paper/main.tex`, 30 pages, no appendix or
+supplement) covering P1-P4, the inference sensitivity layer, and the simulations; tables are
+regenerated from registered runs and the seven figures pass the 600+ DPI check. The SQuAD and HotpotQA manifest checksums verify,
 and a clean-room rerun of the P1/P2/P3/P4 analyses reproduces the committed
 outputs (line-ending normalized for P4). The raw/processed/analysis archive is
 backed up at `G:\energy-optimal-rag-backup\2026-11-18\` (D-027), with checksums in
 `docs/BACKUP.md`. The public code and analysis package is archived at
 **DOI `10.5281/zenodo.24352803`**; raw question/context text is not redistributed.
+
+**Phase 6 status (2026-11-25): COMPLETE - inference repair, no new data.** Four
+analysis defects were fixed on registered rows (`docs/PHASE6_RESULTS.md`, D-029):
+(1) a context-clustered interval, design effect 0.98 on 806 clusters, so the negative
+result is unchanged; (2) energy is affine in prompt tokens (R^2 0.902, BIC 29,290) better
+than in depth (0.888, 30,212), and the depth coefficient conditional on tokens is -0.11
+J/passage (SE 0.11); (3) cross-fitted selection picks k=4 in all five folds with a 58.13%
+held-out saving, while the preregistered stability gate stays failed at 0.7244; (4) the P3
+capture is -9.8% [-22.8, -1.8] against the matching 7.21% gap, not -2.46% against the
+abstention-inclusive gap. New mechanism evidence: holding the gold passage at rank 1 and
+adding 31 distractors costs 3.73 pp [0.73, 6.72], and on the 500 shared question IDs the
+depth contrast is -2.80 pp (Qwen3.5-4B), +2.00 pp (Qwen2.5-1.5B, inconclusive), and +5.00
+pp (Llama-3.2-3B). Claims C-052 to C-057; 426 tests pass.
 
 ---
 
@@ -235,7 +250,8 @@ require numpy, pandas, torch, or a GPU.
 
 ## Roadmap
 
-Phases P0–P6, sprint plan, gates K1–K7 / G1–G5, budget, deliverables, and risks:
+Phases P0–P10, sprint plan, gates K1–K7 / G1–G5 and the Q1 exit gates G6–G10, budget,
+deliverables, and risks:
 [`ROADMAP.md`](ROADMAP.md).
 
 Supervisor proposal: [`docs/proposal.md`](docs/proposal.md).
@@ -252,7 +268,8 @@ deck. Build and run instructions, including the offline install command, are in
 ## Citation
 
 If you use this scaffold, cite the repository (see [`CITATION.cff`](CITATION.cff)). The
-paper citation will be added when a manuscript is posted.
+archived code and analysis package is at DOI `10.5281/zenodo.24352803`; a new version
+(`v0.3.0`) is cut before submission (Phase 10).
 
 ## License
 

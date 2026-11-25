@@ -173,6 +173,8 @@ outputs, acceptance.
 
 ### Phase 7 — 📋 todo · Metrology: block estimator + falsified windows (5–8 GPU-h) — DO SECOND
 
+**Execution plan:** [docs/PHASE7_PLAN.md](docs/PHASE7_PLAN.md) (design, estimand, decision rules, risks).
+
 - **Goal:** replace the falsified per-query window with a block estimator, and report the window
   failure as a finding rather than correcting it with a scalar.
 - **Hypotheses:**

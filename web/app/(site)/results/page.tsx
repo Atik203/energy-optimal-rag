@@ -31,7 +31,7 @@ import { MathFrac, MathLine, MathSub, MathSup } from "@/components/math";
 export const metadata: Metadata = {
   title: "Pilot evidence",
   description:
-    "The pilot evidence, exactly as measured: the energy curve, accuracy plateau, dead 2 pp claim, context-side share, identity diagnostic, repeatability, and the 5 pp signal. No confirmatory results.",
+    "The pilot evidence plus the confirmatory P1 result: the energy curve, accuracy plateau, dead 2 pp claim, dead 5 pp claim, context-side share, identity diagnostic, repeatability, and the recall/precision mechanism.",
 };
 
 const setup = [
@@ -54,12 +54,12 @@ export default function ResultsPage() {
             The pilot, <em>exactly as measured.</em>
           </>
         }
-        lede={`A ${pilot.questions}-question run on one laptop GPU. It produced a precise energy curve, a dead static claim, and one signal that still needs power. Nothing on this page is confirmatory.`}
+        lede={`A ${pilot.questions}-question pilot on one laptop GPU, followed by the 1,000-question confirmatory run. The pilot gives the energy curve and the dead 2 pp rule; P1 establishes that the 5 pp guarantee is not met while the accuracy cost is real.`}
         meta={[
           { label: `Pilot n = ${pilot.questions}`, tone: "caution" },
-          { label: "No confirmatory results", tone: "dead" },
+          { label: "P1 confirmatory: 5 pp NOT met", tone: "dead" },
           { label: "2 pp claim DEAD", tone: "dead" },
-          { label: "5 pp: signal, not certified", tone: "caution" },
+          { label: "Accuracy cost real (-4.30 pp)", tone: "caution" },
         ]}
       />
 
@@ -74,15 +74,20 @@ export default function ResultsPage() {
           </span>
           <div>
             <p className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-dead">
-              No confirmatory results
+              Confirmatory result: 5 pp not established
             </p>
             <h2 id="no-confirmatory" className="display-title mt-2 text-2xl sm:text-3xl">
-              This page reports pilot evidence only.
+              The pilot sets up the design; P1 decides it.
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              The pilot raw CSVs are not in this repository. Values are transcribed from the
-              repository record and are not independently reproducible from this public scaffold.
-              The P0 harness sweep is a harness check, not confirmatory evidence; its clean _r3 run failed block calibration at k=0 (factor 0.7944). P1 ran under D-022 with a frozen prereg: 7,000/7,000 rows, 0 invalid, calibration 7/7, but the 5 pp non-inferiority claim was not supported (A(4)-A(32) = -4.30 pp; one-sided lower -6.17 pp; savings 58.17%). Both the 2 pp and 5 pp static claims are dead; the {pilot.oracle.gain}% oracle gain is an upper bound.
+              The pilot raw CSVs are not in this repository; pilot values are transcribed and
+              labelled as pilot. The P0 harness sweep is a harness check, not evidence. P1 ran
+              under D-022 with a frozen prereg: 7,000/7,000 rows, 0 invalid, calibration 7/7, and
+              the 5 pp non-inferiority claim was not supported (A(4)-A(32) = -4.30 pp; one-sided
+              lower -6.17 pp; savings 58.17%). A context-clustered interval leaves the result
+              unchanged (design effect 0.98). The accuracy cost is nonetheless nonzero (two-sided
+              95% CI [-6.53, -2.07] pp; McNemar p = 0.0002). Both static claims are dead; the
+              {pilot.oracle.gain}% oracle gain remains an upper bound.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               <Chip tone="caution" dot>
@@ -691,7 +696,7 @@ export default function ResultsPage() {
               <h3 className="text-sm font-semibold">What is not here</h3>
             </div>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
-              <li className="flex gap-2"><span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-dead" aria-hidden />No confirmatory accuracy or energy results.</li>
+              <li className="flex gap-2"><span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-dead" aria-hidden />P1 is confirmatory and negative on the 5 pp claim; its energy scale remains provisional.</li>
               <li className="flex gap-2"><span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-dead" aria-hidden />No certified 5 pp result.</li>
               <li className="flex gap-2"><span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-dead" aria-hidden />No learned-policy gain.</li>
               <li className="flex gap-2"><span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-dead" aria-hidden />No universal optimum, carbon claim, or frontier/dense-retriever generalization.</li>

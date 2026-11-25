@@ -138,7 +138,7 @@ export default function HomePage() {
 
           <div className="mt-5 flex flex-wrap gap-2">
             <Chip tone="caution" dot>
-              Post-pilot MARGINAL
+              Pre-Q1 hardening
             </Chip>
             <Chip tone="caution" dot>
               {p0.label}
