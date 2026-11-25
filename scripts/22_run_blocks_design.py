@@ -187,6 +187,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--fresh", action="store_true", help="Ignore a partial file and start over."
     )
+    parser.add_argument(
+        "--smoke",
+        action="store_true",
+        help="Run one tiny block in a separate _smoke run directory, then stop.",
+    )
     args = parser.parse_args(argv)
 
     resolved = resolve_run_config(Path(args.config), root=ROOT)
@@ -203,6 +208,15 @@ def main(argv: list[str] | None = None) -> int:
     nonce_hex = int(config.get("energy", {}).get("nonce_hex_chars", 10))
     candidate = int(config.get("blocks", {}).get("candidate_depth", 4))
     reference = int(config.get("blocks", {}).get("reference_depth", 32))
+
+    if args.smoke:
+        run_id = f"{run_id}_smoke"
+        replicates = 1
+        q_per_block = 3
+        discard = 0
+        cooldown = 0.0
+        k_grid = [int(k_grid[0])]
+        print("mode          smoke (one block, 3 questions, no cooldown)")
 
     plan = build_block_plan(k_grid, replicates, seed=seed)
     n_generations = len(plan) * (q_per_block + discard)

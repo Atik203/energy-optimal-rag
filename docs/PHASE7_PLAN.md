@@ -61,19 +61,22 @@ cooldowns.
    `unknown` for fields that were never recorded. Never fabricate a value.
 2. **Freeze the prereg.** Write `prereg/measurement_hardening_prereg.md` with the estimand,
    design, exclusions, stop rule, and decision rules below; tag it.
-3. **Pilot block (0.5 GPU-h).** One depth, two blocks, confirm the harness writes block windows
+3. **Smoke block (2 min).** `--smoke` runs one block of 3 questions at the first depth in a
+   separate `_smoke` run directory, with no cooldown. This executes the measurement path
+   end-to-end (sampler, integrator, JSON, manifest) before committing GPU hours.
+4. **Pilot block (0.5 GPU-h).** One depth, two blocks, confirm the harness writes block windows
    and idle baselines correctly.
-4. **Block sweep (2-3 GPU-h).** 7 depths x 5 blocks, randomized order, cooldown, discard rule.
-5. **Replays (1-1.5 GPU-h).** `R = 10`; report the distributions of `replay/block` and
+5. **Block sweep (2-3 GPU-h).** 7 depths x 5 blocks, randomized order, cooldown, discard rule.
+6. **Replays (1-1.5 GPU-h).** `R = 10`; report the distributions of `replay/block` and
    `per-query sum/replay` with 95% CIs. Do not apply a global factor.
-6. **Carryover regression (0 GPU-h, existing rows).** Fit
+7. **Carryover regression (0 GPU-h, existing rows).** Fit
    `J_i = a + b k_i + g k_{i-1} + d temp_i + e clock_i` with cluster-robust SEs by question;
    report `g`. Add a crossed subset varying the predecessor over `{0,4,32}` for one target depth.
-7. **Session variance (1 GPU-h).** Three sessions on `n = 200`, `k in {1,4,32}`; report ICC.
-8. **Wall meter (1-2 h + hardware).** Run last, then re-baseline idle. Report
+8. **Session variance (1 GPU-h).** Three sessions on `n = 200`, `k in {1,4,32}`; report ICC.
+9. **Wall meter (1-2 h + hardware).** Run last, then re-baseline idle. Report
    `system_J / (GPU_J + CPU_proxy)` as a range; never rescale P1.
-9. **Analysis and report.** Block estimator, convergence table, CV distributions, affine fit on
-   `k >= 1`; write `analysis/measurement_hardening/`.
+10. **Analysis and report.** Block estimator, convergence table, CV distributions, affine fit on
+    `k >= 1`; write `analysis/measurement_hardening/`.
 
 ## 5. Decision rules (frozen before the run)
 
