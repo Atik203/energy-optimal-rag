@@ -103,11 +103,35 @@ def _nvidia_smi(field: str) -> str:
     return value[0].strip() if value else "unknown"
 
 
+def _cuda_version() -> str:
+    """Parse the driver/CUDA banner, which is not a queryable GPU field."""
+    try:
+        completed = subprocess.run(["nvidia-smi"], capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.TimeoutExpired):
+        return "unknown"
+    for line in completed.stdout.splitlines():
+        if "CUDA Version" in line:
+            _, _, tail = line.partition("CUDA Version:")
+            return tail.strip().split()[0] if tail.strip() else "unknown"
+    return "unknown"
+
+
+def _ollama_version(host: str) -> str:
+    try:
+        import requests
+
+        response = requests.get(f"{host.rstrip('/')}/api/version", timeout=5)
+        response.raise_for_status()
+        return str(response.json().get("version", "unknown"))
+    except Exception:
+        return "unknown"
+
+
 def _environment(config: dict[str, Any]) -> dict[str, str]:
     reader = config.get("reader", {})
     return {
         "nvidia_driver": _nvidia_smi("driver_version"),
-        "cuda_version": _nvidia_smi("cuda_version"),
+        "cuda_version": _cuda_version(),
         "gpu_name": _nvidia_smi("name"),
         "power_mode": str(config.get("measurement", {}).get("power_mode", "unknown")),
         "batch_size": str(config.get("measurement", {}).get("batch_size", 1)),
@@ -118,7 +142,9 @@ def _environment(config: dict[str, Any]) -> dict[str, str]:
         "reader_model": str(reader.get("model", "")),
         "num_ctx": str(reader.get("num_ctx", "")),
         "quantization": str(reader.get("quantization", "")),
-        "ollama_version": "unknown",
+        "ollama_version": _ollama_version(str(reader.get("host", "http://127.0.0.1:11434")))
+        if str(reader.get("backend", "ollama")) == "ollama"
+        else "not-applicable",
         "ambient_temp_c": "unknown",
     }
 
