@@ -1,0 +1,98 @@
+{
+  "run_id": "squad_qwen4b_p1",
+  "per_depth": {
+    "0": {
+      "n": 1000,
+      "mean_j": 14.585339191,
+      "mean_prefill_s": 0.09802089,
+      "mean_eval_s": 0.020993874,
+      "mean_prompt_tokens": 86.267,
+      "mean_output_tokens": 2.008,
+      "j_per_prefill_token": 0.16907205757705726,
+      "j_per_decode_token": 7.263615134960159
+    },
+    "1": {
+      "n": 1000,
+      "mean_j": 25.071343201,
+      "mean_prefill_s": 0.130136365,
+      "mean_eval_s": 0.069758592,
+      "mean_prompt_tokens": 166.049,
+      "mean_output_tokens": 5.045,
+      "j_per_prefill_token": 0.15098761932321184,
+      "j_per_decode_token": 4.969542755401388
+    },
+    "2": {
+      "n": 1000,
+      "mean_j": 26.839736918,
+      "mean_prefill_s": 0.161461166,
+      "mean_eval_s": 0.074581544,
+      "mean_prompt_tokens": 250.234,
+      "mean_output_tokens": 5.336,
+      "j_per_prefill_token": 0.10725855366576884,
+      "j_per_decode_token": 5.029935704272863
+    },
+    "4": {
+      "n": 1000,
+      "mean_j": 32.505134455,
+      "mean_prefill_s": 0.231015517,
+      "mean_eval_s": 0.086230678,
+      "mean_prompt_tokens": 416.978,
+      "mean_output_tokens": 5.934,
+      "j_per_prefill_token": 0.07795407540685599,
+      "j_per_decode_token": 5.477777966801482
+    },
+    "8": {
+      "n": 1000,
+      "mean_j": 40.886658748,
+      "mean_prefill_s": 0.386078618,
+      "mean_eval_s": 0.093823175,
+      "mean_prompt_tokens": 749.968,
+      "mean_output_tokens": 6.179,
+      "j_per_prefill_token": 0.05451787109316665,
+      "j_per_decode_token": 6.617034916329503
+    },
+    "16": {
+      "n": 1000,
+      "mean_j": 58.419731355,
+      "mean_prefill_s": 0.716768399,
+      "mean_eval_s": 0.106253084,
+      "mean_prompt_tokens": 1423.874,
+      "mean_output_tokens": 6.574,
+      "j_per_prefill_token": 0.04102872259413403,
+      "j_per_decode_token": 8.886481800273806
+    },
+    "32": {
+      "n": 1000,
+      "mean_j": 91.19680283,
+      "mean_prefill_s": 1.474419577,
+      "mean_eval_s": 0.113815695,
+      "mean_prompt_tokens": 2769.318,
+      "mean_output_tokens": 6.735,
+      "j_per_prefill_token": 0.032931141468765954,
+      "j_per_decode_token": 13.540727962880474
+    }
+  },
+  "j_per_prefill_token_constancy": {
+    "min": 0.032931141468765954,
+    "max": 0.16907205757705726,
+    "ratio_max_min": 5.134108628983184
+  },
+  "depth_model_J_on_k": {
+    "coefs": [
+      21.24501685762012,
+      2.23475601102634
+    ],
+    "r_squared": 0.8964650578633864,
+    "n": 7000
+  },
+  "token_model_J_on_tokens": {
+    "coefs": [
+      13.88236216361932,
+      0.025485357443558357,
+      1.1350007218165246
+    ],
+    "r_squared": 0.9574613493106843,
+    "n": 7000
+  },
+  "note": "Prefill/decode split is wall-time attribution on one GPU; tokens come from the reader's own counts."
+}
