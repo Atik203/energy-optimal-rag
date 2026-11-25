@@ -74,7 +74,7 @@ cooldowns.
 8. **Session variance (1 GPU-h).** Three sessions on `n = 200`, `k in {1,4,32}`; report ICC.
    The wall meter is waived (D-031): no meter will be purchased, so only GPU energy is reported.
 9. **Analysis and report.** Block estimator, convergence table, CV distributions, affine fit on
-    `k >= 1`; write `analysis/measurement_hardening/`.
+    `k >= 1`; write `analysis/measurement_hardening/<run_id>/`.
 
 ## 5. Decision rules (frozen before the run)
 
@@ -98,7 +98,7 @@ cooldowns.
 1. `prereg/measurement_hardening_prereg.md` + freeze tag.
 2. `runs/<block_run_id>/raw.csv`, `blocks.json`, `manifest.json`, registry row.
 3. `runs/<replay_run_id>/` and `runs/<session_run_id>/`.
-4. `analysis/measurement_hardening/` JSON + report; updated validity figure.
+4. `analysis/measurement_hardening/<run_id>/` JSON + report; updated validity figure.
 5. `docs/PHASE7_RESULTS.md`; `docs/DECISIONS.md` entry; claims rows.
 6. `paper/main.tex` energy-language pass (the deferred 6b edits): every absolute `J/E/N*/S(k)/a`
    becomes a range or a diagnostic.

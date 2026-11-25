@@ -49,6 +49,30 @@ re-analyses of registered rows; no gate changes.
 
 Regenerate with `python scripts/21_phase6_inference.py`.
 
+## Phase 7 measurement hardening
+
+`analysis/measurement_hardening/<run_id>/` holds the block-estimator outputs, one directory per
+run so that runs in the record cannot overwrite each other.
+
+| Run | Output |
+|---|---|
+| `squad_qwen4b_p7_blocks` | First block run (20 questions per block); the energy-precision result |
+| `squad_qwen4b_p7_blocks_full` | Representative run (200 disjoint questions per block, 1,000 per depth); the reported result |
+
+Each directory contains `estimates.json` (ratio-of-sums `E(k)`, accuracy, CV, savings with the
+cluster-bootstrap interval and every depth against the reference), `affine.json` (weighted fit on
+`k >= 1`, `k=0` as a floor), `convergence.json` (replay agreement at the frozen 3 pp tolerance),
+and `report.md`.
+
+Regenerate with:
+
+```bash
+python scripts/23_phase7_analysis.py --run-id squad_qwen4b_p7_blocks_full
+python scripts/23_phase7_analysis.py --run-id squad_qwen4b_p7_blocks
+```
+
+Results and interpretation: `docs/PHASE7_RESULTS.md`, decision D-032.
+
 ## Rules
 
 - Analysis code reads only `runs/<run_id>/raw.csv` and the frozen config.

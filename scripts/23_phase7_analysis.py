@@ -116,7 +116,9 @@ def main() -> int:
     payload = json.loads(src.read_text(encoding="utf-8"))
     blocks = _observations(payload)
     totals = depth_totals(blocks)
-    out_dir = root / "analysis" / "measurement_hardening"
+    # One directory per run: two block runs are both part of the record and must not
+    # overwrite each other's estimates.
+    out_dir = root / "analysis" / "measurement_hardening" / args.run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
     estimates = {
@@ -135,6 +137,18 @@ def main() -> int:
             "point": boot["point"],
             "ci95": boot["ci"],
             "n_valid": boot["n_valid"],
+        }
+        # Every other depth against the reference, so the knee can be located rather
+        # than assumed: the paper reports where E(k) stops falling.
+        estimates["savings_vs_reference"] = {
+            str(d): {
+                "point": b["point"],
+                "ci95": b["ci"],
+                "n_valid": b["n_valid"],
+            }
+            for d in sorted(totals)
+            if d not in (0, REFERENCE) and totals[d]["correct"] > 0
+            for b in [bootstrap_savings(blocks, d, REFERENCE, seed=20261115)]
         }
     (out_dir / "estimates.json").write_text(json.dumps(estimates, indent=2), encoding="utf-8")
 
@@ -190,12 +204,46 @@ def main() -> int:
             f"Savings at k={CANDIDATE} vs k={REFERENCE}: "
             f"{100 * s['point']:.2f}% [{100 * s['ci95'][0]:.2f}, {100 * s['ci95'][1]:.2f}]",
         ]
+        extra = estimates.get("savings_vs_reference", {})
+        if extra:
+            lines += [
+                "",
+                f"| k | saving vs k={REFERENCE} | 95% CI |",
+                "|---:|---:|---:|",
+            ]
+            for k in sorted(extra, key=int):
+                item = extra[k]
+                lines.append(
+                    f"| {k} | {100 * item['point']:.2f}% | "
+                    f"[{100 * item['ci95'][0]:.2f}, {100 * item['ci95'][1]:.2f}] |"
+                )
     if "slope_b_j_per_passage" in affine:
         lines += [
             "",
             f"Affine (k>=1): a = {affine['intercept_a_j']:.2f} J, "
             f"b = {affine['slope_b_j_per_passage']:.3f} J/passage, "
             f"95% b interval [{affine['ci95_b'][0]:.3f}, {affine['ci95_b'][1]:.3f}].",
+        ]
+    if "savings" in estimates:
+        lines += [
+            "",
+            f"| reference | saving | gap (pp) | verdict at {TOLERANCE_PP:g} pp |",
+            "|---|---:|---:|---|",
+        ]
+        for name, item in (
+            ("sweep", conv["block_vs_sweep"]),
+            ("block calibration", conv["block_vs_block_calibration"]),
+            ("raw window", conv["block_vs_raw"]),
+        ):
+            lines.append(
+                f"| {name} | {item['alternative_savings_pct']:.2f}% | {item['gap_pp']:.2f} | "
+                f"{'agree' if item['agrees'] else 'disagree'} |"
+            )
+        n_agree = sum(1 for item in conv.values() if item["agrees"])
+        lines += [
+            "",
+            f"G7 replay agreement: {n_agree}/3 references agree; "
+            f"{'passes' if n_agree == 3 else 'fails'}, so absolute energy stays a range.",
         ]
     (out_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"wrote {out_dir}")
