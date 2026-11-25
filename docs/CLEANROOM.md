@@ -1,13 +1,24 @@
 # Clean-room reproduction check
 
-- **Date:** 2026-11-18
+- **Date:** 2026-11-18 (initial), re-run 2026-11-26 on `exp/phase10-repro`.
 - **Source:** `git archive HEAD` (tracked files only), extracted to a fresh
   temporary directory.
 - **Data:** copied `runs/`, `data/raw/`, and `data/processed/` into the clean
-  tree; no repository-relative state was reused.
+  tree; no repository-relative state was reused. (On the 2026-11-26 re-run the
+  first copy nested runs as `runs/runs/` and misplaced processed data; fixed
+  before measuring.)
 - **Environment:** Python 3.12, project venv, same package set.
 
-## Checks
+## Checks (2026-11-26, `exp/phase10-repro`)
+
+| Check | Result |
+|---|---|
+| `pytest -q` | 483 passed (matches working tree) |
+| `python -m rag_energy.cli validate` | all configs valid |
+| `scripts/38_qc_token_attribution.py` | identical: R2 0.9575, 25 mJ/token |
+| `scripts/33_qc_fresh_analysis.py` | identical: gap 3.00pp, saving 16.90% |
+
+## Checks (2026-11-18)
 
 | Check | Result |
 |---|---|
