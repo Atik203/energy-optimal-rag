@@ -57,7 +57,6 @@ def main() -> int:
     parser.add_argument("--questions", type=int, default=200)
     parser.add_argument("--segments", type=int, default=4)
     parser.add_argument("--cooldown-s", type=float, default=120.0)
-    parser.add_argument("--settle-s", type=float, default=120.0)
     parser.add_argument("--interval-ms", type=int, default=100)
     parser.add_argument("--root", default=str(ROOT))
     parser.add_argument("--fresh", action="store_true")
@@ -104,16 +103,18 @@ def main() -> int:
     for session in range(args.sessions):
         if session in done:
             continue
-        if session == 0:
-            print(f"settling {args.settle_s:.0f} s before the first idle baseline")
-            time.sleep(args.settle_s)
-        idle = _measure_idle(NvmlSampler, args.interval_ms, IDLE_SECONDS)
-        print(f"session {session}  idle {idle.mean_w:.2f} W (CV {idle.cv:.3f})")
-
+        print(f"session {session}")
         blocks: list[dict[str, Any]] = []
         for depth in DEPTHS:
-            if args.cooldown_s > 0:
-                time.sleep(args.cooldown_s)
+            # The idle baseline is taken from the tail of the pre-block cooldown, not
+            # from a separate window at session start. A baseline read straight after
+            # the previous block catches a cooling GPU (22.6 W instead of 15 W) and
+            # understates that block's energy by about 14%.
+            settle = max(0.0, args.cooldown_s - IDLE_SECONDS)
+            if settle > 0:
+                time.sleep(settle)
+            idle = _measure_idle(NvmlSampler, args.interval_ms, IDLE_SECONDS)
+            print(f"  k={depth:<3} idle {idle.mean_w:.2f} W (CV {idle.cv:.3f})")
             sampler = NvmlSampler(args.interval_ms)
             sampler.start()
             windows: list[tuple[str, float, float, int]] = []
@@ -157,6 +158,8 @@ def main() -> int:
                     "correct": correct,
                     "n": len(windows),
                     "energy_per_query_j": total / len(windows),
+                    "idle_mean_w": idle.mean_w,
+                    "idle_cv": idle.cv,
                     "segments": segments,
                 }
             )
@@ -168,8 +171,9 @@ def main() -> int:
         item = {
             "session": session,
             "started_utc": _utc_now(),
-            "idle_mean_w": idle.mean_w,
-            "idle_cv": idle.cv,
+            "idle_mean_w": sum(b["idle_mean_w"] for b in blocks) / len(blocks),
+            "idle_cv": sum(b["idle_cv"] for b in blocks) / len(blocks),
+            "idle_by_block": {str(b["k"]): b["idle_mean_w"] for b in blocks},
             "questions": args.questions,
             "segments_per_block": args.segments,
             "segment_size": seg_size,
