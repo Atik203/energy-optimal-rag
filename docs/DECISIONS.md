@@ -614,7 +614,7 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   - Comparing the session run against run 2's replicate 0 (identical 200 questions, identical
     accuracy), the absolute level is **3.3-5.9% lower** in the session run. That offset is not
     explained by idle, question mix, or accuracy.
-  - The saving is nevertheless stable: 66.97%, 66.28%, 66.41% across sessions (0.69 pp spread)
+  - The saving is nevertheless stable: 66.97%, 66.28%, 66.41% across sessions (0.70 pp spread)
     against 65.64% for the same questions in run 2, a 0.92 pp cross-occasion difference.
 - **Decision:**
   1. Report session variance as negligible and cite the ICC table.

@@ -25,6 +25,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 DEFAULT_RUN_ID = "squad_qwen4b_p7_sessions"
+CANDIDATE = 4
+REFERENCE = 32
 
 
 def _icc_one_way(groups: list[list[float]]) -> dict[str, float]:
@@ -78,6 +80,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Phase 7 session-variance analysis.")
     parser.add_argument("--root", default=str(ROOT))
     parser.add_argument("--run-id", default=DEFAULT_RUN_ID)
+    parser.add_argument(
+        "--compare-run-id",
+        default="squad_qwen4b_p7_blocks_full",
+        help="Block run measured on the same questions for the cross-occasion comparison.",
+    )
+    parser.add_argument("--compare-replicate", type=int, default=0)
     args = parser.parse_args()
     root = Path(args.root)
     src = root / "runs" / args.run_id / "sessions.json"
@@ -153,6 +161,64 @@ def main() -> int:
     idles = [float(s["idle_mean_w"]) for s in sessions]
     idles_cv = [float(s["idle_cv"]) for s in sessions]
 
+    # Cross-occasion comparison: the session run used the same first 200 questions as the
+    # block run's replicate 0, so the two are directly comparable. This is what makes the
+    # "level moves, ratio does not" statement traceable to a registered output.
+    cross: dict[str, Any] = {}
+    compare_dir = root / "runs" / args.compare_run_id
+    compare_path = compare_dir / "blocks_design.json"
+    if compare_path.is_file():
+        compare = json.loads(compare_path.read_text(encoding="utf-8"))
+        # Reproduce the session question set: the first `questions_per_block` questions,
+        # which is replicate 0 of a disjoint block design.
+        j_tot: dict[int, float] = {}
+        c_tot: dict[int, int] = {}
+        n_tot: dict[int, int] = {}
+        for block in compare["blocks"]:
+            if int(block["replicate"]) != args.compare_replicate:
+                continue
+            k = int(block["k"])
+            j_tot[k] = j_tot.get(k, 0.0) + float(block["energy_j"])
+            c_tot[k] = c_tot.get(k, 0) + int(block["correct"])
+            n_tot[k] = n_tot.get(k, 0) + int(block["n"])
+        per_depth: dict[str, Any] = {}
+        for depth in depths:
+            if depth not in j_tot or not c_tot.get(depth):
+                continue
+            cmp_jq = j_tot[depth] / n_tot[depth]
+            sess_jq = by_depth[str(depth)]["block_mean_j_per_query"]
+            per_depth[str(depth)] = {
+                "compare_j_per_query": cmp_jq,
+                "session_mean_j_per_query": sess_jq,
+                "offset_pct": 100 * (sess_jq / cmp_jq - 1),
+                "compare_accuracy": c_tot[depth] / n_tot[depth],
+                "session_accuracy": statistics.mean(by_depth[str(depth)]["accuracy"]),
+            }
+        savings: dict[str, Any] = {}
+        if CANDIDATE in j_tot and REFERENCE in j_tot:
+            cmp_e4 = (j_tot[CANDIDATE] / n_tot[CANDIDATE]) / (c_tot[CANDIDATE] / n_tot[CANDIDATE])
+            cmp_e32 = (j_tot[REFERENCE] / n_tot[REFERENCE]) / (c_tot[REFERENCE] / n_tot[REFERENCE])
+            session_savings = []
+            for session in sessions:
+                b4 = next(b for b in session["blocks"] if int(b["k"]) == CANDIDATE)
+                b32 = next(b for b in session["blocks"] if int(b["k"]) == REFERENCE)
+                e4 = b4["energy_per_query_j"] / (b4["correct"] / b4["n"])
+                e32 = b32["energy_per_query_j"] / (b32["correct"] / b32["n"])
+                session_savings.append(100 * (1 - e4 / e32))
+            savings = {
+                "compare_saving_pct": 100 * (1 - cmp_e4 / cmp_e32),
+                "session_saving_pct": session_savings,
+                "session_saving_mean_pct": statistics.mean(session_savings),
+                "session_saving_spread_pp": max(session_savings) - min(session_savings),
+                "difference_pp": statistics.mean(session_savings) - 100 * (1 - cmp_e4 / cmp_e32),
+            }
+        cross = {
+            "compare_run_id": args.compare_run_id,
+            "compare_replicate": args.compare_replicate,
+            "by_depth": per_depth,
+            "savings": savings,
+        }
+
     out = {
         "run_id": args.run_id,
         "n_sessions": len(sessions),
@@ -162,6 +228,7 @@ def main() -> int:
         "idle_mean_w": idles,
         "idle_cv": idles_cv,
         "by_depth": by_depth,
+        "cross_occasion": cross,
         "note": (
             "ICC(1,1) with three sessions is coarse; it is reported as a descriptive "
             "decomposition, not as a precise variance component."

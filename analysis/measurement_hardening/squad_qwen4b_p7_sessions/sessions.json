@@ -175,5 +175,43 @@
       "segments_per_session": 4.0
     }
   },
+  "cross_occasion": {
+    "compare_run_id": "squad_qwen4b_p7_blocks_full",
+    "compare_replicate": 0,
+    "by_depth": {
+      "1": {
+        "compare_j_per_query": 19.261218375326635,
+        "session_mean_j_per_query": 18.447553794032377,
+        "offset_pct": -4.224367147701058,
+        "compare_accuracy": 0.34,
+        "session_accuracy": 0.3416666666666667
+      },
+      "4": {
+        "compare_j_per_query": 26.470148577609248,
+        "session_mean_j_per_query": 24.909276838351843,
+        "offset_pct": -5.89672451093729,
+        "compare_accuracy": 0.43,
+        "session_accuracy": 0.42833333333333334
+      },
+      "32": {
+        "compare_j_per_query": 85.99506189146838,
+        "session_mean_j_per_query": 83.18947061800777,
+        "offset_pct": -3.262502766730324,
+        "compare_accuracy": 0.48,
+        "session_accuracy": 0.47833333333333333
+      }
+    },
+    "savings": {
+      "compare_saving_pct": 65.6398028201767,
+      "session_saving_pct": [
+        66.97424585382078,
+        66.27767483198865,
+        66.41295007171895
+      ],
+      "session_saving_mean_pct": 66.55495691917612,
+      "session_saving_spread_pp": 0.6965710218321277,
+      "difference_pp": 0.9151540989994231
+    }
+  },
   "note": "ICC(1,1) with three sessions is coarse; it is reported as a descriptive decomposition, not as a precise variance component."
 }

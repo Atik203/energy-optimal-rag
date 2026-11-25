@@ -1,9 +1,9 @@
 # Roadmap — Depth Has a Knee → Q1 Hardening
 
-**Status:** P0–P6 COMPLETE · Phase 6 (inference repair) COMPLETE 2026-11-25 · next: Phase 7 · last updated 2026-11-25
+**Status:** P0–P7 COMPLETE · Phase 7 metrology COMPLETE 2026-11-26 (G7 FAILED by construction, reported) · next: Phase 8 · last updated 2026-11-26
 **Horizon:** 6–10 weeks · local RTX 3060 6 GB + optional H200 `1g.18gb` accuracy-only slice · ≤ $47 cash
 **Repository:** https://github.com/Atik203/energy-optimal-rag · **branch model:** `dev` integration → `main` release (PRs only)
-**Paper:** `paper/main.tex` (30 pp, 8 figs, 650 DPI) + `paper/out/main.pdf` · DOI `10.5281/zenodo.24352803` · tag `v0.2.1` behind `main`
+**Paper:** `paper/main.tex` (30 pp, 7 figs, 650 DPI) + `paper/out/main.pdf` · DOI `10.5281/zenodo.24352803` · tag `v0.2.1` behind `main`
 
 **Legend:** ✅ done · ❌ gate fired (= finding, reported not tuned away) · 📋 todo · ⏳ in progress · 🔬 optional · ⏸️ blocked (needs approval/hardware). Phases 6–10 continue P0–P5; each phase ends at its G-gate.
 
@@ -171,7 +171,7 @@ outputs, acceptance.
   420 tests pass.
 - **Effort:** small, CPU-only, ~1 day with agents.
 
-### Phase 7 — 🔄 partial · Metrology: block estimator + falsified windows (5–8 GPU-h) — DO SECOND
+### Phase 7 — ✅ done · Metrology: block estimator + falsified windows (5–8 GPU-h) — DONE SECOND
 
 **Execution plan:** [docs/PHASE7_PLAN.md](docs/PHASE7_PLAN.md) (design, estimand, decision rules, risks).
 
