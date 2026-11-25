@@ -1,6 +1,6 @@
 # Preregistration - measurement hardening (Phase 7)
 
-**Status:** drafted 2026-11-25, **not yet frozen**.
+**Status:** drafted 2026-11-25, **frozen 2026-11-25** (tag `prereg-measurement-v1`).
 **Freeze procedure:** review, then tag `prereg-measurement-v1` and record the SHA-256 of this
 file in `configs/analysis/prereg.toml`. No Phase 7 outcome may be inspected before the tag.
 **Supersedes nothing.** `prereg-freeze-v1` remains the frozen analysis for P1-P4 and is not
@@ -115,7 +115,7 @@ exceeds 6 pp, the result is reported as an interval and no point saving is quote
 
 ## 10. Freeze block
 
-- File SHA-256: `TO-BE-FILLED-AT-FREEZE`
-- Freeze tag: `TO-BE-FILLED-AT-FREEZE`
+- File SHA-256: recorded in `prereg/measurement_hardening_prereg.sha256`
+- Freeze tag: `prereg-measurement-v1`
 - Frozen by: Atikur Rahaman
-- Date: `TO-BE-FILLED-AT-FREEZE`
+- Date: 2026-11-25
