@@ -686,3 +686,35 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   2. The 16.90% saving with a CI covering zero is reported as-is; it does not gate Step 2.
 - **Consequences:** ~40 min of GPU budget returns to reserve. The mechanism test (dose
   trend) is unaffected: it needs an accuracy slope across doses, not oracle headroom.
+
+## D-036 - Step 2 dose curve rises: H-overload REJECTED, mechanism is positional
+
+- **Date:** 2026-11-26
+- **Status:** accepted
+- **Context:** Distractor dose-response (`squad_qwen4b_qc_distractor`, 6 doses x 500
+  questions, gold held first, 120 s cooldowns, ~70 min wall including an Ollama-500
+  interruption and resume). Analysis in `analysis/qc_distractor/dose_curve.json`.
+- **Findings:**
+  - Accuracy by dose: 0.382 / 0.408 / 0.462 / 0.490 / 0.512 / 0.528 — monotone rising,
+    +14.6 pp from dose 0 to dose 31.
+  - Repeated-measures trend slope is **+3.06 pp per doubling, 95% CI [1.43, 4.69]**
+    (per-segment OLS slopes averaged, t at df=3). The CI excludes zero and is positive.
+  - **H-overload is rejected**: at fixed gold rank 1, adding distractors does not lower
+    accuracy — it raises it. Reader overload by distractors alone is not observed.
+  - Energy rises with dose throughout (19.64 to 84.72 J/query), so E(dose) rises: the
+    extra accuracy is bought with energy, exactly the knee logic.
+- **Interpretation (bounded):** with the gold fixed first, the recall gain dominates and
+  the P1 precision collapse does not replicate. P1's negative Q term therefore comes from
+  gold displacement to lower ranks, not from the reader choking on distractors per se.
+  This is an inference across designs, not a direct test: the position conditions that
+  would separate rank from length were halted by the Step 1 stop rule (D-035). Stated as
+  a hypothesis for the dense arm, not a claim.
+- **Incident:** Ollama returned 500 on the dose-0 block after the 15-minute dose-31 block
+  (model had unloaded; server alive). Manual reload verified clean; the `PROTOCOL`-tagged
+  resume ledger held 4/6 blocks and the rerun completed the remaining two. Zero measured
+  data lost, ~5 min diagnosis.
+- **Harness gap:** the runner persisted segment aggregates, not per-question outcomes, so
+  the preregistered McNemar is impossible. Substituted segment-paired contrasts (A-005,
+  conservative at df=3). Future runners persist per-question outcomes.
+- **Decision:** report H-overload as rejected; carry the positional hypothesis into the
+  dense DiD interpretation.
