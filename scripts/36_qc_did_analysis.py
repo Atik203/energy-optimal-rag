@@ -180,7 +180,7 @@ def main() -> int:
     }
     out_dir = root / "analysis" / "qc_dense"
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "did.json").write_text(json.dumps(out, indent=2, encoding="utf-8"))
+    (out_dir / "did.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
 
     lines = [
         "# Phase 8 Step 3 - dense 2x2 DiD",

@@ -126,7 +126,7 @@ def main(argv: list[str] | None = None) -> int:
 
     full_q = pd.read_parquet(root / "data" / "processed" / "squad_questions.parquet")
     full_questions = {str(r.qid): str(r.question) for r in full_q.itertuples(index=False)}
-    full_golds_q = {str(r.qid): str(r.answer) for r in full_q.itertuples(index=False)}
+    full_golds_q = {str(r.qid): str(r.gold) for r in full_q.itertuples(index=False)}
     golds = split.questions.set_index("qid")["gold"].to_dict()
     for qid in qids:
         questions.setdefault(qid, full_questions[qid])
