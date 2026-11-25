@@ -211,12 +211,15 @@ outputs, acceptance.
 - **Acceptance (G7):** block estimator with CI; windows explicitly reported as falsified (`0.817`)
   and not used; `γ` reported; CV distributions for all seven depths; replay agreement within 3 pp;
   manifest complete.
-- **Status after runs 1–2 (D-032, results in [docs/PHASE7_RESULTS.md](docs/PHASE7_RESULTS.md)):**
-  saving 65.25% [61.27, 69.11] at `k=4` vs `k=32`; `A(k)` reproduces P1 within 0.9 pp; CV
-  1.2–7.0% at all seven depths (H-M2 pass); slope 2.131 [2.043, 2.219] J/passage (H-M3 pass);
-  **replay agreement fails at 7.08 pp (H-M1), so G7 fails** and absolute `J` stays a range.
-  `E(k)` is minimised at `k=1`–`k=2`, which is reported as a knee, not an optimum. Outstanding:
-  the 10-replay set and the session ICC.
+- **Status (D-032, D-033; results in [docs/PHASE7_RESULTS.md](docs/PHASE7_RESULTS.md)):** all Phase 7
+  measurements are complete. Saving 65.25% [61.27, 69.11] at `k=4` vs `k=32`; `A(k)` reproduces P1
+  within 0.9 pp; CV 1.2–7.0% at all seven depths (H-M2 pass); slope 2.131 [2.043, 2.219] J/passage
+  (H-M3 pass); carryover `γ` = 0.091 J/depth, unchanged by temperature and clock controls; session
+  ICC ≈ 0 with a 3–6% between-occasion offset in the absolute level while the ratio holds to
+  0.92 pp; P1 manifest sidecar complete at 13/14 `unknown`. **Replay agreement fails at 7.08 pp
+  (H-M1), so G7 fails** and absolute `J` stays a range. `E(k)` is minimised at `k=1`–`k=2`, reported
+  as a knee, not an optimum. The crossed-predecessor subset was not run: the predecessor sets the
+  thermal history, so it cannot separate carryover from it.
 - **Effort:** medium; single GPU, batch 1, no concurrent jobs; `df -h`/`du -sh` before runs.
 
 ### Phase 8 — 📋 todo · Causal tests + retargeted router (6–9 GPU-h) — THE Q1 BET

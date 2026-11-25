@@ -594,3 +594,36 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   6b energy-language pass inherits the constraint that every joule is GPU energy (D-031). The
   remaining Phase 7 work is the replay set (10 permutation replays) and the session-variance ICC;
   neither can rescue G7 to a pass, but both are reported because the prereg lists them.
+
+## D-033 - Session variance is negligible; the absolute level has a 3-6% occasion offset
+
+- **Date:** 2026-11-26
+- **Status:** accepted
+- **Context:** The Phase 7 plan requires a three-session variance decomposition on
+  `k in {1,4,32}`, `n = 200`, reporting ICC. Two attempts were discarded for harness defects: the
+  first measured idle immediately after the previous session's `k=32` block and read 22.61 W
+  instead of ~15 W, which alone accounted for the apparent 14% session effect; the second resumed
+  the first run's invalid rows. The third run is in the record.
+- **Findings:**
+  - Between-session CV is 2.4-3.5%, and ICC(1,1) is 0.000 at `k=1`, 0.000 at `k=4`, and 0.076 at
+    `k=32`. Harmonising every block to a common idle (14.72 W) leaves the ICC at or near zero.
+  - Session variance is therefore negligible with cooldown separation, which localises the 15%
+    artifact seen in the continuous replays to **sequence continuity**, not to elapsed time.
+  - Idle CV is a usable quality flag: contaminated windows showed 0.208-0.227 against 0.001-0.002
+    in clean sessions.
+  - Comparing the session run against run 2's replicate 0 (identical 200 questions, identical
+    accuracy), the absolute level is **3.3-5.9% lower** in the session run. That offset is not
+    explained by idle, question mix, or accuracy.
+  - The saving is nevertheless stable: 66.97%, 66.28%, 66.41% across sessions (0.69 pp spread)
+    against 65.64% for the same questions in run 2, a 0.92 pp cross-occasion difference.
+- **Decision:**
+  1. Report session variance as negligible and cite the ICC table.
+  2. Report the absolute joule level as a range that additionally carries a measured 3-6%
+     between-occasion component. This is a second, independent reason for the existing claim
+     boundary, not a new claim.
+  3. Report the saving as the reproducible quantity. Ratio invariance to a depth-common offset is
+     confirmed empirically at 0.92 pp.
+  4. Add a `PROTOCOL` tag to the resume ledger so a corrected measurement method cannot inherit
+     rows measured with a broken one. This is the guard for the error that cost two discarded runs.
+- **Consequences:** No gate changes; G7 remains failed on replay agreement. The paper gains a
+  measured statement about which quantity is reproducible: the ratio is, the level is not.
