@@ -1,0 +1,78 @@
+# Phase 8 Step 1 — fresh k=4 oracle gap (gating).
+# Design: k in {1,4}, 5 blocks x 200 disjoint questions per depth (same block
+# protocol as run 2 / scripts/22_run_blocks_design.py), ~2,000 generations.
+# Frame: 1,000 SQuAD dev qids disjoint from every earlier split, selected
+# deterministically (seed 20261115) by excluding the union of
+# p0_golden/p1_primary (replication, boundary, context, tax are subsets of
+# p1_primary, so excluding p1_primary excludes them too). The concrete qid
+# list must be materialized as id_split "qc_fresh" in
+# data/processed/squad_splits.json and recorded in prereg/qc_prereg.md BEFORE
+# any GPU run. Stop rule: oracle gap < 10% halts the distractor
+# position conditions (see PHASE8_PLAN.md Step 1).
+schema_version = 1
+kind = "run"
+run_id = "squad_qwen4b_qc_fresh"
+dataset = "squad"
+dataset_version = "v1.1"
+split = "dev"
+n_questions = 1000
+k_grid = [1, 4]
+seed = 20261115
+phase = "P8"
+id_split = "qc_fresh"
+
+[reader]
+backend = "ollama"
+model = "qwen3.5:4b"
+quantization = "Q4"
+num_ctx = 4096
+num_predict = 24
+temperature = 0.0
+top_k = 1
+seed = 42
+think = false
+
+[retrieval]
+backend = "bm25"
+top_k = 32
+chunking = "word"
+passage_words = 70
+tokenizer = "lowercase_alnum"
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 200
+warmup_queries = 20
+nonce_hex_chars = 10
+cpu_retrieval_proxy_watts = 20.0
+idle_max_cv = 0.20
+
+[blocks]
+replicates = 5
+questions_per_block = 200
+disjoint = true
+discard_first = 2
+cooldown_s = 120.0
+candidate_depth = 1
+reference_depth = 4
+
+[measurement]
+power_mode = "ac"
+batch_size = 1
+screen_off = true
+concurrent_jobs = false
+
+[scoring]
+primary = "normalized_em"
+secondary = ["lenient_span", "token_f1_ge_0.5"]
+
+[output]
+dir = "runs"
+raw_csv = "raw.csv"
+blocks_json = "blocks_design.json"
+
+[notes]
+purpose = "Phase 8 Step 1: fresh-sample k=4 oracle gap; gating stop rule for distractor position conditions."
+claim_status = "exploratory-until-qc-prereg-freeze"

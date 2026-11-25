@@ -1,0 +1,86 @@
+# Phase 8 Step 2 — distractor dose-response (THE causal test). PLACEHOLDER.
+# Design (planned, script scripts/30_qc_distractor.py does not exist yet):
+# 500 questions disjoint from Step 1, each with gold at rank 1 at k=1 under BM25.
+# Doses hold gold first and append 0/1/3/7/15/31 distractors after it (6 levels,
+# prompt lengths ~= k=1/2/4/8/16/32). Paired by question across doses.
+# Position condition (only if the Step 1 stop rule passes): gold at rank 1/8/32
+# at fixed total length, to separate position sensitivity from pure length.
+# k_grid below mirrors the six prompt-length levels so this file passes
+# `python -m rag_energy.cli validate`; the dose semantics live in [distractor].
+# id_split "qc_distractor" must be materialized (500 qids, disjoint from
+# qc_fresh) and recorded in prereg/qc_prereg.md BEFORE any GPU run.
+schema_version = 1
+kind = "run"
+run_id = "squad_qwen4b_qc_distractor"
+dataset = "squad"
+dataset_version = "v1.1"
+split = "dev"
+n_questions = 500
+k_grid = [1, 2, 4, 8, 16, 32]
+seed = 20261115
+phase = "P8"
+id_split = "qc_distractor"
+
+[reader]
+backend = "ollama"
+model = "qwen3.5:4b"
+quantization = "Q4"
+num_ctx = 4096
+num_predict = 24
+temperature = 0.0
+top_k = 1
+seed = 42
+think = false
+
+[retrieval]
+backend = "bm25"
+top_k = 32
+chunking = "word"
+passage_words = 70
+tokenizer = "lowercase_alnum"
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 200
+warmup_queries = 20
+nonce_hex_chars = 10
+cpu_retrieval_proxy_watts = 20.0
+idle_max_cv = 0.20
+
+[blocks]
+replicates = 5
+questions_per_block = 100
+disjoint = true
+discard_first = 2
+cooldown_s = 120.0
+candidate_depth = 1
+reference_depth = 32
+
+[distractor]
+doses = [0, 1, 3, 7, 15, 31]
+gold_position = "first"
+position_conditions = [1, 8, 32]
+position_condition_gated_by_step1 = true
+pairing = "by-question-across-doses"
+frame = "gold-at-rank-1-at-k1-under-bm25"
+
+[measurement]
+power_mode = "ac"
+batch_size = 1
+screen_off = true
+concurrent_jobs = false
+
+[scoring]
+primary = "normalized_em"
+secondary = ["lenient_span", "token_f1_ge_0.5"]
+
+[output]
+dir = "runs"
+raw_csv = "raw.csv"
+blocks_json = "blocks_design.json"
+
+[notes]
+purpose = "Phase 8 Step 2 placeholder: distractor dose-response + gated position conditions; needs scripts/30_qc_distractor.py."
+claim_status = "placeholder-script-missing-no-gpu-run"
