@@ -204,10 +204,10 @@ question mix, or accuracy. Within that offset, the saving is stable:
 | session 0 | 66.97% |
 | session 1 | 66.28% |
 | session 2 | 66.41% |
-| session mean | **66.55%** (0.69 pp spread) |
+| session mean | **66.55%** (0.70 pp spread) |
 | run 2 replicate 0, same questions | **65.64%** |
 
-The three sessions agree to **0.69 pp**, and the cross-occasion difference is **0.92 pp** — even
+The three sessions agree to **0.70 pp**, and the cross-occasion difference is **0.92 pp** — even
 though the level moved 3-6%. This is the ratio-invariance the estimand was chosen for: a
 depth-common offset cancels.
 
@@ -318,7 +318,7 @@ BM25, word chunks of 70). It is not a universal `k*` and must not be reported as
   run 1 anomaly was sampling, not method.
 - Session variance is negligible once cooldown separation is used: between-session CV 2.4-3.5%
   and ICC(1,1) at or near zero at every depth, before and after idle harmonisation.
-- The saving is stable to 0.69 pp across three sessions and 0.92 pp across measurement
+- The saving is stable to 0.70 pp across three sessions and 0.92 pp across measurement
   occasions, while the absolute level moves 3-6%. The ratio is reproducible when the level is not.
 - The saving is at least 61% on the block estimator (lower bound of the `k=4` interval,
   [61.27, 69.11]) and 58% on the sweep. Every estimator tested puts it above 50%, so
