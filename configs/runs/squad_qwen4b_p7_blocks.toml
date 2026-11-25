@@ -1,0 +1,69 @@
+# Phase 7: block-design measurement run (replaces the per-query window estimator).
+# Design: 7 depths x 5 randomized blocks x 20 questions, 2 discarded warmup queries
+# per block, 120 s cooldown between blocks. 700 measured generations plus 70 discarded.
+# Not a confirmatory accuracy run; the output is the block energy estimator.
+schema_version = 1
+kind = "run"
+run_id = "squad_qwen4b_p7_blocks"
+dataset = "squad"
+dataset_version = "v1.1"
+split = "dev"
+n_questions = 20
+k_grid = [0, 1, 2, 4, 8, 16, 32]
+seed = 20261115
+phase = "P7"
+id_split = "p1_primary"
+
+[reader]
+backend = "ollama"
+model = "qwen3.5:4b"
+quantization = "Q4"
+num_ctx = 4096
+num_predict = 24
+temperature = 0.0
+top_k = 1
+seed = 42
+think = false
+
+[retrieval]
+backend = "bm25"
+top_k = 32
+chunking = "word"
+passage_words = 70
+tokenizer = "lowercase_alnum"
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 20
+warmup_queries = 20
+nonce_hex_chars = 10
+cpu_retrieval_proxy_watts = 20.0
+idle_max_cv = 0.20
+
+[blocks]
+replicates = 5
+discard_first = 2
+cooldown_s = 120.0
+candidate_depth = 4
+reference_depth = 32
+
+[measurement]
+power_mode = "ac"
+batch_size = 1
+screen_off = true
+concurrent_jobs = false
+
+[scoring]
+primary = "normalized_em"
+secondary = ["lenient_span", "token_f1_ge_0.5"]
+
+[output]
+dir = "runs"
+raw_csv = "raw.csv"
+blocks_json = "blocks_design.json"
+
+[notes]
+purpose = "Phase 7 block estimator: randomized blocks, cooldown, discard rule; per-query windows are diagnostic only."
+claim_status = "measurement-method"
