@@ -267,6 +267,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--segments", type=int, default=4)
     parser.add_argument("--cooldown-s", type=float, default=120.0)
     parser.add_argument("--interval-ms", type=int, default=100)
+    parser.add_argument(
+        "--settle-s",
+        type=float,
+        default=0.0,
+        help="One-off settle before the first block's idle baseline. Smoke mode sets "
+        "this to 45 s: with no inter-block cooldown the baseline would otherwise be "
+        "sampled on a warm GPU and over-subtract every block.",
+    )
     parser.add_argument("--include-positions", action="store_true")
     parser.add_argument("--root", default=str(ROOT))
     parser.add_argument("--fresh", action="store_true")
@@ -308,6 +316,7 @@ def main(argv: list[str] | None = None) -> int:
         args.questions = 4
         args.segments = 2
         args.cooldown_s = 0.0
+        args.settle_s = 45.0
         print("mode          smoke (2 doses x 4 questions, no cooldown)")
 
     if args.questions % args.segments:
@@ -348,6 +357,9 @@ def main(argv: list[str] | None = None) -> int:
         reader.generate(questions[qid], [p.text for p in retrieved], make_nonce(nonce_chars))
 
     finished: list[dict[str, Any]] = [done[key] for key in sorted(done) for _ in [0]]
+    if args.settle_s > 0 and not done:
+        print(f"settling      {args.settle_s:.0f} s before the first idle baseline")
+        time.sleep(args.settle_s)
     for item in plan:
         key = (item.dose, item.replicate, item.position_rank)
         if key in done:
