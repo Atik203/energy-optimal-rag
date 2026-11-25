@@ -47,7 +47,6 @@ Per-query windows remain diagnostic only.
 | Discard | First 2 queries of each block, pre-specified |
 | Replays `R` | 10 (exact sweep permutation plus different permutations) |
 | Sessions | At least 3 sessions on the `k in {1,4,32}` subset for an ICC estimate |
-| Wall meter | `k in {1,4,32}`, 3 repeats x 100 queries, run last |
 
 Total: 7 depths x 5 blocks x 20 queries = 700 queries for the block design, plus 10 replays over
 the 140-query permutation, plus the session and meter subsets. Estimated 5-8 GPU-h including
@@ -73,9 +72,8 @@ cooldowns.
    `J_i = a + b k_i + g k_{i-1} + d temp_i + e clock_i` with cluster-robust SEs by question;
    report `g`. Add a crossed subset varying the predecessor over `{0,4,32}` for one target depth.
 8. **Session variance (1 GPU-h).** Three sessions on `n = 200`, `k in {1,4,32}`; report ICC.
-9. **Wall meter (1-2 h + hardware).** Run last, then re-baseline idle. Report
-   `system_J / (GPU_J + CPU_proxy)` as a range; never rescale P1.
-10. **Analysis and report.** Block estimator, convergence table, CV distributions, affine fit on
+   The wall meter is waived (D-031): no meter will be purchased, so only GPU energy is reported.
+9. **Analysis and report.** Block estimator, convergence table, CV distributions, affine fit on
     `k >= 1`; write `analysis/measurement_hardening/`.
 
 ## 5. Decision rules (frozen before the run)
@@ -86,8 +84,6 @@ cooldowns.
 | Block estimator and replay disagree by more than the pre-specified tolerance (3 pp) | Report the disagreement; demote all absolute `J` to a range |
 | Per-depth CV exceeds 20% at `k >= 4` | Report the depth as not measurable; do not gate the paper on it |
 | `k=0` factor again within 2% of the 0.8 floor | Report `k=0` as a floor only; exclude from every fit |
-| Wall ratio is depth-invariant within its interval | Report system-level saving as a lower bound |
-| Wall ratio varies with depth beyond its interval | Report GPU-only energy only; retitle the quantity `E_GPU` |
 
 ## 6. What Phase 7 must not do
 
@@ -113,5 +109,4 @@ cooldowns.
 |---|---|
 | Thermal drift across a 3 h run | Randomized block order, cooldown, log clock/temperature, drop-first-2 rule, session ICC |
 | NVML ~1 Hz update under 100 ms sampling | Blocks are 20 queries, far above the sensor period |
-| Wall meter changes power delivery | Run last, re-baseline idle, never interleave with NVML-only runs |
 | Time overrun | Reduce `B` from 7 to 5 and replays from 10 to 6 before touching the design |
