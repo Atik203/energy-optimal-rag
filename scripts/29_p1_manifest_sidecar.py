@@ -10,7 +10,8 @@ is reported under ``derived_from_raw`` and labelled as an observation, not as a 
 field. A field that the run never wrote stays ``unknown`` even when it is obvious from
 the code, because an obvious value is still a reconstruction.
 
-Writes ``artifacts/manifests/<run_id>.manifest.sidecar.json``.
+Writes ``analysis/measurement_hardening/<run_id>/manifest_sidecar.json``, which is
+tracked; ``artifacts/`` is git-ignored apart from a whitelist.
 """
 
 from __future__ import annotations
@@ -125,9 +126,9 @@ def main() -> int:
         "required_count": len(REQUIRED_FIELDS),
     }
 
-    out_dir = root / "artifacts" / "manifests"
+    out_dir = root / "analysis" / "measurement_hardening" / args.run_id
     out_dir.mkdir(parents=True, exist_ok=True)
-    out = out_dir / f"{args.run_id}.manifest.sidecar.json"
+    out = out_dir / "manifest_sidecar.json"
     out.write_text(json.dumps(sidecar, indent=2), encoding="utf-8")
     print(f"wrote {out}")
     print(f"unknown: {sidecar['unknown_count']} of {sidecar['required_count']}")
