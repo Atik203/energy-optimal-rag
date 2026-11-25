@@ -79,7 +79,7 @@ def main() -> int:
     ):
         split = load_prepared_split(root / "data" / "processed", "squad", split_name)
         questions = {str(r.qid): str(r.question) for r in split.questions.itertuples(index=False)}
-        golds = {str(r.qid): str(r.answer) for r in split.questions.itertuples(index=False)}
+        golds = {str(r.qid): str(r.gold) for r in split.questions.itertuples(index=False)}
         by_key: dict[tuple[str, int], int] = {}
         with (root / "runs" / run_id / "raw.csv").open(encoding="utf-8", newline="") as handle:
             for row in csv.DictReader(handle):
