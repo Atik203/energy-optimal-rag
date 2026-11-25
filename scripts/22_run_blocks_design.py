@@ -174,6 +174,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--config", default="configs/runs/squad_qwen4b_p7_blocks.toml")
     parser.add_argument("--plan-only", action="store_true", help="Print the plan and stop.")
     parser.add_argument("--limit-blocks", type=int, default=None, help="Stop after N blocks.")
+    parser.add_argument(
+        "--fresh", action="store_true", help="Ignore a partial file and start over."
+    )
     args = parser.parse_args(argv)
 
     resolved = resolve_run_config(Path(args.config), root=ROOT)
@@ -233,11 +236,35 @@ def main(argv: list[str] | None = None) -> int:
     idle_power_w = idle_stats.mean_w
     print(f"idle          {idle_power_w:.2f} W (CV {idle_stats.cv:.3f})")
 
+    partial_path = run_dir / "blocks_design.partial.jsonl"
     observations: list[BlockObservation] = []
+    done: set[tuple[int, int]] = set()
+    if partial_path.exists() and not args.fresh:
+        for line in partial_path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            key = (int(record["k"]), int(record["replicate"]))
+            if key in done:
+                continue
+            done.add(key)
+            observations.append(
+                BlockObservation(
+                    k=key[0],
+                    replicate=key[1],
+                    energy_j=float(record["energy_j"]),
+                    correct=int(record["correct"]),
+                    n=int(record["n"]),
+                    duration_s=float(record.get("duration_s", 0.0)),
+                )
+            )
+        print(f"resume        {len(done)} blocks already recorded")
     rows: list[dict[str, Any]] = []
     started = _utc_now()
     for item in plan:
-        if args.limit_blocks is not None and len(observations) >= args.limit_blocks:
+        if (item.k, item.replicate) in done:
+            continue
+        if args.limit_blocks is not None and len(observations) - len(done) >= args.limit_blocks:
             break
         if cooldown > 0:
             print(f"cooldown      {cooldown:.0f} s before block {item.order} (k={item.k})")
@@ -285,16 +312,29 @@ def main(argv: list[str] | None = None) -> int:
             row["gpu_temp_c"] = samples[-1].temperature_c if samples else ""
             row["sm_clock_mhz"] = samples[-1].sm_clock_mhz if samples else ""
         rows.extend(block_rows)
-        observations.append(
-            BlockObservation(
-                k=item.k,
-                replicate=item.replicate,
-                energy_j=energy_j,
-                correct=correct,
-                n=len(block_qids),
-                duration_s=duration_s,
-            )
+        observation = BlockObservation(
+            k=item.k,
+            replicate=item.replicate,
+            energy_j=energy_j,
+            correct=correct,
+            n=len(block_qids),
+            duration_s=duration_s,
         )
+        observations.append(observation)
+        with partial_path.open("a", encoding="utf-8") as partial_handle:
+            partial_handle.write(
+                json.dumps(
+                    {
+                        "k": observation.k,
+                        "replicate": observation.replicate,
+                        "energy_j": observation.energy_j,
+                        "correct": observation.correct,
+                        "n": observation.n,
+                        "duration_s": observation.duration_s,
+                    }
+                )
+                + "\n"
+            )
         print(
             f"block {item.order:03d}  k={item.k:<2}  E={energy_j:7.2f} J  "
             f"{correct}/{len(block_qids)}  {power_w:5.1f} W  {duration_s:5.1f} s"
@@ -318,6 +358,7 @@ def main(argv: list[str] | None = None) -> int:
         "started_utc": started,
         "estimand": "E(k) = sum_b J_block(k,b) / sum_b C(k,b)",
         "n_blocks": len(observations),
+        "resumed_blocks": len(done),
         "replicates": replicates,
         "questions_per_block": q_per_block,
         "discard_first": discard,
