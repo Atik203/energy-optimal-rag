@@ -546,3 +546,19 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
 - **Consequences:** About 3.5 GPU-h instead of 2. No gate, margin, or threshold changes. Run 1
   stays in the record as the energy-precision result; run 2 becomes the ratio result. Absolute
   `J` remains a range until G7 passes.
+
+## D-031 - Wall meter waived for Phase 7 and after
+
+- **Date:** 2026-11-25
+- **Status:** accepted
+- **Context:** The Phase 7 prereg (§3) listed a depth-resolved wall-meter cross-check on
+  `k in {1,4,32}` with 3 repeats x 100 queries. The meter costs about $25 and has never been
+  purchased (D-016 also waived it for P0/P1). The owner has decided not to buy it.
+- **Decision:** Waive the wall-meter measurement permanently for this project. The reported
+  energy quantity is the **GPU integral from NVML**, not system energy. No `system_J` figure is
+  reported, and the budget line for the meter is removed. Logged as `prereg/amendments.md` A-004
+  because the frozen prereg listed the measurement.
+- **Consequences:** No system-level or wall-validated energy claim, and no total-energy
+  comparison against other systems. The paper must say "GPU energy" wherever joules appear and
+  must not imply system energy. An energy-venue submission would need a second hardware class
+  and a meter, so it is out of scope; the IR/ML venue path is unaffected.
