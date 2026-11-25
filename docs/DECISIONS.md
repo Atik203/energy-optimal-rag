@@ -627,3 +627,62 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
      rows measured with a broken one. This is the guard for the error that cost two discarded runs.
 - **Consequences:** No gate changes; G7 remains failed on replay agreement. The paper gains a
   measured statement about which quantity is reproducible: the ratio is, the level is not.
+
+## D-034 - Phase 8 prereg frozen (prereg-qc-v1); four draft questions resolved
+
+- **Date:** 2026-11-26
+- **Status:** accepted
+- **Context:** Three subagents prepared Phase 8 in parallel (prereg draft, configs + frames,
+  scripts + tests). The draft raised four open questions that had to be resolved before any
+  GPU run.
+- **Resolutions:**
+  1. MiniLM revision recorded as `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`
+     (verified in the local HF cache; snapshots dir holds exactly that revision).
+  2. DiD bootstrap is independent across retriever arms — the dense frame is disjoint from
+     the run-2 BM25 frame by construction, so full pairing is not intended.
+  3. TOST equivalence bounds are +-2 pp for accuracy contrasts (dose-curve flatness and
+     zero-DiD), matching the 2 pp estimation margin.
+  4. Step 1 is paired within question over the same 1,000 qids (shards disjoint across
+     replicates, as in run 2); `disjoint` in the config refers to across-replicate sharding.
+- **Corrections to the plan:** the "2,250 used / 8,320 fresh" figure double-counts nested
+  splits (replication, boundary, context, tax are all subsets of p1_primary; boundary ==
+  context as sets). Unique exclusion is 1,200 (p0 200 + p1 1000, disjoint); fresh pool is
+  9,370. Frames drawn deterministically (seed 20261115): qc_fresh 1000
+  (`79cc63a6…`), qc_distractor 500 (`fd72ca73…`), qc_dense 1000 (`e10eb333…`), mutually
+  disjoint. Tracked source `data/splits/qc_frames.json`; regeneration via
+  `scripts/32_qc_frames.py`; merged into the local loader splits (untracked).
+- **Freeze:** `prereg/qc_prereg.md`, SHA-256 `a501d7e3…` (`prereg/qc_prereg.sha256`), tag
+  `prereg-qc-v1` pushed 2026-11-26. Step 1 smoke passed (idle 13.85 W, CV 0.003); smoke
+  artifacts and registry row removed.
+- **Consequences:** GPU gate for Step 1 is open. Any later change goes in
+  `prereg/amendments.md`, never by editing the frozen file. Scripts subagent caught and
+  pinned a DiD sign convention (dense degrading less gives negative `Δ`); the prereg formula
+  governs.
+
+## D-035 - Step 1 fresh gap: 3.00 pp, position conditions HALTED
+
+- **Date:** 2026-11-26
+- **Status:** accepted
+- **Context:** First GPU run under `prereg-qc-v1` (`squad_qwen4b_qc_fresh`, 10 blocks,
+  5 x 200 disjoint per depth over the same 1,000 fresh qids, `k in {1,4}`, 2,020
+  generations, ~36 min). Smoke passed first (idle 13.85 W, CV 0.003).
+- **Findings:**
+  - `A(1) = 0.389`, `A(4) = 0.455`, oracle `0.485`. **Gap = 3.00 pp [2.00, 4.10]**
+    (paired bootstrap, 10,000 resamples). Below the 10% stop threshold, so the
+    **distractor position conditions are HALTED**; the 6-dose main curve runs.
+  - Saving `k=1` vs `k=4` is **16.90% [-2.24, 32.28]** (cluster bootstrap over 10
+    blocks): the interval includes zero. On fresh questions with 10 blocks the energy
+    saving is not significant — reported as measured, not as a failure.
+  - Reproduction: fresh `A(4) = 0.455` vs run-2 `0.459`; fresh `A(1) = 0.389` vs `0.386`.
+    Within 0.4 pp on disjoint question sets: the accuracy level reproduces.
+  - Analysis bug caught before reporting: the first version of
+    `scripts/33_qc_fresh_analysis.py` resampled the oracle and `k=4` terms
+    independently in the gap bootstrap, widening the CI to [-1.30, 7.40] pp. Fixed to a
+    single shared resample; CI is now [2.00, 4.10] pp. The script was not yet committed,
+    so nothing published the wrong interval.
+- **Decision:**
+  1. Position conditions (gold at rank 1/8/32) do not run. Step 2 is the 6-dose main
+     curve only (~55 min instead of ~1.5 h).
+  2. The 16.90% saving with a CI covering zero is reported as-is; it does not gate Step 2.
+- **Consequences:** ~40 min of GPU budget returns to reserve. The mechanism test (dose
+  trend) is unaffected: it needs an accuracy slope across doses, not oracle headroom.
