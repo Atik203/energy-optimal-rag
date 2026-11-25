@@ -134,3 +134,28 @@ _No amendments before A-001. The preregistration was frozen at `prereg-freeze-v1
   scope (it would need a meter and a second hardware class); the IR/ML venue path is unchanged.
 - **approved_by:** PI instruction, 2026-11-25 ("we will not use the wall meter").
 - **decision_log:** `docs/DECISIONS.md` D-031.
+
+### A-005
+
+- **amendment_id:** A-005
+- **date_utc:** 2026-11-26
+- **prereg_version:** `prereg-qc-v1`
+- **section:** Section 8, Analysis item 2: "Dose curve: McNemar per dose vs 0 + trend test".
+- **original:** Paired McNemar tests of each dose against dose 0, plus the trend test.
+- **replacement:** The trend test runs as specified (repeated-measures slope over
+  question-aligned segments). The per-dose McNemar tests are replaced by segment-paired
+  contrasts (paired t over the 4 question-aligned 125-question segments, reported with
+  t intervals at df=3).
+- **reason:** `scripts/30_qc_distractor.py` persisted segment aggregates, not per-question
+  outcomes, so McNemar's discordant pairs are unrecoverable from the registered output.
+  Segments are contiguous chunks of one fixed qid order and hence question-aligned across
+  doses, so the segment is a valid paired unit; this is the GLM-family half of the
+  preregistered "McNemar/GLM + trend" pair.
+- **outcome_data_seen:** yes. The substitution was discovered after the dose curve was
+  observed (monotone rising, +14.6 pp). The substitute analysis is strictly more
+  conservative than McNemar would be (df=3 intervals are wide), so it cannot manufacture
+  a precision finding.
+- **impact:** No gate change. H-overload is adjudicated by the trend test, which is
+  unchanged. Future runners should persist per-question outcomes (noted in D-036).
+- **approved_by:** PI standing instruction 2026-11-26 (complete through Phase 10).
+- **decision_log:** `docs/DECISIONS.md` D-036.
