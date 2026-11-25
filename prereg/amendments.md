@@ -81,3 +81,33 @@ _No amendments before A-001. The preregistration was frozen at `prereg-freeze-v1
   (`4` vs `10`), the margin, and all gates are unchanged. The Qwen2.5-1.5B arm is unaffected.
 - **approved_by:** PI session decision, 2026-11-15.
 - **decision_log:** `docs/DECISIONS.md` D-026.
+
+### A-003
+
+- **amendment_id:** A-003
+- **date_utc:** 2026-11-25
+- **prereg_version:** `prereg-measurement-v1`
+- **section:** Section 3, Design: "Questions per block 20, identical across blocks" and
+  "Measured generations 700".
+- **original:** 5 blocks per depth, 20 identical questions per block, 700 measured generations.
+  The accuracy denominator for `E(k)` is therefore 20 questions per depth.
+- **replacement:** 5 blocks per depth of **200 disjoint questions** each (1,000 distinct
+  questions per depth; 7,000 measured generations). Block order, cooldown (120 s), discard rule
+  (2 queries), depths, estimator, bootstrap, and every gate are unchanged. The estimator is
+  still `E(k) = sum_b J_block(k,b) / sum_b C(k,b)`; the denominator now covers the full P1
+  sample.
+- **reason:** The first run (`squad_qwen4b_p7_blocks`) showed that 20 questions give an accuracy
+  standard error of about 11 pp and a non-monotone `A(k)` (`A(4)=A(8)=0.65`, `A(16)=0.53`),
+  against 0.450/0.467/0.481 on the full sample. The energy side passed its gates (block CV
+  1.8-3.6% at `k >= 4`; affine slope 2.523 [2.329, 2.717]). The savings ratio therefore failed
+  G7 on the denominator, not on the measurement. Increasing the denominator to 1,000
+  questions per depth is the smallest change that makes `E(k)` comparable to P1.
+- **outcome_data_seen:** **yes.** The change follows inspection of the first run's accuracy
+  subsample and its 75.70% saving. This is disclosed because it is a design change made after
+  seeing an outcome. It does not change any gate, margin, or decision rule; H-M1's 3 pp
+  tolerance, H-M2's 20% CV gate, and H-M3 are unchanged. The first run remains in the record
+  and is reported as run 1, not discarded.
+- **impact:** GPU cost rises from about 2 h to about 3.5 h (7,070 generations). The estimator,
+  bootstrap, and convergence rule are identical. No P1-P4 gate is affected.
+- **approved_by:** PI instruction, 2026-11-25 ("do what is the best").
+- **decision_log:** `docs/DECISIONS.md` D-030.
