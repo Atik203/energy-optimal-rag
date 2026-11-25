@@ -111,3 +111,26 @@ _No amendments before A-001. The preregistration was frozen at `prereg-freeze-v1
   bootstrap, and convergence rule are identical. No P1-P4 gate is affected.
 - **approved_by:** PI instruction, 2026-11-25 ("do what is the best").
 - **decision_log:** `docs/DECISIONS.md` D-030.
+
+### A-004
+
+- **amendment_id:** A-004
+- **date_utc:** 2026-11-25
+- **prereg_version:** `prereg-measurement-v1`
+- **section:** Section 3, Design row "Wall meter: `k in {1,4,32}`, 3 repeats x 100 queries, run
+  last"; Section 7, Analysis item 7; Section 8, the two wall-ratio decision rules.
+- **original:** A depth-resolved wall-meter cross-check would be run last, and the
+  `system_J / (GPU_J + CPU_proxy)` ratio would be reported as a range, with a decision rule for
+  depth-invariant versus depth-varying ratios.
+- **replacement:** The wall meter is **not measured**. The reported energy quantity is the GPU
+  integral from NVML. No system-level energy figure is reported.
+- **reason:** No meter will be purchased. The owner decided on 2026-11-25 that the project will
+  not use one; D-016 had already waived it for P0 and P1.
+- **outcome_data_seen:** yes. The decision follows the Phase 7 runs. It removes a measurement,
+  so it cannot bias any remaining estimate in a favourable direction: removing a cross-check only
+  narrows what may be claimed.
+- **impact:** No absolute energy claim gains support; one source of support is removed. Every
+  joule in the paper must be labelled GPU energy. An energy-venue submission becomes out of
+  scope (it would need a meter and a second hardware class); the IR/ML venue path is unchanged.
+- **approved_by:** PI instruction, 2026-11-25 ("we will not use the wall meter").
+- **decision_log:** `docs/DECISIONS.md` D-031.

@@ -200,9 +200,8 @@ outputs, acceptance.
      `J_i = α + βk_i + γk_{i−1} + δtemp_i + εclock_i` with cluster-robust SEs; report `γ`.
      Add a crossed subset: for target depth `k`, vary the predecessor over `{0,4,32}`.
   4. **CV distributions.** All seven depths, 5 blocks; report full distributions, not median/max.
-  5. **Depth-resolved wall meter** (last step, then re-baseline idle): condition `k ∈ {1,4,32}`
-     (~1 h) matching the new block run's power mode/thermal state. Report
-     `system_J/(GPU_J + CPU_proxy)` as a **range**; never rescale P1.
+  5. ~~Depth-resolved wall meter~~ — **waived 2026-11-25** (D-031): no meter will be purchased.
+     The GPU integral is the reported quantity; any system-level figure is out of scope.
   6. **Manifest schema.** Driver, CUDA, power mode, clocks, Ollama version/digest, model digest,
      HF cache/revision, ambient temperature, throttle reasons, screen/AC state, batch size,
      concurrency. Backfill a P1 sidecar with `unknown` — **never fabricate** values.
@@ -288,7 +287,7 @@ outputs, acceptance.
   4. **Cut:** P0 forensics → 3 sentences; gate alphabet → G1/G4; S1–S3 → 1 paragraph; identity
      derivation → footnote; notation/checklist schematics → supplement. Keep claim map at 8–10 rows.
   5. **Venue chosen before Phase 8:** IR/ML (IP&M, KBS, Information Sciences, Patterns, TMLR) with
-     energy as a ratio-based secondary claim; an energy venue makes the wall meter and a second
+     energy as a ratio-based secondary claim; an energy venue would need a wall meter and a second
      hardware class mandatory.
   6. **Retitle** away from "Energy-Optimal": *Depth Has a Knee: Reader-Conditional Accuracy–Energy
      Trade-offs in Retrieval-Augmented Generation*.
@@ -308,7 +307,7 @@ outputs, acceptance.
 | Gate | Phase | Criterion | Pass action |
 |---|---|---|---|
 | **G6** | 6 | Cluster-robust SE + token-vs-k + cross-fit reported; 5 pp = "not established"; 0.8 still failed | Enter Phase 7 |
-| **G7** | 7 | Block estimator with CI; windows falsified (0.817) and unused; carryover `γ` reported; CV for all seven depths; manifest complete | Block estimator is the primary energy result |
+| **G7** | 7 | Block estimator with CI; windows falsified (0.817) and unused; carryover `γ` reported; CV for all seven depths; replay agreement within 3 pp; manifest complete | Block estimator is the primary energy result |
 | **G8** | 8 | Prereg frozen; fresh `k=4` gap reported; router capture CI vs 2 pp margin; causal contrast direction; dense DiD with CI | Headline contribution (or documented null with MDE) |
 | **G10** | 10 | 15–18 pp; traceability; clean-room repro; v0.3.0 DOI + tag | Submit |
 
@@ -343,7 +342,6 @@ a measurement/reproducibility venue or a short paper, not a tuned positive.
 |---|---|---|
 | GPU compute (Phases 7–9) | **$0** | Local RTX 3060 6 GB, batch 1, single job; **~12–18 GPU-h** new work (Phase 7 5–8, Phase 8 6–9, Phase 9 0–2) |
 | Electricity | ~$2 | Indicative, not metered billing |
-| Wall meter | **$25** | Depth-resolved 3×3×100 run (Phase 7, last) |
 | Backup USB | $10 | Verify checksums before new runs |
 | Contingency | $10 | Hard cap **≤ $47** unchanged |
 | Storage | 0 | Project space only; `df -h`/`du -sh`; 200 GB quota |
