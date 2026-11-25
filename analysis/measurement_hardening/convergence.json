@@ -1,0 +1,23 @@
+{
+  "block_vs_sweep": {
+    "block_savings_pct": 75.69745840463567,
+    "alternative_savings_pct": 58.17,
+    "gap_pp": 17.527458404635667,
+    "tolerance_pp": 3.0,
+    "agrees": false
+  },
+  "block_vs_block_calibration": {
+    "block_savings_pct": 75.69745840463567,
+    "alternative_savings_pct": 64.3,
+    "gap_pp": 11.397458404635671,
+    "tolerance_pp": 3.0,
+    "agrees": false
+  },
+  "block_vs_raw": {
+    "block_savings_pct": 75.69745840463567,
+    "alternative_savings_pct": 68.47,
+    "gap_pp": 7.227458404635669,
+    "tolerance_pp": 3.0,
+    "agrees": false
+  }
+}
