@@ -1,0 +1,16 @@
+{
+  "run_id": "squad_qwen4b_qc_fresh",
+  "estimand": "Gap = A_oracle{1,4} - A(4), paired within question",
+  "n_paired": 1000,
+  "accuracy_k1": 0.389,
+  "accuracy_k4": 0.455,
+  "accuracy_oracle": 0.485,
+  "gap_point": 0.02999999999999997,
+  "gap_ci95": [
+    0.019999999999999962,
+    0.04099999999999998
+  ],
+  "stop_threshold": 0.1,
+  "stop_verdict": "HALT",
+  "stop_rule": "Gap < 10% halts the distractor position conditions; the 6-dose main curve still runs."
+}

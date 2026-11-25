@@ -658,3 +658,31 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   `prereg/amendments.md`, never by editing the frozen file. Scripts subagent caught and
   pinned a DiD sign convention (dense degrading less gives negative `Δ`); the prereg formula
   governs.
+
+## D-035 - Step 1 fresh gap: 3.00 pp, position conditions HALTED
+
+- **Date:** 2026-11-26
+- **Status:** accepted
+- **Context:** First GPU run under `prereg-qc-v1` (`squad_qwen4b_qc_fresh`, 10 blocks,
+  5 x 200 disjoint per depth over the same 1,000 fresh qids, `k in {1,4}`, 2,020
+  generations, ~36 min). Smoke passed first (idle 13.85 W, CV 0.003).
+- **Findings:**
+  - `A(1) = 0.389`, `A(4) = 0.455`, oracle `0.485`. **Gap = 3.00 pp [2.00, 4.10]**
+    (paired bootstrap, 10,000 resamples). Below the 10% stop threshold, so the
+    **distractor position conditions are HALTED**; the 6-dose main curve runs.
+  - Saving `k=1` vs `k=4` is **16.90% [-2.24, 32.28]** (cluster bootstrap over 10
+    blocks): the interval includes zero. On fresh questions with 10 blocks the energy
+    saving is not significant — reported as measured, not as a failure.
+  - Reproduction: fresh `A(4) = 0.455` vs run-2 `0.459`; fresh `A(1) = 0.389` vs `0.386`.
+    Within 0.4 pp on disjoint question sets: the accuracy level reproduces.
+  - Analysis bug caught before reporting: the first version of
+    `scripts/33_qc_fresh_analysis.py` resampled the oracle and `k=4` terms
+    independently in the gap bootstrap, widening the CI to [-1.30, 7.40] pp. Fixed to a
+    single shared resample; CI is now [2.00, 4.10] pp. The script was not yet committed,
+    so nothing published the wrong interval.
+- **Decision:**
+  1. Position conditions (gold at rank 1/8/32) do not run. Step 2 is the 6-dose main
+     curve only (~55 min instead of ~1.5 h).
+  2. The 16.90% saving with a CI covering zero is reported as-is; it does not gate Step 2.
+- **Consequences:** ~40 min of GPU budget returns to reserve. The mechanism test (dose
+  trend) is unaffected: it needs an accuracy slope across doses, not oracle headroom.

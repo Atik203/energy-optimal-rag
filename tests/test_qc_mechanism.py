@@ -1,8 +1,9 @@
 """Tests for the Phase 8 causal-mechanism scaffolds.
 
 These pin the pure parts of the distractor dose-response run
-(``scripts/30_qc_distractor.py``) and the dense precompute
-(``scripts/31_qc_dense_precompute.py``). CPU only: no GPU, no model download,
+(``scripts/30_qc_distractor.py``), the dense precompute
+(``scripts/31_qc_dense_precompute.py``), and the Step 1 fresh-gap analysis
+(``scripts/33_qc_fresh_analysis.py``). CPU only: no GPU, no model download,
 no network. The failures they guard against are silent: a dose plan that drops
 a level, a position condition that misplaces the gold, a DiD with the wrong
 sign convention, or a harmonization that drifts from the Phase 7 convention.
@@ -200,3 +201,21 @@ class TestDensePrecompute:
         env = dense_module.offline_env()
         assert env["HF_HUB_OFFLINE"] == "1"
         assert env["TRANSFORMERS_OFFLINE"] == "1"
+
+
+@pytest.fixture(scope="module")
+def fresh_module():
+    return _load("qc_fresh_analysis", "33_qc_fresh_analysis.py")
+
+
+class TestPairedGap:
+    def test_identical_arms_give_zero_gap(self, fresh_module):
+        assert fresh_module._quantile([0.03, 0.03, 0.03], 0.5) == pytest.approx(0.03)
+
+    def test_quantile_interpolates(self, fresh_module):
+        assert fresh_module._quantile([0.0, 0.10], 0.5) == pytest.approx(0.05)
+
+    def test_quantile_endpoints(self, fresh_module):
+        values = [0.02, 0.03, 0.04]
+        assert fresh_module._quantile(values, 0.0) == pytest.approx(0.02)
+        assert fresh_module._quantile(values, 1.0) == pytest.approx(0.04)
