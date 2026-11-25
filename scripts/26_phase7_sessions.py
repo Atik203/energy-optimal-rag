@@ -43,10 +43,33 @@ DEFAULT_CONFIG = "configs/runs/squad_qwen4b_p7_blocks_full.toml"
 DEFAULT_RUN_ID = "squad_qwen4b_p7_sessions"
 DEPTHS = (1, 4, 32)
 IDLE_SECONDS = 10.0
+# Bump when the measurement protocol changes. The resume ledger stores it and refuses
+# entries from a different protocol, so a fixed method cannot inherit rows measured with
+# the broken one. v2: idle baseline sampled from the tail of each block's cooldown.
+PROTOCOL = "idle-from-cooldown-tail-v2"
 
 
 def _utc_now() -> str:
     return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def load_resume(path: Path, protocol: str) -> dict[int, dict[str, Any]]:
+    """Load a resume ledger, discarding rows measured with another protocol.
+
+    Mixed-protocol resumes are the failure this guards: a session measured with a
+    different idle method looks like a completed session and would be silently reused.
+    """
+    done: dict[int, dict[str, Any]] = {}
+    if not path.is_file():
+        return done
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        item = json.loads(line)
+        if item.get("protocol") != protocol:
+            continue
+        done[int(item["session"])] = item
+    return done
 
 
 def main() -> int:
@@ -85,14 +108,11 @@ def main() -> int:
     run_dir = root / "runs" / args.run_id
     run_dir.mkdir(parents=True, exist_ok=True)
     partial = run_dir / "sessions.partial.jsonl"
-    done: dict[int, dict[str, Any]] = {}
-    if partial.is_file() and not args.fresh:
-        for line in partial.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                item = json.loads(line)
-                done[int(item["session"])] = item
+    done = {} if args.fresh else load_resume(partial, PROTOCOL)
     if done:
-        print(f"resuming: {len(done)} session(s) on record")
+        print(f"resuming: {len(done)} session(s) on record ({PROTOCOL})")
+    elif partial.is_file() and not args.fresh:
+        print("no session on record matches this protocol; starting from session 0")
 
     # Warm up so the model is resident before any session's idle baseline.
     for row in rows[:2]:
@@ -170,6 +190,7 @@ def main() -> int:
 
         item = {
             "session": session,
+            "protocol": PROTOCOL,
             "started_utc": _utc_now(),
             "idle_mean_w": sum(b["idle_mean_w"] for b in blocks) / len(blocks),
             "idle_cv": sum(b["idle_cv"] for b in blocks) / len(blocks),
@@ -188,6 +209,7 @@ def main() -> int:
         "run_id": args.run_id,
         "created_utc": _utc_now(),
         "source_config": args.config,
+        "protocol": PROTOCOL,
         "n_sessions": len(done),
         "depths": list(DEPTHS),
         "questions_per_block": args.questions,

@@ -39,6 +39,11 @@ def carryover_module():
     return _load("phase7_carryover", "27_phase7_carryover.py")
 
 
+@pytest.fixture(scope="module")
+def sessions_module():
+    return _load("phase7_sessions_run", "26_phase7_sessions.py")
+
+
 class TestICC:
     def test_identical_sessions_give_zero_icc(self, icc_module):
         groups = [[10.0, 11.0, 9.0, 10.5], [10.0, 11.0, 9.0, 10.5], [10.0, 11.0, 9.0, 10.5]]
@@ -74,6 +79,21 @@ class TestReplayStatistics:
 
     def test_quantile_interpolates(self, replay_module):
         assert replay_module._quantile([0.0, 10.0], 0.5) == pytest.approx(5.0)
+
+
+class TestResumeProtocol:
+    def test_rows_from_another_protocol_are_discarded(self, sessions_module, tmp_path):
+        ledger = tmp_path / "sessions.partial.jsonl"
+        ledger.write_text(
+            '{"session": 0, "protocol": "old-method", "blocks": []}\n'
+            '{"session": 1, "protocol": "idle-from-cooldown-tail-v2", "blocks": []}\n',
+            encoding="utf-8",
+        )
+        done = sessions_module.load_resume(ledger, "idle-from-cooldown-tail-v2")
+        assert set(done) == {1}
+
+    def test_missing_ledger_is_empty(self, sessions_module, tmp_path):
+        assert sessions_module.load_resume(tmp_path / "absent.jsonl", "v2") == {}
 
 
 class TestCarryoverPredecessor:
