@@ -494,3 +494,36 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
 - **Consequences:** No absolute P2 energy claim. HotpotQA savings are reported
   as 23.0-31.4%, not a point. A future estimator must replay the sweep sequence
   or bracket each query with a locally measured floor.
+
+## D-029 - Phase 6 inference repair: cluster interval, token cost, capture denominator
+
+- **Date:** 2026-11-25
+- **Status:** accepted
+- **Context:** The Q1 audit found four analysis defects that could be fixed on registered
+  data: questions were treated as independent although SQuAD shares articles; the power
+  calculation's discordance assumption was never reconciled with the observed rate; the
+  selected depth was reported without an out-of-sample check; and the P3 capture divided the
+  policy saving by the abstention-inclusive gap while labelling it non-abstention.
+  Generator: `scripts/21_phase6_inference.py`. Results: `docs/PHASE6_RESULTS.md`.
+- **Decision:**
+  1. Report the accuracy contrast with a **context-clustered** standard error. The design
+     effect is 0.98 on 806 clusters, so the conclusion is unchanged, but the clustered
+     interval is the reported one.
+  2. Report that energy is affine in **prompt tokens** (R2 0.902, BIC 29,290) better than in
+     depth (R2 0.888, BIC 30,212), and that the depth coefficient conditional on tokens is
+     -0.11 J/passage (SE 0.11). Depth remains the control knob; the physical cost is context
+     length.
+  3. Fit the affine model on `k >= 1` (`a = 26.90 [25.85, 27.95]`, `b = 2.149
+     [2.055, 2.243]`) and report `k=0` as a floor, not a fit point.
+  4. Report the **cross-fitted** selection result (all folds select `k=4`; held-out saving
+     58.13%, SD 1.96; winner's curse 0.03 pp) alongside K3, which **remains failed** at
+     0.7244. The 0.8 threshold is not changed.
+  5. Correct the P3 capture to **-9.8% [-22.8, -1.8]** against the matching no-abstention gap
+     of 7.21%. The registered -2.46% is retained in the record with a note that it divided by
+     the 28.64% abstention-inclusive gap.
+  6. Relabel H7 on the Qwen2.5-1.5B arm as **inconclusive** (95% CI [-1.46, +5.46]), not a
+     sign reversal, and report the three-reader contrast on the 500 shared question IDs.
+- **Consequences:** No gate changes and no new data. Phase 7 still replaces the per-query
+  window estimator; Phase 8 still retargets routing to the 22.5% gap against `k=4`. The
+  paper's H1 sentence now names tokens, and the abstract must carry that framing at
+  submission.

@@ -1,9 +1,11 @@
 # Paper figures and tables
 
-**Status:** 2026-11-23. The current paper uses eight figures: `design.png`,
-`p0_harness.png`, `measurement_validity.png`, `p1_curve.png`, `p1_frontier.png`,
-`sim_ratio.png`, `p1_contrasts.png`, and `rq_curves.png`. The old `p1_calibration.png` was removed from the package because
-the paper now reports the block factors in a table.
+**Status:** 2026-11-25. The current paper uses **seven** figures: `design.png`,
+`p0_harness.png`, `measurement_validity.png`, `p1_curve.png`, `p1_contrasts.png`,
+`p1_frontier.png`, and `rq_curves.png`. Phase 6 removed the `sim_ratio.png` figure from
+the manuscript because the simulation numbers are fully reported in Table `tab:simulations`;
+the PNG is retained in `figures/` for the record but is not referenced. The old
+`p1_calibration.png` was removed earlier because the block factors are reported in a table.
 
 The P1 primary result is **negative**: the 5 pp non-inferiority test is **not supported**
 (`A(4)-A(32) = -4.30` pp; one-sided lower bound `-6.17` pp; savings `58.17%`). The figure
@@ -15,8 +17,8 @@ The scripts are the source of truth:
 - `tools/paper/scripts/make_tables.py` → `tools/paper/tables/*.tex`
 
 The supplement is now embedded in `paper/main.tex`; the old standalone
-`supplement.tex` no longer exists. The figure package is limited to the eight files
-listed above.
+`supplement.tex` no longer exists. The figure package is limited to the seven files
+referenced by `main.tex` (plus the unused `sim_ratio.png`).
 
 ---
 

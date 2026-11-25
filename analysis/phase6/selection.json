@@ -1,0 +1,42 @@
+{
+  "folds": 5,
+  "depth_grid": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32
+  ],
+  "selected_depth_by_fold": [
+    4,
+    4,
+    4,
+    4,
+    4
+  ],
+  "selected_depth_counts": {
+    "4": 5
+  },
+  "in_sample_savings_pct_by_fold": [
+    59.00851993528748,
+    57.77231778321293,
+    58.13389104633857,
+    58.038658959924305,
+    57.87142122477662
+  ],
+  "held_out_savings_pct_by_fold": [
+    54.76657189042713,
+    59.55744839858674,
+    58.25312907275526,
+    58.63592262176939,
+    59.44932605813352
+  ],
+  "mean_in_sample": 58.16496178990798,
+  "mean_held_out": 58.132479608334414,
+  "sd_held_out": 1.9597172341980262,
+  "winner_curse_pp": 0.032482181573563196,
+  "full_sample_savings_at_k4_pct": 58.16738530915217,
+  "rule": "smallest k with A(k)-A(32) > -5 pp and >=20% savings on the training folds",
+  "note": "Selection is data-dependent; the held-out number is the honest object."
+}

@@ -1,0 +1,17 @@
+{
+  "point": -9.784348716811317,
+  "ci": [
+    -22.784497129952452,
+    -1.7538549579037213
+  ],
+  "n_valid": 2000,
+  "n_test": 186,
+  "static_depth": 1,
+  "threshold": 0.05,
+  "depth_histogram": {
+    "1": 182,
+    "2": 3,
+    "4": 1
+  },
+  "note": "Capture of the matched no-abstention oracle gap; CI is a question bootstrap."
+}

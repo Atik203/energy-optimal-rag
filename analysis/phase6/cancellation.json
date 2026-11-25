@@ -1,0 +1,42 @@
+{
+  "squad_qwen4b_p1": {
+    "from_depth": 4,
+    "to_depth": 32,
+    "delta_r": 0.11699999999999999,
+    "delta_q": -0.02795457833068138,
+    "recall_term": 0.06793548387096775,
+    "precision_term": -0.02493548387096779,
+    "net_delta_a": 0.04299999999999998,
+    "sum_of_terms": 0.042999999999999955
+  },
+  "squad_qwen15b_p2": {
+    "from_depth": 4,
+    "to_depth": 32,
+    "delta_r": 0.11399999999999999,
+    "delta_q": -0.08023748939779474,
+    "recall_term": 0.05221374045801526,
+    "precision_term": -0.07221374045801526,
+    "net_delta_a": -0.019999999999999962,
+    "sum_of_terms": -0.020000000000000004
+  },
+  "squad_llama3b_p2": {
+    "from_depth": 4,
+    "to_depth": 32,
+    "delta_r": 0.11399999999999999,
+    "delta_q": -0.13226463104325697,
+    "recall_term": 0.06903816793893129,
+    "precision_term": -0.11903816793893128,
+    "net_delta_a": -0.04999999999999999,
+    "sum_of_terms": -0.04999999999999999
+  },
+  "hotpot_qwen4b_p2": {
+    "from_depth": 4,
+    "to_depth": 10,
+    "delta_r": 0.05600000000000005,
+    "delta_q": 0.08367796610169492,
+    "recall_term": 0.024322033898305107,
+    "precision_term": 0.08367796610169492,
+    "net_delta_a": 0.10800000000000004,
+    "sum_of_terms": 0.10800000000000003
+  }
+}
