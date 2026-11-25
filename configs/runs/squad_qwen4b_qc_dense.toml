@@ -1,0 +1,82 @@
+# Phase 8 Step 3 — dense 2x2 reader (BM25 arm reused from run 2). PLACEHOLDER.
+# Encoder: sentence-transformers/all-MiniLM-L6-v2, cached in
+# G:\SmartScan-Cache\hf\hub (models--sentence-transformers--all-MiniLM-L6-v2),
+# revision 1110a243fdf4706b3f48f1d95db1a4f5529b4d41, verified 2026-11-26
+# without network. No download. Cross-encoder reranker out of scope.
+# Pipeline: CPU precompute dense rankings over the same 45,651 passages /
+# 70-word chunks (planned script scripts/31_qc_dense_precompute.py, freeze
+# rankings + record revision hash in prereg BEFORE any reader GPU run), then
+# GPU reader over 1,000 fresh questions (id_split "qc_dense", disjoint from
+# Steps 1-2) x k in {4,32} under the frozen dense rankings.
+# [retrieval] below documents the dense path; retrieval.top_k = 32 satisfies
+# the max(k_grid) validator check. The BM25 comparison arm is reused from run 2.
+schema_version = 1
+kind = "run"
+run_id = "squad_qwen4b_qc_dense"
+dataset = "squad"
+dataset_version = "v1.1"
+split = "dev"
+n_questions = 1000
+k_grid = [4, 32]
+seed = 20261115
+phase = "P8"
+id_split = "qc_dense"
+
+[reader]
+backend = "ollama"
+model = "qwen3.5:4b"
+quantization = "Q4"
+num_ctx = 4096
+num_predict = 24
+temperature = 0.0
+top_k = 1
+seed = 42
+think = false
+
+[retrieval]
+backend = "dense"
+encoder = "sentence-transformers/all-MiniLM-L6-v2"
+encoder_revision = "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+encoder_source = "cached-hf-hub-no-download"
+top_k = 32
+chunking = "word"
+passage_words = 70
+tokenizer = "lowercase_alnum"
+
+[energy]
+sampler = "nvml"
+sample_interval_ms = 100
+idle_baseline_s = 60
+block_size = 200
+warmup_queries = 20
+nonce_hex_chars = 10
+cpu_retrieval_proxy_watts = 20.0
+idle_max_cv = 0.20
+
+[blocks]
+replicates = 5
+questions_per_block = 200
+disjoint = true
+discard_first = 2
+cooldown_s = 120.0
+candidate_depth = 4
+reference_depth = 32
+
+[measurement]
+power_mode = "ac"
+batch_size = 1
+screen_off = true
+concurrent_jobs = false
+
+[scoring]
+primary = "normalized_em"
+secondary = ["lenient_span", "token_f1_ge_0.5"]
+
+[output]
+dir = "runs"
+raw_csv = "raw.csv"
+blocks_json = "blocks_design.json"
+
+[notes]
+purpose = "Phase 8 Step 3 placeholder: dense-ranking reader at k=4,32; needs frozen precompute (scripts/31_qc_dense_precompute.py) before GPU."
+claim_status = "placeholder-precompute-missing-no-gpu-run"

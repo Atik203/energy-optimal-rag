@@ -627,3 +627,34 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
      rows measured with a broken one. This is the guard for the error that cost two discarded runs.
 - **Consequences:** No gate changes; G7 remains failed on replay agreement. The paper gains a
   measured statement about which quantity is reproducible: the ratio is, the level is not.
+
+## D-034 - Phase 8 prereg frozen (prereg-qc-v1); four draft questions resolved
+
+- **Date:** 2026-11-26
+- **Status:** accepted
+- **Context:** Three subagents prepared Phase 8 in parallel (prereg draft, configs + frames,
+  scripts + tests). The draft raised four open questions that had to be resolved before any
+  GPU run.
+- **Resolutions:**
+  1. MiniLM revision recorded as `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`
+     (verified in the local HF cache; snapshots dir holds exactly that revision).
+  2. DiD bootstrap is independent across retriever arms — the dense frame is disjoint from
+     the run-2 BM25 frame by construction, so full pairing is not intended.
+  3. TOST equivalence bounds are +-2 pp for accuracy contrasts (dose-curve flatness and
+     zero-DiD), matching the 2 pp estimation margin.
+  4. Step 1 is paired within question over the same 1,000 qids (shards disjoint across
+     replicates, as in run 2); `disjoint` in the config refers to across-replicate sharding.
+- **Corrections to the plan:** the "2,250 used / 8,320 fresh" figure double-counts nested
+  splits (replication, boundary, context, tax are all subsets of p1_primary; boundary ==
+  context as sets). Unique exclusion is 1,200 (p0 200 + p1 1000, disjoint); fresh pool is
+  9,370. Frames drawn deterministically (seed 20261115): qc_fresh 1000
+  (`79cc63a6…`), qc_distractor 500 (`fd72ca73…`), qc_dense 1000 (`e10eb333…`), mutually
+  disjoint. Tracked source `data/splits/qc_frames.json`; regeneration via
+  `scripts/32_qc_frames.py`; merged into the local loader splits (untracked).
+- **Freeze:** `prereg/qc_prereg.md`, SHA-256 `a501d7e3…` (`prereg/qc_prereg.sha256`), tag
+  `prereg-qc-v1` pushed 2026-11-26. Step 1 smoke passed (idle 13.85 W, CV 0.003); smoke
+  artifacts and registry row removed.
+- **Consequences:** GPU gate for Step 1 is open. Any later change goes in
+  `prereg/amendments.md`, never by editing the frozen file. Scripts subagent caught and
+  pinned a DiD sign convention (dense degrading less gives negative `Δ`); the prereg formula
+  governs.
