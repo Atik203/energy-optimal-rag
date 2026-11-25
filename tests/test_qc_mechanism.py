@@ -2,8 +2,9 @@
 
 These pin the pure parts of the distractor dose-response run
 (``scripts/30_qc_distractor.py``), the dense precompute
-(``scripts/31_qc_dense_precompute.py``), and the Step 1 fresh-gap analysis
-(``scripts/33_qc_fresh_analysis.py``). CPU only: no GPU, no model download,
+(``scripts/31_qc_dense_precompute.py``), the Step 1 fresh-gap analysis
+(``scripts/33_qc_fresh_analysis.py``), and the dense DiD
+(``scripts/36_qc_did_analysis.py``). CPU only: no GPU, no model download,
 no network. The failures they guard against are silent: a dose plan that drops
 a level, a position condition that misplaces the gold, a DiD with the wrong
 sign convention, or a harmonization that drifts from the Phase 7 convention.
@@ -219,3 +220,24 @@ class TestPairedGap:
         values = [0.02, 0.03, 0.04]
         assert fresh_module._quantile(values, 0.0) == pytest.approx(0.02)
         assert fresh_module._quantile(values, 1.0) == pytest.approx(0.04)
+
+
+@pytest.fixture(scope="module")
+def did_module():
+    return _load("qc_did_analysis", "36_qc_did_analysis.py")
+
+
+class TestDiDFull:
+    def test_sign_convention_dense_degrades_less_is_negative(self, did_module):
+        # Dense A falls 0.05, BM25 A falls 0.10: dense degrades less -> negative.
+        assert did_module._did(0.50, 0.45, 0.50, 0.40) == pytest.approx(-0.05)
+
+    def test_zero_when_contrasts_match(self, did_module):
+        assert did_module._did(0.5, 0.4, 0.6, 0.5) == pytest.approx(0.0)
+
+    def test_quantile_endpoints(self, did_module):
+        assert did_module._quantile([0.1, 0.2, 0.3], 0.0) == pytest.approx(0.1)
+        assert did_module._quantile([0.1, 0.2, 0.3], 1.0) == pytest.approx(0.3)
+
+    def test_norm_is_case_insensitive_alnum(self, did_module):
+        assert did_module._norm("Hello, World!") == "hello world"
