@@ -209,6 +209,11 @@ def fresh_module():
     return _load("qc_fresh_analysis", "33_qc_fresh_analysis.py")
 
 
+@pytest.fixture(scope="module")
+def token_module():
+    return _load("qc_token_attribution", "38_qc_token_attribution.py")
+
+
 class TestPairedGap:
     def test_identical_arms_give_zero_gap(self, fresh_module):
         assert fresh_module._quantile([0.03, 0.03, 0.03], 0.5) == pytest.approx(0.03)
@@ -241,3 +246,23 @@ class TestDiDFull:
 
     def test_norm_is_case_insensitive_alnum(self, did_module):
         assert did_module._norm("Hello, World!") == "hello world"
+
+
+class TestTokenAttribution:
+    def test_ols_recovers_exact_line(self, token_module):
+        xs = [float(i) for i in range(10)]
+        ys = [13.0 + 0.025 * x for x in xs]
+        out = token_module._ols(xs, None, ys)
+        assert out['coefs'][0] == pytest.approx(13.0)
+        assert out['coefs'][1] == pytest.approx(0.025)
+        assert out['r_squared'] == pytest.approx(1.0)
+
+    def test_two_regressor_model_beats_one(self, token_module):
+        xs1 = [float(i) for i in range(10)]
+        xs2 = [float(i % 3) for i in range(10)]
+        ys = [1.0 + 2.0 * a + 5.0 * b for a, b in zip(xs1, xs2, strict=True)]
+        one = token_module._ols(xs1, None, ys)
+        two = token_module._ols(xs1, xs2, ys)
+        assert two['r_squared'] >= one['r_squared']
+        assert two['r_squared'] == pytest.approx(1.0)
+

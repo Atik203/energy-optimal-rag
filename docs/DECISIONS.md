@@ -750,3 +750,24 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   by smoke runs before any full measurement; swept scripts 30-37 clean afterwards.
 - **Decision:** Phase 8 measurements complete. G8 is adjudicated in
   `docs/PHASE8_RESULTS.md`.
+
+## D-038 - Phase 9 token attribution: J is affine in tokens, not just depth
+
+- **Date:** 2026-11-26
+- **Status:** accepted
+- **Context:** Phase 9 (roadmap: pick at most one; D3 token attribution chosen, 0 GPU).
+  Analysis of the 7,000 P1 requests with the reader's own token counts
+  (`scripts/38_qc_token_attribution.py`, CPU only).
+- **Findings:**
+  - Token model `J = 13.88 + 0.02549*Tpre + 1.135*Tdec`, R2 = **0.9575**, against
+    depth model `J = 21.25 + 2.2348k`, R2 = 0.8965.
+  - Marginal prefill cost is about **25 mJ/token**; decode about 1.1 J/token.
+    Prefill wall time grows 15x across the grid (0.098 to 1.474 s) while decode is
+    flat (0.021 to 0.114 s): the grid's energy is prefill-dominated.
+  - J-per-prefill-token falls 5.1x across depths, which is expected under an affine
+    token model (fixed 13.9 J amortized), not evidence against it.
+- **Consequence:** H1 is upgraded from a depth curve to a hardware-grounded token
+  cost. The Step 4 padding result (75.93 J/q for length-matched pads) is the
+  experimental confirmation of the same model from the other direction: two
+  independent paths, one observational and one interventional, agree that energy
+  follows prompt tokens. Reported in the paper's measurement section.
