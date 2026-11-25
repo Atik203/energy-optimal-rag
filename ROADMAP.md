@@ -171,7 +171,7 @@ outputs, acceptance.
   420 tests pass.
 - **Effort:** small, CPU-only, ~1 day with agents.
 
-### Phase 7 — 📋 todo · Metrology: block estimator + falsified windows (5–8 GPU-h) — DO SECOND
+### Phase 7 — 🔄 partial · Metrology: block estimator + falsified windows (5–8 GPU-h) — DO SECOND
 
 **Execution plan:** [docs/PHASE7_PLAN.md](docs/PHASE7_PLAN.md) (design, estimand, decision rules, risks).
 
@@ -207,10 +207,16 @@ outputs, acceptance.
      concurrency. Backfill a P1 sidecar with `unknown` — **never fabricate** values.
   7. **Affine fit on `k ≥ 1`**; `k=0` reported as a floor, not a fit point.
 - **Outputs:** `prereg/measurement_hardening_prereg.md` (frozen before runs), `runs/<block*>/`,
-  `analysis/measurement_hardening/`, updated validity figure, `docs/DECISIONS.md`.
+  `analysis/measurement_hardening/<run_id>/`, updated validity figure, `docs/DECISIONS.md`.
 - **Acceptance (G7):** block estimator with CI; windows explicitly reported as falsified (`0.817`)
-  and not used; `γ` reported; CV distributions for all seven depths; wall ratio as a range;
+  and not used; `γ` reported; CV distributions for all seven depths; replay agreement within 3 pp;
   manifest complete.
+- **Status after runs 1–2 (D-032, results in [docs/PHASE7_RESULTS.md](docs/PHASE7_RESULTS.md)):**
+  saving 65.25% [61.27, 69.11] at `k=4` vs `k=32`; `A(k)` reproduces P1 within 0.9 pp; CV
+  1.2–7.0% at all seven depths (H-M2 pass); slope 2.131 [2.043, 2.219] J/passage (H-M3 pass);
+  **replay agreement fails at 7.08 pp (H-M1), so G7 fails** and absolute `J` stays a range.
+  `E(k)` is minimised at `k=1`–`k=2`, which is reported as a knee, not an optimum. Outstanding:
+  the 10-replay set and the session ICC.
 - **Effort:** medium; single GPU, batch 1, no concurrent jobs; `df -h`/`du -sh` before runs.
 
 ### Phase 8 — 📋 todo · Causal tests + retargeted router (6–9 GPU-h) — THE Q1 BET
@@ -307,7 +313,7 @@ outputs, acceptance.
 | Gate | Phase | Criterion | Pass action |
 |---|---|---|---|
 | **G6** | 6 | Cluster-robust SE + token-vs-k + cross-fit reported; 5 pp = "not established"; 0.8 still failed | Enter Phase 7 |
-| **G7** | 7 | Block estimator with CI; windows falsified (0.817) and unused; carryover `γ` reported; CV for all seven depths; replay agreement within 3 pp; manifest complete | Block estimator is the primary energy result |
+| **G7** | 7 | Block estimator with CI; windows falsified (0.817) and unused; carryover `γ` reported; CV for all seven depths; replay agreement within 3 pp; manifest complete | **FAILED** — CV and slope pass, replay agreement 7.08 pp. Block estimator stays primary; absolute `J` is a range |
 | **G8** | 8 | Prereg frozen; fresh `k=4` gap reported; router capture CI vs 2 pp margin; causal contrast direction; dense DiD with CI | Headline contribution (or documented null with MDE) |
 | **G10** | 10 | 15–18 pp; traceability; clean-room repro; v0.3.0 DOI + tag | Submit |
 
