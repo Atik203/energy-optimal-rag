@@ -527,3 +527,22 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   window estimator; Phase 8 still retargets routing to the 22.5% gap against `k=4`. The
   paper's H1 sentence now names tokens, and the abstract must carry that framing at
   submission.
+
+## D-030 - Phase 7 representative block design (1,000 questions per depth)
+
+- **Date:** 2026-11-25
+- **Status:** accepted
+- **Context:** The first Phase 7 block run (`squad_qwen4b_p7_blocks`) measured 5 blocks x 20
+  questions per depth. The energy side passed: block CV 1.8-3.6% at `k >= 4`, affine slope
+  2.523 [2.329, 2.717], monotone energy with depth. The savings ratio failed G7 (75.70% vs
+  58.17%, 17.5 pp) because the accuracy denominator was 20 questions (SE about 11 pp) with a
+  non-monotone `A(k)` (`A(4)=A(8)=0.65`, `A(16)=0.53`) against 0.450/0.467/0.481 on the full
+  sample. See `docs/PHASE7_RESULTS.md`.
+- **Decision:** Run a second block design with 5 blocks x 200 **disjoint** questions per depth
+  (1,000 distinct questions per depth; 7,000 measured generations). Block order, cooldown,
+  discard rule, estimator, bootstrap, and all gates are unchanged. Logged as
+  `prereg/amendments.md` A-003 with `outcome_data_seen: yes`, because the change follows
+  inspection of run 1.
+- **Consequences:** About 3.5 GPU-h instead of 2. No gate, margin, or threshold changes. Run 1
+  stays in the record as the energy-precision result; run 2 becomes the ratio result. Absolute
+  `J` remains a range until G7 passes.
