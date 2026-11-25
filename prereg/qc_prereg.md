@@ -37,7 +37,7 @@ Exclusion list = union of all tracked SQuAD splits: `p0_golden` 200 + `p1_primar
 (P3 is a hashed subset of P1, so excluding P1 excludes P3). Pool: 10,570 − 1,200
 = **9,370** remaining dev qids. Three fresh frames drawn disjoint from the
 exclusion list and from each other: fresh `n=1,000`, distractor `n=500`, dense
-`n=1,000` (2,500 total). Qid lists in `data/processed/qc_frames.json` (generated 2026-11-26, seed 20261115), per-frame hashes:
+`n=1,000` (2,500 total). Qid lists in `data/splits/qc_frames.json` (generated 2026-11-26, seed 20261115), per-frame hashes:
 - `qc_fresh`: n=1000, sha256 `79cc63a654b49765d0a9681ea3af8091f8d5394dba93d8ad2b4ad687e6ce36ad`
 - `qc_distractor`: n=500, sha256 `fd72ca733cda1b1425dc4007673e6b48ad516a39011de9c9970ed046924477a3`
 - `qc_dense`: n=1000, sha256 `e10eb333fa8fb474770edb9c0b70be5d969fe85b848386d2cfac56b2b9a28534`
