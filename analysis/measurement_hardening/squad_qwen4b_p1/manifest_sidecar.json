@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "run_id": "squad_qwen4b_p1",
+  "kind": "manifest-sidecar",
+  "purpose": "Completes the Phase 7 manifest schema for a run that predates it, without inventing values.",
+  "fields": {
+    "driver_version": "unknown",
+    "cuda_version": "unknown",
+    "power_mode": "unknown",
+    "gpu_clock_mhz": "unknown",
+    "ollama_version": "unknown",
+    "ollama_digest": "unknown",
+    "model_digest": "d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04",
+    "hf_cache_revision": "unknown",
+    "ambient_temperature_c": "unknown",
+    "throttle_reasons": "unknown",
+    "screen_state": "unknown",
+    "ac_state": "unknown",
+    "batch_size": "unknown",
+    "concurrent_jobs": "unknown"
+  },
+  "field_sources": {
+    "driver_version": "not recorded by the run",
+    "cuda_version": "not recorded by the run",
+    "power_mode": "not recorded by the run",
+    "gpu_clock_mhz": "not recorded by the run",
+    "ollama_version": "not recorded by the run",
+    "ollama_digest": "not recorded by the run",
+    "model_digest": "manifest.json",
+    "hf_cache_revision": "not recorded by the run",
+    "ambient_temperature_c": "not recorded by the run",
+    "throttle_reasons": "not recorded by the run",
+    "screen_state": "not recorded by the run",
+    "ac_state": "not recorded by the run",
+    "batch_size": "not recorded by the run",
+    "concurrent_jobs": "not recorded by the run"
+  },
+  "derived_from_raw": {
+    "sm_clock_mhz": {
+      "mean": 1839.440857142857,
+      "min": 900.0,
+      "max": 2062.0,
+      "n": 7000
+    },
+    "gpu_temp_c": {
+      "mean": 85.32485714285714,
+      "min": 65.0,
+      "max": 90.0,
+      "n": 7000
+    }
+  },
+  "derived_note": "derived_from_raw holds per-request observations the run did record. These are measurements, not manifest fields, and must not be quoted as recorded environment state.",
+  "unknown_count": 13,
+  "required_count": 14
+}
