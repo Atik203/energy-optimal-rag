@@ -18,10 +18,12 @@
  * - docs/proposal.md
  * - prereg/PREREGISTRATION.md
  *
- * Claim boundary: post-pilot MARGINAL, public scaffold v0.1.0, no
- * confirmatory results, preregistration not frozen. Every pilot value is
- * labelled pilot in the UI. The 2 pp static claim is dead. The 5 pp result
- * is a pilot signal, not certified. The 78.8% oracle gain is an upper bound.
+ * Claim boundary: pre-Q1 hardening, version 0.2.1, Phase 6 complete. P1 is a
+ * confirmatory negative (5 pp not established); the preregistration is frozen
+ * at prereg-freeze-v1. Every pilot value is labelled pilot in the UI. The 2 pp
+ * static claim is dead and the 5 pp claim is not established. Absolute joules
+ * are provisional until Phase 7 replaces the per-query window estimator. The
+ * 78.8% oracle gain remains an upper bound.
  */
 
 export type ClaimStatus = "supported" | "dead" | "rejected" | "upper-bound" | "signal" | "pending";
@@ -30,11 +32,11 @@ export const project = {
   name: "Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation",
   shortName: "G2",
   siteName: "Energy Observatory",
-  version: "0.1.0",
-  status: "post-pilot MARGINAL",
+  version: "0.2.1",
+  status: "pre-Q1 hardening",
   statusDetail:
-    "Public scaffold. P0 harness failed block calibration on the clean _r3 run. P1 completed with calibration 7/7, but the pre-registered 5 pp non-inferiority claim was not supported.",
-  updated: "2026-11-15",
+    "Phase 6 complete (2026-11-25). The pre-registered 5 pp non-inferiority claim is not established, the accuracy cost is nonzero, and a recall/precision mechanism explains the plateau. Absolute joules remain provisional until Phase 7 replaces the per-query window estimator.",
+  updated: "2026-11-25",
   repo: "https://github.com/Atik203/energy-optimal-rag",
   author: "Atikur Rahaman and contributors",
   citationVersion: "0.1.0",
@@ -60,7 +62,7 @@ export const p1 = {
   runId: "squad_qwen4b_p1",
   status: "fail" as P1Status,
   label: "P1 failed (5 pp)",
-  note: "7,000/7,000 rows, 0 invalid, calibration 7/7; A(4)-A(32) = -4.30 pp, one-sided lower -6.17 pp; 5 pp NI not supported; savings 58.17%.",
+  note: "7,000/7,000 rows, 0 invalid, calibration 7/7; A(4)-A(32) = -4.30 pp, one-sided lower -6.17 pp; 5 pp NI not supported; savings 58.17%. A context-clustered interval (design effect 0.98) leaves the result unchanged.",
   preregHash: "fb9e5bcf",
 };
 
@@ -670,7 +672,7 @@ export const phases: Array<{
     goal: "Stress the result with one confirmatory replication reader, one exploratory reader, a distractor dataset, depth/context probes, and energy taxes.",
     outputs:
       "Qwen2.5-1.5B replication (n = 500) and Llama 3.2 3B exploratory reader (n = 500), HotpotQA distractor (n = 500, k \u2264 10), boundary probe (n = 200, 8k), 16k context-budget probe (n = 200), fixed and per-passage taxes; optional H200 accuracy-only check, not run.",
-    exit: "G5 replication; tax signs match Corollary 1; boundary probe resolves; exploratory arms reported without gates.",
+    exit: "G5 replication; tax signs match Corollary 1; boundary probe resolves; exploratory arms reported without gates. Result: Qwen1.5B inconclusive (+2.00 pp, CI -1.46 to +5.46), HotpotQA supports the direction (-10.80 pp); boundary and 16k probes null.",
   },
   {
     id: "P3",
@@ -679,7 +681,7 @@ export const phases: Array<{
     goal: "Test whether adaptivity is real, not just a ceiling.",
     outputs:
       "Feature set, policy model, 600/200/200 split, matched-accuracy evaluation, oracle gap capture.",
-    exit: "G4: oracle gain \u2265 20% and policy captures \u2265 50% at matched accuracy, or a documented negative.",
+    exit: "G4: oracle gain \u2265 20% and policy captures \u2265 50% at matched accuracy, or a documented negative. Result: policy saving -0.71%, capture -9.8% [-22.8, -1.8] against the matching 7.21% gap; G4 fails.",
   },
   {
     id: "P4",
@@ -688,7 +690,7 @@ export const phases: Array<{
     goal: "Test the identity, the comparative statics, and the dependence on scoring and margin.",
     outputs:
       "Identity tests across datasets and readers, certification-cost curves, margin sensitivity, distractor counterexample check, robustness to scoring rule.",
-    exit: "Theory report; identity and comparative statics either supported or revised.",
+    exit: "Theory report; identity and comparative statics either supported or revised. Result: coverage model rejected on three of four arms; identity is a local diagnostic; scoring flips k* between 4 and 8.",
   },
   {
     id: "P5",
@@ -696,8 +698,8 @@ export const phases: Array<{
     name: "Paper",
     goal: "Write a decision-theory and causal-measurement paper, not a curve paper.",
     outputs:
-      "Manuscript draft, supplement, figures, tables, claims-evidence map.",
-    exit: "Internal review; every number traces to runs/<run_id>/raw.csv.",
+      "Manuscript draft, figures, tables, claims-evidence map; single self-contained file, 30 pages.",
+    exit: "Internal review; every number traces to runs/<run_id>/raw.csv. Result: paper frozen at 30 pages, seven figures, 426 tests.",
   },
   {
     id: "P6",
@@ -706,7 +708,19 @@ export const phases: Array<{
     goal: "Make the result reproducible off the original machine.",
     outputs:
       "Camera-ready fixes, reproducibility package, Zenodo DOI, data card, release tag.",
-    exit: "Clean-room reproduction on a second machine; archive deposited.",
+    exit: "Clean-room reproduction on a second machine; archive deposited. Result: clean-room check passed, DOI 10.5281/zenodo.24352803; v0.3.0 pending Phase 10.",
+  },
+  {
+    id: "P6",
+    weeks: "Phase 6",
+    status: "pass",
+    name: "Inference repair (CPU only)",
+    goal:
+      "Fix the analysis defects a methods reviewer would call errors, using registered rows only.",
+    outputs:
+      "Context-clustered interval; depth-versus-token model; k >= 1 affine fit with intervals; cross-fitted selection; capture bootstrap; gold-first overload test; same-ID three-reader contrast; cancellation table; price of guarantee.",
+    exit:
+      "Design effect 0.98; token model R^2 0.902 versus 0.888 for depth; all folds select k=4 with a 58.13% held-out saving; capture -9.8%; gold-first loss 3.73 pp; 30 pages, 426 tests.",
   },
 ];
 
@@ -1445,6 +1459,16 @@ export const contributions = [
     title: "Learned adaptive policy",
     body:
       "A small cost-sensitive model uses cheap pre-generation features and is tested once on held-out questions at matched accuracy.",
+  },
+  {
+    title: "Recall x precision mechanism",
+    body:
+      "From k=4 to the maximum depth the recall gain is stable at +2.4 to +6.9 pp while the precision term ranges from -12.0 to +8.4 pp, so the sign of the depth effect is set by precision. Holding the gold passage at rank 1 and adding 31 distractors still costs 3.73 pp.",
+  },
+  {
+    title: "Measurement audit",
+    body:
+      "Per-query NVML windows are sequence-dependent: the window sum recovers 81.7% of a replay total. Absolute joules are therefore reported as provisional and the accuracy contrast is the claim that travels.",
   },
 ];
 

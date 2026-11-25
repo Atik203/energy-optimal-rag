@@ -96,7 +96,7 @@ export function PageHero({
         <span className="eyebrow">{eyebrow}</span>
         <span className="h-px flex-1 bg-line" aria-hidden />
         <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
-          Status / Post-pilot MARGINAL · {p0.label} · {p1.label}
+          Status / Pre-Q1 hardening · {p0.label} · {p1.label}
         </span>
       </div>
       <h1 className="display-title mt-6 max-w-4xl text-[2.55rem] leading-[1.01] sm:text-5xl lg:text-[3.65rem]">

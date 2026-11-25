@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 };
 
 const statusRows = [
-  ["Research status", "post-pilot MARGINAL"],
+  ["Research status", "pre-Q1 hardening"],
   ["Release", "public scaffold v0.1.0"],
   ["Last updated", project.updated],
   ["Confirmatory data", "none"],
@@ -98,7 +98,7 @@ export default function AboutPage() {
         }
         lede="This site describes a research project that has run a pilot, killed its own headline, and is now collecting confirmatory data. It is intentionally specific about what is not known."
         meta={[
-          { label: "Post-pilot MARGINAL", tone: "caution" },
+          { label: "Pre-Q1 hardening (Phase 6 complete)", tone: "caution" },
           { label: "v0.1.0", tone: "neutral" },
           { label: "Prereg frozen 2026-11-15", tone: "signal" },
           { label: "P1 complete: 5 pp not supported", tone: "dead" },
@@ -137,10 +137,10 @@ export default function AboutPage() {
         </div>
 
         <div className="mt-4">
-          <Callout tone="caution" title="What “post-pilot MARGINAL” means">
-            The energy curve is precise and the 2 pp static claim is dead. The 5 pp policy is a
-            pilot signal that needs a powered rerun. “MARGINAL” is the honest status, not a
-            euphemism for a positive result.
+          <Callout tone="caution" title="What “pre-Q1 hardening” means">
+            The energy curve is precise, the 2 pp static claim is dead, and the 5 pp guarantee was
+            tested and not established. Phase 6 then removed the analysis defects: the interval
+            is now context-clustered and the energy model is expressed in prompt tokens.
           </Callout>
         </div>
       </section>
