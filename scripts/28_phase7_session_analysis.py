@@ -60,6 +60,20 @@ def _icc_one_way(groups: list[list[float]]) -> dict[str, float]:
     }
 
 
+def _harmonize(energy_j: float, duration_s: float, idle_w: float, reference_w: float) -> float:
+    """Re-express a block or segment integral at a common idle baseline.
+
+    ``measured = gross - idle_w * duration``, so ``gross`` can be reconstructed and
+    re-subtracted at ``reference_w``. This matters because idle power on the host is not
+    stationary: a block measured behind a 20 W baseline is biased low relative to one
+    behind 14.5 W, by ``(idle_w - reference_w) * duration``.
+    """
+    if duration_s <= 0:
+        return energy_j
+    gross = energy_j + idle_w * duration_s
+    return gross - reference_w * duration_s
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Phase 7 session-variance analysis.")
     parser.add_argument("--root", default=str(ROOT))
@@ -75,18 +89,49 @@ def main() -> int:
     seg_size = int(payload["segment_size"])
 
     by_depth: dict[str, Any] = {}
+    # A common idle baseline for the harmonised comparison: the median of every block's
+    # measured idle. The median avoids privileging the cleanest session.
+    all_idles = sorted(
+        float(block["idle_mean_w"]) for session in sessions for block in session["blocks"]
+    )
+    reference_idle = statistics.median(all_idles)
+
     for depth in depths:
         block_values: list[float] = []
+        harmonized_values: list[float] = []
         groups: list[list[float]] = []
+        harmonized_groups: list[list[float]] = []
         accuracies: list[float] = []
         for session in sessions:
             block = next(b for b in session["blocks"] if int(b["k"]) == depth)
             block_values.append(float(block["energy_per_query_j"]))
             accuracies.append(int(block["correct"]) / int(block["n"]))
             groups.append([float(seg["energy_j"]) / (seg_size * 1.0) for seg in block["segments"]])
+
+            duration = float(block["duration_s"])
+            idle_w = float(block["idle_mean_w"])
+            n_questions = int(block["n"])
+            harmonized_values.append(
+                _harmonize(float(block["energy_j"]), duration, idle_w, reference_idle) / n_questions
+            )
+            harmonized_groups.append(
+                [
+                    _harmonize(
+                        float(seg["energy_j"]),
+                        float(seg["end_s"]) - float(seg["start_s"]),
+                        idle_w,
+                        reference_idle,
+                    )
+                    / (seg_size * 1.0)
+                    for seg in block["segments"]
+                ]
+            )
         icc = _icc_one_way(groups)
+        icc_harmonized = _icc_one_way(harmonized_groups)
         mean = statistics.mean(block_values)
         sd = statistics.stdev(block_values) if len(block_values) > 1 else 0.0
+        mean_h = statistics.mean(harmonized_values)
+        sd_h = statistics.stdev(harmonized_values) if len(harmonized_values) > 1 else 0.0
         by_depth[str(depth)] = {
             "block_j_per_query": block_values,
             "block_mean_j_per_query": mean,
@@ -94,6 +139,14 @@ def main() -> int:
             "between_session_cv": sd / mean if mean else None,
             "accuracy": accuracies,
             "segment_j_per_query": groups,
+            "idle_harmonized": {
+                "reference_idle_w": reference_idle,
+                "block_j_per_query": harmonized_values,
+                "block_mean_j_per_query": mean_h,
+                "between_session_cv": sd_h / mean_h if mean_h else None,
+                "icc": icc_harmonized["icc"],
+                "icc_truncated": icc_harmonized["icc_truncated"],
+            },
             **icc,
         }
 
@@ -128,15 +181,24 @@ def main() -> int:
         "",
         f"Idle across sessions: {', '.join(f'{v:.2f} W' for v in idles)}.",
         "",
-        "| k | block J/query | between-session CV | ICC(1,1) |",
-        "|---:|---:|---:|---:|",
+        "| k | J/query | between-session CV | ICC(1,1) | harmonised J/query | "
+        "harmonised CV | harmonised ICC |",
+        "|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for depth in depths:
         item = by_depth[str(depth)]
+        h = item["idle_harmonized"]
         lines.append(
             f"| {depth} | {item['block_mean_j_per_query']:.2f} | "
-            f"{100 * item['between_session_cv']:.1f}% | {item['icc_truncated']:.3f} |"
+            f"{100 * item['between_session_cv']:.1f}% | {item['icc_truncated']:.3f} | "
+            f"{h['block_mean_j_per_query']:.2f} | {100 * h['between_session_cv']:.1f}% | "
+            f"{h['icc_truncated']:.3f} |"
         )
+    lines += [
+        "",
+        f"Harmonised to a common idle of {reference_idle:.2f} W (median of measured idles).",
+        "",
+    ]
     lines += ["", out["note"], ""]
     (out_dir / "sessions.md").write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines))

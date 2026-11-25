@@ -150,6 +150,110 @@ This is a negative metrology result and should be reported as one. It is also th
 argument for the paper's protocol contribution: the randomized cooldown-separated block is what
 removes a 15% thermal artifact that a continuous sweep would silently absorb.
 
+## Session variance: the level drifts, the ratio does not
+
+Three independent sessions (`scripts/26_phase7_sessions.py`), each 3 depths x 200 questions with
+a 120 s cooldown per block. Each 200-question block is also integrated as **4 contiguous
+50-question segments**, which supplies the within-session replicates the ICC needs without
+re-measuring.
+
+Two runs of this measurement were discarded before this one, both for defects in the harness
+rather than the instrument. In the first, sessions 1 and 2 measured idle immediately after the
+previous session's `k=32` block and read **22.61 W** instead of ~15 W; at `k=32` that is
+7.5 W x 362 s = 2,715 J, or 13.6 J/query, which accounted for almost exactly the apparent 14%
+session difference. The fix samples idle from the **tail of each block's cooldown**. The second
+run was aborted because it resumed the first run's invalid rows; the ledger now records a
+`PROTOCOL` tag and discards rows measured under a different one.
+
+| k | J/query | between-session CV | ICC(1,1) | harmonised J/query | harmonised ICC |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 18.45 | 2.4% | 0.000 | 18.52 | 0.000 |
+| 4 | 24.91 | 2.7% | 0.000 | 25.79 | 0.008 |
+| 32 | 83.19 | 3.5% | 0.076 | 85.08 | 0.000 |
+
+Harmonised to a common idle of 14.72 W (median of measured idles). ICC(1,1) with three sessions
+is coarse and is reported as a descriptive decomposition.
+
+**Session variance is negligible.** Between-session CV is 2.4-3.5%, and the intraclass
+correlation is at or near zero at every depth, before and after idle harmonisation. Session is
+not a meaningful source of variance once cooldown separation is used. This is the opposite of
+what the continuous replays showed, and it localises the artifact to sequence continuity rather
+than to elapsed time.
+
+**Idle CV identifies contaminated baselines.** Session 1's contaminated windows had idle CV 0.208
+and 0.227, against 0.001-0.002 in the clean sessions. Within-sample CV is therefore a usable
+quality flag for the baseline, and harmonising to a common idle leaves the ICC essentially
+unchanged, which confirms the contamination did not drive the conclusion.
+
+### A between-occasion offset in the level
+
+The session run used the same first 200 questions as run 2's replicate 0, so the two can be
+compared directly. Accuracy is identical, but energy is not:
+
+| k | run 2 replicate 0 | sessions | difference | A (rep 0) | A (sessions) |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 19.26 | 18.45 | -4.2% | 0.340 | 0.342 |
+| 4 | 26.47 | 24.91 | -5.9% | 0.430 | 0.428 |
+| 32 | 86.00 | 83.19 | -3.3% | 0.480 | 0.478 |
+
+So the absolute level carries a **3-6% between-occasion offset** that is not explained by idle,
+question mix, or accuracy. Within that offset, the saving is stable:
+
+| | saving `k=4` vs `k=32` |
+|---|---:|
+| session 0 | 66.97% |
+| session 1 | 66.28% |
+| session 2 | 66.41% |
+| session mean | **66.55%** (0.69 pp spread) |
+| run 2 replicate 0, same questions | **65.64%** |
+
+The three sessions agree to **0.69 pp**, and the cross-occasion difference is **0.92 pp** — even
+though the level moved 3-6%. This is the ratio-invariance the estimand was chosen for: a
+depth-common offset cancels.
+
+**Consequence.** The reportable quantity is the ratio; the absolute joule level is a range with a
+measured 3-6% occasion component on top of the block and window disagreement. The claim boundary
+does not change, but it now has a second, independent reason: the level is not reproducible to
+better than a few per cent between occasions even with a matched protocol.
+
+## Carryover coefficient and manifest
+
+**Carryover.** Fitting `J_i = a + b k_i + g k_{i-1} + d temp_i + e clock_i` on the 6,999 P1 sweep
+requests with question-clustered standard errors (`scripts/27_phase7_carryover.py`):
+
+| model | `g` (J per depth of predecessor) | 95% CI | t |
+|---|---:|---|---:|
+| bare | **0.0908** | [0.0787, 0.1030] | 14.6 |
+| with temperature and clock | **0.0907** | [0.0786, 0.1029] | 14.6 |
+
+The coefficient barely moves when thermal state is controlled, so carryover is **not** a thermal
+proxy: a preceding `k=32` request adds about 2.9 J to the next one. The crossed-subset design
+planned in the roadmap was not run, because varying the predecessor also varies the thermal
+history the current request runs in — the manipulation and the confound travel together, so it
+would not separate them. The prereg requires only this regression.
+
+**Manifest.** P1 predates the full schema. The sidecar
+(`analysis/measurement_hardening/squad_qwen4b_p1/manifest_sidecar.json`) records **13 of 14 fields
+as `unknown`** and takes only `model_digest` from the manifest. Per-request clock and temperature
+are reported separately as observations (clock mean 1,839 MHz, range 900-2,062; temperature mean
+85.3 °C, range 65-90), never as recorded environment state.
+
+## G7 checklist
+
+| Criterion | Status |
+|---|---|
+| Block estimator with CI | done, 65.25% [61.27, 69.11] |
+| Windows falsified (0.817) and unused | done |
+| Carryover `g` reported | done, 0.091 J/depth |
+| CV for all seven depths | done, 1.2-7.0% |
+| Replay agreement within 3 pp | **failed**, 7.08 pp to sweep and 13.65 pp to replay |
+| Manifest complete | done via sidecar, 13/14 `unknown` |
+| Session variance | done, ICC ~ 0, 3-6% occasion offset in the level |
+
+**G7 fails on the one criterion that cannot be met**, and the reason is now measured rather than
+asserted: the available alternative estimators are themselves unstable, so agreement at 3 pp is
+unattainable by construction.
+
 ## What changed between the runs, and why
 
 The saving moved 75.70% -> 65.25%. Two independent errors, in opposite directions, account for it.
@@ -212,6 +316,10 @@ BM25, word chunks of 70). It is not a universal `k*` and must not be reported as
   absorbs silently.
 - `A(k)` on the block design reproduces the full P1 sample within 1 pp at every depth, so the
   run 1 anomaly was sampling, not method.
+- Session variance is negligible once cooldown separation is used: between-session CV 2.4-3.5%
+  and ICC(1,1) at or near zero at every depth, before and after idle harmonisation.
+- The saving is stable to 0.69 pp across three sessions and 0.92 pp across measurement
+  occasions, while the absolute level moves 3-6%. The ratio is reproducible when the level is not.
 - The saving is at least 61% on the block estimator (lower bound of the `k=4` interval,
   [61.27, 69.11]) and 58% on the sweep. Every estimator tested puts it above 50%, so
   "**more than half the GPU energy per correct answer at `k=4` versus `k=32`**" is safe across

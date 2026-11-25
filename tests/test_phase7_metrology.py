@@ -81,6 +81,16 @@ class TestReplayStatistics:
         assert replay_module._quantile([0.0, 10.0], 0.5) == pytest.approx(5.0)
 
 
+class TestHarmonization:
+    def test_rebasing_idle_recovers_the_same_gross(self, icc_module):
+        # 100 J net over 10 s behind a 20 W baseline implies 300 J gross.
+        # At a 15 W baseline the same gross yields 150 J net.
+        assert icc_module._harmonize(100.0, 10.0, 20.0, 15.0) == pytest.approx(150.0)
+
+    def test_zero_duration_is_returned_unchanged(self, icc_module):
+        assert icc_module._harmonize(100.0, 0.0, 20.0, 15.0) == pytest.approx(100.0)
+
+
 class TestResumeProtocol:
     def test_rows_from_another_protocol_are_discarded(self, sessions_module, tmp_path):
         ledger = tmp_path / "sessions.partial.jsonl"
