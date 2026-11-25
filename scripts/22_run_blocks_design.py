@@ -107,7 +107,7 @@ def _environment(config: dict[str, Any]) -> dict[str, str]:
     reader = config.get("reader", {})
     return {
         "nvidia_driver": _nvidia_smi("driver_version"),
-        "cuda_version": _nvidia_smi("compute_cap"),
+        "cuda_version": _nvidia_smi("cuda_version"),
         "gpu_name": _nvidia_smi("name"),
         "power_mode": str(config.get("measurement", {}).get("power_mode", "unknown")),
         "batch_size": str(config.get("measurement", {}).get("batch_size", 1)),
@@ -160,12 +160,22 @@ def _reader(config: dict[str, Any]) -> Reader:
 
 
 def _block_energy(samples: list[Any], idle_power_w: float) -> tuple[float, float, float]:
+    """Integrate one block window and subtract the idle baseline.
+
+    ``samples`` are ``PowerSample`` objects. The integrator takes
+    ``(t_s, power_w)`` pairs and ``idle_subtract`` takes
+    ``(gross_j, duration_s, idle_power_w)``, which is the same convention the
+    depth sweep uses.
+    """
     if len(samples) < 2:
         raise RuntimeError("sampler returned fewer than two samples")
-    raw = trapezoid_joules(samples)
-    energy = idle_subtract(raw, samples, idle_power_w)
-    power = mean_power(samples)
-    duration = samples[-1].t_s - samples[0].t_s
+    points = [(float(sample.t_s), float(sample.power_w)) for sample in samples]
+    gross = trapezoid_joules(points)
+    duration = points[-1][0] - points[0][0]
+    if duration <= 0:
+        raise RuntimeError("block window has non-positive duration")
+    energy = idle_subtract(gross, duration, idle_power_w)
+    power = mean_power(gross, duration)
     return max(energy, 0.0), power, duration
 
 
