@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 6 inference repair** (2026-11-25): `scripts/21_phase6_inference.py` and
+  `analysis/phase6/` (nine outputs plus a report). Adds a context-clustered paired interval,
+  a depth-versus-prompt-token model comparison, an affine fit on `k >= 1` with intervals,
+  cross-fitted selection, a bootstrap interval for the P3 capture ratio, a gold-first reader
+  overload test, a same-ID three-reader contrast, a cancellation decomposition, and a
+  price-of-guarantee table. Results: `docs/PHASE6_RESULTS.md`; decision D-029; claims
+  C-052-C-057; tests `tests/test_phase6_inference.py`.
+- **Phase 7/8/9/10 plan** in `ROADMAP.md`, with exit gates G6-G10 and a Q1 acceptance outlook.
+- `docs/PHASE7_PLAN.md`: step-by-step metrology identification plan for the next phase.
+- `CONTRIBUTING.md` now documents the `dev` -> `main` branch model and the protected `main`.
+
+### Fixed
+- **Injected web payload removed** (2026-11-25): `web/postcss.config.mjs` carried an obfuscated
+  `fromCharCode` payload appended after the export, `web/init` was added, the npm scripts were
+  changed to run it, and `.gitignore` stopped ignoring `.env`. All four changes were reverted
+  and `web/init` deleted. `main` was never infected. Credentials in `.env` and
+  `web/.env.local` should be rotated.
+- Paper held at 30 pages after the Phase 6 additions by removing the reporting-checklist table
+  and the simulation illustration figure.
+
 - Public research website under `web/` (Next.js App Router, React 19, Tailwind 4): home,
   research, method, pilot results, roadmap, and about pages plus a keyboard-driven slide deck.
 - `docs/PILOT_EVIDENCE.md`: every pilot claim with its value, source document, and status, plus
