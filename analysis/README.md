@@ -29,6 +29,26 @@ There is no `analysis/golden_squad_qwen4b_p0_r3/`: the clean `_r3` block calibra
 at `k=0` (0.7944), so no calibrated analysis was produced. The first-run failure analysis is
 under `analysis/golden_squad_qwen4b_p0/` and is uncalibrated.
 
+## Phase 6 inference repair
+
+`analysis/phase6/` holds the analyses added after the first review round. All are CPU-only
+re-analyses of registered rows; no gate changes.
+
+| File | Content |
+|---|---|
+| `cluster_robust.json` | Paired contrasts with context-clustered SEs and the design effect |
+| `token_vs_depth.json` | `J = a + b k` against `J = a + c T` (prompt tokens), cluster SEs, AIC/BIC |
+| `affine_ci.json` | Intercept and slope with 95% intervals, `k >= 1`, `k=0` as a floor |
+| `selection.json` | Cross-fitted selection of `k*`, held-out savings, winner's curse |
+| `policy_ci.json` | Bootstrap interval for the P3 capture ratio |
+| `gold_rank.json` | Accuracy when the gold passage is retrieved first (reader overload) |
+| `reader_subset.json` | Three readers on the same 500 question IDs |
+| `price_of_guarantee.json` | Savings bought by loosening the accuracy margin |
+| `cancellation.json` | Recall/precision terms from `k=4` to the maximum depth |
+| `report.md` | Human-readable summary |
+
+Regenerate with `python scripts/21_phase6_inference.py`.
+
 ## Rules
 
 - Analysis code reads only `runs/<run_id>/raw.csv` and the frozen config.

@@ -1,6 +1,6 @@
 # Roadmap — Depth Has a Knee → Q1 Hardening
 
-**Status:** P0–P6 COMPLETE · 3 audit rounds COMPLETE (6 reviewers + design stress-test, 2026-11-22/23) · entering Q1-hardening · last updated 2026-11-23
+**Status:** P0–P6 COMPLETE · Phase 6 (inference repair) COMPLETE 2026-11-25 · next: Phase 7 · last updated 2026-11-25
 **Horizon:** 6–10 weeks · local RTX 3060 6 GB + optional H200 `1g.18gb` accuracy-only slice · ≤ $47 cash
 **Repository:** https://github.com/Atik203/energy-optimal-rag · **branch model:** `dev` integration → `main` release (PRs only)
 **Paper:** `paper/main.tex` (30 pp, 8 figs, 650 DPI) + `paper/out/main.pdf` · DOI `10.5281/zenodo.24352803` · tag `v0.2.1` behind `main`
@@ -119,10 +119,19 @@ traces to `runs/<run_id>/raw.csv` or registered output; never commit raw text, w
 `runs/<run_id>/` data (registry row only). Each phase lists goal, hypothesis, inputs, steps,
 outputs, acceptance.
 
-### Phase 6 — 📋 todo · Inference repair and reframe (CPU-only, 0 GPU-h) — DO FIRST
+### Phase 6 — ✅ done 2026-11-25 · Inference repair and reframe (CPU-only, 0 GPU-h)
 
 - **Goal:** remove the three places a methods reviewer finds an *error* rather than a limitation.
   No energy-language edits in this phase (those wait for Phase 7; see Phase 10).
+- **Result (✅):** `docs/PHASE6_RESULTS.md`, `analysis/phase6/`, D-029, claims C-052–C-057.
+  Cluster design effect 0.98 on 806 clusters (interval unchanged); energy is affine in prompt
+  tokens (R2 0.902, BIC 29,290) better than in depth (0.888 / 30,212) and the depth coefficient
+  conditional on tokens is −0.11 (SE 0.11); `k≥1` fit `a=26.90 [25.85,27.95]`, `b=2.149
+  [2.055,2.243]`; cross-fitted selection picks `k=4` in all five folds with a 58.13% held-out
+  saving and a 0.03 pp winner's curse, while K3 stays failed at 0.7244; P3 capture corrected to
+  −9.8% [−22.8,−1.8] against the matching 7.21% gap; H7 on 1.5B relabelled inconclusive
+  (95% CI −1.46 to +5.46); gold-first overload −3.73 pp [0.73, 6.72]; three readers on the same
+  500 IDs are −2.80 / +2.00 / +5.00 pp. Paper held at 30 pages; 426 tests pass.
 - **Hypotheses:** (H-cost, re-analysis) the paired contrast is negative; (H-het) the depth effect
   is reader×task-conditional; (H-cancel) `Q` term dominates the sign.
 - **Inputs:** `analysis/squad_qwen4b_p1/{noninferiority,bootstrap}.json`,

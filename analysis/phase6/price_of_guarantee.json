@@ -1,0 +1,71 @@
+{
+  "points": [
+    {
+      "margin_pp": 2.0,
+      "selected_depth": 16,
+      "savings_pct": 32.88208386251993
+    },
+    {
+      "margin_pp": 3.0,
+      "selected_depth": 8,
+      "savings_pct": 50.371593765720625
+    },
+    {
+      "margin_pp": 4.0,
+      "selected_depth": 8,
+      "savings_pct": 50.371593765720625
+    },
+    {
+      "margin_pp": 5.0,
+      "selected_depth": 4,
+      "savings_pct": 58.16738530915217
+    },
+    {
+      "margin_pp": 6.0,
+      "selected_depth": 4,
+      "savings_pct": 58.16738530915217
+    },
+    {
+      "margin_pp": 8.0,
+      "selected_depth": 2,
+      "savings_pct": 61.921517632252844
+    },
+    {
+      "margin_pp": 10.0,
+      "selected_depth": 2,
+      "savings_pct": 61.921517632252844
+    }
+  ],
+  "marginal_cost": [
+    {
+      "from_margin_pp": 2.0,
+      "to_margin_pp": 3.0,
+      "savings_cost_pp": -17.489509903200698
+    },
+    {
+      "from_margin_pp": 3.0,
+      "to_margin_pp": 4.0,
+      "savings_cost_pp": 0.0
+    },
+    {
+      "from_margin_pp": 4.0,
+      "to_margin_pp": 5.0,
+      "savings_cost_pp": -7.795791543431548
+    },
+    {
+      "from_margin_pp": 5.0,
+      "to_margin_pp": 6.0,
+      "savings_cost_pp": 0.0
+    },
+    {
+      "from_margin_pp": 6.0,
+      "to_margin_pp": 8.0,
+      "savings_cost_pp": -3.75413232310067
+    },
+    {
+      "from_margin_pp": 8.0,
+      "to_margin_pp": 10.0,
+      "savings_cost_pp": 0.0
+    }
+  ]
+}
