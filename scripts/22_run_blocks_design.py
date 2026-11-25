@@ -225,7 +225,12 @@ def main(argv: list[str] | None = None) -> int:
     run_id = resolved.run_id
     k_grid = [int(k) for k in config["k_grid"]]
     replicates = int(config.get("blocks", {}).get("replicates", 5))
-    q_per_block = int(config.get("energy", {}).get("block_size", 20))
+    q_per_block = int(
+        config.get("blocks", {}).get(
+            "questions_per_block", config.get("energy", {}).get("block_size", 20)
+        )
+    )
+    disjoint = bool(config.get("blocks", {}).get("disjoint", False))
     discard = int(config.get("blocks", {}).get("discard_first", 2))
     cooldown = float(config.get("blocks", {}).get("cooldown_s", 120.0))
     seed = int(config.get("seed", 20261115))
@@ -270,9 +275,19 @@ def main(argv: list[str] | None = None) -> int:
     questions = split.questions.set_index("qid")["question"].to_dict()
     golds = split.questions.set_index("qid")["gold"].to_dict()
     index = RetrievalIndex.from_corpus(split.corpus)
-    block_qids = [str(q) for q in split.questions.head(q_per_block)["qid"]]
-    if len(block_qids) < q_per_block:
-        raise SystemExit(f"need {q_per_block} questions, found {len(block_qids)}")
+    all_qids = [str(q) for q in split.questions["qid"]]
+    if disjoint:
+        needed = replicates * q_per_block
+        if len(all_qids) < needed:
+            raise SystemExit(f"disjoint design needs {needed} questions, found {len(all_qids)}")
+        shards = {
+            replicate: all_qids[replicate * q_per_block : (replicate + 1) * q_per_block]
+            for replicate in range(replicates)
+        }
+    else:
+        if len(all_qids) < q_per_block:
+            raise SystemExit(f"need {q_per_block} questions, found {len(all_qids)}")
+        shards = {replicate: all_qids[:q_per_block] for replicate in range(replicates)}
 
     reader = _reader(config)
     idle_stats = summarize_idle(
@@ -319,6 +334,7 @@ def main(argv: list[str] | None = None) -> int:
         if cooldown > 0:
             print(f"cooldown      {cooldown:.0f} s before block {item.order} (k={item.k})")
             time.sleep(cooldown)
+        block_qids = shards[item.replicate]
         # Discard: return the device to the measured steady state.
         for _ in range(discard):
             qid = block_qids[0]
@@ -411,6 +427,7 @@ def main(argv: list[str] | None = None) -> int:
         "resumed_blocks": len(done),
         "replicates": replicates,
         "questions_per_block": q_per_block,
+        "disjoint_question_sets": disjoint,
         "discard_first": discard,
         "cooldown_s": cooldown,
         "idle": {
