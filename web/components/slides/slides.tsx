@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { ReactElement } from "react";
 import {
   AlertTriangle,
@@ -616,33 +615,49 @@ function BoundarySlide({ index, total }: SlideProps) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 11 · Flow diagram                                                    */
+/* 11 · Gates and verdicts                                              */
 /* ------------------------------------------------------------------ */
 
-function FlowSlide({ index, total }: SlideProps) {
+function GatesSlide({ index, total }: SlideProps) {
+  const rows = [
+    ["G1 · 5 pp at interior k + ≥20%", "−4.30 pp, bound −6.17", "Fail"],
+    ["G2 · loss bound + P(k*) ≥ 0.8", "P(k*=4) = 0.7244", "Fail"],
+    ["G4 · capture ≥ 50% at matched acc", "−9.8% capture", "Fail"],
+    ["G7 · replay agreement 3 pp", "7.08 pp (ref set spans 10.3)", "Fail"],
+    ["G8 · mechanism probes", "trend + dose curve + DiD + padding", "Complete"],
+  ];
   return (
     <SlideFrame
-      badge="Study Workflow"
-      badgeTone="deep"
-      title="How the study runs."
-      subtitle="Preregister, measure in blocks, audit the instrument, test the mechanism — each phase gated."
+      badge="Gates & Verdicts"
+      badgeTone="rose"
+      title="Failed gates are findings."
+      subtitle="G = go, K = stop, H = hypothesis. A gate fires when its rule fires — the claim moves, not the gate."
       index={index}
       total={total}
     >
-      <div className="flex min-h-0 flex-1 items-center justify-center">
-        <Image
-          src="/flow-diagram-v4.png"
-          alt="Study workflow: prepare SQuAD and HotpotQA, index with BM25, sweep seven SQuAD depths and six HotpotQA depths, measure NVML power with idle and block calibration, score normalized exact match, then analyze the paired non-inferiority test, bootstrap, E(k), N*, and policy. Measurement hardening adds block estimators, permutation replays, and session variance; Phase 8 adds distractor dose-response and a dense comparison."
-          width={7512}
-          height={3167}
-          priority
-          className="h-full w-full object-contain"
-        />
+      <SlideTable
+        head={["Gate", "Outcome", "Verdict"]}
+        rows={rows}
+        tone="rose"
+        widths={["38%", "42%", "20%"]}
+      />
+      <div className="mt-[1.2cqh] grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
+        <SlideCard title="What passed" tone="teal" icon={<Target size="2.8cqh" />}>
+          <p className="text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            H-M2 (CV 1.2–7.0%), H-M3 (slope 2.131 [2.043, 2.219]), the dose trend, the token
+            model (R² 0.9575). H-overload rejected; dense DiD null as a finding.
+          </p>
+        </SlideCard>
+        <SlideCard title="What this means" tone="amber" icon={<AlertTriangle size="2.8cqh" />}>
+          <p className="text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
+            No static depth is certified, no adaptive policy is claimed, absolute joules stay a
+            range. The mechanism — reader-side, token-priced — is what the gates leave standing.
+          </p>
+        </SlideCard>
       </div>
-      <p className="mt-[0.4cqh] text-center text-[2.0cqh] font-semibold" style={{ color: S.inkSoft }}>
-        BM25 = Best Matching 25 · NVML = NVIDIA Management Library · EM = exact match · DiD = difference-in-differences
-      </p>
-      <SlideCallout tone="teal">The run is the measurement; the checkpoints are the decision.</SlideCallout>
+      <SlideCallout tone="rose">
+        The static 5 pp rule, the 2 pp optimum, and the learned-policy gain all failed their gates. The paper reports each failure with its measured reason.
+      </SlideCallout>
     </SlideFrame>
   );
 }
@@ -747,7 +762,7 @@ export const SLIDES: SlideDef[] = [
   { id: "prereg", title: "Frozen before outcome, amended in public", Component: PreregSlide },
   { id: "results", title: "A knee, not an optimum", Component: ResultsSlide },
   { id: "boundary", title: "What we claim and what we don't", Component: BoundarySlide },
-  { id: "flow", title: "How the study runs", Component: FlowSlide },
+  { id: "flow", title: "Failed gates are findings", Component: GatesSlide },
   { id: "data", title: "Two datasets, one depth question", Component: DatasetSlide },
   { id: "references", title: "References", Component: ReferencesSlide },
 ];
