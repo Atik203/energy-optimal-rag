@@ -198,3 +198,4 @@ node_modules
 *.out
 *.toc
 *.synctex.gz
+*.listing
