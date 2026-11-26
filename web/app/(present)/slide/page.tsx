@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { SlideDeck } from "@/components/slides/deck";
 
 export const metadata: Metadata = {
-  title: "Project Proposal",
+  title: "Methodology",
   description:
-    "EEE 4261: Green Computing, Section C — Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation.",
+    "How the joules were measured: block estimator, metrology audit, causal mechanism, token model, and preregistration discipline.",
   robots: {
     index: false,
     follow: false,
