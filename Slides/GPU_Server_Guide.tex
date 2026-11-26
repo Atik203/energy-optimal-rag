@@ -1,0 +1,212 @@
+% ===========================================================================
+%  UIU GPU server - student guide
+%  All addresses, usernames and passwords in this document are PLACEHOLDERS.
+%  No real host, account or credential appears here.
+% ===========================================================================
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1.5cm,top=1.2cm,bottom=1.2cm]{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{ink}{HTML}{14241B}
+\definecolor{forest}{HTML}{1F5134}
+\definecolor{amber}{HTML}{8A4B00}
+\definecolor{rose}{HTML}{9F1239}
+\definecolor{codebg}{HTML}{F4F6F4}
+
+\titlespacing*{\section}{0pt}{6pt}{2pt}
+\titleformat{\section}{\normalsize\bfseries\color{forest}}{}{0em}{}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{codebg},
+  frame=none, aboveskip=2pt, belowskip=2pt,
+  xleftmargin=4pt, columns=fullflexible, keepspaces=true, breaklines=true,
+}
+
+\newcommand{\cmd}[1]{{\ttfamily\small #1}}
+
+\newtcolorbox{warnbox}[1][]{
+  colback=#1!6, colframe=#1!70, boxrule=0.6pt, arc=2pt,
+  left=5pt, right=5pt, top=3pt, bottom=3pt, fontupper=\small
+}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries\color{forest} How to use the shared GPU server}\\[2pt]
+{\small Ubuntu 24.04 Server \textperiodcentered\ SSH access \textperiodcentered\ 200 GB storage \textperiodcentered\ monitored by UIU CITS}
+\end{center}
+
+\vspace{-3pt}
+\begin{warnbox}[rose]
+\textbf{Every address, username and password below is a placeholder.} Replace them with the
+values issued to you. Never post real credentials in a chat, a repository or a slide.
+\end{warnbox}
+
+\section{1.\ What you are given}
+
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+Operating system & Ubuntu 24.04 Server, no desktop \\
+Access & SSH only; there is no remote desktop \\
+File transfer & over the same SSH connection, using \cmd{scp} \\
+Storage & 200 GB total; check with \cmd{df -h} \\
+GPUs & shared, so keep one job running at a time (section 4) \\
+Support & monitored at all times by UIU CITS \\
+\bottomrule
+\end{tabularx}
+
+Use the internal address on the campus network, and the global address with a forwarded port from
+outside it.
+
+\begin{lstlisting}
+ssh username@10.100.110.110          # on campus
+ssh -p 110 username@100.100.52.109   # from outside
+\end{lstlisting}
+
+\section{2.\ First login, in this order}
+
+\begin{enumerate}[leftmargin=1.3em,itemsep=0pt,topsep=0pt]
+  \item Change the password if prompted: \cmd{passwd}
+  \item Look around: \cmd{whoami}, \cmd{pwd}, \cmd{df -h}
+  \item Confirm the GPU is visible: \cmd{nvidia-smi}
+  \item Make your workspace and stay inside it: \cmd{mkdir -p \textasciitilde/work}
+  \item Do not use \cmd{sudo} unless an administrator asks you to.
+\end{enumerate}
+
+\section{3.\ Moving files with \texttt{scp}}
+
+Run these \textbf{from your own laptop}, not from the server. \cmd{scp} uses the same login as SSH.
+
+\begin{lstlisting}
+scp ./train.py username@10.100.110.110:~/work/    # upload a file
+scp -r ./project username@10.100.110.110:~/work/  # upload a folder
+scp username@10.100.110.110:~/work/results.csv ./ # download a file
+scp -r username@10.100.110.110:~/work/results ./  # download a folder
+scp -P 110 ./train.py username@100.100.52.109:~/work/  # from outside
+\end{lstlisting}
+
+The port flag is capital \cmd{-P} for \cmd{scp} and lower-case \cmd{-p} for \cmd{ssh}. Add \cmd{-C}
+to compress. For large or interrupted transfers use \cmd{rsync -avP}, which resumes where it stopped.
+
+\section{4.\ Running jobs with Task Spooler}
+
+The GPU is shared, so never leave training in a plain terminal. Queue every job instead.
+\textbf{Task Spooler} runs your jobs one after another and writes each output to its own file, so
+you can disconnect and read the result later.
+
+If \cmd{ts} is missing, ask the administrator; do not install packages yourself. On some builds the
+binary is called \cmd{tsp}:
+
+\begin{lstlisting}
+which ts tsp      # find the name on your system
+ts -h             # every flag, from the installed version
+\end{lstlisting}
+
+\subsection*{Commands you will actually use}
+
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+\cmd{ts python train.py} & add a job and return immediately \\
+\cmd{ts} & list the queue: ID, state, output file, time, command \\
+\cmd{ts -c 3} & print the whole output of job 3 (cat) \\
+\cmd{ts -t 3} & show the last lines of job 3, refreshed (tail) \\
+\cmd{ts -s 3} & state of job 3: queued, running, finished \\
+\cmd{ts -S 1} & set one slot, so one job at a time \\
+\cmd{ts -L run1 sleep 10} & give the job the label \cmd{run1} \\
+\cmd{ts -D 3 python b.py} & start only after job 3 succeeds \\
+\cmd{ts -d python b.py} & start only after the last job added \\
+\cmd{ts -r 3} & drop job 3 if it is queued or finished \\
+\cmd{ts -k 3} & kill the running job 3 \\
+\cmd{ts -T} & kill everything currently running \\
+\cmd{ts -C} & clear finished jobs from the list \\
+\cmd{ts -K} & stop the Task Spooler daemon itself \\
+\bottomrule
+\end{tabularx}
+
+\begin{lstlisting}
+ts -S 1                                        # one job at a time
+ts bash -c "source ~/venv/bin/activate && python train.py --epochs 5"
+ts                                             # note the ID, say 7
+ts -t 7                                        # watch it
+ts -c 7                                        # read the full log
+\end{lstlisting}
+
+\newpage
+\subsection*{GPU-aware builds}
+
+Some Task Spooler builds accept a GPU count and show a \cmd{GPUs} column. A job then runs only when
+both a slot and a GPU are free, and its state reads \cmd{allocating} while it waits.
+
+\begin{lstlisting}
+ts -g 1 python train.py     # ask for one GPU
+\end{lstlisting}
+
+Output files are never deleted automatically, not even by \cmd{ts -C}. Clean up your own logs.
+
+\section{5.\ Watching the machine}
+
+\begin{lstlisting}
+nvidia-smi                                        # one snapshot
+watch -n 2 nvidia-smi                             # refresh every 2 s
+nvidia-smi --query-gpu=memory.used --format=csv   # memory only
+htop                                              # CPU and RAM, quit with q
+df -h                                             # disk space
+du -sh ~/work                                     # size of your workspace
+\end{lstlisting}
+
+Before starting, check that the GPU is idle. If \cmd{nvidia-smi} shows a process that is not yours,
+wait or ask. Two jobs on one GPU are slower than one, and timings become meaningless.
+
+\section{6.\ Python environments}
+
+Work in your own environment; never install into the system Python.
+
+\begin{lstlisting}
+python3 -m venv ~/venv
+source ~/venv/bin/activate
+pip install --upgrade pip && pip install -r requirements.txt
+\end{lstlisting}
+
+Keep the environment in your home directory and record packages in \cmd{requirements.txt}.
+
+\section{7.\ Rules you must follow}
+
+\begin{warnbox}[rose]
+\begin{itemize}[leftmargin=1.1em,itemsep=0pt,topsep=0pt]
+  \item Avoid installing unnecessary software packages.
+  \item Back up all necessary data every day.
+  \item Do not share your user credentials with anyone.
+  \item The server is monitored at all times by UIU CITS.
+\end{itemize}
+\end{warnbox}
+
+A backup means copying results off the server, not trusting the disk. Use \cmd{scp} from section 3,
+or \cmd{rsync -avP} for a folder, at the end of every working day.
+
+\section{8.\ When something goes wrong}
+
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+\cmd{Permission denied (publickey)} & your key is not on the server; send the administrator your public key \\
+\cmd{Connection timed out} & you are probably outside the campus network; use the global address with \cmd{-p 110} \\
+\cmd{No space left on device} & \cmd{df -h}, delete old checkpoints, move results off the server \\
+\cmd{CUDA out of memory} & another job holds the GPU, or the batch is too large; check \cmd{nvidia-smi} and reduce it \\
+job looks stuck & \cmd{ts} to see its state, \cmd{ts -t <id>} to see where it stopped \\
+\bottomrule
+\end{tabularx}
+
+\end{document}

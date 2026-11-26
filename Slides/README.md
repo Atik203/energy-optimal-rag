@@ -8,8 +8,28 @@ Everything for the presentation lives here, in one place.
 | `Energy_Methodology_Presentation.pdf` | The same deck as PDF, for backup or printing |
 | `Presentation_Script_and_QA.pdf` | Speaker script (5 speakers, 1.5 min each) plus likely questions and answers |
 | `Presentation_Script_and_QA.tex` | Source of the script, in case the wording needs editing |
+| `GPU_Server_Guide.pdf` | Two-page guide for students: SSH access, `scp` transfer, Task Spooler, rules |
+| `GPU_Server_Guide.tex` | Source of the guide |
 | `figures/` | Every figure used in the deck, generated from registered analysis outputs |
 | `reference/` | The example deck used as the style reference |
+
+## The GPU server guide
+
+Two pages, written for students who have never used a shared server.
+
+- All addresses and credentials in it are **placeholders** and are marked as such in a red box on
+  page 1. Replace them with the values issued to each person.
+- Section 4 documents Task Spooler, including the flags that are easy to get wrong:
+  `ts` with no argument lists the queue, `ts -L` sets a **label**, `-k` kills one job,
+  `-T` kills all running jobs, and `-K` stops the daemon.
+- GPU-aware builds: `ts -g 1` requests one GPU, and the job waits in state `allocating`.
+
+Rebuild with:
+
+```powershell
+cd Slides
+pdflatex -interaction=nonstopmode GPU_Server_Guide.tex
+```
 
 ## The deck
 
@@ -48,7 +68,8 @@ calibration, so their joules are not reported.
 
 Deck rules that were checked, not assumed:
 
-- No text smaller than **14 pt**, anywhere on any slide.
+- No text smaller than **14 pt**, anywhere on any slide — including the type drawn **inside** each
+  figure. Figures are generated at their exact on-slide size so nothing shrinks at placement.
 - Every text pair meets **WCAG AA** (worst pair 6.6:1), so it survives a projector in daylight.
 - Plain white background, no busy panels.
 - Animations are grouped so a card arrives as a unit, not letter by letter.
@@ -57,10 +78,11 @@ Deck rules that were checked, not assumed:
 ## Regenerating the figures
 
 ```powershell
-C:\ProgramData\anaconda3\python.exe scripts\48_make_deck_figures.py
+C:\ProgramData\anaconda3\python.exe scripts\70_figures_final.py
+C:\ProgramData\anaconda3\python.exe scripts\71_pipeline_final.py
+C:\ProgramData\anaconda3\python.exe scripts\72_fix_diagrams.py
+C:\ProgramData\anaconda3\python.exe scripts\75_rq_figure_correct.py
 C:\ProgramData\anaconda3\python.exe scripts\48b_render_deck_equations.py
-C:\ProgramData\anaconda3\python.exe scripts\65_redraw_pipeline.py
-C:\ProgramData\anaconda3\python.exe scripts\66_reader_curves.py
 ```
 
 All of them read only from `analysis/` and write to `Slides/figures/`. Every plotted value therefore
@@ -81,9 +103,9 @@ Word counts and speaking time are checked with `scripts\57_speech_timing.py`.
 |---|---|---|---:|---:|
 | Member 1 | 1–3 | 2 | 150 | 1.50 min |
 | Member 2 | 4–5 | 2 | 151 | 1.51 min |
-| Member 3 | 6–7 | 2 | 143 | 1.43 min |
-| Member 4 | 8–9 | 2 | 151 | 1.51 min |
-| Member 5 | 10–12 | 2 | 152 | 1.52 min |
-| **Total** | 13 slides | 10 | **747** | **7.47 min** |
+| Member 3 | 6–7 | 2 | 153 | 1.53 min |
+| Member 4 | 8–9 | 2 | 153 | 1.53 min |
+| Member 5 | 10–12 | 2 | 149 | 1.49 min |
+| **Total** | 13 slides | 10 | **756** | **7.56 min** |
 
-That leaves about 32 seconds for thirteen slide changes, inside an eight-minute slot.
+That leaves about 26 seconds for thirteen slide changes, inside an eight-minute slot.
