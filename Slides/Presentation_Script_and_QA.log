@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.11.6)  26 NOV 2026 23:05
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.11.6)  26 NOV 2026 23:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -470,12 +470,12 @@ Here is how much of TeX's memory you used:
  39747 multiletter control sequences out of 15000+600000
  671275 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 74i,6n,79p,1213b,439s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 74i,6n,79p,1249b,439s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/texlive/2026
 /texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/texlive/2026/texmf-dist/fonts/
 type1/public/lm/lmmi10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lm
 r10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr12.pfb>
-Output written on Presentation_Script_and_QA.pdf (8 pages, 140850 bytes).
+Output written on Presentation_Script_and_QA.pdf (8 pages, 140972 bytes).
 PDF statistics:
  110 PDF objects out of 1000 (max. 8388607)
  87 compressed objects within 1 object stream
