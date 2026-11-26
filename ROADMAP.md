@@ -222,7 +222,15 @@ outputs, acceptance.
   thermal history, so it cannot separate carryover from it.
 - **Effort:** medium; single GPU, batch 1, no concurrent jobs; `df -h`/`du -sh` before runs.
 
-### Phase 8 — 📋 todo · Causal tests + retargeted router (6–9 GPU-h) — THE Q1 BET
+### Phase 8 — ✅ done · Causal tests + router (confirmatory null) · DONE
+
+- **Router status (D-039):** re-opened after the earlier drop as a confirmatory test under
+  `prereg-qc-router-v1`. Max-reuse split: train on P1, threshold frozen on `qc_fresh`,
+  evaluated once on `qc_router_eval` (fresh, disjoint). Result: capture **0.54%
+  [-1.99, +3.29]** at **+0.00 pp [-0.30, +0.30]** accuracy difference; oracle gap
+  **3.80 pp [2.70, 5.00]**, below the 10% stop rule. 995 of 1,000 questions routed to
+  `k=4`, so the policy collapsed onto the static baseline. **G8-router fires**; documented
+  null, no adaptive claim. Details: `docs/PHASE8_ROUTER_RESULTS.md`.
 
 - **Goal:** identify the mechanism causally, and test a router that has **real** headroom.
 - **Correction that drives this phase (R5):** the quoted 7.21% gap is a per-query-noise artifact
