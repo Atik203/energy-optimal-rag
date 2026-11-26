@@ -1,7 +1,7 @@
 """48b - Render the deck equations with real LaTeX (transparent PNG).
 
 Uses the same pdflatex path as the manuscript so the symbols match.
-Output: ppt_slides/figures/eq_*.png
+Output: Slides/figures/eq_*.png
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-OUT = Path(__file__).resolve().parents[1] / "ppt_slides" / "figures"
+OUT = Path(__file__).resolve().parents[1] / "Slides" / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
 
 plt.rcParams.update(

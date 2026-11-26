@@ -4,7 +4,7 @@ Every plotted value is read from a registered analysis output; nothing is
 retiped. Diagrams (pipeline, sweep grid, block timeline, window-vs-block) are
 geometric schematics drawn from the protocol described in the manuscript.
 
-Output: ppt_slides/figures/*.png at 300 dpi, palette matched to the deck.
+Output: Slides/figures/*.png at 300 dpi, palette matched to the deck.
 
 Sources
   E(k), accuracy, context share  analysis/squad_qwen4b_p1/estimates.csv
@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.patches import FancyArrowPatch, Rectangle  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "ppt_slides" / "figures"
+OUT = ROOT / "Slides" / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
 
 INK = "#14241B"

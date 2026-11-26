@@ -1,0 +1,271 @@
+% ===========================================================================
+%  Presentation script and Q&A - Energy cost of retrieval depth
+%  5 speakers x 1.5 min at ~100 words per minute = about 8 minutes total.
+%  Every paragraph follows the slide order, in full sentences, so it can be
+%  read aloud directly if a speaker loses their place.
+% ===========================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=2.1cm,top=1.9cm,bottom=1.9cm]{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{ink}{HTML}{14241B}
+\definecolor{forest}{HTML}{1F5134}
+\definecolor{muted}{HTML}{4A5A52}
+\definecolor{timing}{HTML}{8A4B00}
+
+\titleformat{\section}{\Large\bfseries\color{forest}}{\thesection}{0.7em}{}
+\titlespacing*{\section}{0pt}{14pt}{6pt}
+\titleformat{\subsection}{\large\bfseries\color{ink}}{}{0em}{}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{7pt}
+\linespread{1.16}
+
+\newcommand{\slideref}[1]{{\small\color{timing}\textbf{[#1]}}\ }
+
+\newcommand{\speech}[1]{%
+  \begin{justify}%
+  \setlength{\leftskip}{0.9em}%
+  \setlength{\rightskip}{0.9em}%
+  \color{ink}#1%
+  \end{justify}%
+}
+
+\newcommand{\qa}[2]{%
+  \par\vspace{8pt}%
+  \noindent\textbf{Q.}\enspace #1\par\vspace{3pt}%
+  \noindent\hspace*{1.3em}\begin{minipage}[t]{0.90\linewidth}\color{ink}#2\end{minipage}\par
+}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries\color{forest} Presentation script and Q\&A}\\[6pt]
+{\large Energy cost of retrieval depth: how the joules were measured}\\[10pt]
+{\small EEE 4261 Green Computing \textperiodcentered\ Section C \textperiodcentered\ Group of five}\\[4pt]
+{\small 13 slides \textperiodcentered\ 5 speakers \textperiodcentered\ 1.5 minutes each \textperiodcentered\ about 8 minutes in total}
+\end{center}
+
+\vspace{4pt}
+\hrule
+\vspace{10pt}
+
+\subsection*{How to use this script}
+
+\begin{itemize}[leftmargin=1.3em,itemsep=3pt,topsep=2pt]
+  \item Each block is about \textbf{150 words}, which is \textbf{1.5 minutes at 100 words per minute}. Read at a calm, even speed.
+  \item The marker \slideref{slide 4} tells you when to change the slide. Press once, then speak.
+  \item Sentences are written to be read aloud. Do not memorise them. If you lose your place, read the next sentence from the page.
+  \item Say the numbers slowly. Pause after each one. A number said too fast is the most common lost mark.
+\end{itemize}
+
+\vspace{6pt}
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Speaker} & \textbf{Slides} & \textbf{Topic} & \textbf{Time} \\
+\midrule
+Member 1 & 1--3 & Opening, the quantity we measure, what we ran & 1.5 min \\
+Member 2 & 4--5 & Study design, measuring in batches & 1.5 min \\
+Member 3 & 6--7 & Why we replaced the old method, why a ratio & 1.5 min \\
+Member 4 & 8--10 & The decision rule, fixed rules, the cause & 1.5 min \\
+Member 5 & 11--13 & Text length, findings and limits, close & 1.5 min \\
+\midrule
+ & & \textbf{Total speaking} & \textbf{7.5 min} \\
+ & & \textbf{Slide changes and pauses} & \textbf{0.5 min} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{8pt}
+\subsection*{Say these words this way}
+
+\begin{center}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Written} & \textbf{Say it as} \\
+\midrule
+Qwen3.5-4B & ``Kwen three point five, four B'' \\
+BM25 & ``B M twenty-five'' \\
+NVML & ``N V M L'' (four letters) \\
+SQuAD & ``skwad'' \\
+MiniLM & ``mini L M'' \\
+$k=4$ & ``k equals four'' \\
+pp (percentage points) & ``percentage points'', never ``percent'' \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\newpage
+
+% ===========================================================================
+\section{Member 1 \textnormal{\small --- slides 1 to 3, opening}}
+
+\slideref{slide 1} Good morning. We are Group 1 from Section C. Our project measures how much GPU energy a retrieval system spends to produce one correct answer.
+
+\slideref{slide 2} Most systems choose the number of retrieved passages by habit. We treat that number as a decision. We ask one question: can we use fewer passages, spend less energy, and still keep the same accuracy?
+
+The number we follow is energy per correct answer. We take all the joules used at one depth and divide them by all the correct answers at that depth. We do not average per-question ratios, because at low depth most questions are wrong, and the ratio becomes meaningless.
+
+\slideref{slide 3} To answer this we used one thousand SQuAD questions, seven depths from zero to thirty-two, a four-bit Qwen model, BM25 retrieval, and one laptop GPU. Every question was run at every depth, which gave us seven thousand measured answers.
+
+\vspace{6pt}
+{\small\color{muted}\textbf{Handover:} ``Thank you. My teammate will explain the study design.''}
+
+% ===========================================================================
+\section{Member 2 \textnormal{\small --- slides 4 and 5, design and measurement}}
+
+\slideref{slide 4} Thank you. I will explain the study design.
+
+Every question is tested at all seven depths, so we compare the same question with itself. That removes question difficulty from the comparison. We also shuffle the order in which the depths are run for each question, so the GPU heating up is not tied to one particular depth. Finally, every prompt carries a random ten-character tag, so the model cannot reuse work from an earlier call.
+
+\slideref{slide 5} Now, how do we measure the energy? A single short query finishes too fast for the power sensor, which updates about once per second. So we measure in batches: two hundred questions at one depth, integrated as one window.
+
+Between batches we rest the GPU for one hundred and twenty seconds, and we read idle power from the end of that rest, when the machine is cool. We also discard two warm-up questions before each batch.
+
+\vspace{6pt}
+{\small\color{muted}\textbf{Handover:} ``Thank you. My teammate will explain why we had to change our method.''}
+
+% ===========================================================================
+\section{Member 3 \textnormal{\small --- slides 6 and 7, why the method changed}}
+
+\slideref{slide 6} Thank you. My part is why we changed our measurement method.
+
+At first we measured each question separately. That failed. Per-question readings captured only eighty-one point seven percent of the measured time, and at k equals four they came out twenty-two percent low. The error depends on the depth, so no single correction can repair it. That is why we moved to batches.
+
+\slideref{slide 7} The second problem is the absolute number.
+
+When we repeated the same questions ten times in a row, the energy fell by about fifteen percent as the GPU heated up. Separate sessions differ by three to six percent on identical questions. So the level moves.
+
+But the ratio does not. The same saving came out within zero point nine two points across sessions. That is why we report the saving, and give the absolute joule count only as a range.
+
+\vspace{6pt}
+{\small\color{muted}\textbf{Handover:} ``Thank you. My teammate will explain the decision rule.''}
+
+% ===========================================================================
+\section{Member 4 \textnormal{\small --- slides 8 to 10, decision and cause}}
+
+\slideref{slide 8} Thank you. I will explain the decision rule and the tests.
+
+A smaller depth counts as good only if it does both. It must save at least twenty percent of the energy, and it must lose at most five accuracy points.
+
+At k equals four, the accuracy loss was four point three points. That is inside the limit. But the lower bound of our confidence interval was minus six point one seven, which is outside it. So the saving condition was met, and the accuracy condition was not. We report that honestly.
+
+\slideref{slide 9} Before the runs, we wrote three plans, hashed them, and tagged them, so the rules could not move after we saw the numbers. Five tests fired, and one finished.
+
+\slideref{slide 10} Then we asked why. Recall always rises with depth. Precision moves both ways, and it decides the sign. When we hold the correct passage first, adding distractors actually helps.
+
+\vspace{6pt}
+{\small\color{muted}\textbf{Handover:} ``Thank you. My teammate will finish with the cause and the limits.''}
+
+% ===========================================================================
+\section{Member 5 \textnormal{\small --- slides 11 to 13, cause and close}}
+
+\slideref{slide 11} Thank you. The last part is the cause and the limits.
+
+Energy follows text length, not the number of passages. The equation on the slide explains ninety-five point seven five percent of the variation, against eighty-nine point six five for the depth model. Each extra prefill token costs about twenty-five millijoules.
+
+We also padded four passages to the length of thirty-two with neutral text. The cost rose to seventy-five point nine joules, close to the eighty-seven point two joules of thirty-two real passages.
+
+\slideref{slide 12} So what can we claim? Serving at k equals four instead of thirty-two saves about two thirds of the GPU energy per correct answer, and every method we tried puts the saving above half.
+
+What we cannot claim is a five-point accuracy guarantee, a single best depth, or an adaptive router gain. We tested the router twice and found nothing.
+
+\slideref{slide 13} Thank you. We are happy to take your questions.
+
+\newpage
+
+% ===========================================================================
+\section{Questions and short answers}
+
+Answer in two or three sentences. Do not argue. If the answer is ``we did not test that'', say so plainly and stop.
+
+\subsection*{Likely questions for Member 1}
+
+\qa{Why these numbers: one thousand questions and seven depths?}{One thousand gives a usable estimate of accuracy near the plateau, and seven depths cover the useful range from no context to the retriever's limit. Seven depths also let us fit the energy curve with enough points.}
+
+\qa{Why only one dataset and one GPU?}{We chose depth of measurement over breadth, because the same questions had to be run on the same machine. That gives a clean comparison, but we state it as a limit, not as a general result.}
+
+\qa{Why this model, and why four-bit?}{A four-billion-parameter model at four-bit fits in six gigabytes of laptop memory, which is the hardware we had. It is a realistic deployment setting for a small team.}
+
+\qa{What does ``energy per correct answer'' actually mean?}{It answers the budget question: if I have to produce correct answers, how many joules does one correct answer cost. It is total energy divided by total correct answers.}
+
+\subsection*{Likely questions for Member 2}
+
+\qa{Why shuffle the depth order instead of running each depth in one block?}{Because a long run heats the GPU, and the energy falls as it heats. Shuffling spreads that drift across all depths instead of hiding it in one. \qa{Why a random tag in every prompt?} The serving software caches earlier prompt prefixes. Without a unique tag, a deeper request could reuse the first passages of a shallower one and report a cheaper prefill. \qa{Why two hundred questions per batch?} The sensor updates about once per second, so a single short query gives too few usable readings. Two hundred queries make the window long enough for a stable integral. \qa{Why rest the GPU before every batch?} To return the card to a known thermal state. Without the rest, a batch inherits heat from the previous one, and the measurement depends on the order of the schedule.}
+
+\subsection*{Likely questions for Member 3}
+
+\qa{You said the old method was wrong. How wrong?}{Per-question windows captured eighty-one point seven percent of the measured time, and at k equals four they read twenty-two percent low. The error is larger at short depths, so it cannot be fixed by one multiplier. \qa{Why not just correct the old numbers with a factor?} Because the factor depends on depth. A single multiplier would fix one depth and make another worse. We tested that and rejected it. \qa{How do you know the new method is right if everything drifts?} We do not claim it is exactly right. We claim it is stable: repeated batches agree to a few percent, and the ratio holds while the level moves. That is why the saving is the reported quantity. \qa{What is a ``range'' of joules, in practice?} The absolute level moves three to six percent between occasions on identical questions. So we give the estimated joule figure and say it carries that uncertainty, rather than printing one exact number.}
+
+\subsection*{Likely questions for Member 4}
+
+\qa{Why five percentage points, and not seven?}{Five points was frozen in the plan before we saw the result. Moving it to seven after seeing minus four point three would be changing the rule to fit the answer, and that is not a test any more. \qa{So did the method fail?} The accuracy claim was not established, because the lower bound missed the limit by one point one seven points. The energy claim held. We report both. \qa{What would make the five-point claim pass?} More questions. The disagreement rate was thirteen point one percent, higher than we planned for, so we would need roughly seven thousand question pairs instead of one thousand. \qa{Why does adding distractors help?} Because in that experiment the correct passage stayed at rank one. The extra passages add context without pushing the answer down the list. That tells us the loss comes from the correct passage being pushed away, not from the model being confused by length.}
+
+\subsection*{Likely questions for Member 5}
+
+\qa{If you cannot give an exact joule figure, what is the practical advice?}{Measure the curve on your own corpus and your own model, then choose a depth against a margin you are willing to accept. Do not copy our depth, because the knee depends on the reader. \qa{Why did the router fail?} The router sees only retrieval scores and question shape. Those predict whether the correct passage is found, but not whether the model will use it. The second part decides the sign, and the router cannot see it. \qa{Is ``two thirds saving'' not too good to be true?} It is energy per correct answer, not total electricity, and it is GPU only. Three independent methods gave fifty-eight, sixty-five and seventy-nine percent, so the direction is solid even though the exact number is uncertain. \qa{What is the single most important message?} Measure the cost of the decision, not only the accuracy. Once you do, you find the saving is large and stable, while the accuracy guarantee is the hard part. \qa{What would you do next?} Two things: a larger sample to settle the five-point bound, and a second hardware class. Both are outside the budget we had.}
+
+\newpage
+
+% ===========================================================================
+\section{If you forget everything: one card per speaker}
+
+Read the three lines in order. They carry the argument.
+
+\vspace{8pt}
+\subsection*{Member 1 \textnormal{\small (slides 1--3)}}
+\begin{itemize}[leftmargin=1.2em,itemsep=4pt]
+  \item We measure energy per correct answer, not energy alone.
+  \item One thousand SQuAD questions, seven depths, seven thousand answers.
+  \item One laptop GPU, one reader model, one retriever.
+\end{itemize}
+
+\subsection*{Member 2 \textnormal{\small (slides 4--5)}}
+\begin{itemize}[leftmargin=1.2em,itemsep=4pt]
+  \item Every question at every depth, order shuffled, random tag in each prompt.
+  \item Measure in batches of two hundred, because the sensor is too slow for one query.
+  \item One hundred and twenty seconds of rest before each batch.
+\end{itemize}
+
+\subsection*{Member 3 \textnormal{\small (slides 6--7)}}
+\begin{itemize}[leftmargin=1.2em,itemsep=4pt]
+  \item Per-question readings were wrong: eighty-one point seven percent coverage, twenty-two percent low.
+  \item The level drifts by fifteen percent with heat; the ratio holds to zero point nine two points.
+  \item So we report the saving, and give joules as a range.
+\end{itemize}
+
+\subsection*{Member 4 \textnormal{\small (slides 8--10)}}
+\begin{itemize}[leftmargin=1.2em,itemsep=4pt]
+  \item Two conditions: save twenty percent, lose at most five points.
+  \item The saving passed; the accuracy bound missed by one point one seven.
+  \item Rules were frozen before the run; the cause is precision, not recall.
+\end{itemize}
+
+\subsection*{Member 5 \textnormal{\small (slides 11--13)}}
+\begin{itemize}[leftmargin=1.2em,itemsep=4pt]
+  \item Energy follows text length: ninety-five point seven five percent explained.
+  \item Claim two thirds saving. Do not claim a five-point guarantee.
+  \item No router gain, no single best depth, GPU energy only.
+\end{itemize}
+
+\vspace{14pt}
+\begin{center}
+{\small\color{muted} Every number in this script appears on the slides or in the manuscript.\\ Nothing here is estimated.}
+\end{center}
+
+\end{document}
