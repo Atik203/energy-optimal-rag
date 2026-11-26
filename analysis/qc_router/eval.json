@@ -1,0 +1,32 @@
+{
+  "threshold": 0.8,
+  "static": {
+    "n": 1000.0,
+    "accuracy": 0.454,
+    "total_j": 27941.486946603534,
+    "energy_per_correct": 61.54512543304743,
+    "depth": 4.0
+  },
+  "policy": {
+    "n": 1000.0,
+    "accuracy": 0.454,
+    "total_j": 27904.36335086474,
+    "energy_per_correct": 61.463355398380486,
+    "mean_depth": 3.985,
+    "threshold": 0.8
+  },
+  "matched_oracle_no_abstention": {
+    "n": 1000.0,
+    "accuracy": 0.454,
+    "total_j": 21029.07342004009,
+    "energy_per_correct": 46.31954497806188,
+    "mean_depth": NaN,
+    "allow_abstention": false
+  },
+  "capture_pct": 0.5370569280343523,
+  "acc_diff_pp": 0.0,
+  "fixed_j_per_query": {
+    "1": 20.516767798844732,
+    "4": 27.941486946603533
+  }
+}

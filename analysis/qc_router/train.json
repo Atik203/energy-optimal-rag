@@ -1,0 +1,9 @@
+{
+  "n_train": 1000,
+  "depths": [
+    1,
+    4
+  ],
+  "seed": 20261115,
+  "static_depth": 4
+}
