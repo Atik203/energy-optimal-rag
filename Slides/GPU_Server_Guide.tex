@@ -1,10 +1,7 @@
 % ===========================================================================
 %  UIU GPU server - student guide
 %  All addresses, usernames and passwords are PLACEHOLDERS.
-%
-%  Colour code:
-%    amber  = type this on your Windows laptop
-%    green  = type this on the server
+%  amber = run on your Windows laptop   |   green = run on the server
 % ===========================================================================
 \documentclass[12pt,a4paper]{article}
 
@@ -32,15 +29,15 @@
 \definecolor{linkc}{HTML}{1D4ED8}
 
 \hypersetup{colorlinks=true, urlcolor=linkc, linkcolor=linkc}
-\linespread{1.06}
+\linespread{1.04}
 
 \titleformat{\section}
   {\large\bfseries\color{forest}}{\textcolor{teal}{\thesection}}{0.5em}{}
   [{\vspace{-7pt}\noindent{\color{forest!30}\rule{\linewidth}{0.8pt}}}]
-\titlespacing*{\section}{0pt}{10pt}{6pt}
+\titlespacing*{\section}{0pt}{9pt}{5pt}
 
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{3pt}
+\setlength{\parskip}{2pt}
 
 \tcbset{
   cmdstyle/.style={
@@ -49,125 +46,93 @@
     before skip=4pt, after skip=4pt,
   }
 }
-
 \newtcblisting{winblock}{
-  cmdstyle, colback=amber!12, colframe=amber!85,
-  listing only,
-  listing options={
-    basicstyle=\ttfamily\small\color{ink},
-    commentstyle=\color{amber!90}\itshape,
-    columns=fullflexible, keepspaces=true, breaklines=true,
-    aboveskip=0pt, belowskip=0pt, xleftmargin=0pt, xrightmargin=0pt,
-  }
+  cmdstyle, colback=amber!12, colframe=amber!85, listing only,
+  listing options={basicstyle=\ttfamily\small\color{ink},
+    commentstyle=\color{amber!90}\itshape, columns=fullflexible,
+    keepspaces=true, breaklines=true, aboveskip=0pt, belowskip=0pt},
 }
-
 \newtcblisting{srvblock}{
-  cmdstyle, colback=forest!12, colframe=forest!85,
-  listing only,
-  listing options={
-    basicstyle=\ttfamily\small\color{ink},
-    commentstyle=\color{forest!90}\itshape,
-    columns=fullflexible, keepspaces=true, breaklines=true,
-    aboveskip=0pt, belowskip=0pt, xleftmargin=0pt, xrightmargin=0pt,
-  }
+  cmdstyle, colback=forest!12, colframe=forest!85, listing only,
+  listing options={basicstyle=\ttfamily\small\color{ink},
+    commentstyle=\color{forest!90}\itshape, columns=fullflexible,
+    keepspaces=true, breaklines=true, aboveskip=0pt, belowskip=0pt},
 }
 
 \newcommand{\cmd}[1]{{\ttfamily\small #1}}
 
 \newtcolorbox{titleband}{colback=forest, colframe=forest, boxrule=0pt, arc=4pt,
-  left=12pt, right=12pt, top=10pt, bottom=10pt, halign=center}
+  left=12pt, right=12pt, top=9pt, bottom=9pt, halign=center}
 \newtcolorbox{quick}{colback=teal!8, colframe=teal!80, boxrule=0.9pt, arc=4pt,
-  left=8pt, right=8pt, top=6pt, bottom=6pt, fontupper=\small,
+  left=8pt, right=8pt, top=5pt, bottom=5pt, fontupper=\small,
   title={\small\bfseries Quick start}, coltitle=white, colbacktitle=teal!85}
 \newtcolorbox{tipbox}{colback=teal!6, colframe=teal!55, boxrule=0.7pt, arc=3pt,
-  left=8pt, right=8pt, top=5pt, bottom=5pt, fontupper=\small}
+  left=8pt, right=8pt, top=4pt, bottom=4pt, fontupper=\small}
 \newtcolorbox{warnbox}{colback=rose!6, colframe=rose!70, boxrule=0.7pt, arc=3pt,
-  left=8pt, right=8pt, top=5pt, bottom=5pt, fontupper=\small}
+  left=8pt, right=8pt, top=4pt, bottom=4pt, fontupper=\small}
 \newtcolorbox{legend}{colback=white, colframe=forest!30, boxrule=0.7pt, arc=3pt,
-  left=8pt, right=8pt, top=5pt, bottom=5pt, fontupper=\small}
+  left=8pt, right=8pt, top=4pt, bottom=4pt, fontupper=\small}
 
 \begin{document}
 
 \begin{titleband}
-{\LARGE\bfseries\color{white} How to use the shared GPU server}\\[3pt]
-{\small\color{white} Ubuntu 24.04 Server \textperiodcentered\ SSH \textperiodcentered\ 200 GB \textperiodcentered\ monitored by UIU CITS}
+{\LARGE\bfseries\color{white} How to use the shared GPU server}\\[2pt]
+{\small\color{white} Ubuntu 24.04 \textperiodcentered\ SSH \textperiodcentered\ 200 GB \textperiodcentered\ monitored by UIU CITS}
 \end{titleband}
 
-\begin{warnbox}
-\textbf{Every address, username and password below is a placeholder.} Replace them with the values
-issued to you, and never share real credentials.
-\end{warnbox}
+\begin{legend}
+Addresses and passwords below are \textbf{placeholders}. Use the ones issued to you.
+\quad\textcolor{amber}{\textbf{amber}} = your Windows laptop.\quad
+\textcolor{forest}{\textbf{green}} = the server.
+\end{legend}
 
 \begin{quick}
 \begin{enumerate}[leftmargin=1.2em,itemsep=1pt,topsep=0pt]
-  \item Save the short name once (section 3), then connect with \cmd{ssh uiu-gpu}.
-  \item Install \textbf{VS Code} with the \textbf{Remote - SSH} extension (section 4).
-  \item Queue every job with \cmd{ts} so the shared GPU is not overloaded (section 6).
+  \item Save the short name once (section 3).
+  \item Install VS Code + \textbf{Remote - SSH} (section 4).
+  \item Queue every job with \cmd{ts} (section 6).
 \end{enumerate}
 \end{quick}
 
-\begin{legend}
-\textbf{Two colours, two places.}\quad
-\colorbox{amber!20}{\textbf{\textcolor{amber}{amber}}}~type it on your Windows laptop.\quad
-\colorbox{forest!20}{\textbf{\textcolor{forest}{green}}}~type it on the server.
-\end{legend}
-
-\section{What you are given}
+\section{What you get}
 
 \begin{tabularx}{\linewidth}{@{}>{\bfseries}lX@{}}
 \toprule
 \rowcolor{forest!10} Item & Detail \\
 \midrule
-Operating system & Ubuntu 24.04 Server, no desktop \\
-Access & SSH only; there is no remote desktop \\
-File transfer & over the same SSH connection, using \cmd{scp} \\
-Storage & 200 GB total; check with \cmd{df -h} on the server \\
-GPUs & shared, so keep one job running at a time \\
-Support & monitored at all times by UIU CITS \\
+System & Ubuntu 24.04 Server, no desktop \\
+Access & SSH only \\
+Files & \cmd{scp}, over the same connection \\
+Storage & 200 GB; check with \cmd{df -h} \\
+GPU & shared, one job at a time \\
+Support & monitored by UIU CITS \\
 \bottomrule
 \end{tabularx}
 
-\section{Connecting from a terminal}
+\section{Connect}
 
-Windows 10 and 11 already include the SSH client. Check it once:
-
-\begin{winblock}
-ssh -V
-\end{winblock}
-
-If it prints a version you are ready. If not, add \emph{OpenSSH Client} from
-\emph{Settings $\rightarrow$ Apps $\rightarrow$ Optional features}, then open a new terminal.
+Windows already has SSH. Check it, then log in:
 
 \begin{winblock}
-ssh username@10.100.110.110          # on the campus network
-ssh -p 110 username@100.100.52.109   # from outside, through the port
+ssh -V                              # should print a version
+ssh username@10.100.110.110         # on campus
+ssh -p 110 username@100.100.52.109  # from outside
 \end{winblock}
 
-Accept the host key with \cmd{yes} on the first connection. Nothing appears while you type the
-password, which is normal. When the prompt changes, you are on the server.
+First time: type \cmd{yes}. The password does not appear as you type it. That is normal.
 
 \section{Save a short name: \texttt{ssh uiu-gpu}}
 
-Typing that address every time is slow and easy to mistype. Windows keeps a small file that
-\cmd{ssh}, \cmd{scp} and VS Code all read, so you can save the address once and then use a short
-name forever. This works in PowerShell and in Command Prompt.
-
-\textbf{Step 1.} Create the folder, if it does not exist yet. Run \textbf{one} of these:
+Do this once and you never type the address again. It works in PowerShell and Command Prompt,
+and \cmd{scp} and VS Code use it too.
 
 \begin{winblock}
-mkdir "%USERPROFILE%\.ssh"                         # Command Prompt
-New-Item -ItemType Directory -Force "$HOME\.ssh"   # PowerShell
-\end{winblock}
-
-\textbf{Step 2.} Open the file in Notepad:
-
-\begin{winblock}
+mkdir "%USERPROFILE%\.ssh"                        # Command Prompt
+New-Item -ItemType Directory -Force "$HOME\.ssh"  # PowerShell
 notepad "%USERPROFILE%\.ssh\config"
 \end{winblock}
 
-If Notepad asks whether to create the file, say yes.
-
-\textbf{Step 3.} Paste this, put your own account name in place of \cmd{username}, and save:
+Paste this, change \cmd{username}, save:
 
 \begin{winblock}
 Host uiu-gpu
@@ -176,14 +141,14 @@ Host uiu-gpu
     Port 22
 \end{winblock}
 
-\textbf{Step 4.} Close the file and test it:
+\needspace{5\baselineskip}
+Test it:
 
 \begin{winblock}
 ssh uiu-gpu
 \end{winblock}
 
-That is all. From now on \cmd{ssh uiu-gpu}, \cmd{scp} and VS Code all know the address.
-From outside the campus network, add a second block and use \cmd{uiu-gpu-outside}:
+Outside the campus network, add a second block and use \cmd{uiu-gpu-outside}:
 
 \begin{winblock}
 Host uiu-gpu-outside
@@ -193,152 +158,120 @@ Host uiu-gpu-outside
 \end{winblock}
 
 \begin{warnbox}
-Two things go wrong for beginners. The file must be called exactly \cmd{config}, with no
-\cmd{.txt} after it; in Notepad choose \emph{Save as} $\rightarrow$ \emph{All files}. And keep the
-four lines on separate lines with the indentation shown --- do not join them into one line.
+The file must be named \cmd{config}, not \cmd{config.txt} (in Notepad: \emph{Save as}
+$\rightarrow$ \emph{All files}). Keep the four lines separate, with the indentation shown.
 \end{warnbox}
 
-\section{Connecting with VS Code (recommended)}
+\section{VS Code (easier than typing commands)}
 
-VS Code gives you a file tree, a terminal and an editor on the server. It is far easier than typing
-every command, and you can drag files in and out.
-
-\begin{enumerate}[leftmargin=1.3em,itemsep=1.5pt,topsep=2pt]
-  \item Install \textbf{Visual Studio Code} from \url{https://code.visualstudio.com}.
-  \item Open Extensions (\cmd{Ctrl+Shift+X}) and install \textbf{Remote - SSH} by Microsoft.
-  \item Press \cmd{F1}, type \cmd{Remote-SSH: Connect to Host}, then choose \cmd{uiu-gpu}
-        (it appears automatically once section 3 is done).
-  \item Choose \emph{Linux}, then \emph{Open Folder}, then \cmd{~/work}.
-  \item Use \cmd{Ctrl+\`{}} for a terminal. It already runs on the server.
+\begin{enumerate}[leftmargin=1.3em,itemsep=1pt,topsep=1pt]
+  \item Install VS Code: \url{https://code.visualstudio.com}
+  \item Extensions (\cmd{Ctrl+Shift+X}) $\rightarrow$ \textbf{Remote - SSH}.
+  \item \cmd{F1} $\rightarrow$ \emph{Connect to Host} $\rightarrow$ \cmd{uiu-gpu}.
+  \item \emph{Linux} $\rightarrow$ \emph{Open Folder} $\rightarrow$ \cmd{~/work}.
+  \item \cmd{Ctrl+\`{}} opens a terminal on the server.
 \end{enumerate}
 
 \begin{tipbox}
-Upload and download by dragging files into the VS Code sidebar, or right-click a file and choose
-\emph{Download}. It is the same transfer as \cmd{scp}, just with a mouse. Full guide:
-\url{https://code.visualstudio.com/docs/remote/ssh}
+Drag files into the sidebar to upload; right-click $\rightarrow$ \emph{Download} to save results.
+Same as \cmd{scp}, with a mouse. Guide: \url{https://code.visualstudio.com/docs/remote/ssh}
 \end{tipbox}
 
-\section{Moving files with \texttt{scp}}
+\section{Files: \texttt{scp}}
 
-Run these on your laptop, in a \textbf{new} PowerShell window, not inside the SSH session. The
-short name from section 3 works here too.
-
-\begin{winblock}
-scp .\train.py username@10.100.110.110:~/work/   # full address
-scp .\train.py uiu-gpu:~/work/                   # short name, same result
-scp -r .\project uiu-gpu:~/work/                 # upload a folder
-scp uiu-gpu:~/work/out.csv .                     # download a file
-scp -r uiu-gpu:~/work/results .                  # download a folder
-\end{winblock}
-
-Without the short name, port forwarding uses a capital \cmd{-P}:
+Run on your laptop in a \textbf{new} PowerShell window, not inside SSH.
 
 \begin{winblock}
-scp -P 110 .\train.py username@100.100.52.109:~/work/
+scp .\train.py uiu-gpu:~/work/     # upload a file
+scp -r .\project uiu-gpu:~/work/   # upload a folder
+scp uiu-gpu:~/work/out.csv .       # download a file
+scp -r uiu-gpu:~/results .         # download a folder
 \end{winblock}
 
-Capital \cmd{-P} belongs to \cmd{scp}; lower-case \cmd{-p} belongs to \cmd{ssh}. Full manual:
-\url{https://man.openbsd.org/scp}
+Without the short name, add the port with a capital \cmd{-P}:
+\cmd{scp -P 110 file username@100.100.52.109:~/work/}.
+Manual: \url{https://man.openbsd.org/scp}
 
-\section{Running jobs with Task Spooler}
+\section{Jobs: Task Spooler}
 
-The GPU is shared, so never leave training in a plain terminal. Queue every job instead. Task
-Spooler runs your jobs one after another and keeps each output in its own file, so you can close
-the laptop and read the result later.
+The GPU is shared, so never run training in a plain terminal. Queue it.
 
 \begin{srvblock}
-ts python train.py     # add a job and return immediately
-ts                     # list the queue: ID, state, time, command
-ts -t 3                # follow job 3 live (tail)
-ts -c 3                # print all output of job 3 (cat)
-ts -k 3                # kill job 3
-ts -C                  # clear finished jobs from the list
+ts python train.py   # add a job
+ts                   # list the queue
+ts -t 3              # follow job 3
+ts -c 3              # print its output
+ts -k 3              # kill job 3
+ts -C                # clear finished jobs
 \end{srvblock}
 
-A typical session:
+\needspace{6\baselineskip}
+Typical session:
 
 \begin{srvblock}
-ts -S 1                                        # one job at a time
-ts bash -c "source ~/venv/bin/activate && python train.py --epochs 5"
-ts                                             # note the ID, say 7
-ts -t 7                                        # watch it, then Ctrl+C to stop watching
+ts -S 1        # one job at a time
+ts bash -c "source ~/venv/bin/activate && python train.py"
+ts             # note the ID, say 7
+ts -t 7        # watch it, Ctrl+C to stop watching
 \end{srvblock}
 
-More detail, with every flag and example:
-\url{https://justanhduc.github.io/2021/02/03/Task-Spooler.html} and
-\url{https://github.com/justanhduc/task-spooler}.
+More: \url{https://justanhduc.github.io/2021/02/03/Task-Spooler.html} and
+\url{https://github.com/justanhduc/task-spooler}
 
-\section{Watching the machine}
-
-\begin{srvblock}
-nvidia-smi              # one snapshot: memory, load, processes
-watch -n 2 nvidia-smi   # refresh every 2 seconds
-df -h                   # disk space
-du -sh ~/work           # size of your workspace
-\end{srvblock}
-
-Check that the GPU is idle before you start. If \cmd{nvidia-smi} shows a process that is not yours,
-wait or ask. Two jobs on one GPU are slower than one, and timings become meaningless.
-
-\section{Python environments}
-
-Work in your own environment; never install into the system Python.
+\section{Check the GPU, set up Python}
 
 \begin{srvblock}
+nvidia-smi              # is anyone else running?
+df -h                   # free space
+
 python3 -m venv ~/venv
 source ~/venv/bin/activate
-pip install --upgrade pip && pip install -r requirements.txt
+pip install -r requirements.txt
 \end{srvblock}
 
-\section{Rules you must follow}
+If \cmd{nvidia-smi} shows a process that is not yours, wait or ask.
+
+\section{Final notes}
 
 \begin{warnbox}
-\begin{itemize}[leftmargin=1.1em,itemsep=1pt,topsep=0pt]
-  \item Avoid installing unnecessary software packages.
-  \item Back up all necessary data every day.
-  \item Do not share your user credentials with anyone.
-  \item The server is monitored at all times by UIU CITS.
+\begin{itemize}[leftmargin=1.1em,itemsep=0pt,topsep=0pt]
+  \item No unnecessary software.
+  \item Back up your data daily.
+  \item Never share your credentials.
+  \item Monitored by UIU CITS.
 \end{itemize}
 \end{warnbox}
 
-A backup means copying results \textbf{to your own computer}, not trusting the server disk. Download
-them at the end of every working day, with VS Code or with \cmd{scp}.
-
-\Needspace{12\baselineskip}
-\section{When something goes wrong}
+\textbf{If something goes wrong.}
 
 \begin{tabularx}{\linewidth}{@{}>{\ttfamily\small}lX@{}}
 \toprule
 \rowcolor{rose!10} Message & What to do \\
 \midrule
-ssh not recognised & the Windows SSH client is missing; install OpenSSH Client (section 2) \\
-Permission denied & the account name is wrong, or your key is not on the server; ask the administrator \\
-Connection timed out & you are outside the campus network; use \cmd{uiu-gpu-outside} or \cmd{-p 110} \\
-\cmd{uiu-gpu} unknown & the \cmd{config} file is missing, named \cmd{config.txt}, or in the wrong folder (section 3) \\
-No space left & check \cmd{df -h}, delete old checkpoints, download results and remove them \\
-CUDA out of memory & another job holds the GPU, or the batch is too large; check \cmd{nvidia-smi} \\
-job looks stuck & \cmd{ts} to see its state, \cmd{ts -t <id>} to see where it stopped \\
+ssh not recognised & install OpenSSH Client (section 2) \\
+Permission denied & wrong account name, or your key is missing; ask the administrator \\
+Connection timed out & outside campus; use \cmd{uiu-gpu-outside} \\
+\cmd{uiu-gpu} unknown & \cmd{config} missing, named \cmd{config.txt}, or wrong folder \\
+No space left & \cmd{df -h}, delete checkpoints, download results \\
+CUDA out of memory & another job holds the GPU, or batch too large \\
 \bottomrule
 \end{tabularx}
 
-\section{Ubuntu commands you will need}
+\textbf{Commands on the server.}
 
 \begin{srvblock}
-ls -lh              # list files with sizes
-cd ~/work           # change folder
-mkdir results       # make a folder
-mv old new          # rename or move
-rm old.csv          # delete a file (no undo)
-less log.txt        # scroll a file, q to quit
-tail -f log.txt     # watch a file grow, Ctrl+C to stop
-grep ERROR log.txt  # find lines containing a word
-nano notes.txt      # editor: Ctrl+O save, Ctrl+X exit
-du -sh *            # size of each item here
+ls -lh        # list files
+cd ~/work     # change folder
+mkdir out     # make a folder
+mv a b        # rename or move
+rm old.csv    # delete (no undo)
+less log.txt  # read a file, q to quit
+tail -f log.txt   # watch it grow, Ctrl+C to stop
+nano file     # editor, Ctrl+O save, Ctrl+X exit
 \end{srvblock}
 
 \begin{tipbox}
-\textbf{Before you log off:} check for jobs you forgot with \cmd{ts}, download anything worth
-keeping, and free space with \cmd{df -h} if you are near the 200 GB limit.
+\textbf{Before you log off:} stop forgotten jobs (\cmd{ts}), download your results.
 \end{tipbox}
 
 \end{document}
