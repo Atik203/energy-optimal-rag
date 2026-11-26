@@ -54,7 +54,7 @@
 \setlength{\textfloatsep}{4pt plus 2pt minus 2pt}
 \setlength{\floatsep}{4pt plus 2pt minus 2pt}
 \setlength{\intextsep}{4pt plus 2pt minus 2pt}
-\setlength{\bibsep}{0.2pt plus 0.1pt minus 0.1pt}
+\setlength{\bibsep}{0pt}
 % Table styling: plain grid tables with roomier cells and rows.
 \renewcommand{\arraystretch}{1.08}
 \setlength{\tabcolsep}{5pt}
@@ -275,7 +275,7 @@
 % Abstract
 \linenumbers
 \begin{abstract}
-Retrieval-augmented generation (RAG) spends GPU energy in proportion to the number of passages placed in the prompt, while accuracy rises and then plateaus. Whether an interior depth can replace the retriever's ceiling at an acceptable accuracy cost is a decision problem that existing studies resolve by convention. This paper reports a preregistered non-inferiority test on 1{,}000 SQuAD v1.1 dev questions at seven depths, with a 4-bit Qwen3.5-4B reader, BM25 retrieval, and one laptop GPU. The design pairs every question across depths with per-depth block calibration (factors 0.8089--1.3111; idle 15.794~W), so the primary analysis uses calibrated energy, although a window-bias audit makes absolute $J$ provisional. Energy per correct answer rose from 73.71~J at $k=1$ to 192.59~J at $k=32$ on the window estimator and from 52.84~J to 177.64~J on the block estimator; the per-query curve was affine ($J=24.0759+2.2772k$, $R^{2}=0.9714$), and the context-side share rose from 0.209 to 0.807. At a 5~pp margin, $k=4$ lost 4.30~pp against $k=32$ ($n=1{,}000$; lower bound $-6.17$~pp), so the static 5~pp claim is not supported. Savings are 58.17\% of GPU energy per correct answer on the window estimator (95\% CI 56.02--60.14\%) and 65.25\% on the block estimator that supersedes it (61.27--69.11\%), so the saving exceeds 55\% under every estimator tested. Selection is unstable ($P=0.7244$ at $k=4$), the direction holds on HotpotQA but is inconclusive on Qwen2.5-1.5B, and a BM25 policy captures $-9.8$\% of the matched oracle gap. A recall $\times$ precision decomposition explains the plateau (recall $+2.4$ to $+6.9$~pp, precision $-12.0$ to $+8.4$~pp), and distractors lower exact match by 3.73~pp where gold alone suffices but raise it from 0.382 to 0.528 on fresh rank-1 questions, so overload is not uniform. The paper contributes a calibrated protocol, a margin-indexed decision framework, a documented negative result, and an explicit claim boundary: no 5~pp guarantee, no universal $k^{*}$, no adaptive-policy gain, and no absolute joule figure as a deployment guarantee.
+Retrieval-augmented generation (RAG) spends GPU energy in proportion to the number of passages placed in the prompt, while accuracy rises and then plateaus. Whether an interior depth can replace the retriever's ceiling at an acceptable accuracy cost is a decision problem that existing studies resolve by convention. This paper reports a preregistered non-inferiority test on 1{,}000 SQuAD v1.1 dev questions at seven depths, with a 4-bit Qwen3.5-4B reader, BM25 retrieval, and one laptop GPU. The design pairs every question across depths with per-depth block calibration (factors 0.8089--1.3111; idle 15.794~W), so the primary analysis uses calibrated energy, although a window-bias audit makes absolute $J$ provisional. Energy per correct answer rose from 73.71~J at $k=1$ to 192.59~J at $k=32$ on the window estimator and from 52.84~J to 177.64~J on the block estimator; the per-query curve was affine ($J=24.0759+2.2772k$, $R^{2}=0.9714$), and the context-side share rose from 0.209 to 0.807. At a 5~pp margin, $k=4$ lost 4.30~pp against $k=32$ ($n=1{,}000$; lower bound $-6.17$~pp), so the static 5~pp claim is not supported. Savings are 58.17\% of GPU energy per correct answer on the window estimator (95\% CI 56.02--60.14\%) and 65.25\% on the block estimator that supersedes it (61.27--69.11\%), so the saving exceeds 55\% under every estimator tested. Selection is unstable ($P=0.7244$ at $k=4$), the direction holds on HotpotQA but is inconclusive on Qwen2.5-1.5B, and a BM25 policy captures $-9.8$\% of the matched oracle gap, a null that a second router test on a fresh frame reproduces ($0.54$\%). A recall $\times$ precision decomposition explains the plateau (recall $+2.4$ to $+6.9$~pp, precision $-12.0$ to $+8.4$~pp), and distractors lower exact match by 3.73~pp where gold alone suffices but raise it from 0.382 to 0.528 on fresh rank-1 questions, so overload is not uniform. The paper contributes a calibrated protocol, a margin-indexed decision framework, a documented negative result, and an explicit claim boundary: no 5~pp guarantee, no universal $k^{*}$, no adaptive-policy gain, and no absolute joule figure as a deployment guarantee.
 \end{abstract}
 
 % Keywords
@@ -801,7 +801,7 @@ The clean rerun then collected 1{,}400 of 1{,}400 rows with zero invalid rows, 1
 \begin{figure}[pos=htbp]
   \centering
   \IfFileExists{figures/p0_harness.png}%
-    {\includegraphics[width=0.98\linewidth]{figures/p0_harness.png}}%
+    {\includegraphics[width=0.94\linewidth]{figures/p0_harness.png}}%
     {\missingfigure{figures/p0_harness.png}{Harness diagnostic figure generated by the analysis pipeline; not present in this build.}}
   \caption{P0 block factors against the fixed $[0.8,1.4]$ gate and the idle baseline. The clean rerun fails at $k=0$ with $\texttt{factor\_csv}=0.7944$.}
   \label{fig:p0}
@@ -820,7 +820,7 @@ The P2 calibration failures motivated a direct probe of the per-query window. Wi
 \begin{figure}[pos=htbp]
   \centering
   \IfFileExists{figures/measurement_validity.png}%
-    {\includegraphics[width=0.98\linewidth]{figures/measurement_validity.png}}%
+    {\includegraphics[width=0.94\linewidth]{figures/measurement_validity.png}}%
     {\missingfigure{figures/measurement_validity.png}{Measurement-validity figure generated from the probe.}}
   \caption{Left: the post-query power floor does not return to the pre-run idle within 3~s. Right: $k=0$ energy depends on the preceding row's depth. Both are diagnostics of the per-query estimator, not of the reader.}
   \label{fig:validity}
@@ -929,7 +929,7 @@ The exploratory inference layer agrees. A restricted-MLE score test gives $p=0.2
 \begin{figure}[pos=htbp]
   \centering
   \IfFileExists{figures/p1_curve.png}%
-    {\includegraphics[width=0.98\linewidth]{figures/p1_curve.png}}%
+    {\includegraphics[width=0.94\linewidth]{figures/p1_curve.png}}%
     {\missingfigure{figures/p1_curve.png}{P1 curve generated from the registered analysis.}}
   \caption{P1 curves: accuracy $A(k)$, energy per query $J(k)$, and energy per correct answer $E(k)$ at the seven depths, calibrated.}
   \label{fig:p1}
@@ -1021,7 +1021,7 @@ The exploratory arms are descriptive and carry no gate. The boundary probe place
 \begin{figure}[pos=htbp]
   \centering
   \IfFileExists{figures/p1_contrasts.png}%
-    {\includegraphics[width=0.98\linewidth]{figures/p1_contrasts.png}}%
+    {\includegraphics[width=0.94\linewidth]{figures/p1_contrasts.png}}%
     {\missingfigure{figures/p1_contrasts.png}{Accuracy contrasts and selection figure.}}
   \caption{Accuracy contrasts with decision bounds and bootstrap selection. Whiskers are two-sided 95\% intervals; arrows are one-sided 95\% bounds; the dashed line is the 5 pp margin.}
   \label{fig:contrasts}
@@ -1047,7 +1047,7 @@ the identity. This is exploratory and does not re-adjudicate H3. Margin and scor
 \begin{figure}[pos=htbp]
   \centering
   \IfFileExists{figures/p1_frontier.png}%
-    {\includegraphics[width=0.98\linewidth]{figures/p1_frontier.png}}%
+    {\includegraphics[width=0.94\linewidth]{figures/p1_frontier.png}}%
     {\missingfigure{figures/p1_frontier.png}{Margin-frontier figure generated from the registered analysis.}}
   \caption{Margin-indexed certification frontier: selected depth, energy saving, and derived sample size at each margin.}
   \label{fig:frontier}
@@ -1100,7 +1100,7 @@ Figure~\ref{fig:rq} shows the decomposition. The SQuAD plateau is a precision de
 \begin{figure}[pos=htbp]
   \centering
   \IfFileExists{figures/rq_curves.png}%
-    {\includegraphics[width=0.98\linewidth]{figures/rq_curves.png}}%
+    {\includegraphics[width=0.94\linewidth]{figures/rq_curves.png}}%
     {\missingfigure{figures/rq_curves.png}{Recall and precision curves.}}
   \caption{Recall rises with depth on all arms while conditional precision falls except on HotpotQA; their product is the accuracy plateau.}
   \label{fig:rq}
@@ -1113,6 +1113,8 @@ Figure~\ref{fig:rq} shows the decomposition. The SQuAD plateau is a precision de
 The estimators were exercised on synthetic data, which is a Monte Carlo check rather than new evidence about RAG. The ratio of sums has relative bias 4.9\% at $A=0.1$ and $n=200$, falling to 0.4\% at $n=2{,}000$, whereas the mean of per-question ratios is biased by $-98.7$\% at $A=0.1$; this is the formal reason the paper uses a ratio of sums. At the 5~pp margin the one-sided test rejects at 4.8--6.5\% under the null with power 33.9\% at $n=200$ and 98.9\% at $n=2{,}000$, and with a 2--25\% true gap the selection rate for the true depth is 32--63\% against a 0.8 gate, so $N^{*}$ is biased low by 20\% at $n=200$ and 2\% at $n=1{,}000$. These are descriptive properties of the estimator, not deployment guarantees.
 
 P3 tested whether a query-conditional policy can capture the oracle gap on the hashed 608/206/186 split. The BM25-feature logistic policy reaches 0.4194 accuracy at 59.99~J/correct, while the static $k=1$ baseline reaches 0.4194 at 59.57~J/correct, a saving of $-0.71$\%. Against the matched no-abstention gap of 7.21\% that is a capture of $-9.8$\% (95\% CI $-22.8$ to $-1.8$). The abstention-inclusive gap of 28.64\% is a coverage gain, not depth routing: with fixed per-depth costs the same oracle has a zero gap against $k=1$, because every question already starts at the cheapest depth. Most of the apparent adaptive advantage is therefore abstention, and the remainder is not reachable from BM25 features. G4 is not supported, and no adaptive claim is made.
+
+A second, independent router test confirms the negative on a larger sample and a fresh frame. Under a separate preregistration (\texttt{prereg-qc-router-v1}, frozen before the evaluation data existed) the same feature family was trained on P1, its threshold fixed on the Phase-8 fresh frame, and evaluated once on 1{,}000 previously unused questions with fixed per-depth costs. The policy captures 0.54\% of the matched oracle gap (95\% CI $-1.99$ to $+3.29$) at an accuracy difference of $+0.00$ pp (95\% CI $-0.30$ to $+0.30$). The depth histogram explains this before any statistic does: 995 of 1{,}000 questions were routed to $k=4$ and five to $k=1$, so the policy reproduces the static baseline and inherits its energy; the fresh oracle gap was 3.80 pp, below the preregistered 10\% headroom threshold. Both results follow from the same structure: BM25 scores forecast recall $R$, while the sign of the depth effect is set by reader precision $Q$, which retrieval scores do not observe (Section~\ref{sec:p4}).
 
 \subsection{Discussion, Threats, and Limitations}\label{sec:discussion}\label{sec:discussion-body}\label{sec:threats}\label{sec:limitations}\label{sec:status}
 
@@ -1138,6 +1140,7 @@ P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of
     H7 on HotpotQA & $-10.80$ pp & upper $-8.00$ pp & supported & interval crosses zero \\
     G5 external validity & HotpotQA direction & one-sided upper $-8.00$ pp & pass & both arms fail \\
     G4 adaptive policy & 28.64\% matched oracle; policy $-9.8$\% & 95\% CI $-22.8$ to $-1.8$; AUC 0.733 & fail & policy capture $\ge50$\% \\
+    Router (2nd test) & capture at fixed costs, fresh frame & 0.54\%; CI $-1.99$ to $+3.29$; acc $+0.00$ pp & null & capture $\ge30$\% with lower bound $>0$ \\
     Coverage model & $R^{2}$ 0.097--0.879 & model rejected on 3/4 arms & rejected & good fit on all arms \\
     Recall $\times$ precision & two-stage RMSE 0.015--0.024 & versus 0.062--0.149 one-stage & descriptive & two-stage worse than one-stage \\
     P2 energy & sweep/block range & uncalibrated; window bias & descriptive & calibrated replay agrees \\
@@ -1153,13 +1156,13 @@ P1 is complete and its result is mixed. The measurement chain passed: 7{,}000 of
 
 \textbf{Implication for practice.} The static 5 pp rule is not supported on this evidence. A deployment that needs a 5 pp accuracy guarantee should not adopt $k=4$ on the basis of this run, even though the point estimate saves 58.17\% of energy per correct answer. The margin-indexed decision procedure remains the right object: state the margin, measure the curve on the target corpus and reader, and test the candidate. The sensitivity analysis shows what that procedure returns at other margins: $k=16$ at 2 pp with 32.9\% savings, $k=8$ at 3--4 pp with 50.4\%, $k=4$ at 5--6 pp with 58.2\%, and $k=2$ at 8--10 pp with 61.9\%. These are point estimates from one sample, not guarantees, and no rule selects $k=32$.
 
-\textbf{Relation to the adaptive direction.} The static claim fails, so P3 tested whether a query-conditional policy can recover the oracle gap. The answer on this feature set is no: the BM25-feature policy saves $-0.71\%$ (capture $-9.8\%$), so G4 is not supported, and most of the oracle advantage is an abstention gain rather than depth routing. The negative result is for this policy class, not a proof that no adaptive policy can work.
+\textbf{Relation to the adaptive direction.} The static claim fails, so P3 tested whether a query-conditional policy can recover the oracle gap. The answer on this feature set is no: the BM25-feature policy saves $-0.71\%$ (capture $-9.8\%$), so G4 is not supported, and most of the oracle advantage is an abstention gain rather than depth routing. A second router test on an independent fresh frame returns the same verdict (capture 0.54\%, at $+0.00$ pp). The negative rests on two designs and two samples, and it is a result about this policy class: a reader-side probe is priced out of the budget, and neither test varies the feature family.
 
 \textbf{Hardware and measurement.} All energy measurements come from one laptop GPU. The pilot reached 88.4~$^{\circ}$C and a 1003~MHz clock, and P0 reached 90~$^{\circ}$C with a 900~MHz clock floor, so the device is thermally throttled during long runs. NVML updates \texttt{power.draw} at roughly 1~s despite the 100~ms cadence, so per-query energy is a paired observation rather than a precision measurement. Block calibration failed in P0 and passed in P1, but the $k=0$ factor is 0.8089, only 1.1\% above the floor, and the repeat CV maximum is 18.44\%, close to the 20\% threshold. No wall meter is available (D-016, D-031), and the CPU retrieval term is a 20~W time-to-joules proxy. \textbf{What the metrology audit establishes.} The replay and session audits in Section~\ref{sec:pilot} show that a continuous sequence absorbs a thermal transient that a cooldown-separated block design does not, so a single replay landing within 2\% of the block sum was a coincidence rather than a validation, and that the absolute joule level varies 3.3--5.9\% between measurement occasions on identical questions at identical accuracy. No absolute figure in this paper should therefore be read as a deployment guarantee; the saving is the reproducible quantity. The shared H200 slice cannot supply an energy measurement at all because per-instance power telemetry is unavailable, so it is used for accuracy only. Every joule reported here is GPU energy from NVML; no system or wall energy is claimed. \textbf{Design and scope.} The study uses one corpus (SQuAD v1.1), one retriever (BM25), one reader family, and a 4-bit quantized model at a 4096-token context with $k\le32$. SQuAD is a closed-corpus extractive task, so the results do not automatically transfer to open-domain generation, dense retrieval, long-context readers, or API models. The boundary probe at $k\in\{32,48,64\}$ and the context-budget probe were run in P2 and are diagnostic; neither is a new $k^{*}$. The Llama 3.2 3B reader is exploratory and does not satisfy the replication gate. The P2 Qwen arm failed block calibration at $k=0,1,2$ and its repeat CV reached 80.15\%, so its energy contrast is uncalibrated; the HotpotQA arm missed only $k=0$ but is also uncalibrated because calibration is all-or-nothing. P4 shows the accuracy curve is not generally monotone or well described by the coverage model, so the identity and any greedy search are local diagnostics rather than global guarantees. The accuracy metric is normalized exact match, which is conservative and does not credit paraphrases; the scoring sensitivity shows that the selected depth changes under lenient span and token F1, so the result is rule-dependent. The pilot used strict exact match, so pilot and P1 accuracy values are not like-for-like. A single run seed controls the within-question depth order, and seed-to-seed variability is not estimated.
 
 \textbf{Statistical power.} The planning calculation assumed an 8\% discordant rate and an interval half-width of about 1.8 pp at $n=1{,}000$. The run produced 13.1\% discordance, so the realized interval is wider and the 5 pp margin was not resolved. The design can estimate a difference of this size but did not establish the margin; a larger sample, or a lower-discordance reader, would be needed to do so, and the required size depends on the discordance rate that was observed. The 2 pp margin is dead at this sample size and remains estimation-only. The selection probability is a bootstrap quantity and inherits the uncertainty of the curve. Secondary estimands are not corrected for multiplicity because only one confirmatory test is declared, and they are labelled accordingly. \textbf{Identity and selection.} H3 is not supported: the identity gap at $k=4$ is $+0.2004$ with an interval that excludes zero. The identity is a diagnostic, not a policy gate, and its failure says that the selected depth is not an unconstrained energy optimum. K3 and K5 fail because the selection is unstable between $k=4$ and $k=8$. Neither failure invalidates the descriptive curve, but both limit any claim that a particular static depth is the best one.
 
-\textbf{Status.} The confirmatory result is negative on the primary policy claim and positive on the measurement and descriptive claims. P2 is complete: the direction holds on HotpotQA and is inconclusive on the 1.5B reader, and the P2 energy contrasts are uncalibrated. P3 is complete and negative on G4: the learned policy does not capture the oracle gap, so no adaptive claim is made. P4 is descriptive and rejects the coverage model as a general description. \textbf{Data and reproducibility.} Raw SQuAD text is not redistributed, and the raw run directories are local-only under D-020. The repository publishes the dataset IDs, checksums, configs, prompts, split IDs, predictions, and aggregate statistics, and the public code/analysis archive is at DOI \texttt{10.5281/zenodo.24352803}. Sanitized per-query tables in \texttt{artifacts/release/} omit question text, gold answers, predictions, and nonces but retain question IDs, depth, correctness flags, and measured joules, so a reader can rebuild the energy and accuracy tables without redistributing the benchmarks.
+\textbf{Status.} The confirmatory result is negative on the primary policy claim and positive on the measurement and descriptive claims. P2, P3, and P4 are complete: the direction holds on HotpotQA and is inconclusive on the 1.5B reader; the learned policy does not capture the oracle gap, so no adaptive claim is made; and the coverage model is rejected as a general description. \textbf{Data and reproducibility.} Raw SQuAD text is not redistributed, and the raw run directories are local-only under D-020. The repository publishes the dataset IDs, checksums, configs, prompts, split IDs, predictions, and aggregate statistics, and the public code/analysis archive is at DOI \texttt{10.5281/zenodo.24352803}. Sanitized per-query tables in \texttt{artifacts/release/} omit question text, gold answers, predictions, and nonces but retain question IDs, depth, correctness flags, and measured joules, so a reader can rebuild the energy and accuracy tables without redistributing the benchmarks.
 
 \section{Conclusion}\label{sec:conclusion}
 
@@ -1190,7 +1193,7 @@ The authors thank the curators of SQuAD for releasing the dataset under CC BY-SA
 \hbadness=10000
 \sloppy
 \setlength{\bibsep}{0pt}
-\renewcommand{\bibfont}{\fontsize{8.5pt}{9pt}\selectfont}
+\renewcommand{\bibfont}{\fontsize{7.8pt}{8.3pt}\selectfont}
 \bibliographystyle{elsarticle-num}
 \bibliography{refs}
 

@@ -62,6 +62,18 @@ abstention the matched gap falls to 7.21%, so most of the oracle advantage is an
 abstention gain. No adaptive claim is made. See
 [`docs/P3_RESULTS.md`](docs/P3_RESULTS.md).
 
+**Router status (2026-11-27): COMPLETE - documented null.** The router was
+re-opened as a confirmatory study under `prereg-qc-router-v1` using a max-reuse
+split: train on P1, freeze the confidence threshold on the Phase-8 fresh frame,
+evaluate once on 1,000 previously unused questions with fixed per-depth costs.
+The policy captures **0.54%** of the matched oracle gap (95% CI −1.99 to +3.29)
+at **+0.00 pp** accuracy difference (95% CI −0.30 to +0.30); 995 of 1,000
+questions were routed to `k=4`, so it reproduces the static baseline. The fresh
+oracle gap was 3.80 pp, below the preregistered 10% headroom stop rule, which
+fired. Two independent designs on two fresh samples therefore leave adaptive
+depth routing unsupported on pre-generation retrieval features. See
+[`docs/PHASE8_ROUTER_RESULTS.md`](docs/PHASE8_ROUTER_RESULTS.md).
+
 **P4 status (2026-11-18): COMPLETE - theory is local, coverage model rejected.**
 Across P1, Qwen2.5-1.5B, HotpotQA, and Llama 3B, the coverage model fits poorly
 (R² 0.10–0.88), and the Qwen and Llama accuracy curves are non-monotone, so the
@@ -138,7 +150,9 @@ The defensible next claim, if the rerun supports it, is narrow:
 > relative to `k = 32`, and a query-conditional policy captures a material fraction of the
 > adaptive oracle gap at matched accuracy.
 
-That is a policy result, not a universal optimum.
+That is a policy result, not a universal optimum. The rerun has since run: the static clause
+is not supported (the 5 pp bound misses by 1.17 pp), and the adaptive clause was tested twice
+and returned a null both times (P3, and the confirmatory router at 0.54% capture).
 
 ---
 

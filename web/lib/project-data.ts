@@ -738,13 +738,13 @@ export const phases: Array<{
     id: "P8",
     weeks: "Phase 8",
     status: "pass",
-    name: "Causal mechanism (no router)",
+    name: "Causal mechanism + router",
     goal:
-      "Identify the mechanism causally: distractor dose-response plus dense 2x2 under prereg-qc-v1.",
+      "Identify the mechanism causally (distractor dose-response, dense 2x2) and test a pre-generation router confirmatorily.",
     outputs:
-      "Fresh gap (1,000 qids, k=1/4); 6-dose curve (500 qids, gold first); frozen MiniLM rankings (45,651 passages); dense reader (1,000 qids, k=4/32); token-matched padding (200 qids x 3).",
+      "Under prereg-qc-v1: fresh gap (1,000 qids, k=1/4); 6-dose curve (500 qids, gold first); frozen MiniLM rankings (45,651 passages); dense reader (1,000 qids, k=4/32); token-matched padding (200 qids x 3). Under prereg-qc-router-v1: max-reuse router (train P1, threshold on qc_fresh, once-only eval on 1,000 fresh qids).",
     exit:
-      "Fresh gap 3.00 pp (position tests halted); dose trend +3.06 pp/doubling rejects H-overload; dense DiD -2.20 pp [-5.40, +1.00] null (knee does not travel); padding recovers 87% of k=32 energy. G8 complete: mechanism is reader-side.",
+      "Fresh gap 3.00 pp (position tests halted); dose trend +3.06 pp/doubling rejects H-overload; dense DiD -2.20 pp [-5.40, +1.00] null (knee does not travel); padding recovers 87% of k=32 energy. Router: capture 0.54% [-1.99, +3.29] at +0.00 pp [-0.30, +0.30], 995/1000 routed to k=4, oracle gap 3.80 pp below the 10% stop rule - a documented null, not an adaptive claim.",
   },
   {
     id: "P9",
@@ -756,7 +756,7 @@ export const phases: Array<{
     outputs:
       "Per-request prefill/decode split on 7,000 P1 rows; token model vs depth model; marginal prefill cost.",
     exit:
-      "J = 13.88 + 0.02549*Tpre + 1.135*Tdec, R2 0.9575 vs 0.8965 for depth; ~25 mJ per prefill token. Abstention arm stays out (companion to the dropped router).",
+      "J = 13.88 + 0.02549*Tpre + 1.135*Tdec, R2 0.9575 vs 0.8965 for depth; ~25 mJ per prefill token. Abstention arm stays out: its companion router was tested in Phase 8 and returned a null.",
   },
 ];
 
