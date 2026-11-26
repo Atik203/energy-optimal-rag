@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-t = Path("docs/PRESENTATION_SCRIPT.tex").read_text(encoding="utf-8")
+t = Path("Slides/Presentation_Script_and_QA.tex").read_text(encoding="utf-8")
 
 # take only the spoken sections, between \section{Member and the handover note
 sections = re.split(r"\\section\{Member (\d)", t)
