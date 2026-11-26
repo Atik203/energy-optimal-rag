@@ -199,3 +199,4 @@ node_modules
 *.toc
 *.synctex.gz
 *.listing
+Slides/*.private.*
