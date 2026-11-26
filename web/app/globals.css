@@ -89,6 +89,8 @@
   --animate-rise: rise 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-fade: fade 0.35s ease both;
   --animate-blink: blink 2.6s ease-in-out infinite;
+  --animate-slide-fwd: slide-fwd 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-back: slide-back 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 
   @keyframes rise {
     from {
@@ -117,6 +119,28 @@
     }
     50% {
       opacity: 0.25;
+    }
+  }
+
+  @keyframes slide-fwd {
+    from {
+      opacity: 0;
+      transform: translateX(56px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes slide-back {
+    from {
+      opacity: 0;
+      transform: translateX(-56px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
     }
   }
 }
@@ -396,6 +420,24 @@
       linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
     background-size: 2.2cqw 2.2cqw;
   }
+}
+
+/* Staggered entrances for slide body blocks. Applied by SlideFrame to its
+   top-level content; grids, KPI rows, and callouts rise in sequence. */
+.slide-stagger > * {
+  animation: rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.slide-stagger > *:nth-child(2) {
+  animation-delay: 0.07s;
+}
+.slide-stagger > *:nth-child(3) {
+  animation-delay: 0.14s;
+}
+.slide-stagger > *:nth-child(4) {
+  animation-delay: 0.21s;
+}
+.slide-stagger > *:nth-child(5) {
+  animation-delay: 0.28s;
 }
 
 @media (prefers-reduced-motion: reduce) {
