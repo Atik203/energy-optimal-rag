@@ -26,6 +26,7 @@ function clamp(value: number, max: number) {
 export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
   const total = SLIDES.length;
   const [index, setIndex] = useState(() => clamp(initialSlide - 1, total - 1));
+  const [forward, setForward] = useState(true);
   const [isFs, setIsFs] = useState(false);
   const indexRef = useRef(index);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -33,8 +34,9 @@ export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
 
   const goTo = useCallback(
     (next: number) => {
-      const clamped = clamp(next, total - 1);
+      const clamped = Math.min(Math.max(next, 0), total - 1);
       if (clamped === indexRef.current) return;
+      setForward(clamped > indexRef.current);
       indexRef.current = clamped;
       setIndex(clamped);
       const url = new URL(window.location.href);
@@ -149,7 +151,7 @@ export function SlideDeck({ initialSlide = 1 }: { initialSlide?: number }) {
           aria-roledescription="slide"
           aria-label={`Slide ${index + 1} of ${total}: ${SLIDES[index].title}`}
         >
-          <div key={index} className="h-full w-full animate-fade">
+          <div key={index} className={`h-full w-full ${forward ? "animate-slide-fwd" : "animate-slide-back"}`}>
             <Current index={index} total={total} />
           </div>
         </div>
