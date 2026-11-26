@@ -160,3 +160,13 @@ A PR that changes analysis code without a prereg/amendment check is not done.
   `artifacts/`.
 - Stop and report if a command would download data, use a paid API, or write outside
   `E:\PROJECT\energy-optimal-rag`.
+
+## 11. Branch workflow (dev → main, no feature branches)
+
+- Do all work directly on `dev`. Do not create `exp/*` or other feature branches.
+- Release with a single PR `dev` → `main` (admin merge if `main` is protected).
+  Vercel auto-deploys from `main`.
+- Delete a branch immediately after its PR is merged. The only branches that
+  exist are `dev`, `main`, and at most one active work branch when the owner
+  explicitly asks for isolation (e.g. a running GPU study that must not be
+  disturbed).
