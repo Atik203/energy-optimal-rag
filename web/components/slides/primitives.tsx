@@ -130,7 +130,7 @@ export function SlideFrame({
           )}
         </div>
 
-        <div className="relative mt-[1.9cqh] flex min-h-0 flex-1 flex-col">{children}</div>
+        <div className="slide-stagger relative mt-[1.9cqh] flex min-h-0 flex-1 flex-col">{children}</div>
 
         <div
           className="mt-[1.5cqh] flex justify-end border-t pt-[0.9cqh] font-mono text-[2.0cqh] font-bold"
