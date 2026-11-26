@@ -147,7 +147,7 @@ Between batches we rest the GPU for one hundred and twenty seconds, and we read 
 
 \slideref{slide 6} Thank you. My part is why we changed our measurement method.
 
-At first we measured each question separately. That failed. Per-question readings captured only eighty-one point seven percent of the measured time, and at k equals four they came out twenty-two percent low. The error depends on the depth, so no single correction can repair it. That is why we moved to batches.
+At first we measured each question separately. That failed. The per-question readings recovered only eighty-one point seven percent of the replay energy. At k equals four the window reads thirty-six point two five joules per query against the block's twenty-eight point three three, so it overstates by about twenty-eight percent. The bias shrinks with depth, so no single correction can repair it.
 
 \slideref{slide 7} The second problem is the absolute number.
 
@@ -163,11 +163,11 @@ But the ratio does not. The same saving came out within zero point nine two poin
 
 \slideref{slide 8} Thank you. I will explain the decision rule.
 
-A smaller depth counts as good only if it does both. It must save at least twenty percent of the energy, and it must lose at most five accuracy points.
+A smaller depth counts as good only if it does both. It must save at least twenty percent of the energy, and the ninety-five percent lower bound on its accuracy loss must be no worse than five points.
 
-At k equals four, the accuracy loss was four point three points. That is inside the limit. But the lower bound of our confidence interval was minus six point one seven, which is outside it. So the saving condition was met, and the accuracy condition was not. We report that honestly.
+At k equals four, the accuracy loss was four point three points. The estimate is inside the limit. But the rule is about the lower bound, and the bound is minus six point one seven, which is outside it. So the saving condition was met, and the accuracy condition was not. We report that honestly.
 
-\slideref{slide 9} Before the runs, we wrote three plans, hashed them, and tagged them, so the rules could not move after we saw the numbers. Five tests are listed. Four did not pass, and one finished cleanly. No threshold was moved afterwards. That is the part we guard most carefully, because moving a threshold after seeing the numbers is the easiest mistake to make.
+\slideref{slide 9} Before the runs, we wrote three plans, hashed them, and tagged them, so the rules could not move after we saw the numbers. Five tests are listed. Four did not pass, and one finished cleanly. No threshold was moved afterwards. That is the easiest mistake to make, so we guard it most.
 
 \vspace{6pt}
 {\small\color{muted}\textbf{Handover:} ``Thank you. My teammate will finish with the cause and the close.''}
@@ -175,13 +175,13 @@ At k equals four, the accuracy loss was four point three points. That is inside 
 % ===========================================================================
 \section{Member 5 \textnormal{\small --- slides 10 and 11, cause and cost, then close}}
 
-\slideref{slide 10} Thank you. I will explain why the effect exists.
+\slideref{slide 10} Thank you. Why does accuracy change?
 
-Recall always rises with depth. Precision moves both ways, and it decides the sign. When we hold the correct passage first, adding distractors actually helps. So the loss comes from the correct passage being pushed down the list. Two more checks agree: swapping the retriever moves the result by only two points, and padding to the same length costs eighty-seven percent of the energy.
+Recall always rises with depth. Precision swings from minus thirteen to plus eight points across the groups, and it decides whether net accuracy rises or falls. When we hold the correct passage first, adding distractors actually helps. So the loss comes from the correct passage being pushed down the list. Two checks agree: the retriever swap moves the result by two points, and padding costs eighty-seven percent of the energy.
 
-\slideref{slide 11} Energy follows text length, not passage count. The equation on the slide explains ninety-five point seven five percent of the variation, against eighty-nine point six five for depth. Each extra prefill token costs about twenty-five millijoules.
+\slideref{slide 11} Energy follows text length, not passage count. The equation explains ninety-five point seven five percent of the variation, against eighty-nine point six five for depth. Each extra prefill token costs about twenty-five millijoules.
 
-\slideref{slide 12} So: serving at k equals four instead of thirty-two saves about two thirds of the GPU energy per correct answer. We do not claim a five-point guarantee, a single best depth, or a router gain. Thank you. We are happy to take questions.
+\slideref{slide 12} So: four passages instead of thirty-two saves about two thirds of the GPU energy per correct answer. We do not claim a five-point guarantee, a single best depth, or a router gain. Thank you. We are happy to take questions.
 
 \newpage
 
@@ -216,7 +216,7 @@ Answer in two or three sentences. Do not argue. If the answer is ``we did not te
 
 \subsection*{Likely questions for Member 5}
 
-\qa{If you cannot give an exact joule figure, what is the practical advice?}{Measure the curve on your own corpus and your own model, then choose a depth against a margin you are willing to accept. Do not copy our depth, because the knee depends on the reader. \qa{Why did the router fail?} The router sees only retrieval scores and question shape. Those predict whether the correct passage is found, but not whether the model will use it. The second part decides the sign, and the router cannot see it. \qa{Is ``two thirds saving'' not too good to be true?} It is energy per correct answer, not total electricity, and it is GPU only. Three independent methods gave fifty-eight, sixty-five and seventy-nine percent, so the direction is solid even though the exact number is uncertain. \qa{What is the single most important message?} Measure the cost of the decision, not only the accuracy. Once you do, you find the saving is large and stable, while the accuracy guarantee is the hard part. \qa{What would you do next?} Two things: a larger sample to settle the five-point bound, and a second hardware class. Both are outside the budget we had.}
+\qa{If you cannot give an exact joule figure, what is the practical advice?}{Measure the curve on your own corpus and your own model, then choose a depth against a margin you are willing to accept. Do not copy our depth, because the knee depends on the reader. \qa{Why did the router fail?} The router sees only retrieval scores and question shape. Those predict whether the correct passage is found, but not whether the model will use it. The second part decides the sign, and the router cannot see it. \qa{Is ``two thirds saving'' not too good to be true?} It is energy per correct answer, not total electricity, and it is GPU only. Three independent methods gave fifty-eight, sixty-five and seventy-nine percent, so the direction is solid even though the point estimate is not, and our checks on it did not all agree. \qa{What is the single most important message?} Measure the cost of the decision, not only the accuracy. Once you do, you find the saving is large and stable, while the accuracy guarantee is the hard part. \qa{What would you do next?} Two things: a larger sample to settle the five-point bound, and a second hardware class. Both are outside the budget we had.}
 
 \newpage
 
