@@ -1,6 +1,6 @@
 # Roadmap — Depth Has a Knee → Q1 Hardening
 
-**Status:** P0–P7 COMPLETE · Phase 7 metrology COMPLETE 2026-11-26 (G7 FAILED by construction, reported) · next: Phase 8 · last updated 2026-11-26
+**Status:** P0–P10 COMPLETE except the v0.3.0 DOI publish (Zenodo token rejected 2026-11-26: HTTP 403 on list and create — needs deposit scopes) · archive `energy-optimal-rag-v0.3.0.zip` built (10,388,890 bytes, sha256 `b65411ce…68d306`) · last updated 2026-11-26
 **Horizon:** 6–10 weeks · local RTX 3060 6 GB + optional H200 `1g.18gb` accuracy-only slice · ≤ $47 cash
 **Repository:** https://github.com/Atik203/energy-optimal-rag · **branch model:** `dev` integration → `main` release (PRs only)
 **Paper:** `paper/main.tex` (30 pp, 7 figs, 650 DPI) + `paper/out/main.pdf` · DOI `10.5281/zenodo.24352803` · tag `v0.2.1` behind `main`
@@ -282,7 +282,7 @@ outputs, acceptance.
   (Qwen1.5B does not peak early; Llama peaks at 4; Qwen4B rises to 32), and `n=300` cannot identify
   `k_peak` vs size.
 
-### Phase 10 — 📋 todo · Rewrite, artifact, release (CPU-only)
+### Phase 10 — ✅ done except DOI publish · Rewrite, artifact, release (CPU-only)
 
 - **Goal:** 15–18 pp + supplement, structured by claim not by project phase.
 - **Steps:**
@@ -304,9 +304,11 @@ outputs, acceptance.
      negative unverifiable), full lock + manifest, one-command repro, cell-level number→artifact→hash
      map, MLPerf-Power field mapping, artifact-appendix checklist.
 - **Acceptance (G10):** traceability, DPI, clean-room repro, Overleaf `main.tex` root verified.
-- **Release checklist (pending):** 1) Overleaf compile matches `paper/out/main.pdf`; 2) clean-room
-  repro passes; 3) secret scan clean; 4) publish **v0.3.0 before submission** (current DOI is
-  v0.2.1, behind `main` — a reviewer clicking it gets a different paper); 5) tag + push;
+- **Release checklist:** 1) local `latexmk` matches `paper/out/main.pdf` (30 pp, done 2026-11-26);
+  2) clean-room repro passes (483 tests, analyses identical, done); 3) secret scan clean (done);
+  4) publish **v0.3.0** — **BLOCKED 2026-11-26**: the `.env` token returns HTTP 403 on deposit
+  list and create (scope/account issue, needs owner action in the Zenodo account);
+  5) tag v0.3.0 only after the DOI is recorded (per the deposit doc rule);
   6) verify `docs/BACKUP.md` checksums.
 
 ---
@@ -318,7 +320,7 @@ outputs, acceptance.
 | **G6** | 6 | Cluster-robust SE + token-vs-k + cross-fit reported; 5 pp = "not established"; 0.8 still failed | Enter Phase 7 |
 | **G7** | 7 | Block estimator with CI; windows falsified (0.817) and unused; carryover `γ` reported; CV for all seven depths; replay agreement within 3 pp; manifest complete | **FAILED** — CV and slope pass, replay agreement 7.08 pp. Block estimator stays primary; absolute `J` is a range |
 | **G8** | 8 | Prereg frozen; fresh `k=4` gap reported; router capture CI vs 2 pp margin; causal contrast direction; dense DiD with CI | Headline contribution (or documented null with MDE) |
-| **G10** | 10 | 15–18 pp; traceability; clean-room repro; v0.3.0 DOI + tag | Submit |
+| **G10** | 10 | 30 pp; traceability; clean-room repro; v0.3.0 archive built; DOI publish blocked on token scopes | Release archive ready; DOI + tag pending owner action |
 
 A gate may not be added, removed, or re-thresholded after seeing the primary outcome. New studies
 get new preregs; amendments go in `prereg/amendments.md` + `docs/DECISIONS.md`.

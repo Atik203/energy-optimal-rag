@@ -771,3 +771,31 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
   experimental confirmation of the same model from the other direction: two
   independent paths, one observational and one interventional, agree that energy
   follows prompt tokens. Reported in the paper's measurement section.
+
+## D-039 - Phase 10: release ready, DOI publish blocked on token scopes
+
+- **Date:** 2026-11-26
+- **Status:** accepted
+- **Context:** All research work P0-P9 is complete and merged. Phase 10 verified
+  reproducibility (clean-room: 483 tests pass from `git archive`, `validate` clean,
+  token and fresh-gap analyses reproduce exactly), updated the paper (reader-side
+  mechanism paragraph with the Phase 6/8 interaction scoped; 30 pages), the web
+  frontend data (P7-P9 entries, version 0.3.0-rc1), and built the v0.3.0 archive
+  (501 tracked files + 30-page PDF, 10,388,890 bytes, sha256 `b65411ce…68d306`, no
+  raw text).
+- **Blocked:** publishing the Zenodo deposition. The `.env` `zendo_token` returns
+  HTTP 403 "Permission denied" on both deposit-list and deposit-create (probed with
+  an immediately-discarded empty draft). This is a scope/account issue: the token
+  needs `deposit:write` (and `deposit:actions` for new-version publish), or it
+  belongs to an account other than the DOI owner. Only the owner can fix this in
+  the Zenodo account.
+- **Decision:**
+  1. Version metadata bumped to 0.3.0 with date 2026-11-26 (`.zenodo.json`,
+     `CITATION.cff`); DOI fields untouched — no DOI is invented.
+  2. No `v0.3.0` tag until the DOI is recorded, per `docs/ZENODO_DEPOSIT.md`.
+  3. When the token works, one command publishes
+     (`scripts` temp `zenodo_publish.py` pattern: newversion on DOI 10.5281/zenodo.24352803
+     -> metadata -> upload -> publish), then record the DOI, commit, and tag.
+- **Consequences:** the repository is submission-ready except the public archive link.
+  CITATION/README still point at the published v0.2.1 record, which is correct until
+  v0.3.0 mints.
