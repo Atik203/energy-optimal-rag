@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.11.6)  26 NOV 2026 22:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.11.6)  26 NOV 2026 23:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -336,7 +336,7 @@ File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 File: l3backend-pdftex.def 2026-09-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count310
 )
-No file Presentation_Script_and_QA.aux.
+(./Presentation_Script_and_QA.aux)
 \openout1 = `Presentation_Script_and_QA.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 52.
@@ -357,6 +357,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 52.
 LaTeX Font Info:    ... okay on input line 52.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 52.
 LaTeX Font Info:    ... okay on input line 52.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -406,12 +407,14 @@ LaTeX Font Info:    ... okay on input line 52.
 \everyMPtoPDFconversion=\toks26
 )
 Package hyperref Info: Link coloring OFF on input line 52.
+ (./Presentation_Script_and_QA.out) (./Presentation_Script_and_QA.out)
 \@outlinefile=\write3
 \openout3 = `Presentation_Script_and_QA.out'.
 
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 5
 7.
- (c:/texlive/2026/texmf-dist/tex/latex/lm/ts1lmr.fd
+
+(c:/texlive/2026/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 7
@@ -456,22 +459,15 @@ vips/lm/lm-ts1.enc}{c:/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc
 LaTeX2e <2026-11-01>
 L3 programming layer <2026-09-09>
  ***********
-
-
-Package rerunfilecheck Warning: File `Presentation_Script_and_QA.out' has chang
-ed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `Presentation_Script_and_QA.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  4C77FC388CB9ECF46A25EEE8B5D5483A;2037.
+Package rerunfilecheck Info: File `Presentation_Script_and_QA.out' has not chan
+ged.
+(rerunfilecheck)             Checksum: 4C77FC388CB9ECF46A25EEE8B5D5483A;2037.
  ) 
 Here is how much of TeX's memory you used:
- 10401 strings out of 466968
- 161206 string characters out of 5407725
- 609583 words of memory out of 5000000
- 39737 multiletter control sequences out of 15000+600000
+ 10417 strings out of 466968
+ 161557 string characters out of 5407725
+ 609686 words of memory out of 5000000
+ 39747 multiletter control sequences out of 15000+600000
  671275 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  74i,6n,79p,1213b,439s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -479,10 +475,10 @@ Here is how much of TeX's memory you used:
 /texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/texlive/2026/texmf-dist/fonts/
 type1/public/lm/lmmi10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lm
 r10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr12.pfb>
-Output written on Presentation_Script_and_QA.pdf (8 pages, 139687 bytes).
+Output written on Presentation_Script_and_QA.pdf (8 pages, 140850 bytes).
 PDF statistics:
- 88 PDF objects out of 1000 (max. 8388607)
- 65 compressed objects within 1 object stream
+ 110 PDF objects out of 1000 (max. 8388607)
+ 87 compressed objects within 1 object stream
  16 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 57 words of extra memory for PDF output out of 10000 (max. 10000000)
 

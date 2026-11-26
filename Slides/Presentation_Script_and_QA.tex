@@ -117,11 +117,13 @@ pp (percentage points) & ``percentage points'', never ``percent'' \\
 
 \slideref{slide 1} Good morning. We are Group 1 from Section C. Our project measures how much GPU energy a retrieval system spends to produce one correct answer.
 
-\slideref{slide 2} Most systems choose the number of retrieved passages by habit. We treat that number as a decision. We ask one question: can we use fewer passages, spend less energy, and still keep the same accuracy?
+\slideref{slide 2} Most systems choose the number of retrieved passages by habit. We treat that number as a decision.
 
-The number we follow is energy per correct answer. We take all the joules used at one depth and divide them by all the correct answers at that depth. We do not average per-question ratios, because at low depth most questions are wrong, and the ratio becomes meaningless.
+The number we follow is energy per correct answer: all the joules used at one depth, divided by all the correct answers at that depth. We never average per-question ratios, because at low depth most questions are wrong, and the ratio becomes meaningless.
 
-\slideref{slide 3} To answer this we used one thousand SQuAD questions, seven depths from zero to thirty-two, a four-bit Qwen model, BM25 retrieval, and one laptop GPU. Every question was run at every depth, which gave us seven thousand measured answers.
+\slideref{slide 3} We used one thousand SQuAD questions, seven depths, BM25 retrieval, and one laptop GPU. That gave seven thousand measured answers.
+
+We also tested two smaller readers on the same questions. The chart shows why the reader matters. Our main model keeps improving up to thirty-two passages. Llama peaks at four and then falls. The 1.5B model stays flat. So there is no single best depth.
 
 \vspace{6pt}
 {\small\color{muted}\textbf{Handover:} ``Thank you. My teammate will explain the study design.''}
@@ -165,7 +167,7 @@ A smaller depth counts as good only if it does both. It must save at least twent
 
 At k equals four, the accuracy loss was four point three points. That is inside the limit. But the lower bound of our confidence interval was minus six point one seven, which is outside it. So the saving condition was met, and the accuracy condition was not. We report that honestly.
 
-\slideref{slide 9} Before the runs, we wrote three plans, hashed them, and tagged them, so the rules could not move after we saw the numbers. Five tests fired and one finished. No threshold was moved afterwards. That is the part we guard most carefully, because moving a threshold after seeing the numbers is the easiest mistake to make.
+\slideref{slide 9} Before the runs, we wrote three plans, hashed them, and tagged them, so the rules could not move after we saw the numbers. Five tests are listed. Four did not pass, and one finished cleanly. No threshold was moved afterwards. That is the part we guard most carefully, because moving a threshold after seeing the numbers is the easiest mistake to make.
 
 \vspace{6pt}
 {\small\color{muted}\textbf{Handover:} ``Thank you. My teammate will finish with the cause and the close.''}
@@ -175,9 +177,9 @@ At k equals four, the accuracy loss was four point three points. That is inside 
 
 \slideref{slide 10} Thank you. I will explain why the effect exists.
 
-Recall always rises with depth. Precision moves both ways, and it decides the sign. When we hold the correct passage first, adding distractors actually helps. So the loss comes from the correct passage being pushed down the list, not from length alone.
+Recall always rises with depth. Precision moves both ways, and it decides the sign. When we hold the correct passage first, adding distractors actually helps. So the loss comes from the correct passage being pushed down the list. Two more checks agree: swapping the retriever moves the result by only two points, and padding to the same length costs eighty-seven percent of the energy.
 
-\slideref{slide 11} And energy follows text length. The equation on the slide explains ninety-five point seven five percent of the variation, against eighty-nine point six five for depth. Each extra prefill token costs about twenty-five millijoules. We checked this by padding four passages to the length of thirty-two, and the cost rose to seventy-five point nine joules.
+\slideref{slide 11} Energy follows text length, not passage count. The equation on the slide explains ninety-five point seven five percent of the variation, against eighty-nine point six five for depth. Each extra prefill token costs about twenty-five millijoules.
 
 \slideref{slide 12} So: serving at k equals four instead of thirty-two saves about two thirds of the GPU energy per correct answer. We do not claim a five-point guarantee, a single best depth, or a router gain. Thank you. We are happy to take questions.
 
@@ -195,6 +197,8 @@ Answer in two or three sentences. Do not argue. If the answer is ``we did not te
 \qa{Why only one dataset and one GPU?}{We chose depth of measurement over breadth, because the same questions had to be run on the same machine. That gives a clean comparison, but we state it as a limit, not as a general result.}
 
 \qa{Why this model, and why four-bit?}{A four-billion-parameter model at four-bit fits in six gigabytes of laptop memory, which is the hardware we had. It is a realistic deployment setting for a small team.}
+
+\qa{Why test three different readers?}{Because the shape of the accuracy curve is a property of the reader, not of retrieval. The main model keeps improving, Llama peaks early, and the smallest model is flat. One reader alone would have hidden that.}
 
 \qa{What does ``energy per correct answer'' actually mean?}{It answers the budget question: if I have to produce correct answers, how many joules does one correct answer cost. It is total energy divided by total correct answers.}
 
