@@ -191,3 +191,10 @@ scratch/
 *.orig
 config.bat
 node_modules
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
