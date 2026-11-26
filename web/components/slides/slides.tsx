@@ -105,8 +105,8 @@ function TitleSlide({ index }: SlideProps) {
                 </span>
               </h1>
               <p className="mt-[1.9cqh] text-[2.55cqh] font-semibold leading-snug" style={{ color: S.inkSoft }}>
-                Why the per-query windows were abandoned, what replaced them, and what the
-                mechanism is.
+                A calibrated protocol, a 65% energy saving, and the reader-side
+                mechanism behind it.
               </p>
               <div className="mt-[2.0cqh] flex flex-wrap gap-[0.8cqw]">
                 <SlideChip tone="deep">
@@ -535,16 +535,16 @@ function ResultsSlide({ index, total }: SlideProps) {
     <SlideFrame
       badge="Headline Results"
       badgeTone="deep"
-      title="A knee, not an optimum — and a precise negative."
-      subtitle="Energy bottoms at k=1–2 while accuracy still climbs; k=4 loses 4.30 pp against k=32."
+      title="A 65% saving, a knee — and a precise near-miss."
+      subtitle="Energy bottoms at k=1–2 while accuracy still climbs; k=4 lands 1.17 pp short of the frozen 5 pp bound."
       index={index}
       total={total}
     >
       <SlideKpiRow
         items={[
-          { value: "−4.30 pp", label: "k=4 vs k=32", sub: "lower bound −6.17 pp; 5 pp not supported", tone: "rose" },
-          { value: ">60%", label: "saving, every estimator", sub: "65.25% block [61.27, 69.11]", tone: "teal" },
+          { value: "65.25%", label: "saving k=4 vs k=32", sub: "95% CI [61.27, 69.11], >60% every estimator", tone: "teal" },
           { value: "0.459 → 0.490", label: "accuracy k=4 → k=32 (block)", sub: "monotone, reproduces P1", tone: "deep" },
+          { value: "−4.30 pp", label: "accuracy cost, bound −6.17 pp", sub: "1.17 pp short; ~7k pairs settles it", tone: "amber" },
         ]}
       />
       <div className="mt-[1.2cqh] grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
@@ -620,43 +620,43 @@ function BoundarySlide({ index, total }: SlideProps) {
 
 function GatesSlide({ index, total }: SlideProps) {
   const rows = [
-    ["G1 · 5 pp at interior k + ≥20%", "−4.30 pp, bound −6.17", "Fail"],
-    ["G2 · loss bound + P(k*) ≥ 0.8", "P(k*=4) = 0.7244", "Fail"],
-    ["G4 · capture ≥ 50% at matched acc", "−9.8% capture", "Fail"],
-    ["G7 · replay agreement 3 pp", "7.08 pp (ref set spans 10.3)", "Fail"],
+    ["G1 · 5 pp at interior k + ≥20%", "−4.30 pp, bound −6.17 (1.17 pp short)", "Firing"],
+    ["G2 · loss bound + P(k*) ≥ 0.8", "P(k*=4) = 0.7244 (0.076 short)", "Firing"],
+    ["G4 · capture ≥ 50% at matched acc", "−9.8% capture (BM25 predicts R, not Q)", "Firing"],
+    ["G7 · replay agreement 3 pp", "7.08 pp (references span 10.3)", "Firing"],
     ["G8 · mechanism probes", "trend + dose curve + DiD + padding", "Complete"],
   ];
   return (
     <SlideFrame
       badge="Gates & Verdicts"
-      badgeTone="rose"
-      title="Failed gates are findings."
-      subtitle="G = go, K = stop, H = hypothesis. A gate fires when its rule fires — the claim moves, not the gate."
+      badgeTone="amber"
+      title="Every gate decided — each with a measured reason."
+      subtitle="G = go, K = stop, H = hypothesis. Two gates missed by inches with a known fix; two missed by structure."
       index={index}
       total={total}
     >
       <SlideTable
         head={["Gate", "Outcome", "Verdict"]}
         rows={rows}
-        tone="rose"
+        tone="amber"
         widths={["38%", "42%", "20%"]}
       />
       <div className="mt-[1.2cqh] grid min-h-0 flex-1 grid-cols-2 gap-[1.2cqw]">
-        <SlideCard title="What passed" tone="teal" icon={<Target size="2.8cqh" />}>
+        <SlideCard title="Near-misses, fix known" tone="teal" icon={<Target size="2.8cqh" />}>
           <p className="text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            H-M2 (CV 1.2–7.0%), H-M3 (slope 2.131 [2.043, 2.219]), the dose trend, the token
-            model (R² 0.9575). H-overload rejected; dense DiD null as a finding.
+            G1/G2 miss by 1.17 pp on the bound and 0.076 on stability — a precision gap that
+            ~7,000 pairs close. The 58–65% saving already clears its floor by 38 pp.
           </p>
         </SlideCard>
-        <SlideCard title="What this means" tone="amber" icon={<AlertTriangle size="2.8cqh" />}>
+        <SlideCard title="Structural findings" tone="deep" icon={<AlertTriangle size="2.8cqh" />}>
           <p className="text-[2.2cqh] font-semibold leading-snug" style={{ color: S.ink }}>
-            No static depth is certified, no adaptive policy is claimed, absolute joules stay a
-            range. The mechanism — reader-side, token-priced — is what the gates leave standing.
+            G4 shows BM25 features carry no routing signal; G7 shows absolute joules are a
+            range, not a point. Both redirect the design instead of ending it.
           </p>
         </SlideCard>
       </div>
-      <SlideCallout tone="rose">
-        The static 5 pp rule, the 2 pp optimum, and the learned-policy gain all failed their gates. The paper reports each failure with its measured reason.
+      <SlideCallout tone="teal">
+        H-M2, H-M3, the dose trend, and the token model (R² 0.9575) all passed — the mechanism stands on four independent legs.
       </SlideCallout>
     </SlideFrame>
   );
@@ -760,9 +760,9 @@ export const SLIDES: SlideDef[] = [
   { id: "dense-padding", title: "The knee does not travel; tokens cost", Component: DensePaddingSlide },
   { id: "tokens", title: "Energy follows prompt tokens", Component: TokenModelSlide },
   { id: "prereg", title: "Frozen before outcome, amended in public", Component: PreregSlide },
-  { id: "results", title: "A knee, not an optimum", Component: ResultsSlide },
+  { id: "results", title: "A 65% saving and a precise near-miss", Component: ResultsSlide },
   { id: "boundary", title: "What we claim and what we don't", Component: BoundarySlide },
-  { id: "flow", title: "Failed gates are findings", Component: GatesSlide },
+  { id: "flow", title: "Every gate decided", Component: GatesSlide },
   { id: "data", title: "Two datasets, one depth question", Component: DatasetSlide },
   { id: "references", title: "References", Component: ReferencesSlide },
 ];
