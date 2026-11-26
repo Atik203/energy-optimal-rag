@@ -120,15 +120,15 @@ def fig_pipeline() -> None:
             FancyArrowPatch((xs[i] + 15, 17), (xs[i + 1], 17), arrowstyle="-|>", mutation_scale=16, color=TEAL, linewidth=1.6)
         )
     # sensor tap under the reader
-    ax.add_patch(Rectangle((60.5, 2.0), 22, 6.6, facecolor="#EEF5F1", edgecolor=TEAL, linewidth=1.4))
-    ax.text(71.5, 6.7, "NVML power sensor", ha="center", va="center", fontsize=10, fontweight="bold", color=FOREST)
-    ax.text(71.5, 4.3, "samples every 100 ms", ha="center", va="center", fontsize=9, color=MUTED)
+    ax.add_patch(Rectangle((54.0, 1.8), 35, 7.4, facecolor="#EEF5F1", edgecolor=TEAL, linewidth=1.4))
+    ax.text(71.5, 7.4, "NVML power sensor", ha="center", va="center", fontsize=9.5, fontweight="bold", color=FOREST)
+    ax.text(71.5, 4.6, "one reading every 100 ms", ha="center", va="center", fontsize=8.5, color=MUTED)
     ax.annotate("", xy=(71.5, 11.8), xytext=(71.5, 8.8), arrowprops=dict(arrowstyle="-|>", color=TEAL, linewidth=1.4))
     save(fig, "fig_pipeline.png")
 
 
 def fig_sweep() -> None:
-    fig, ax = plt.subplots(figsize=(7.4, 4.6))
+    fig, ax = plt.subplots(figsize=(7.8, 4.9))
     ks = [0, 1, 2, 4, 8, 16, 32]
     nrows = 12
     rng = [2, 5, 0, 6, 3, 1, 4, 6, 2, 0, 5, 3]  # illustrative shuffle
