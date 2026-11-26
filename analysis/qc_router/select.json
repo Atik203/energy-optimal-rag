@@ -1,0 +1,20 @@
+{
+  "n_select": 1000,
+  "static_k4_accuracy": 0.455,
+  "threshold": 0.8,
+  "policy": {
+    "n": 1000.0,
+    "accuracy": 0.455,
+    "total_j": 26748.50740250876,
+    "energy_per_correct": 58.78792835716211,
+    "mean_depth": 3.979,
+    "threshold": 0.8
+  },
+  "fixed_j_per_query": {
+    "1": 19.04168182041165,
+    "4": 26.802835478112666
+  },
+  "auc_k1": 0.7248768296736354,
+  "auc_k4": 0.6687649964714185,
+  "note": "exploratory; threshold frozen here before eval exists"
+}

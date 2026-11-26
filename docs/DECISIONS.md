@@ -799,3 +799,38 @@ Newest last. Each entry is immutable; a reversal is a new entry, not an edit.
 - **Consequences:** the repository is submission-ready except the public archive link.
   CITATION/README still point at the published v0.2.1 record, which is correct until
   v0.3.0 mints.
+
+## D-039 - Router re-opened and resolved as a null (prereg-qc-router-v1)
+
+- **Date:** 2026-11-27
+- **Status:** accepted
+- **Context:** The Phase 8 router was dropped 2026-11-26 because routing was not the Q1
+  argument. The owner then asked to re-open it as a **confirmatory** study using maximum
+  reuse without harming validity: train on P1, freeze the threshold on `qc_fresh`, and
+  evaluate once on a fresh frame. This reverses the drop; it does not re-threshold any
+  earlier gate.
+- **Design as frozen:** `prereg/qc_router_prereg.md`, SHA-256 `ba14c2f2…`, tag
+  `prereg-qc-router-v1`, pushed before any eval outcome existed. Roles: P1 = train only,
+  `qc_fresh` = threshold selection only, `qc_router_eval` = once-only evaluation
+  (1,000 fresh qids, sha256 `4c16b6a6…`, disjoint from P0/P1 and all `qc_*` frames).
+- **Findings:**
+  - Threshold frozen at **0.80** on `qc_fresh` (policy 0.4550 vs static 0.4550).
+  - Eval: `A(1) = 0.385`, `A(4) = 0.454`, oracle `{1,4}` gap **3.80 pp [2.70, 5.00]** -
+    below the preregistered 10% headroom stop rule, which fired.
+  - **Capture 0.54% [-1.99, +3.29]**, accuracy difference **+0.00 pp [-0.30, +0.30]**.
+  - Depth histogram: **995 routed to k=4, 5 to k=1**. AUC 0.739 (k=1), 0.664 (k=4).
+- **Interpretation:** at the frozen threshold the model almost never believed a question
+  was answerable from one passage, so the policy collapsed onto the static baseline and
+  reproduced static accuracy and static energy. This is consistent with the Phase 6
+  result that BM25 features predict recall `R` and not reader precision `Q`, which is what
+  sets the sign of the depth effect.
+- **Analysis correction (not a design change):** the first version of
+  `scripts/41_qc_router_eval.py` called sklearn `predict_proba` inside each of 10,000
+  bootstrap resamples (~20M calls) and consumed 89 minutes of CPU without finishing. It
+  was stopped and rewritten to precompute each decision once and resample precomputed
+  vectors. Threshold, frames, estimand, and decision rule are unchanged.
+- **Decision:** G8-router **fires**. The result is a documented null, reported with its
+  MDE and the structural reason, not tuned or dropped.
+- **Consequences:** no adaptive-policy claim is made, and the claim boundary is unchanged.
+  The router negative now rests on two independent designs (P3 at `n=186`, seven depths;
+  this at `n=1000`, `{1,4}`, fixed costs) and two separate fresh samples.
