@@ -32,11 +32,11 @@ export const project = {
   name: "Energy-Optimal Retrieval Depth in Retrieval-Augmented Generation",
   shortName: "G2",
   siteName: "Energy Observatory",
-  version: "0.2.1",
-  status: "pre-Q1 hardening",
+  version: "0.3.0-rc1",
+  status: "Phase 8-9 complete, Phase 10 in progress",
   statusDetail:
-    "Phase 6 complete (2026-11-25). The pre-registered 5 pp non-inferiority claim is not established, the accuracy cost is nonzero, and a recall/precision mechanism explains the plateau. Absolute joules remain provisional until Phase 7 replaces the per-query window estimator.",
-  updated: "2026-11-25",
+    "Phase 7 metrology closed (block estimator 65.25% saving, G7 failed by construction); Phase 8 mechanism complete (reader-side: dose +14.6pp rejects overload, dense DiD null, padding prices tokens at ~25 mJ each); Phase 9 token model R2 0.9575. DOI v0.3.0 pending Zenodo scopes.",
+  updated: "2026-11-26",
   repo: "https://github.com/Atik203/energy-optimal-rag",
   author: "Atikur Rahaman and contributors",
   citationVersion: "0.1.0",
@@ -699,7 +699,7 @@ export const phases: Array<{
     goal: "Write a decision-theory and causal-measurement paper, not a curve paper.",
     outputs:
       "Manuscript draft, figures, tables, claims-evidence map; single self-contained file, 30 pages.",
-    exit: "Internal review; every number traces to runs/<run_id>/raw.csv. Result: paper frozen at 30 pages, seven figures, 426 tests.",
+    exit: "Internal review; every number traces to runs/<run_id>/raw.csv. Result: paper frozen at 30 pages, seven figures, 483 tests.",
   },
   {
     id: "P6",
@@ -720,7 +720,43 @@ export const phases: Array<{
     outputs:
       "Context-clustered interval; depth-versus-token model; k >= 1 affine fit with intervals; cross-fitted selection; capture bootstrap; gold-first overload test; same-ID three-reader contrast; cancellation table; price of guarantee.",
     exit:
-      "Design effect 0.98; token model R^2 0.902 versus 0.888 for depth; all folds select k=4 with a 58.13% held-out saving; capture -9.8%; gold-first loss 3.73 pp; 30 pages, 426 tests.",
+      "Design effect 0.98; token model R^2 0.902 versus 0.888 for depth; all folds select k=4 with a 58.13% held-out saving; capture -9.8%; gold-first loss 3.73 pp; 30 pages, 483 tests.",
+  },
+  {
+    id: "P7",
+    weeks: "Phase 7",
+    status: "fail",
+    name: "Metrology: block estimator + falsified windows",
+    goal:
+      "Replace the falsified per-query window with a block estimator and report the window failure as a finding.",
+    outputs:
+      "35-block representative run (1,000 qids/depth); 10 permutation replays; 3-session ICC; carryover regression; P1 manifest sidecar; per-run analysis dirs.",
+    exit:
+      "H-M2/H-M3 pass (CV 1.2-7.0%, slope 2.131 [2.043, 2.219]); H-M1 fails (65.25% [61.27, 69.11] vs 58.17%, gap 7.08 pp; 13.65 pp vs replays). G7 FAILED by construction: references are non-stationary. Saving >60% on every estimator; absolute J stays a range.",
+  },
+  {
+    id: "P8",
+    weeks: "Phase 8",
+    status: "pass",
+    name: "Causal mechanism (no router)",
+    goal:
+      "Identify the mechanism causally: distractor dose-response plus dense 2x2 under prereg-qc-v1.",
+    outputs:
+      "Fresh gap (1,000 qids, k=1/4); 6-dose curve (500 qids, gold first); frozen MiniLM rankings (45,651 passages); dense reader (1,000 qids, k=4/32); token-matched padding (200 qids x 3).",
+    exit:
+      "Fresh gap 3.00 pp (position tests halted); dose trend +3.06 pp/doubling rejects H-overload; dense DiD -2.20 pp [-5.40, +1.00] null (knee does not travel); padding recovers 87% of k=32 energy. G8 complete: mechanism is reader-side.",
+  },
+  {
+    id: "P9",
+    weeks: "Phase 9",
+    status: "pass",
+    name: "Token attribution (CPU only)",
+    goal:
+      "Upgrade H1 from a depth curve to a hardware-grounded token cost using existing timestamps.",
+    outputs:
+      "Per-request prefill/decode split on 7,000 P1 rows; token model vs depth model; marginal prefill cost.",
+    exit:
+      "J = 13.88 + 0.02549*Tpre + 1.135*Tdec, R2 0.9575 vs 0.8965 for depth; ~25 mJ per prefill token. Abstention arm stays out (companion to the dropped router).",
   },
 ];
 
@@ -1468,7 +1504,7 @@ export const contributions = [
   {
     title: "Measurement audit",
     body:
-      "Per-query NVML windows are sequence-dependent: the window sum recovers 81.7% of a replay total. Absolute joules are therefore reported as provisional and the accuracy contrast is the claim that travels.",
+      "Per-query NVML windows are sequence-dependent: the window sum recovers 81.7% of a replay total. Ten replays show the ratio drifts with thermal position, so the cooldown-separated block estimator (65.25% saving, CV 1.2-7.0%) is retained on stability grounds. Absolute joules stay a range; the saving is the reproducible quantity.",
   },
 ];
 

@@ -18,8 +18,8 @@ authors:
   - family-names: Rahaman
     given-names: Atikur
     email: atikurrahaman0305@gmail.com
-version: 0.2.1
-date-released: 2026-11-19
+version: 0.3.0
+date-released: 2026-11-26
 repository-code: "https://github.com/Atik203/energy-optimal-rag"
 url: "https://github.com/Atik203/energy-optimal-rag"
 doi: "10.5281/zenodo.24352803"
