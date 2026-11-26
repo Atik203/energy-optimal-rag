@@ -8,21 +8,28 @@ Everything for the presentation lives here, in one place.
 | `Energy_Methodology_Presentation.pdf` | The same deck as PDF, for backup or printing |
 | `Presentation_Script_and_QA.pdf` | Speaker script (5 speakers, 1.5 min each) plus likely questions and answers |
 | `Presentation_Script_and_QA.tex` | Source of the script, in case the wording needs editing |
-| `GPU_Server_Guide.pdf` | Two-page guide for students: SSH access, `scp` transfer, Task Spooler, rules |
+| `GPU_Server_Guide.pdf` | Three-page guide for students: SSH access, `scp` transfer, Task Spooler, rules |
 | `GPU_Server_Guide.tex` | Source of the guide |
 | `figures/` | Every figure used in the deck, generated from registered analysis outputs |
 | `reference/` | The example deck used as the style reference |
 
 ## The GPU server guide
 
-Two pages, written for students who have never used a shared server.
+Three pages, written for students who have never used a shared server: one line of context per
+section, then the command block.
 
-- All addresses and credentials in it are **placeholders** and are marked as such in a red box on
-  page 1. Replace them with the values issued to each person.
-- Section 4 documents Task Spooler, including the flags that are easy to get wrong:
-  `ts` with no argument lists the queue, `ts -L` sets a **label**, `-k` kills one job,
-  `-T` kills all running jobs, and `-K` stops the daemon.
-- GPU-aware builds: `ts -g 1` requests one GPU, and the job waits in state `allocating`.
+- All addresses and credentials in it are **placeholders** and are marked as such in a box on page
+  1. `10.0.0.50` and `203.0.113.10` are documentation ranges, so they can never resolve to a real
+  host. The real address and each person's login have to be handed over separately.
+- Colour carries meaning: **amber** blocks run on the Windows laptop, **green** blocks run on the
+  server.
+- Section 3 sets up the short name, so students type `ssh uiu-gpu` instead of the full address.
+  `scp` and VS Code Remote-SSH read the same `%USERPROFILE%\.ssh\config`.
+- Section 7 documents Task Spooler, including the flags that are easy to get wrong: `ts` with no
+  argument lists the queue, `ts -L` sets a **label**, `-k` kills one job, `-T` kills all running
+  jobs, and `-K` stops the daemon.
+- The closing box replaces a troubleshooting table: rules, a sign-off reminder, and one line
+  pointing to UIU CITS for anything else.
 
 Rebuild with:
 
@@ -95,7 +102,10 @@ cd Slides
 pdflatex -interaction=nonstopmode Presentation_Script_and_QA.tex
 ```
 
-Word counts and speaking time are checked with `scripts\57_speech_timing.py`.
+Seven pages, in the same colour language as the deck and the server guide: teal chips mark each
+slide cue, teal panels hold what is said, amber strips hold the handover line, and the last page is
+one card per speaker. Word counts and speaking time are checked with
+`scripts\57_speech_timing.py`.
 
 ## Speaking plan
 
