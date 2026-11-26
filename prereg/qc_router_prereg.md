@@ -78,4 +78,7 @@ Budget ~1h GPU eval + 0 GPU train/select + ~0.5h contingency = ~1.5h total, batc
 
 - File SHA-256: see `prereg/qc_router_prereg.sha256`
 - Freeze tag: `prereg-qc-router-v1`
-- Frozen by / date: TBD (must postdate threshold freeze, predate eval GPU)
+- Frozen by / date: PI instruction 2026-11-26 ("Good we will do that. Plan for it and start") / 2026-11-27
+- Eval frame: `qc_router_eval` n=1000, sha256 `4c16b6a644dfe16847b2f56f0e5a90227126d6e65827ce14c40e424ea3eea170`
+- Threshold frozen on select before eval exists: `0.80` (`analysis/qc_router/select.json`; select acc 0.4550 vs static 0.4550, AUC k1 0.725 / k4 0.669, fixed J1 19.04 / J4 26.80 J/q)
+- Eval outcome seen at freeze: no (`runs/squad_qwen4b_qc_router/` does not exist)
